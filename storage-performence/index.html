@@ -1,0 +1,475 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>存储性能瓶颈的成因、定位与排查 | HelloDog&#39;s Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="wsgzao">
+    
+    <meta name="description" itemprop="description" content="存储性能分析、定位与排查">
+    
+    
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="wsgzao" />
+    <meta name="twitter:title" content="存储性能瓶颈的成因、定位与排查 | HelloDog&#39;s Blog" />
+      
+        <meta name="twitter:description" content="存储性能分析、定位与排查" />
+      
+    
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog&#39;s Blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/iDog.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/iDog.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fc2c5fc7d844d0973d9f77abd87f49c3c' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog&#39;s Blog" title="HelloDog&#39;s Blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog&#39;s Blog">HelloDog&#39;s Blog</a></h1>
+				<h2 class="blog-motto">羡慕别人所得到的，不如珍惜自己所拥有的！</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/archives">归档 | Archives</a></li>
+					
+						<li><a href="/about">简介 | About</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:wsgzao.github.io/">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/storage-performence/" title="存储性能瓶颈的成因、定位与排查" itemprop="url">存储性能瓶颈的成因、定位与排查</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://wsgzao.github.io/" title="wsgzao">wsgzao</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-06-22T13:03:23.000Z" itemprop="datePublished">2014年06月22日</time>
+    更新日期:<time datetime="2014-06-22T13:31:33.000Z" itemprop="dateModified">2014年06月22日</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#介绍"><span class="toc-number">1.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据存储瓶颈的四个常见场景："><span class="toc-number">3.</span> <span class="toc-text">数据存储瓶颈的四个常见场景：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#存储瓶颈常发区域:"><span class="toc-number">4.</span> <span class="toc-text">存储瓶颈常发区域:</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#存储区域网络（Storage-area_network,_SAN）/阵列前端口"><span class="toc-number">4.1.</span> <span class="toc-text">存储区域网络（Storage-area network, SAN）/阵列前端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#存储控制器"><span class="toc-number">4.2.</span> <span class="toc-text">存储控制器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cache"><span class="toc-number">4.3.</span> <span class="toc-text">Cache</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#磁盘"><span class="toc-number">4.4.</span> <span class="toc-text">磁盘</span></a></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#需要监控的指标："><span class="toc-number">5.</span> <span class="toc-text">需要监控的指标：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据存储性能最佳实践："><span class="toc-number">6.</span> <span class="toc-text">数据存储性能最佳实践：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#应用于"><span class="toc-number">7.</span> <span class="toc-text">应用于</span></a></li></ol>
+		</div>
+		
+		<h2 id="介绍">介绍</h2>
+<p>企业数据存储性能瓶颈常常会发生在端口，控制器和磁盘，难点在于找出引起拥塞的单元，往往需要应用多重工具以及丰富的经验来查找并解决。</p>
+<p>本文详细阐述存储瓶颈发生最常见的四种情况，可能发生的拥塞点，需要监控的参数指标，以及部署存储系统的最佳实践。</p>
+<hr>
+<h2 id="更新历史">更新历史</h2>
+<p>2014年6月22日 - 转载修改初稿</p>
+<p><a href="http://wsgzao.github.io/storage-performence/" target="_blank">阅读原文</a></p>
+<hr>
+<h2 id="数据存储瓶颈的四个常见场景：">数据存储瓶颈的四个常见场景：</h2>
+<p>以下是储瓶颈发生最常见的四种典型情况：</p>
+<ol>
+<li><p>当多个用户同时访问某一业务应用，无论是邮件服务器，企业资源规划（ERP）系统或数据库，数据请求会累积在队列中。单个I/O的响应时间开始增长，短暂延时开始转变成为漫长的等待。<br>这类响应时间敏感型应用的特征是，很多随机请求，读取比写入更多，I/O较小。最好的方法是：将负载分布在多块磁盘上，否则可能造成性能瓶颈。<br>如果应用增加了更多用户，或应用IOPS请求增加，则可能需要在RAID组中添加更多磁盘，或数据可能需要跨越更多磁盘，在更多层级做条带化。<br>存储在这样的情况下往往首先被怀疑，但大多数情况下并非存储引发，原因可能在于网络、应用或服务器。</p>
+</li>
+<li><p>带宽敏感型应用——如数据备份，视频流或安全登录，这类应用当多个用户同时访问大型文件或数据流时可能造成瓶颈。<br>定位这一问题存储管理员应当从备份服务器开始一路向下检查至磁盘，原因可能存在于这一通路的任何地方。<br>问题不一定发生在存储，可能是由于备份应用创建的方式或是磁带系统的工作方式引起的。如果瓶颈定位于存储，那么可能是由于服务I/O的磁盘数量不足，在控制器造成争用，或是阵列前端口带宽不足。<br>性能调优需要针对不同应用程序负载来完成。针对大型文件和流数据的调优并不适合于小型文件，反之亦然。这也就是为什么在大多数存储系统中往往做一个平衡，需要用户尝试并找出系统的折中。用户通常需要优化吞吐量或IOPS，但并不需要对两者同时优化。</p>
+</li>
+<li><p>RAID组中的磁盘故障。特别是在RAID 5中会造成性能的下降，因为系统需要重建校验数据。相比数据读写操作，重建会对性能造成更大影响。<br>即便坏盘是造成故障的根源，但控制器还是可能成为瓶颈，因为在重建过程中它需要不停地服务数据。当重建完成时，性能才会恢复正常。</p>
+</li>
+<li><p>部署了一种新的应用，而卷存在于处理繁忙邮件系统的同一磁盘。如果新的应用变得繁忙，邮件系统性能将会遭受影响。额外的流量最终会将磁盘完全覆盖。</p>
+</li>
+</ol>
+<h2 id="存储瓶颈常发区域:">存储瓶颈常发区域:</h2>
+<h3 id="存储区域网络（Storage-area_network,_SAN）/阵列前端口">存储区域网络（Storage-area network, SAN）/阵列前端口</h3>
+<p>存储部署于集中化SAN环境时，需考虑服务器和SAN之间的潜在网络瓶颈。例如，运行多部虚拟机的整合服务器可能不具备支持工作负载要求的足够网络端口。添加网络端口或转移网络密集型工作负载至其他服务器可解决这一问题。如前所述，对于带宽集中型应用，需考虑NFS有多少<a href="http://searchstorage.techtarget.com/definition/Fibre-Channel" target="_blank">Fiber Channel</a> 端口, or <a href="http://searchstorage.techtarget.com/definition/iSCSI" target="_blank">iSCSI</a> 端口 or <a href="http://searchnetworking.techtarget.com/definition/Ethernet" target="_blank">Ethernet</a> 端口，需要用户站在带宽的角度来考量整个架构。</p>
+<p>可能发生的问题包括：</p>
+<ul>
+<li>如果阵列中端口数量不够，就会发生过饱和/过度使用。</li>
+<li>虚拟服务器环境下的过量预定</li>
+<li>端口间负载不均衡</li>
+<li>交换机间链路争用/流量负荷过重</li>
+<li>如某一HBA端口负载过重将导致HBA拥塞。使用虚拟机会导致问题更加严重。</li>
+</ul>
+<h3 id="存储控制器">存储控制器</h3>
+<p>一个标准的主动——被动或主动——主动控制器都有一个性能极限。接近这条上限取决于用户有多少块磁盘，因为每块磁盘的IOPS和吞吐量是固定的。</p>
+<p>可能出现的问题包括：</p>
+<ul>
+<li>控制器I/O过饱和，使得从缓存到阵列能够处理的IOPS受到限制</li>
+<li>吞吐量“淹没“处理器</li>
+<li>CPU过载/处理器功率不足</li>
+<li>性能无法跟上SSD</li>
+</ul>
+<h3 id="Cache">Cache</h3>
+<p>由于服务器内存和CPU远比机械磁盘快得多，需为磁盘添加高速内存以缓存读写数据。例如，写入磁盘的数据存储在缓存中直到磁盘能够跟上，同时磁盘中的读数据放入缓存中直到能被主机读取。Cache比磁盘快1000倍，因此将数据写入和读出Cache对性能影响巨大。智能缓存算法能够预测你需要查找的数据，你是否会对此数据频繁访问，甚至是将访问频繁的随机数据放在缓存中。</p>
+<p>可能发生的问题包括：</p>
+<ul>
+<li>Cache memory不足</li>
+<li>Cache写入过载，引起性能降低</li>
+<li>频繁访问顺序性数据引起cache超负荷</li>
+<li>Cache中需要持续不断地写入新数据，因此如果cache总是在refill，将无法从cache获益。</li>
+</ul>
+<h3 id="磁盘">磁盘</h3>
+<p>磁盘瓶颈与磁盘转速有关, 慢速磁盘会引入较多延时。存储性能问题的排查首先考虑的因素就是磁盘速度，同时有多少块磁盘可进行并发读写。而另一因素是磁盘接口。采用更快的接口能够缓解磁盘瓶颈，但更重要的是在快速接口与相应更大的缓存大小以及转速之间取得平衡。同样，应避免将快速和慢速磁盘混入同一接口，因为慢速磁盘将会造成快速接口与快速磁盘的性能浪费。</p>
+<p>可能引发的问题包括：</p>
+<ul>
+<li>过多应用命中磁盘</li>
+<li>磁盘数量不足以满足应用所需的IOPS或吞吐量</li>
+<li>磁盘速度过慢无法满足性能需求及支持繁重工作负荷</li>
+<li>Disk group往往是classic存储架构的潜在性能瓶颈，这种结构下RAID最多配置在16块磁盘。Thin结构通常每个LUN拥有更多磁盘，从而数据分布于更多spindle，因增加的并发性而减少了成为瓶颈的可能。</li>
+</ul>
+<h2 id="需要监控的指标：">需要监控的指标：</h2>
+<p>曾经一度存储厂商们强调的是IOPS和吞吐量，但现在重点逐渐转变成为响应时间。也就是说，不是数据移动的速度有多快，而在于对请求的响应速度有多快。</p>
+<p>正常情况下，15,000 rpm Fibre Channel磁盘响应时间为4ms，SAS磁盘响应时间约为5ms至6ms，SATA为10ms，而SSD少于1ms。如果发现Fibre Channel磁盘响应时间为12ms，或SSD响应时间变成5ms，那么就说明可能产生了争用，可能芯片发生了故障。</p>
+<p>除了响应时间，其他需要监控的指标包括：</p>
+<ul>
+<li>队列长度，队列中一次积累的请求数量，平均磁盘队列长度；</li>
+<li>平均I/O大小千字节数；</li>
+<li>IOPS （读和写，随机和顺序，整体平均IOPS）；</li>
+<li>每秒百万字节吞吐量；</li>
+<li>读写所占比例；</li>
+<li>容量（空闲，使用和保留）。</li>
+</ul>
+<h2 id="数据存储性能最佳实践：">数据存储性能最佳实践：</h2>
+<p>性能调优和改进的方式有很多种，用户当然可以通过添加磁盘，端口，多核处理器，内存来改善，但问题是：性价比，以及对业务是否实用。本文建议的方式是在预算范围内找寻性能最大化的解决方案。另外一个需要考虑的方面是环境并非一尘不变，系统部署方案要能够适应环境的改变需求。</p>
+<p>首先需要考虑刷数据的性能特征，需要了解IO工作情况是怎样的。是否是cache友好型？是否是CPU集中型？业务数据很大数量很少，还是很小但数量很多？另外一方面就是构成存储环境的组件。包括应用，存储系统本身，网络。。。瓶颈可能在哪里，改善哪里最有效？</p>
+<p>以下是一些常规建议：</p>
+<ol>
+<li>不要仅仅根据空闲空间来分配存储，而需要结合考虑性能需求，确保为吞吐量或IOPS分配足够多的磁盘。</li>
+<li>在磁盘间均衡分布应用负载，以减少热点地区的产生。</li>
+<li>理解应用负载类型，并针对负载选择匹配的RAID类型。例如，写密集型应用建议使用RAID 1而不是RAID 5。因为当写入RAID 5时，需要计算校验位，需耗费较多时间。而RAID 1，写入两块磁盘速度快得多，无需计算。</li>
+<li>磁盘类型（Fibre Channel, SAS, SATA）与期望性能相匹配。对于关键业务应用部署高性能磁盘，例如15,000 rpm Fibre Channel。</li>
+<li>对于I/O密集型应用考虑采用SSD，但并不适用于写性能重要型应用。只要没有达到控制器瓶颈，SSD对读性能提升显著，但对写性能提升并没有明显效果。</li>
+<li>采用端对端的监控工具，特别是虚拟服务器环境。虚拟端与物理端之间有一道防火墙，所以，需要穿透防火墙进行端到端的监控。</li>
+<li>有些性能分析工具涵盖从应用到磁盘，有些仅局限于存储系统本身。由于性能是一个连锁反应包含很多变量，所以需要全面地分析数据。</li>
+<li>以数据仅写入磁盘外部扇区的方式格式化磁盘。因减少数据定位时间而在高I/O环境下提升性能。负面作用是相当一部分磁盘容量未能得以使用。</li>
+</ol>
+<h2 id="应用于">应用于</h2>
+<hr>
+<p>存储性能分析、定位与排查<br><a href="https://community.emc.com/docs/DOC-34921" target="_blank">阅读原文</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"32"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+<div class="article-share" id="share">
+<!--
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Tech/">Tech</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Work/">Work</a>
+</div>
+
+
+-->
+<div class="article-share" id="share">
+<!--
+
+  <div data-url="http://wsgzao.github.io/storage-performence/" data-title="存储性能瓶颈的成因、定位与排查 | HelloDog&#39;s Blog" data-tsina="wsgzao" class="share clearfix">
+  </div>
+
+-->
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/hexo-guide/" title="Github+Hexo搭建静态Blog小结">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Github+Hexo搭建静态Blog小结</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/gfw-break/"  title="OX翻墙小结">
+ <strong>NEXT:</strong><br/> 
+ <span>OX翻墙小结
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#介绍"><span class="toc-number">1.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据存储瓶颈的四个常见场景："><span class="toc-number">3.</span> <span class="toc-text">数据存储瓶颈的四个常见场景：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#存储瓶颈常发区域:"><span class="toc-number">4.</span> <span class="toc-text">存储瓶颈常发区域:</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#存储区域网络（Storage-area_network,_SAN）/阵列前端口"><span class="toc-number">4.1.</span> <span class="toc-text">存储区域网络（Storage-area network, SAN）/阵列前端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#存储控制器"><span class="toc-number">4.2.</span> <span class="toc-text">存储控制器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cache"><span class="toc-number">4.3.</span> <span class="toc-text">Cache</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#磁盘"><span class="toc-number">4.4.</span> <span class="toc-text">磁盘</span></a></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#需要监控的指标："><span class="toc-number">5.</span> <span class="toc-text">需要监控的指标：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据存储性能最佳实践："><span class="toc-number">6.</span> <span class="toc-text">数据存储性能最佳实践：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#应用于"><span class="toc-number">7.</span> <span class="toc-text">应用于</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>2</sup></a></li>
+		
+			<li><a href="/categories/Life/" title="Life">Life<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Work/" title="Work">Work<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Tech/" title="Tech">Tech<sup>2</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05">五月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06">六月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05">五月 2014</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+      <li><a href="http://yangjian.me" target="_blank" title="YangJian">Alimon's Blog</a></li>
+      <li><a href="http://zipperary.com/" target="_blank" title="Zipperary">Zipperary's Blog</a></li>
+            <li><a href="http://zespia.tw/hexo" target="_blank" title="Hexo">Hexo</a></li>
+      
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my first blog. <br/>
+			Try to do better.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/wsgzao" target="_blank" title="weibo"></a>
+		
+		
+		<a href="https://twitter.com/wsgzao" target="_blank" title="twitter"></a>
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" title="github"></a>
+		
+		
+		<a href="https://www.facebook.com/wsgzao" target="_blank" title="facebook"></a>
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://zespia.tw/hexo/" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2014 
+		
+		<a href="http://wsgzao.github.io/" target="_blank" title="wsgzao">wsgzao</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"wsgzao"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>
