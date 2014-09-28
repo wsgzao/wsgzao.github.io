@@ -4,20 +4,20 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>OX的DNS推荐方案 | HelloDog&#39;s Blog</title>
+    <title>Bash Shellshock patch bash 9740 for SLES | HelloDog&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="wsgzao">
     
-    <meta name="description" itemprop="description" content="针对国内形势给出一种最简单直接的翻墙方式">
+    <meta name="description" itemprop="description" content="SLES官方补丁bash 9740 for Shellshock">
     
     
     
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="wsgzao" />
-    <meta name="twitter:title" content="OX的DNS推荐方案 | HelloDog&#39;s Blog" />
+    <meta name="twitter:title" content="Bash Shellshock patch bash 9740 for SLES | HelloDog&#39;s Blog" />
       
-        <meta name="twitter:description" content="针对国内形势给出一种最简单直接的翻墙方式" />
+        <meta name="twitter:description" content="SLES官方补丁bash 9740 for Shellshock" />
       
     
     
@@ -77,15 +77,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/post/dns/" title="OX的DNS推荐方案" itemprop="url">OX的DNS推荐方案</a>
+      <a href="/post/sles-bash-shellshock/" title="Bash Shellshock patch bash 9740 for SLES" itemprop="url">Bash Shellshock patch bash 9740 for SLES</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://wsgzao.github.io/" title="wsgzao">wsgzao</a>
     </p>
   <p class="article-time">
-    <time datetime="2014-07-06T12:45:54.000Z" itemprop="datePublished">2014年07月06日</time>
-    更新日期:<time datetime="2014-08-12T12:33:27.000Z" itemprop="dateModified">2014年08月12日</time>
+    <time datetime="2014-09-28T08:40:15.000Z" itemprop="datePublished">2014年09月28日</time>
+    更新日期:<time datetime="2014-09-28T09:10:09.000Z" itemprop="dateModified">2014年09月28日</time>
     
   </p>
 </header>
@@ -94,103 +94,52 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#国内服务器"><span class="toc-number">3.</span> <span class="toc-text">国内服务器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#国际服务器"><span class="toc-number">4.</span> <span class="toc-text">国际服务器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#OX推荐方案"><span class="toc-number">5.</span> <span class="toc-text">OX推荐方案</span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#修复方案"><span class="toc-number">3.</span> <span class="toc-text">修复方案</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#测试代码"><span class="toc-number">3.1.</span> <span class="toc-text">测试代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#补丁修复"><span class="toc-number">3.2.</span> <span class="toc-text">补丁修复</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#验证结果"><span class="toc-number">3.3.</span> <span class="toc-text">验证结果</span></a></li></ol>
 		</div>
 		
-		<p><img src="http://i.v2ex.co/rqZ0QfT0.png" alt=""></p>
+		<p><img src="http://i.v2ex.co/bfz9o566.png" alt=""></p>
 <h2 id="前言">前言</h2>
-<p>接着之前一篇<code>GFW-Break</code>主要还是想找到更加简单的翻墙方式，只是通过修改DNS服务解析上网对大家来说并非合适的推荐，1不安全，2不稳定，但我推荐的原因还是只有一个词<code>简单</code>，如果大家不那么在意国内环境下所谓的隐私安全，也不需要复杂的网络访问需求，那么就直接体验下DNS翻墙的便捷吧，最后建议大家认真阅读网站内的使用条例和适用范围，It’s a good manner。</p>
-<p>P.S. 世界上没有绝对安全，因为最不安全的因素永远是人本身。</p>
+<p>本文主要针对SLES11平台提供官方的解决方案bash 9740帮助大家及时修复Shellshock漏洞，原理和详情请参考扩展阅读，建议公网访问设备优先进行补丁修复</p>
+<blockquote>
+<p>Everyone should update.</p>
+</blockquote>
 <hr>
 <h2 id="更新记录">更新记录</h2>
-<p>2014年07月07日 - 撰写初稿</p>
-<p>阅读原文 - <a href="http://wsgzao.github.io/post/dns/" target="_blank">http://wsgzao.github.io/post/dns/</a></p>
+<p>2014年09月28日 - 初稿</p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/sles-bash-shellshock/" target="_blank">http://wsgzao.github.io/post/sles-bash-shellshock/</a></p>
 <p>扩展阅读</p>
 <ul>
-<li>翻墙小结 - <a href="http://wsgzao.github.io/post/gfw-break/" target="_blank">http://wsgzao.github.io/post/gfw-break/</a></li>
+<li>bash 9740 - <a href="https://download.novell.com/protected/Summary.jsp?buildid=sjAu9hv-X1A~" target="_blank">https://download.novell.com/protected/Summary.jsp?buildid=sjAu9hv-X1A~</a></li>
+<li>bash代码注入的安全漏洞 - <a href="http://coolshell.cn/articles/11973.html" target="_blank">http://coolshell.cn/articles/11973.html</a></li>
 </ul>
 <hr>
-<h2 id="国内服务器">国内服务器</h2>
-<table>
-<thead>
-<tr>
-<th>Provider</th>
-<th>Primary DNS Server</th>
-<th>Secondary DNS Server </th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="http://code.google.com/p/openerdns/" target="_blank">OpenerDNS</a></td>
-<td>42.120.21.30</td>
-<td>-</td>
-</tr>
-<tr>
-<td><a href="http://www.114dns.com/" target="_blank">114DNS</a></td>
-<td>114.114.114.114</td>
-<td>114.114.115.115</td>
-</tr>
-<tr>
-<td><a href="http://www.onedns.net/" target="_blank">oneDNS</a></td>
-<td>112.124.47.27</td>
-<td>-</td>
-</tr>
-<tr>
-<td><a href="http://alidns.com/" target="_blank">AliDNS</a></td>
-<td>223.5.5.5</td>
-<td>223.6.6.6</td>
-</tr>
-</tbody>
-</table>
-<p>【备注】如果有需要，建议合理设置DNS解析，有一定的加速效果</p>
-<hr>
-<h2 id="国际服务器">国际服务器</h2>
-<table>
-<thead>
-<tr>
-<th>Provider</th>
-<th>Primary DNS Server</th>
-<th>Secondary DNS Server </th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="http://dns.v2ex.com/" target="_blank">V2EX DNS</a></td>
-<td>199.91.73.222</td>
-<td>178.79.131.110</td>
-</tr>
-<tr>
-<td><a href="https://developers.google.com/speed/public-dns/?hl=zh-CN" target="_blank">Google DNS</a></td>
-<td>8.8.8.8</td>
-<td>8.8.4.4</td>
-</tr>
-<tr>
-<td><a href="http://www.opendns.com/" target="_blank">OpenDNS</a></td>
-<td>208.67.222.222</td>
-<td>208.67.220.220</td>
-</tr>
-</tbody>
-</table>
-<p>【备注】如无必要，不建议手动修改DNS解析，不符合中国国情无法产生预期效果</p>
-<hr>
-<h2 id="OX推荐方案">OX推荐方案</h2>
-<table>
-<thead>
-<tr>
-<th>服务商</th>
-<th>主DNS</th>
-<th>备DNS</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="http://code.google.com/p/openerdns/" target="_blank">OpenerDNS</a> + <a href="http://alidns.com/" target="_blank">AliDNS</a></td>
-<td>42.120.21.30</td>
-<td>223.5.5.5</td>
-</tr>
-</tbody>
-</table>
-<p>【推荐理由】主DNS方便我们访问Google等各项服务，备DNS确保国内访问快速稳定</p>
+<h2 id="修复方案">修复方案</h2>
+<h3 id="测试代码">测试代码</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre>env VAR=<span class="string">'() { :;}; echo Bash is vulnerable!'</span> bash -c <span class="string">"echo 如果你看到了vulnerable字样说明你的bash有安全问题"</span>
+Bash is vulnerable!
+如果你看到了vulnerable字样说明你的bash有安全问题
+</pre></td></tr></table></figure>
+
+<h3 id="补丁修复">补丁修复</h3>
+<p>下载补丁 - <a href="http://pan.baidu.com/s/1c0lIhEw" target="_blank">http://pan.baidu.com/s/1c0lIhEw</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>rpm -Uvh bash-<span class="number">3.2</span>-<span class="number">147.20</span>.<span class="number">1</span>.x86_64.rpm
+</pre></td></tr></table></figure>
+
+<h3 id="验证结果">验证结果</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+</pre></td><td class="code"><pre>env VAR=<span class="string">'() { :;}; echo Bash is vulnerable!'</span> bash -c <span class="string">"echo 如果你看到了vulnerable字样说明你的bash有安全问题"</span>
+bash: warning: VAR: ignoring function definition attempt
+bash: error importing function definition <span class="keyword">for</span> `VAR<span class="string">'
+如果你看到了vulnerable字样说明你的bash有安全问题</span>
+</pre></td></tr></table></figure>
+
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -200,13 +149,13 @@
 <!--
   <div class="article-tags">
   
-  <span></span> <a href="/tags/翻墙/">翻墙</a>
+  <span></span> <a href="/tags/SLES/">SLES</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/Life/">Life</a>
+  <a class="article-category-link" href="/categories/Work/">Work</a>
 </div>
 
 
@@ -214,7 +163,7 @@
 <div class="article-share" id="share">
 <!--
 
-  <div data-url="http://wsgzao.github.io/post/dns/" data-title="OX的DNS推荐方案 | HelloDog&#39;s Blog" data-tsina="wsgzao" class="share clearfix">
+  <div data-url="http://wsgzao.github.io/post/sles-bash-shellshock/" data-title="Bash Shellshock patch bash 9740 for SLES | HelloDog&#39;s Blog" data-tsina="wsgzao" class="share clearfix">
   </div>
 
 -->
@@ -225,18 +174,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/post/jailbreak-ipad/" title="iPad mini Retina越狱小结">
+ <a href="/post/hexo-guide/" title="Github+Hexo搭建静态Blog小结">
   <strong>PREVIOUS:</strong><br/>
   <span>
-  iPad mini Retina越狱小结</span>
+  Github+Hexo搭建静态Blog小结</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/post/storage-performence/"  title="存储性能瓶颈的成因、定位与排查">
+<a href="/post/china-mobile-and-telecom/"  title="中国移动和中国电信纯净版套餐方案分享">
  <strong>NEXT:</strong><br/> 
- <span>存储性能瓶颈的成因、定位与排查
+ <span>中国移动和中国电信纯净版套餐方案分享
 </span>
 </a>
 </div>
@@ -253,7 +202,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#国内服务器"><span class="toc-number">3.</span> <span class="toc-text">国内服务器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#国际服务器"><span class="toc-number">4.</span> <span class="toc-text">国际服务器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#OX推荐方案"><span class="toc-number">5.</span> <span class="toc-text">OX推荐方案</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#修复方案"><span class="toc-number">3.</span> <span class="toc-text">修复方案</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#测试代码"><span class="toc-number">3.1.</span> <span class="toc-text">测试代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#补丁修复"><span class="toc-number">3.2.</span> <span class="toc-text">补丁修复</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#验证结果"><span class="toc-number">3.3.</span> <span class="toc-text">验证结果</span></a></li></ol>
   </div>
 
 <div id="asidepart">
