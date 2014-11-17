@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Keep Calm and Carry On]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://wsgzao.github.io//"/>
-  <updated>2014-11-17T12:38:36.385Z</updated>
+  <updated>2014-11-17T13:38:40.284Z</updated>
   <id>http://wsgzao.github.io//</id>
   
   <author>
@@ -168,11 +168,118 @@ hexo s <span class="comment">#server</span>
   </entry>
   
   <entry>
+    <title><![CDATA[【SuSE】关于CVE-2014-7169漏洞的解决方案]]></title>
+    <link href="http://wsgzao.github.io/post/sles-bash-shellshock/"/>
+    <id>http://wsgzao.github.io/post/sles-bash-shellshock/</id>
+    <published>2014-11-17T08:40:15.000Z</published>
+    <updated>2014-11-17T13:38:01.000Z</updated>
+    <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/bfz9o566.png" alt=""></p>
+<h2 id="前言">前言</h2>
+<p>本文主要针对SuSE平台提供官方的解决方案bash 9740帮助大家及时修复Shellshock漏洞，原理和详情请参考扩展阅读，建议公网访问设备优先进行补丁修复，修复补丁和文档请下载附件。</p>
+<blockquote>
+<p>Everyone should update.</p>
+</blockquote>
+<hr>
+<h2 id="更新记录">更新记录</h2>
+<p>2014年11月17日 - 更新bash-3.2-147.14.22.1，修复CVE-2014-7169<br>2014年09月28日 - 初稿</p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/sles-bash-shellshock/" target="_blank">http://wsgzao.github.io/post/sles-bash-shellshock/</a></p>
+<p>扩展阅读</p>
+<ul>
+<li>SLES 9809 - <a href="https://download.novell.com/Download?buildid=qgwAwvwUOHI~" target="_blank">https://download.novell.com/Download?buildid=qgwAwvwUOHI~</a></li>
+<li>bash代码注入的安全漏洞 - <a href="http://coolshell.cn/articles/11973.html" target="_blank">http://coolshell.cn/articles/11973.html</a></li>
+</ul>
+<hr>
+<h2 id="修复方案">修复方案</h2>
+<h3 id="漏洞概述">漏洞概述</h3>
+<p>GNU Bash 4.3 bash43-025及之前版本处理环境变量值内某些畸形函数定义后尾随的字符串时存在安全漏洞，远程攻击者通过构造的环境，利用此漏洞可覆盖文件、执行任意代码、导致其他影响。此漏洞源于CVE-2014-6271的不完整修复，函数解析仍然存在问题。</p>
+<p>SUSE提供的这个针对CVE-2014-7169的补丁包可以完整解决CVE-2014-6271，CVE-2014-7169，CVE-2014-7186，CVE-2014-7187漏洞 .即 如果已经升级过CVE-2014-6271补丁，请务必再次升级CVE-2014-7169补丁；如果没有升级CVE-2014-6271，只需升级CVE-2014-7169补丁。</p>
+<h3 id="SuSE补丁支持版本">SuSE补丁支持版本</h3>
+<p><code>10sp3之前的版本不支持,需联系csc_service@novell.com获取支持</code></p>
+<blockquote>
+<p>SLES <code>10</code> SP <code>3/4</code><br>SLES <code>11</code> SP <code>1/2/3</code></p>
+</blockquote>
+<h3 id="测试代码">测试代码</h3>
+<ol>
+<li>CVE-2014-6271</li>
+</ol>
+<p>本地验证bash是否受影响的方法：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre>env x=<span class="string">'() { :;}; echo vulnerable'</span> bash -c <span class="string">"echo this is a test"</span>
+Vulnerable
+this is a test
+</pre></td></tr></table></figure><br>如果显示上述信息，则受影响。<br><br><br><figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre>env x=<span class="string">'() { :;}; echo vulnerable'</span> bash -c <span class="string">"echo this is a test"</span>
+bash: warning: x: ignoring function definition attempt
+bash: error importing function definition <span class="keyword">for</span> `x<span class="string">'</span>
+</pre></td></tr></table></figure><br>如果显示上述信息，则不受影响。<br><br>2. CVE-2014-7169<br><br>测试是否受影响的办法：<br>如果时间信息出现，则表示系统能够被攻击<br><figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+</pre></td><td class="code"><pre><span class="built_in">cd</span> /tmp; rm <span class="operator">-f</span> /tmp/<span class="built_in">echo</span>; env <span class="string">'x=() { (a)=&gt;\'</span> bash -c <span class="string">"echo date"</span>; cat /tmp/<span class="built_in">echo</span>
+bash: x: line <span class="number">1</span>: syntax error near unexpected token `=<span class="string">'
+bash: x: line 1: `'</span>
+bash: error importing function definition <span class="keyword">for</span> `x<span class="string">'
+Fri Sep 26 11:49:58 GMT 2014</span>
+</pre></td></tr></table></figure>
+
+<p>如果系统是安全的，则输出如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre><span class="built_in">cd</span> /tmp; rm <span class="operator">-f</span> /tmp/<span class="built_in">echo</span>; env <span class="string">'x=() { (a)=&gt;\'</span> bash -c <span class="string">"echo date"</span>; cat /tmp/<span class="built_in">echo</span>
+date
+cat: /tmp/<span class="built_in">echo</span>: No such file or directory
+</pre></td></tr></table></figure>
+
+<h3 id="补丁修复">补丁修复</h3>
+<p><code>RPM升级，无需重启操作系统和应用</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>rpm –Uvh *.rpm
+</pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="code"><pre>file://C:\Users\Administrator\Desktop\Bash 漏洞补丁及解决方案 <span class="keyword">for</span> 银联	(<span class="number">1</span> folders, <span class="number">3</span> files, <span class="number">1.78</span> MB, <span class="number">2.78</span> MB <span class="keyword">in</span> total.)
+│  bash.tar	<span class="number">0.98</span> MB
+│  CVE7169解决方案-suse.docx	<span class="number">280.65</span> KB
+│  Shellshock 说明.pptx	<span class="number">538.64</span> KB
+└─bash	(<span class="number">0</span> folders, <span class="number">5</span> files, <span class="number">1.00</span> MB, <span class="number">1.00</span> MB <span class="keyword">in</span> total.)
+        bash-<span class="number">3.2</span>-<span class="number">147.14</span>.<span class="number">22.1</span>.x86_64.rpm	<span class="number">292.97</span> KB
+        bash-doc-<span class="number">3.2</span>-<span class="number">147.14</span>.<span class="number">22.1</span>.x86_64.rpm	<span class="number">391.08</span> KB
+        libreadline5-<span class="number">32</span>bit-<span class="number">5.2</span>-<span class="number">147.14</span>.<span class="number">22.1</span>.x86_64.rpm	<span class="number">100.43</span> KB
+        libreadline5-<span class="number">5.2</span>-<span class="number">147.14</span>.<span class="number">22.1</span>.x86_64.rpm	<span class="number">103.81</span> KB
+        readline-doc-<span class="number">5.2</span>-<span class="number">147.14</span>.<span class="number">22.1</span>.x86_64.rpm	<span class="number">135.17</span> KB
+</pre></td></tr></table></figure>
+
+<p>下载补丁 - <a href="http://pan.baidu.com/s/1bnetL6J" target="_blank">http://pan.baidu.com/s/1bnetL6J</a></p>
+]]></content>
+    
+    
+      <category term="SLES" scheme="http://wsgzao.github.io/tags/SLES/"/>
+    
+      <category term="Work" scheme="http://wsgzao.github.io/categories/Work/"/>
+    
+  </entry>
+  
+  <entry>
     <title><![CDATA[OX Software List]]></title>
     <link href="http://wsgzao.github.io/post/software-list/"/>
     <id>http://wsgzao.github.io/post/software-list/</id>
     <published>2014-11-11T16:05:27.000Z</published>
-    <updated>2014-11-12T13:31:38.000Z</updated>
+    <updated>2014-11-17T13:06:25.000Z</updated>
     <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/l6zV1ws3.jpeg" alt=""></p>
 <h2 id="前言">前言</h2>
 <p>很多人都认为我是计算机高手，其实我只会帮你修理下你的电脑啦，曾几何时我也帮助过好多好多的同学和老师，尝试和体验各种各样的软件，但谁又能想到我曾今也对你们的电脑做过很多失败的坑爹操作，把你们最宝贵的数据撸得灰飞烟灭，这里要感谢当时允许我不断尝试失败的大白鼠 @王纪华 tommy(249033945)，使我养成了发散思维、逆向思维和创造性思维的解决问题之道。作为一名非职业HelpDesk，我一定不是最最优秀的那一群技术大牛，但我也努力超越了99.99%的从业者，Because I just love and enjoy thinking to do better and better.</p>
@@ -727,64 +834,6 @@ hexo s <span class="comment">#server</span>
     
     
       <category term="Life" scheme="http://wsgzao.github.io/categories/Life/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[Bash Shellshock patch bash 9740 for SLES]]></title>
-    <link href="http://wsgzao.github.io/post/sles-bash-shellshock/"/>
-    <id>http://wsgzao.github.io/post/sles-bash-shellshock/</id>
-    <published>2014-09-28T08:40:15.000Z</published>
-    <updated>2014-09-28T09:10:09.000Z</updated>
-    <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/bfz9o566.png" alt=""></p>
-<h2 id="前言">前言</h2>
-<p>本文主要针对SLES11平台提供官方的解决方案bash 9740帮助大家及时修复Shellshock漏洞，原理和详情请参考扩展阅读，建议公网访问设备优先进行补丁修复</p>
-<blockquote>
-<p>Everyone should update.</p>
-</blockquote>
-<hr>
-<h2 id="更新记录">更新记录</h2>
-<p>2014年09月28日 - 初稿</p>
-<p>阅读原文 - <a href="http://wsgzao.github.io/post/sles-bash-shellshock/" target="_blank">http://wsgzao.github.io/post/sles-bash-shellshock/</a></p>
-<p>扩展阅读</p>
-<ul>
-<li>bash 9740 - <a href="https://download.novell.com/protected/Summary.jsp?buildid=sjAu9hv-X1A~" target="_blank">https://download.novell.com/protected/Summary.jsp?buildid=sjAu9hv-X1A~</a></li>
-<li>bash代码注入的安全漏洞 - <a href="http://coolshell.cn/articles/11973.html" target="_blank">http://coolshell.cn/articles/11973.html</a></li>
-</ul>
-<hr>
-<h2 id="修复方案">修复方案</h2>
-<h3 id="测试代码">测试代码</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
-2
-3
-</pre></td><td class="code"><pre>env VAR=<span class="string">'() { :;}; echo Bash is vulnerable!'</span> bash -c <span class="string">"echo 如果你看到了vulnerable字样说明你的bash有安全问题"</span>
-Bash is vulnerable!
-如果你看到了vulnerable字样说明你的bash有安全问题
-</pre></td></tr></table></figure>
-
-<h3 id="补丁修复">补丁修复</h3>
-<p>下载补丁 - <a href="http://pan.baidu.com/s/1c0lIhEw" target="_blank">http://pan.baidu.com/s/1c0lIhEw</a></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
-</pre></td><td class="code"><pre>rpm -Uvh bash-<span class="number">3.2</span>-<span class="number">147.20</span>.<span class="number">1</span>.x86_64.rpm
-</pre></td></tr></table></figure>
-
-<h3 id="验证结果">验证结果</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-</pre></td><td class="code"><pre>env VAR=<span class="string">'() { :;}; echo Bash is vulnerable!'</span> bash -c <span class="string">"echo 如果你看到了vulnerable字样说明你的bash有安全问题"</span>
-bash: warning: VAR: ignoring function definition attempt
-bash: error importing function definition <span class="keyword">for</span> `VAR<span class="string">'
-如果你看到了vulnerable字样说明你的bash有安全问题</span>
-</pre></td></tr></table></figure>
-
-]]></content>
-    
-    
-      <category term="SLES" scheme="http://wsgzao.github.io/tags/SLES/"/>
-    
-      <category term="Work" scheme="http://wsgzao.github.io/categories/Work/"/>
     
   </entry>
   
