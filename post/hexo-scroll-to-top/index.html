@@ -4,20 +4,20 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>OX OS List | HelloDog</title>
+    <title>Hexo添加返回顶部按钮 | HelloDog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="wsgzao">
     
-    <meta name="description" itemprop="description" content="非常简单纯粹OS经验分享">
+    <meta name="description" itemprop="description" content="方便返回顶部导航栏">
     
     
     
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="wsgzao" />
-    <meta name="twitter:title" content="OX OS List | HelloDog" />
+    <meta name="twitter:title" content="Hexo添加返回顶部按钮 | HelloDog" />
       
-        <meta name="twitter:description" content="非常简单纯粹OS经验分享" />
+        <meta name="twitter:description" content="方便返回顶部导航栏" />
       
     
     
@@ -75,15 +75,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/post/os-list/" title="OX OS List" itemprop="url">OX OS List</a>
+      <a href="/post/hexo-scroll-to-top/" title="Hexo添加返回顶部按钮" itemprop="url">Hexo添加返回顶部按钮</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://wsgzao.github.io/" title="wsgzao">wsgzao</a>
     </p>
   <p class="article-time">
-    <time datetime="2014-08-27T01:53:02.000Z" itemprop="datePublished">2014年08月27日</time>
-    更新日期:<time datetime="2014-08-27T03:04:49.000Z" itemprop="dateModified">2014年08月27日</time>
+    <time datetime="2014-11-29T04:06:21.000Z" itemprop="datePublished">2014年11月29日</time>
+    更新日期:<time datetime="2014-11-29T04:39:38.000Z" itemprop="dateModified">2014年11月29日</time>
     
   </p>
 </header>
@@ -93,28 +93,35 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#目录"><span class="toc-number">3.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下载地址"><span class="toc-number">4.</span> <span class="toc-text">下载地址</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#修改步骤"><span class="toc-number">3.</span> <span class="toc-text">修改步骤</span></a></li></ol>
 			
 		</div>
 		
-		<p><img src="http://i.v2ex.co/KIfbB9vb.jpeg" alt=""></p>
-<h2 id="前言">前言</h2>
-<p>没有多余的介绍，只是很简单而纯粹的分享平时生活和工作中所需要的部分</p>
+		<h2 id="前言">前言</h2>
+<p>Hexo已经为用户实现了清晰的模块化设计，我们只需要根据规范编写合适的EJS和JS文件放入指定目录并在所需位置进行引用即可，这里给大家分享如何为Hexo增加返回顶部功能。</p>
 <blockquote>
-<p>周期性更新稳定、靠谱、经验证的资源</p>
+<p>返回顶部按钮已经成为一种习惯</p>
 </blockquote>
 <hr>
 <h2 id="更新记录">更新记录</h2>
-<p>2014年08月26日 - 初稿</p>
-<p>阅读原文 - <a href="http://wsgzao.github.io/post/os-list/" target="_blank">http://wsgzao.github.io/post/os-list/</a></p>
-<p>扩展阅读</p>
-<ul>
-<li>OX Software List - <a href="http://wsgzao.github.io/post/software-list/" target="_blank">http://wsgzao.github.io/post/software-list/</a></li>
-<li>MSDN  我告诉你 - <a href="http://msdn.itellyou.cn/" target="_blank">http://msdn.itellyou.cn/</a></li>
-</ul>
+<p>2014年11月29日 - 初稿</p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/hexo-scroll-to-top" target="_blank">http://wsgzao.github.io/post/hexo-scroll-to-top</a></p>
 <hr>
-<h2 id="目录">目录</h2>
+<h2 id="修改步骤">修改步骤</h2>
+<p>1.添加EJS代码，新建文件<code>/themes/pacman/layout/_partial/totop.ejs</code>，添加如下代码</p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre><span class="tag">&lt;<span class="title">div</span> <span class="attribute">id</span>=<span class="value">"totop"</span> <span class="attribute">style</span>=<span class="value">"position:fixed;bottom:150px;right:50px;cursor: pointer;"</span>&gt;</span>
+<span class="tag">&lt;<span class="title">a</span> <span class="attribute">title</span>=<span class="value">"返回顶部"</span>&gt;</span><span class="tag">&lt;<span class="title">img</span> <span class="attribute">src</span>=<span class="value">"/imgs/scrollup.png"</span>/&gt;</span><span class="tag">&lt;/<span class="title">a</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+</pre></td></tr></table></figure>
+
+<p>2.添加JS代码，新建文件<code>/themes/pacman/source/js/totop.js</code>，添加如下代码</p>
+<blockquote>
+<p>如果对显示位置和回滚速度不太满意，可以修改代码中的<code>upperLimit</code>和<code>scrollSpeed</code>参数</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -140,207 +147,44 @@
 24
 25
 26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71
-72
-73
-74
-75
-76
-77
-78
-79
-80
-81
-82
-83
-84
-85
-86
-87
-88
-89
-90
-91
-92
-93
-94
-95
-96
-97
-98
-99
-100
-101
-102
-103
-104
-105
-106
-107
-108
-109
-110
-</pre></td><td class="code"><pre>file://H:\OS	(12 folders, 0 files, 0 bytes, 79.39 GB in total.)
-├─AIX	(1 folders, 0 files, 0 bytes, 2.48 GB in total.)
-│  └─AIX 6.1	(0 folders, 3 files, 2.48 GB, 2.48 GB in total.)
-│          6100-08-02_v1.iso	375.39 MB
-│          6100-08-02_v2.iso	1.81 GB
-│          PowerHA 6.1.iso	313.13 MB
-├─Drivers	(0 folders, 5 files, 3.41 GB, 3.41 GB in total.)
-│      WanDrv6_Win7.x64_6.1.2014.0516_r2_iTiankong.com.zip	1.06 GB
-│      WanDrv6_Win7.x86_6.1.2014.0516_r2_iTiankong.com.zip	846.41 MB
-│      WanDrv6_Win8.x64_6.1.2014.0516_r2_iTiankong.com.zip	733.97 MB
-│      WanDrv6_Win8.x86_6.1.2014.0516_r2_iTiankong.com.zip	524.75 MB
-│      WanDrv6_WinXP.x86_6.1.2014.0516_r2_iTiankong.com.zip	305.72 MB
-├─Linux	(3 folders, 0 files, 0 bytes, 44.20 GB in total.)
-│  ├─CentOS	(4 folders, 0 files, 0 bytes, 10.86 GB in total.)
-│  │  ├─6.3	(0 folders, 2 files, 5.43 GB, 5.43 GB in total.)
-│  │  │      CentOS-6.3-x86_64-bin-DVD1.iso	3.99 GB
-│  │  │      CentOS-6.3-x86_64-bin-DVD2.iso	1.43 GB
-│  │  ├─6.4	(0 folders, 2 files, 1.41 GB, 1.41 GB in total.)
-│  │  │      CentOS-6.4-x86_64-bin-DVD1.iso	55.71 MB
-│  │  │      CentOS-6.4-x86_64-bin-DVD2.iso	1.35 GB
-│  │  ├─6.5	(0 folders, 1 files, 165.00 MB, 165.00 MB in total.)
-│  │  │      CentOS-6.5-x86_64-bin-DVD1.iso	165.00 MB
-│  │  └─7.0	(0 folders, 1 files, 3.86 GB, 3.86 GB in total.)
-│  │          CentOS-7.0-1406-x86_64-DVD.iso	3.86 GB
-│  ├─RedHat	(2 folders, 0 files, 0 bytes, 9.93 GB in total.)
-│  │  ├─OracleLinux	(1 folders, 0 files, 0 bytes, 3.62 GB in total.)
-│  │  │  └─6.5_64	(0 folders, 1 files, 3.62 GB, 3.62 GB in total.)
-│  │  │          V41362-01.iso	3.62 GB
-│  │  └─RHEL	(0 folders, 2 files, 2.31 GB, 6.31 GB in total.)
-│  │          rhel-server-6.3-i386-dvd.iso	2.89 GB
-│  │          rhel-server-6.3-x86_64-dvd.iso	3.43 GB
-│  └─SuSE	(1 folders, 0 files, 0 bytes, 23.41 GB in total.)
-│      └─11	(4 folders, 0 files, 0 bytes, 23.41 GB in total.)
-│          ├─Auto	(0 folders, 2 files, 2.05 GB, 6.05 GB in total.)
-│          │      SLES11-SP1-64-AUTO.iso	2.89 GB
-│          │      SLES11-SP2-64-AUTO.iso	3.16 GB
-│          ├─SP1	(0 folders, 2 files, 5.52 GB, 5.52 GB in total.)
-│          │      SLES-11-SP1-64-DVD.iso	2.83 GB
-│          │      SLES-11-SP1-DVD-i586-GM-DVD1.iso	2.70 GB
-│          ├─SP2	(0 folders, 2 files, 3.81 GB, 3.81 GB in total.)
-│          │      SLES-11-SP2-DVD-x86_64-GM-DVD1.iso	3.10 GB
-│          │      SLES-11-SP2-DVD-x86_64-GM-DVD2.iso	731.93 MB
-│          └─SP3	(0 folders, 4 files, 4.02 GB, 8.02 GB in total.)
-│                  SLES-11-SP3-DVD-i586-GM-DVD1.iso	3.00 GB
-│                  SLES-11-SP3-DVD-i586-GM-DVD2.iso	0.94 GB
-│                  SLES-11-SP3-DVD-x86_64-GM-DVD1.iso	3.13 GB
-│                  SLES-11-SP3-DVD-x86_64-GM-DVD2.iso	0.95 GB
-├─Mac	(0 folders, 1 files, 410.55 MB, 410.55 MB in total.)
-│      OS X Mountain Lion 10.8.2 VMware Image.7z	410.55 MB
-├─Others	(0 folders, 6 files, 684.16 MB, 684.16 MB in total.)
-│      cgi-plus.rar	7.10 MB
-│      DirectX_Repair-V3_0.7z	71.42 MB
-│      MAX.7z	478.71 MB
-│      NTBOOTautofix v2.5.7.rar	711.21 KB
-│      Win8PEV2.3.iso	125.10 MB
-│      winntsetup.v3.6.3_x86.x64.exe	1.14 MB
-├─ServerGuide	(0 folders, 2 files, 1.56 GB, 1.56 GB in total.)
-│      ibm_utl_sguide_9.30-win2k03-08_anyos_x86-64.iso	789.50 MB
-│      ibm_utl_sguide_9.30_anyos_i386.iso	809.82 MB
-├─Windows 2003	(1 folders, 3 files, 3.21 GB, 5.19 GB in total.)
-│  │  en_win_srv_2003_r2_datacenter_with_sp2_vl_cd1_X13-46616.iso	583.45 MB
-│  │  ghost2k3_sp2企业完整版2013.11_ie8版.iso	1.73 GB
-│  │  Win2K3_SP2完整安装版2014.01_IE8版.iso	934.19 MB
-│  └─Ghost Server 2003 SP2 数据中心完整版 2014.06	(1 folders, 4 files, 1.87 GB, 1.97 GB in total.)
-│      │  Fix.rar	1.36 KB
-│      │  Ghost2K3_SP2数据中心完整版2014.06_IE8版.iso	1.87 GB
-│      │  光盘说明.txt	7.63 KB
-│      │  文件校验工具.exe	28.50 KB
-│      └─蜻蜓特派员 Office 2003 sp3 五合一 精简安装版 bulid 20140329	(0 folders, 2 files, 102.81 MB, 102.81 MB in total.)
-│              Office2003SP3_5in1_20140329.exe	102.79 MB
-│              蜻蜓特派员 Office 2003 sp3 五合一 精简安装版 bulid 20140329.mht	21.23 KB
-├─Windows 2008 R2	(1 folders, 3 files, 9.66 GB, 13.11 GB in total.)
-│  │  cn_windows_server_2008_r2_standard_enterprise_datacenter_and_web_with_sp1_vl_build_x64_dvd_617396.iso	3.14 GB
-│  │  en_windows_server_2008_r2_standard_enterprise_datacenter_and_web_with_sp1_vl_build_x64_dvd_617403.iso	2.95 GB
-│  │  Win_Server_08R2_33in1_v1.1-UEFI.ISO	3.58 GB
-│  └─Windows Server 2008 R2 With SP1 数据中心完全版2014.08	(0 folders, 5 files, 3.45 GB, 3.45 GB in total.)
-│          ESD文件图文安装教程.mht	1.01 MB
-│          Windows Server 2008 R2 With SP1 数据中心完全版2014.08.txt	5.61 KB
-│          Windows_Server_2008_R2_Datacenter_2014.08.esd	3.44 GB
-│          WinNTSetup3.6.1正式版.zip	2.97 MB
-│          文件校验工具.exe	28.50 KB
-├─Windows 2012	(0 folders, 1 files, 89.97 MB, 89.97 MB in total.)
-│      Win_Server_2012_r2_Up_4in1_201405.iso	89.97 MB
-├─Windows 7	(0 folders, 4 files, 3.12 GB, 3.12 GB in total.)
-│      Win7SP1_2014.03_x64.GHO	2.29 GB
-│      Win7_PRO_X64_Nin1_201403.iso	111.13 MB
-│      Win7SP1_2014.03_x86.GHO	434.66 MB
-│      WIN7SP1_ULT_EN_CN_OEM_Nin1_V1.1.iso	300.11 MB
-├─Windows 8.1	(2 folders, 0 files, 0 bytes, 1.61 GB in total.)
-│  ├─Ghost Win8.1 with Update 64位 企业完整版 2014.07	(0 folders, 4 files, 1.44 GB, 1.44 GB in total.)
-│  │      Ghost Win8.1 with Update 64位 企业完整版 2014.07.txt	6.14 KB
-│  │      OneKey_NoAd.exe	6.45 MB
-│  │      Win8.1_Ent_2014.07_x64.GHO	1.44 GB
-│  │      文件校验工具.exe	28.50 KB
-│  └─Win8.1_Up_X64_Nin1_201404	(0 folders, 4 files, 172.75 MB, 172.75 MB in total.)
-│          Hash.exe	28.50 KB
-│          Win8.1_Up_X64_Nin1_201404.ISO	172.67 MB
-│          说明与校验值.txt	1.42 KB
-│          专业版与企业版.JPG	51.56 KB
-└─Windows XP	(1 folders, 1 files, 1.42 GB, 3.56 GB in total.)
-    │  WinXP_SP3_EN_2014.4_Final.GHO	1.42 GB
-    └─GhostXP_SP3完整纯净版2014.07(终结版)	(1 folders, 3 files, 1.87 GB, 2.14 GB in total.)
-        │  GhostXP_SP3完整纯净版2014.07(终结版)_光盘说明.txt	6.37 KB
-        │  GhostXP_SP3完整纯净版2014.07_终结版.iso	1.87 GB
-        │  文件校验工具.exe	28.50 KB
-        └─蜻蜓特派员 Office 2003 sp3 五合一 精简安装版 bulid 20140329	(0 folders, 4 files, 278.97 MB, 278.97 MB in total.)
-                Office2003SP3_3in1_20140329.exe	82.35 MB
-                Office2003SP3_4in1_20140329.exe	93.81 MB
-                Office2003SP3_5in1_20140329.exe	102.79 MB
-                蜻蜓特派员 Office 2003 sp3 五合一 精简安装版 bulid 20140329.mht	21.23 KB
+</pre></td><td class="code"><pre>(<span class="function"><span class="keyword">function</span><span class="params">($)</span> {</span> 
+	<span class="comment">// When to show the scroll link</span>
+	<span class="comment">// higher number = scroll link appears further down the page   </span>
+	<span class="keyword">var</span> upperLimit = <span class="number">150</span>;
+	
+	<span class="comment">// Our scroll link element</span>
+	<span class="keyword">var</span> scrollElem = $(<span class="string">'#totop'</span>);
+   
+	<span class="comment">// Scroll to top speed</span>
+	<span class="keyword">var</span> scrollSpeed = <span class="number">500</span>;
+   
+	<span class="comment">// Show and hide the scroll to top link based on scroll position   </span>
+	scrollElem.hide();
+	$(window).scroll(<span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>            
+		<span class="keyword">var</span> scrollTop = $(document).scrollTop();       
+		<span class="keyword">if</span> ( scrollTop &gt; upperLimit ) {
+			$(scrollElem).stop().fadeTo(<span class="number">300</span>, <span class="number">1</span>); <span class="comment">// fade back in           </span>
+		}<span class="keyword">else</span>{       
+			$(scrollElem).stop().fadeTo(<span class="number">300</span>, <span class="number">0</span>); <span class="comment">// fade out</span>
+		}
+	});
+	<span class="comment">// Scroll to top animation on click</span>
+	$(scrollElem).click(<span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+		$(<span class="string">'html, body'</span>).animate({scrollTop:<span class="number">0</span>}, scrollSpeed); <span class="keyword">return</span> <span class="literal">false</span>;
+	});
+})(jQuery);
 </pre></td></tr></table></figure>
 
-<hr>
-<h2 id="下载地址">下载地址</h2>
-<p><a href="http://pan.baidu.com/s/1sjPSwrV" target="_blank">http://pan.baidu.com/s/1sjPSwrV</a></p>
-<hr>
-<p>题图 - 宛如瀑布，洒下一片星辰 @ <a href="http://guoli-cheng.lofter.com/post/e5c7d_1948c1e" target="_blank">Purity Cheng</a></p>
+<p>3.添加引用，修改<code>/themes/pacman/layout/_partial/after_footer.ejs</code>，在末尾添加以下代码</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+</pre></td><td class="code"><pre>&lt;%- partial(<span class="string">'totop'</span>) %&gt;
+<span class="xml"><span class="tag">&lt;<span class="title">script</span> <span class="attribute">src</span>=<span class="value">"&lt;%- config.root %&gt;js/totop.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span></span>
+</pre></td></tr></table></figure>
+
+<p>4.添加按钮图片，复制下图到<code>/themes/pacman/source/imgs</code>目录下，文件名为<code>scrollup.png</code></p>
+<p><img src="http://wsgzao.github.io/img/scrollup.png" alt=""></p>
+<p>5.赶紧<code>hexo s</code>本地刷新观察效果吧</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -350,7 +194,7 @@
 <!--
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Software/">Software</a>
+  <span></span> <a href="/tags/Hexo/">Hexo</a>
   </div>
 
 
@@ -364,7 +208,7 @@
 <div class="article-share" id="share">
 <!--
 
-  <div data-url="http://wsgzao.github.io/post/os-list/" data-title="OX OS List | HelloDog" data-tsina="wsgzao" class="share clearfix">
+  <div data-url="http://wsgzao.github.io/post/hexo-scroll-to-top/" data-title="Hexo添加返回顶部按钮 | HelloDog" data-tsina="wsgzao" class="share clearfix">
   </div>
 
 -->
@@ -375,18 +219,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/post/china-mobile-and-telecom/" title="中国移动和中国电信纯净版套餐方案分享">
+ <a href="/post/hexo-guide/" title="Github+Hexo搭建静态Blog小结">
   <strong>PREVIOUS:</strong><br/>
   <span>
-  中国移动和中国电信纯净版套餐方案分享</span>
+  Github+Hexo搭建静态Blog小结</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/post/gfw-break/"  title="OX翻墙小结">
+<a href="/post/sles-bash-shellshock/"  title="【SuSE】关于CVE-2014-7169漏洞的解决方案">
  <strong>NEXT:</strong><br/> 
- <span>OX翻墙小结
+ <span>【SuSE】关于CVE-2014-7169漏洞的解决方案
 </span>
 </a>
 </div>
@@ -403,7 +247,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#目录"><span class="toc-number">3.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下载地址"><span class="toc-number">4.</span> <span class="toc-text">下载地址</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#修改步骤"><span class="toc-number">3.</span> <span class="toc-text">修改步骤</span></a></li></ol>
   </div>
 
 <div id="asidepart">
