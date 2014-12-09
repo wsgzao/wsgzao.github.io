@@ -31,6 +31,7 @@
     <link rel="apple-touch-icon-precomposed" href="/img/iDog.jpg">
     
     <link rel="stylesheet" href="/css/style.css" type="text/css">
+
 </head>
 
   <body>
@@ -63,7 +64,7 @@
  					
 						<form class="search" action="http://zhannei.baidu.com/cse/search" target="_blank">
 							<label>Search</label>
-						<input name="s" type="hidden" value= 1945364396832125023 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						<input name="s" type="hidden" value= 1945364396832125000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
 						</form>
 					
 					</li>
@@ -81,7 +82,7 @@
   </h1>
   <p class="article-author">By
     
-      <a href="http://wsgzao.github.io/" title="wsgzao">wsgzao</a>
+      <a href="http://wsgzao.github.io" title="wsgzao">wsgzao</a>
     </p>
   <p class="article-time">
     <time datetime="2014-11-29T04:06:21.000Z" itemprop="datePublished">2014年11月29日</time>
@@ -107,86 +108,24 @@
 <hr>
 <h2 id="更新记录">更新记录</h2>
 <p>2014年11月29日 - 初稿</p>
-<p>阅读原文 - <a href="http://wsgzao.github.io/post/hexo-scroll-to-top" target="_blank">http://wsgzao.github.io/post/hexo-scroll-to-top</a></p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/hexo-scroll-to-top" target="_blank" rel="external">http://wsgzao.github.io/post/hexo-scroll-to-top</a></p>
 <p>扩展阅读</p>
 <ul>
-<li>Github+Hexo搭建静态Blog小结 - <a href="http://wsgzao.github.io/post/hexo-guide/" target="_blank">http://wsgzao.github.io/post/hexo-guide/</a></li>
+<li>Github+Hexo搭建静态Blog小结 - <a href="http://wsgzao.github.io/post/hexo-guide/" target="_blank" rel="external">http://wsgzao.github.io/post/hexo-guide/</a></li>
 </ul>
 <hr>
 <h2 id="修改步骤">修改步骤</h2>
 <p>1.添加EJS代码，新建文件<code>/themes/pacman/layout/_partial/totop.ejs</code>，添加如下代码</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre>1
-2
-3
-</pre></td><td class="code"><pre><span class="tag">&lt;<span class="title">div</span> <span class="attribute">id</span>=<span class="value">"totop"</span> <span class="attribute">style</span>=<span class="value">"position:fixed;bottom:150px;right:50px;cursor: pointer;"</span>&gt;</span>
-<span class="tag">&lt;<span class="title">a</span> <span class="attribute">title</span>=<span class="value">"返回顶部"</span>&gt;</span><span class="tag">&lt;<span class="title">img</span> <span class="attribute">src</span>=<span class="value">"/imgs/scrollup.png"</span>/&gt;</span><span class="tag">&lt;/<span class="title">a</span>&gt;</span>
-<span class="tag">&lt;/<span class="title">div</span>&gt;</span>
-</pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">id</span>=<span class="value">"totop"</span> <span class="attribute">style</span>=<span class="value">"position:fixed;bottom:150px;right:50px;cursor: pointer;"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">a</span> <span class="attribute">title</span>=<span class="value">"返回顶部"</span>&gt;</span><span class="tag">&lt;<span class="title">img</span> <span class="attribute">src</span>=<span class="value">"/imgs/scrollup.png"</span>/&gt;</span><span class="tag">&lt;/<span class="title">a</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">div</span>&gt;</span></div></pre></td></tr></table></figure>
 
 <p>2.添加JS代码，新建文件<code>/themes/pacman/source/js/totop.js</code>，添加如下代码</p>
 <blockquote>
 <p>如果对显示位置和回滚速度不太满意，可以修改代码中的<code>upperLimit</code>和<code>scrollSpeed</code>参数</p>
 </blockquote>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-</pre></td><td class="code"><pre>(<span class="function"><span class="keyword">function</span><span class="params">($)</span> {</span> 
-	<span class="comment">// When to show the scroll link</span>
-	<span class="comment">// higher number = scroll link appears further down the page   </span>
-	<span class="keyword">var</span> upperLimit = <span class="number">150</span>;
-	
-	<span class="comment">// Our scroll link element</span>
-	<span class="keyword">var</span> scrollElem = $(<span class="string">'#totop'</span>);
-   
-	<span class="comment">// Scroll to top speed</span>
-	<span class="keyword">var</span> scrollSpeed = <span class="number">500</span>;
-   
-	<span class="comment">// Show and hide the scroll to top link based on scroll position   </span>
-	scrollElem.hide();
-	$(window).scroll(<span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>            
-		<span class="keyword">var</span> scrollTop = $(document).scrollTop();       
-		<span class="keyword">if</span> ( scrollTop &gt; upperLimit ) {
-			$(scrollElem).stop().fadeTo(<span class="number">300</span>, <span class="number">1</span>); <span class="comment">// fade back in           </span>
-		}<span class="keyword">else</span>{       
-			$(scrollElem).stop().fadeTo(<span class="number">300</span>, <span class="number">0</span>); <span class="comment">// fade out</span>
-		}
-	});
-	<span class="comment">// Scroll to top animation on click</span>
-	$(scrollElem).click(<span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
-		$(<span class="string">'html, body'</span>).animate({scrollTop:<span class="number">0</span>}, scrollSpeed); <span class="keyword">return</span> <span class="literal">false</span>;
-	});
-})(jQuery);
-</pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">(<span class="function"><span class="keyword">function</span><span class="params">($)</span> </span>{ </div><div class="line">	<span class="comment">// When to show the scroll link</span></div><div class="line">	<span class="comment">// higher number = scroll link appears further down the page   </span></div><div class="line">	<span class="keyword">var</span> upperLimit = <span class="number">150</span>;</div><div class="line">	</div><div class="line">	<span class="comment">// Our scroll link element</span></div><div class="line">	<span class="keyword">var</span> scrollElem = $(<span class="string">'#totop'</span>);</div><div class="line">   </div><div class="line">	<span class="comment">// Scroll to top speed</span></div><div class="line">	<span class="keyword">var</span> scrollSpeed = <span class="number">500</span>;</div><div class="line">   </div><div class="line">	<span class="comment">// Show and hide the scroll to top link based on scroll position   </span></div><div class="line">	scrollElem.hide();</div><div class="line">	$(<span class="built_in">window</span>).scroll(<span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>{            </div><div class="line">		<span class="keyword">var</span> scrollTop = $(<span class="built_in">document</span>).scrollTop();       </div><div class="line">		<span class="keyword">if</span> ( scrollTop &gt; upperLimit ) {</div><div class="line">			$(scrollElem).stop().fadeTo(<span class="number">300</span>, <span class="number">1</span>); <span class="comment">// fade back in           </span></div><div class="line">		}<span class="keyword">else</span>{       </div><div class="line">			$(scrollElem).stop().fadeTo(<span class="number">300</span>, <span class="number">0</span>); <span class="comment">// fade out</span></div><div class="line">		}</div><div class="line">	});</div><div class="line">	<span class="comment">// Scroll to top animation on click</span></div><div class="line">	$(scrollElem).click(<span class="function"><span class="keyword">function</span><span class="params">()</span></span>{</div><div class="line">		$(<span class="string">'html, body'</span>).animate({scrollTop:<span class="number">0</span>}, scrollSpeed); <span class="keyword">return</span> <span class="literal">false</span>;</div><div class="line">	});</div><div class="line">})(jQuery);</div></pre></td></tr></table></figure>
 
 <p>3.添加引用，修改<code>/themes/pacman/layout/_partial/after_footer.ejs</code>，在末尾添加以下代码</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
-2
-</pre></td><td class="code"><pre>&lt;%- partial(<span class="string">'totop'</span>) %&gt;
-<span class="xml"><span class="tag">&lt;<span class="title">script</span> <span class="attribute">src</span>=<span class="value">"&lt;%- config.root %&gt;js/totop.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span></span>
-</pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;%- partial(<span class="string">'totop'</span>) %&gt;</div><div class="line"><span class="xml"><span class="tag">&lt;<span class="title">script</span> <span class="attribute">src</span>=<span class="value">"&lt;%- config.root %&gt;js/totop.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span></span></div></pre></td></tr></table></figure>
 
 <p>4.添加按钮图片，复制下图到<code>/themes/pacman/source/imgs</code>目录下，文件名为<code>scrollup.png</code></p>
 <p><img src="http://wsgzao.github.io/img/scrollup.png" alt=""></p>
@@ -299,7 +238,7 @@
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05">五月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11">十一月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09">九月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07">七月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06">六月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05">五月 2014</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">November 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">September 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05/">May 2014</a><span class="archive-list-count">1</span></li></ul>
   </div>
 
 
@@ -363,7 +302,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 	</div>
 		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2014 
 		
-		<a href="http://wsgzao.github.io/" target="_blank" title="wsgzao">wsgzao</a>
+		<a href="http://wsgzao.github.io" target="_blank" title="wsgzao">wsgzao</a>
 		
 		</p>
 </div>
