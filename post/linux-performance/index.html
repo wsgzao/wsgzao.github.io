@@ -1,0 +1,486 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Linux性能测试实践 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="wsgzao">
+    
+    <meta name="description" itemprop="description" content="简单实用的监测方法">
+    
+    
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="wsgzao" />
+    <meta name="twitter:title" content="Linux性能测试实践 | HelloDog" />
+      
+        <meta name="twitter:description" content="简单实用的监测方法" />
+      
+    
+    
+    <link rel="alternate" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/iDog.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/iDog.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index">索引 | Index</a></li>
+					
+						<li><a href="/archives">归档 | Archives</a></li>
+					
+						<li><a href="/about">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="ts-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/linux-performance/" title="Linux性能测试实践" itemprop="url">Linux性能测试实践</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://wsgzao.github.io" title="wsgzao">wsgzao</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-03-06T07:40:47.000Z" itemprop="datePublished">2015年03月06日</time>
+    更新日期:<time datetime="2015-03-06T07:51:29.000Z" itemprop="dateModified">2015年03月06日</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CPU"><span class="toc-number">3.</span> <span class="toc-text">CPU</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#确认CPU型号"><span class="toc-number">3.1.</span> <span class="toc-text">确认CPU型号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super_PI"><span class="toc-number">3.2.</span> <span class="toc-text">Super PI</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Disk"><span class="toc-number">4.</span> <span class="toc-text">Disk</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#清空缓存"><span class="toc-number">4.1.</span> <span class="toc-text">清空缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试读性能"><span class="toc-number">4.2.</span> <span class="toc-text">测试读性能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试写入性能"><span class="toc-number">4.3.</span> <span class="toc-text">测试写入性能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考数据"><span class="toc-number">4.4.</span> <span class="toc-text">参考数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nmon"><span class="toc-number">5.</span> <span class="toc-text">nmon</span></a></li></ol>
+			
+		</div>
+		
+		<p><img src="http://www.brendangregg.com/Perf/linux_benchmarking_tools.png" alt=""></p>
+<h2 id="前言">前言</h2>
+<p>Linux性能测试、监控、优化是一个持续的过程，上图为LinuxCon上Brendan D. Gregg分享的<code>Linux benchmarking tools</code>示意图，涵盖面十分广泛。我们可以通过成熟的监控方案如BMC Patrol，Zabbix来捕获大部分信息，在实际工作中我们会经常关注I/O性能，一般可以使用dd/ORION/IOzone做简单的测试，如果需要获取更加全面详细的报告可以使用nmon，本文将主要介绍Super PI /dd/nmon三种简单而有效的监测方法。</p>
+<blockquote>
+<p>CPU | Memory | I/O | Network 一个都不能少</p>
+</blockquote>
+<hr>
+<h2 id="更新记录">更新记录</h2>
+<p>2015年03月06日 - 初稿</p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/linux-performance/" target="_blank" rel="external">http://wsgzao.github.io/post/linux-performance/</a></p>
+<p>扩展阅读</p>
+<ul>
+<li>Linux Performance - <a href="http://www.brendangregg.com/linuxperf.html" target="_blank" rel="external">http://www.brendangregg.com/linuxperf.html</a></li>
+<li>AIX 下磁盘 I/O 性能分析 - <a href="http://www.ibm.com/developerworks/cn/aix/library/1203_weixy_aixio/" target="_blank" rel="external">http://www.ibm.com/developerworks/cn/aix/library/1203_weixy_aixio/</a></li>
+<li>nmon - <a href="http://nmon.sourceforge.net/pmwiki.php" target="_blank" rel="external">http://nmon.sourceforge.net/pmwiki.php</a></li>
+</ul>
+<hr>
+<h2 id="CPU">CPU</h2>
+<h3 id="确认CPU型号">确认CPU型号</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">cat /proc/cpuinfo |grep <span class="string">"model name"</span>|uniq|cut <span class="operator">-f</span>2 <span class="operator">-d</span>:</div><div class="line">    </div><div class="line">Intel(R) Xeon(R) CPU E5-<span class="number">2650</span> v2 @ <span class="number">2.60</span>GHz</div></pre></td></tr></table></figure>
+
+<h3 id="Super_PI">Super PI</h3>
+<blockquote>
+<p>计算时间越短越好</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">time <span class="built_in">echo</span> <span class="string">"scale=500;4*a(1)"</span>|bc <span class="operator">-l</span> -q</div><div class="line">    </div><div class="line"><span class="number">3.141592653589793238462643383279502884197169399375105820974944592307</span>\</div><div class="line"><span class="number">81640628620899862803482534211706798214808651328230664709384460955058</span>\</div><div class="line"><span class="number">22317253594081284811174502841027019385211055596446229489549303819644</span>\</div><div class="line"><span class="number">28810975665933446128475648233786783165271201909145648566923460348610</span>\</div><div class="line"><span class="number">45432664821339360726024914127372458700660631558817488152092096282925</span>\</div><div class="line"><span class="number">40917153643678925903600113305305488204665213841469519415116094330572</span>\</div><div class="line"><span class="number">70365759591953092186117381932611793105118548074462379962749567351885</span>\</div><div class="line"><span class="number">75272489122793818301194912</span></div><div class="line">    </div><div class="line">real    <span class="number">0</span>m0.<span class="number">081</span>s</div><div class="line">user    <span class="number">0</span>m0.<span class="number">076</span>s</div><div class="line">sys     <span class="number">0</span>m0.<span class="number">000</span>s</div></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Disk">Disk</h2>
+<h3 id="清空缓存">清空缓存</h3>
+<blockquote>
+<p>每次做读写测试前建议先清空缓存</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sync; <span class="built_in">echo</span> <span class="number">3</span> &gt; /proc/sys/vm/drop_caches</div></pre></td></tr></table></figure>
+
+
+
+<h3 id="测试读性能">测试读性能</h3>
+<blockquote>
+<p>选择测试磁盘，建议做2-3组取平均值</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">hdparm -t /dev/sda</div><div class="line"></div><div class="line">/dev/sda:</div><div class="line">Timing buffered disk reads:  <span class="number">1074</span> MB <span class="keyword">in</span>  <span class="number">3.00</span> seconds = <span class="number">357.92</span> MB/sec</div></pre></td></tr></table></figure>
+
+
+
+<h3 id="测试写入性能">测试写入性能</h3>
+<blockquote>
+<p>根据业务选择不同的BlockSize大小按需多次测试取平均值</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">time dd <span class="keyword">if</span>=/dev/zero of=/tmp/speed bs=<span class="number">1</span>M count=<span class="number">2</span>K conv=fsync;rm /tmp/speed</div></pre></td></tr></table></figure>
+
+
+
+<h3 id="参考数据">参考数据</h3>
+<blockquote>
+<p>以10,000 rpm 300 GB SAS硬盘为例，机型为IBM x3650 M4，Raid参数如下</p>
+</blockquote>
+<p>1.Read Policy：Ahead   （控制器缓存读策略：预读）<br>2.Write Policy：Write Back with BBU（控制器缓存写策略：有电池备份时回写）<br>3.IO Policy: Direct（IO策略：直接）<br>4.Drive Cache：disable （硬盘缓存：禁用）</p>
+<table>
+<thead>
+<tr>
+<th>Raid</th>
+<th>Read(MB)</th>
+<th>Write(MB)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Raid 1</td>
+<td>170</td>
+<td>130</td>
+</tr>
+<tr>
+<td>Raid 5</td>
+<td>350</td>
+<td>250</td>
+</tr>
+<tr>
+<td>Raid 10</td>
+<td>300</td>
+<td>215</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="nmon">nmon</h2>
+<blockquote>
+<p>建议根据实际需求配置间隔时间和次数，配合<code>nmon Analyser</code>可以显示直观的图表数据</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#author: OX</span></div><div class="line"><span class="comment">#function: monitor system information</span></div><div class="line"><span class="comment">#time:2015/03/06</span></div><div class="line"><span class="comment">#crontab -e</span></div><div class="line"><span class="comment">#0 0 * * * sh /tmp/nmon/nmon.sh &gt;/dev/null 2&gt;&1</span></div><div class="line">npath=/tmp/nmon/log</div><div class="line"><span class="comment"># monitoring per 120 senonds</span></div><div class="line"><span class="comment">#nmon -s 120 -c 720 -f -m $npath</span></div><div class="line"><span class="comment"># monitoring per 300 senonds</span></div><div class="line">/tmp/nmon/nmon_x86_sles11 <span class="operator">-s</span> <span class="number">300</span> -c <span class="number">288</span> <span class="operator">-f</span> -m <span class="variable">$npath</span></div><div class="line"><span class="comment">#delete file before 365 day</span></div><div class="line"><span class="comment">#find /tmp -name *.nmon  -mtime +365 -exec rm {} \;</span></div></pre></td></tr></table></figure>
+
+
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+<!--
+<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"32"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+<div class="article-share" id="share">
+-->
+
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+
+  <div data-url="http://wsgzao.github.io/post/linux-performance/" data-title="Linux性能测试实践 | HelloDog" data-tsina="wsgzao" class="share clearfix">
+  </div>
+
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/post/windows/"  title="Windows常用软件推荐">
+ <strong>NEXT:</strong><br/> 
+ <span>Windows常用软件推荐
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CPU"><span class="toc-number">3.</span> <span class="toc-text">CPU</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#确认CPU型号"><span class="toc-number">3.1.</span> <span class="toc-text">确认CPU型号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super_PI"><span class="toc-number">3.2.</span> <span class="toc-text">Super PI</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Disk"><span class="toc-number">4.</span> <span class="toc-text">Disk</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#清空缓存"><span class="toc-number">4.1.</span> <span class="toc-text">清空缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试读性能"><span class="toc-number">4.2.</span> <span class="toc-text">测试读性能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试写入性能"><span class="toc-number">4.3.</span> <span class="toc-text">测试写入性能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考数据"><span class="toc-number">4.4.</span> <span class="toc-text">参考数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nmon"><span class="toc-number">5.</span> <span class="toc-text">nmon</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>5</sup></a></li>
+		
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>4</sup></a></li>
+		
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>5</sup></a></li>
+		
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>6</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+      <li><a href="http://yangjian.me" target="_blank" title="YangJian">Alimon's Blog</a></li>
+      <li><a href="http://zipperary.com/" target="_blank" title="Zipperary">Zipperary's Blog</a></li>
+      <li><a href="http://wuchong.me/" target="_blank" title="WuChong">Jark's Blog</a></li>
+      <li><a href="http://zespia.tw/hexo" target="_blank" title="Hexo">Hexo</a></li>
+
+      
+    </ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Try to do better.</p>
+	</section>
+	 
+	<div class="social-font clearfix">
+		
+		<a href="http://weibo.com/wsgzao" target="_blank" title="weibo"></a>
+		
+		
+		<a href="https://twitter.com/wsgzao" target="_blank" title="twitter"></a>
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" title="github"></a>
+		
+		
+		<a href="https://www.facebook.com/wsgzao" target="_blank" title="facebook"></a>
+		
+		
+        <a href="https://www.linkedin.com/in/aowang" target="_blank" title="linkedin"></a>
+        
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2015 
+		
+		<a href="http://wsgzao.github.io" target="_blank" title="wsgzao">wsgzao</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"wsgzao"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+<div style="display:none;">
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fc2c5fc7d844d0973d9f77abd87f49c3c' type='text/javascript'%3E%3C/script%3E"));
+</script>
+</div>
+
+
+<script>
+var option = {
+  engineKey: '4ac092ad8d749fdc6293'
+};
+(function(w,d,t,u,n,s,e){
+  s = d.createElement(t);
+  s.src = u;
+  s.async = 1;
+  w[n] = function(r){
+    w[n].opts = r;
+  };
+  e = d.getElementsByTagName(t)[0];
+  e.parentNode.insertBefore(s, e);
+})(window,document,'script','//tinysou-cdn.b0.upaiyun.com/ts.js','_ts');
+_ts(option);
+</script>
+
+<div id="totop" style="position:fixed;bottom:150px;right:50px;cursor: pointer;">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+<script src="/js/totop.js"></script>
+  </body>
+</html>

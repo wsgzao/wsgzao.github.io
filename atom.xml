@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Keep Calm and Carry On]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://wsgzao.github.io/"/>
-  <updated>2015-03-05T02:58:04.864Z</updated>
+  <updated>2015-03-06T08:08:44.912Z</updated>
   <id>http://wsgzao.github.io/</id>
   
   <author>
@@ -15,11 +15,117 @@
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
   
   <entry>
+    <title><![CDATA[Linux性能测试实践]]></title>
+    <link href="http://wsgzao.github.io/post/linux-performance/"/>
+    <id>http://wsgzao.github.io/post/linux-performance/</id>
+    <published>2015-03-06T07:40:47.000Z</published>
+    <updated>2015-03-06T07:51:29.000Z</updated>
+    <content type="html"><![CDATA[<p><img src="http://www.brendangregg.com/Perf/linux_benchmarking_tools.png" alt=""></p>
+<h2 id="前言">前言</h2>
+<p>Linux性能测试、监控、优化是一个持续的过程，上图为LinuxCon上Brendan D. Gregg分享的<code>Linux benchmarking tools</code>示意图，涵盖面十分广泛。我们可以通过成熟的监控方案如BMC Patrol，Zabbix来捕获大部分信息，在实际工作中我们会经常关注I/O性能，一般可以使用dd/ORION/IOzone做简单的测试，如果需要获取更加全面详细的报告可以使用nmon，本文将主要介绍Super PI /dd/nmon三种简单而有效的监测方法。</p>
+<blockquote>
+<p>CPU | Memory | I/O | Network 一个都不能少</p>
+</blockquote>
+<hr>
+<h2 id="更新记录">更新记录</h2>
+<p>2015年03月06日 - 初稿</p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/linux-performance/" target="_blank" rel="external">http://wsgzao.github.io/post/linux-performance/</a></p>
+<p>扩展阅读</p>
+<ul>
+<li>Linux Performance - <a href="http://www.brendangregg.com/linuxperf.html" target="_blank" rel="external">http://www.brendangregg.com/linuxperf.html</a></li>
+<li>AIX 下磁盘 I/O 性能分析 - <a href="http://www.ibm.com/developerworks/cn/aix/library/1203_weixy_aixio/" target="_blank" rel="external">http://www.ibm.com/developerworks/cn/aix/library/1203_weixy_aixio/</a></li>
+<li>nmon - <a href="http://nmon.sourceforge.net/pmwiki.php" target="_blank" rel="external">http://nmon.sourceforge.net/pmwiki.php</a></li>
+</ul>
+<hr>
+<h2 id="CPU">CPU</h2>
+<h3 id="确认CPU型号">确认CPU型号</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">cat /proc/cpuinfo |grep <span class="string">"model name"</span>|uniq|cut <span class="operator">-f</span>2 <span class="operator">-d</span>:</div><div class="line">    </div><div class="line">Intel(R) Xeon(R) CPU E5-<span class="number">2650</span> v2 @ <span class="number">2.60</span>GHz</div></pre></td></tr></table></figure>
+
+<h3 id="Super_PI">Super PI</h3>
+<blockquote>
+<p>计算时间越短越好</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">time <span class="built_in">echo</span> <span class="string">"scale=500;4*a(1)"</span>|bc <span class="operator">-l</span> -q</div><div class="line">    </div><div class="line"><span class="number">3.141592653589793238462643383279502884197169399375105820974944592307</span>\</div><div class="line"><span class="number">81640628620899862803482534211706798214808651328230664709384460955058</span>\</div><div class="line"><span class="number">22317253594081284811174502841027019385211055596446229489549303819644</span>\</div><div class="line"><span class="number">28810975665933446128475648233786783165271201909145648566923460348610</span>\</div><div class="line"><span class="number">45432664821339360726024914127372458700660631558817488152092096282925</span>\</div><div class="line"><span class="number">40917153643678925903600113305305488204665213841469519415116094330572</span>\</div><div class="line"><span class="number">70365759591953092186117381932611793105118548074462379962749567351885</span>\</div><div class="line"><span class="number">75272489122793818301194912</span></div><div class="line">    </div><div class="line">real    <span class="number">0</span>m0.<span class="number">081</span>s</div><div class="line">user    <span class="number">0</span>m0.<span class="number">076</span>s</div><div class="line">sys     <span class="number">0</span>m0.<span class="number">000</span>s</div></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Disk">Disk</h2>
+<h3 id="清空缓存">清空缓存</h3>
+<blockquote>
+<p>每次做读写测试前建议先清空缓存</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sync; <span class="built_in">echo</span> <span class="number">3</span> &gt; /proc/sys/vm/drop_caches</div></pre></td></tr></table></figure>
+
+
+
+<h3 id="测试读性能">测试读性能</h3>
+<blockquote>
+<p>选择测试磁盘，建议做2-3组取平均值</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">hdparm -t /dev/sda</div><div class="line"></div><div class="line">/dev/sda:</div><div class="line">Timing buffered disk reads:  <span class="number">1074</span> MB <span class="keyword">in</span>  <span class="number">3.00</span> seconds = <span class="number">357.92</span> MB/sec</div></pre></td></tr></table></figure>
+
+
+
+<h3 id="测试写入性能">测试写入性能</h3>
+<blockquote>
+<p>根据业务选择不同的BlockSize大小按需多次测试取平均值</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">time dd <span class="keyword">if</span>=/dev/zero of=/tmp/speed bs=<span class="number">1</span>M count=<span class="number">2</span>K conv=fsync;rm /tmp/speed</div></pre></td></tr></table></figure>
+
+
+
+<h3 id="参考数据">参考数据</h3>
+<blockquote>
+<p>以10,000 rpm 300 GB SAS硬盘为例，机型为IBM x3650 M4，Raid参数如下</p>
+</blockquote>
+<p>1.Read Policy：Ahead   （控制器缓存读策略：预读）<br>2.Write Policy：Write Back with BBU（控制器缓存写策略：有电池备份时回写）<br>3.IO Policy: Direct（IO策略：直接）<br>4.Drive Cache：disable （硬盘缓存：禁用）</p>
+<table>
+<thead>
+<tr>
+<th>Raid</th>
+<th>Read(MB)</th>
+<th>Write(MB)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Raid 1</td>
+<td>170</td>
+<td>130</td>
+</tr>
+<tr>
+<td>Raid 5</td>
+<td>350</td>
+<td>250</td>
+</tr>
+<tr>
+<td>Raid 10</td>
+<td>300</td>
+<td>215</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="nmon">nmon</h2>
+<blockquote>
+<p>建议根据实际需求配置间隔时间和次数，配合<code>nmon Analyser</code>可以显示直观的图表数据</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#author: OX</span></div><div class="line"><span class="comment">#function: monitor system information</span></div><div class="line"><span class="comment">#time:2015/03/06</span></div><div class="line"><span class="comment">#crontab -e</span></div><div class="line"><span class="comment">#0 0 * * * sh /tmp/nmon/nmon.sh &gt;/dev/null 2&gt;&1</span></div><div class="line">npath=/tmp/nmon/log</div><div class="line"><span class="comment"># monitoring per 120 senonds</span></div><div class="line"><span class="comment">#nmon -s 120 -c 720 -f -m $npath</span></div><div class="line"><span class="comment"># monitoring per 300 senonds</span></div><div class="line">/tmp/nmon/nmon_x86_sles11 <span class="operator">-s</span> <span class="number">300</span> -c <span class="number">288</span> <span class="operator">-f</span> -m <span class="variable">$npath</span></div><div class="line"><span class="comment">#delete file before 365 day</span></div><div class="line"><span class="comment">#find /tmp -name *.nmon  -mtime +365 -exec rm {} \;</span></div></pre></td></tr></table></figure>
+
+
+
+]]></content>
+    
+    
+      <category term="学习 | Study" scheme="http://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
+    
+  </entry>
+  
+  <entry>
     <title><![CDATA[Windows常用软件推荐]]></title>
     <link href="http://wsgzao.github.io/post/windows/"/>
     <id>http://wsgzao.github.io/post/windows/</id>
     <published>2015-03-04T16:05:27.000Z</published>
-    <updated>2015-03-05T02:57:49.000Z</updated>
+    <updated>2015-03-05T03:03:15.000Z</updated>
     <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/l6zV1ws3.jpeg" alt=""></p>
 <h2 id="前言">前言</h2>
 <p>很多人都认为我是计算机高手，其实我只会帮你修理下你的电脑啦，曾几何时我也帮助过好多好多的同学和老师，尝试和体验各种各样的软件，但谁又能想到我曾今也对你们的电脑做过很多失败的坑爹操作，把你们最宝贵的数据撸得灰飞烟灭，这里要感谢当时允许我不断尝试失败的大白鼠 @王纪华 tommy(249033945)，使我养成了发散思维、逆向思维和创造性思维的解决问题之道。作为一名非职业HelpDesk，我一定不是最最优秀的那一群技术大牛，但我也努力超越了99.99%的从业者，Because I just love and enjoy thinking to do better and better.</p>
@@ -30,7 +136,7 @@
 <hr>
 <h2 id="更新记录">更新记录</h2>
 <p>2015年03月05日 - 正式更名为Windows常用软件推荐，统一日志标题和链接<br>2015年02月24日 - 替换TrueCrypt为VeraCrypt，增加易数一键还原，百度电脑专家<br>2015年02月20日 - 剥离Mac和Android部分<br>2014年11月12日 - 增加Win10，3DM运行库，网易云音乐，好奇心日报，调整部分链接和描述<br>2014年08月26日 - 引导部分原版链接至第三方Mod修改版(绿色精简)<br>2014年08月13日 - 增加DirectX Repair，EaseUS Data Recovery Wizard和Mac专题<br>2014年08月12日 - 精简优化分离内容，转化为Markdown书写<br>2014年06月02日 - 更新猎豹免费WiFi和猎豹清理大师<br>2014年04月15日 - 更新Windows 8.1 With Update和一小波翻墙工具并调整部分软件推荐<br>2014年03月18日 - 更新TeamViewer 9，Sublime 3，读知乎<br>2014年03月07日 - 新增雅虎天气，更新Office2013 With SP1等其它软件版本及评语<br>2014年01月20日 - 更新部分软件评语，新增专业软件部分之文件传输专题<br>2013年12月27日 - 手机浏览器回归QQ浏览器，更新部分软件版本和推荐优先级<br>2013年12月03日 - 更新部分软件版本，新增专业软件部分之文本处理专题<br>2013年11月28日 - 更新大批软件版本，新增福昕风腾PDF，StartIsBackPlus，高德地图<br>2013年11月21日 - PE更换为IT天空 SKYPE<br>2013年11月03日 - 增加专业软件部分之网络穿透专题<br>2013年10月08日 - 简单看图制图类工具更换为QQ影像<br>2013年10月04日 - 手机浏览器更换为傲游及链接文字描述等细节<br>2013年09月21日 - 精细化内容<br>2013年09月19日 - 完善内容<br>2013年09月07日 - 补充专业软件部分<br>2013年08月29日 - 微调精炼语法<br>2013年08月28日 - 优化下语句和措辞<br>2013年08月27日 - 增加Software List For Android<br>2013年08月26日 - 增加OS部分<br>2013年08月25日 - 补充特色推荐部分<br>2013年08月24日 - 常用软件部分基本结束<br>2013年08月23日 - 补充内容<br>2013年08月22日 - 补充内容<br>2013年08月21日 - 梳理框架</p>
-<p>阅读原文 - <a href="http://wsgzao.github.io/post/windows/" target="_blank" rel="external">http://wsgzao.github.io/post/windows/</a><br>阅读原文 - <a href="http://wsgzao.github.io/post/windows/" target="_blank" rel="external">http://wsgzao.github.io/post/windows/</a></p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/windows/" target="_blank" rel="external">http://wsgzao.github.io/post/windows/</a></p>
 <p>扩展阅读</p>
 <ul>
 <li>小众软件 - <a href="http://love.appinn.com/" target="_blank" rel="external">http://love.appinn.com/</a></li>
