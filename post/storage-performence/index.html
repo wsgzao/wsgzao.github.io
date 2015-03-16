@@ -5,33 +5,33 @@
   <meta charset="UTF-8">
   
     <title>存储性能瓶颈的成因、定位与排查 | HelloDog</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wsgzao">
     
-    <meta name="description" itemprop="description" content="存储性能分析、定位与排查">
+
+    
+    <meta name="description" content="存储性能分析、定位与排查">
+<meta property="og:type" content="article">
+<meta property="og:title" content="存储性能瓶颈的成因、定位与排查">
+<meta property="og:url" content="http://wsgzao.github.io/post/storage-performence/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="存储性能分析、定位与排查">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="存储性能瓶颈的成因、定位与排查">
+<meta name="twitter:description" content="存储性能分析、定位与排查">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
     
     
-    
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="wsgzao" />
-    <meta name="twitter:title" content="存储性能瓶颈的成因、定位与排查 | HelloDog" />
-      
-        <meta name="twitter:description" content="存储性能分析、定位与排查" />
-      
+    <link rel="icon" href="/img/favicon.ico">
     
     
-    <link rel="alternate" href="/atom.xml" title="HelloDog" type="application/atom+xml">
-    
-    
-    <link rel="icon" href="/img/favicon.png">
-    
-    
-    <link rel="apple-touch-icon" href="/img/iDog.jpg">
-    <link rel="apple-touch-icon-precomposed" href="/img/iDog.jpg">
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
     
     <link rel="stylesheet" href="/css/style.css" type="text/css">
-
 </head>
 
   <body>
@@ -62,10 +62,11 @@
 					
 					<li>
  					
-						<form class="search">
-							<label>Search</label>
-						<input type="text" id="ts-search-input" name="q" size="30" placeholder="搜索"><br>
-						</form>
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:wsgzao.github.io">
+					</form>
 					
 					</li>
 				</ul>
@@ -74,6 +75,7 @@
     </header>
     <div id="container">
       <div id="main" class="post" itemscope itemprop="blogPost">
+  
 	<article itemprop="articleBody"> 
 		<header class="article-info clearfix">
   <h1 itemprop="name">
@@ -81,35 +83,30 @@
       <a href="/post/storage-performence/" title="存储性能瓶颈的成因、定位与排查" itemprop="url">存储性能瓶颈的成因、定位与排查</a>
   </h1>
   <p class="article-author">By
-    
-      <a href="http://wsgzao.github.io" title="wsgzao">wsgzao</a>
-    </p>
+       
+		<a href="http://wsgzao.github.io/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
   <p class="article-time">
-    <time datetime="2014-06-22T13:03:23.000Z" itemprop="datePublished">2014年06月22日</time>
-    更新日期:<time datetime="2014-12-19T13:10:01.000Z" itemprop="dateModified">2014年12月19日</time>
+    <time datetime="2014-06-22T13:03:23.000Z" itemprop="datePublished"> 发表于 2014-06-22</time>
     
   </p>
 </header>
 	<div class="article-content">
 		
-		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
 			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#介绍"><span class="toc-number">1.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据存储瓶颈的四个常见场景："><span class="toc-number">3.</span> <span class="toc-text">数据存储瓶颈的四个常见场景：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#存储瓶颈常发区域:"><span class="toc-number">4.</span> <span class="toc-text">存储瓶颈常发区域:</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#存储区域网络（Storage-area_network,_SAN）/阵列前端口"><span class="toc-number">4.1.</span> <span class="toc-text">存储区域网络（Storage-area network, SAN）/阵列前端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#存储控制器"><span class="toc-number">4.2.</span> <span class="toc-text">存储控制器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cache"><span class="toc-number">4.3.</span> <span class="toc-text">Cache</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#磁盘"><span class="toc-number">4.4.</span> <span class="toc-text">磁盘</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#需要监控的指标："><span class="toc-number">5.</span> <span class="toc-text">需要监控的指标：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据存储性能最佳实践："><span class="toc-number">6.</span> <span class="toc-text">数据存储性能最佳实践：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#应用于"><span class="toc-number">7.</span> <span class="toc-text">应用于</span></a></li></ol>
-			
+		
 		</div>
 		
-		<h2 id="介绍">介绍</h2>
-<p>企业数据存储性能瓶颈常常会发生在端口，控制器和磁盘，难点在于找出引起拥塞的单元，往往需要应用多重工具以及丰富的经验来查找并解决。</p>
+		<h2 id="介绍">介绍</h2><p>企业数据存储性能瓶颈常常会发生在端口，控制器和磁盘，难点在于找出引起拥塞的单元，往往需要应用多重工具以及丰富的经验来查找并解决。</p>
 <p>本文详细阐述存储瓶颈发生最常见的四种情况，可能发生的拥塞点，需要监控的参数指标，以及部署存储系统的最佳实践。</p>
 <hr>
-<h2 id="更新历史">更新历史</h2>
-<p>2014年6月22日 - 转载修改初稿</p>
+<h2 id="更新历史">更新历史</h2><p>2014年6月22日 - 转载修改初稿</p>
 <p>阅读原文 - <a href="http://wsgzao.github.io/post/storage-performence/" target="_blank" rel="external">http://wsgzao.github.io/post/storage-performence/</a></p>
 <hr>
-<h2 id="数据存储瓶颈的四个常见场景：">数据存储瓶颈的四个常见场景：</h2>
-<p>以下是储瓶颈发生最常见的四种典型情况：</p>
+<h2 id="数据存储瓶颈的四个常见场景：">数据存储瓶颈的四个常见场景：</h2><p>以下是储瓶颈发生最常见的四种典型情况：</p>
 <ol>
 <li><p>当多个用户同时访问某一业务应用，无论是邮件服务器，企业资源规划（ERP）系统或数据库，数据请求会累积在队列中。单个I/O的响应时间开始增长，短暂延时开始转变成为漫长的等待。<br>这类响应时间敏感型应用的特征是，很多随机请求，读取比写入更多，I/O较小。最好的方法是：将负载分布在多块磁盘上，否则可能造成性能瓶颈。<br>如果应用增加了更多用户，或应用IOPS请求增加，则可能需要在RAID组中添加更多磁盘，或数据可能需要跨越更多磁盘，在更多层级做条带化。<br>存储在这样的情况下往往首先被怀疑，但大多数情况下并非存储引发，原因可能在于网络、应用或服务器。</p>
 </li>
@@ -120,9 +117,7 @@
 <li><p>部署了一种新的应用，而卷存在于处理繁忙邮件系统的同一磁盘。如果新的应用变得繁忙，邮件系统性能将会遭受影响。额外的流量最终会将磁盘完全覆盖。</p>
 </li>
 </ol>
-<h2 id="存储瓶颈常发区域:">存储瓶颈常发区域:</h2>
-<h3 id="存储区域网络（Storage-area_network,_SAN）/阵列前端口">存储区域网络（Storage-area network, SAN）/阵列前端口</h3>
-<p>存储部署于集中化SAN环境时，需考虑服务器和SAN之间的潜在网络瓶颈。例如，运行多部虚拟机的整合服务器可能不具备支持工作负载要求的足够网络端口。添加网络端口或转移网络密集型工作负载至其他服务器可解决这一问题。如前所述，对于带宽集中型应用，需考虑NFS有多少<a href="http://searchstorage.techtarget.com/definition/Fibre-Channel" target="_blank" rel="external">Fiber Channel</a> 端口, or <a href="http://searchstorage.techtarget.com/definition/iSCSI" target="_blank" rel="external">iSCSI</a> 端口 or <a href="http://searchnetworking.techtarget.com/definition/Ethernet" target="_blank" rel="external">Ethernet</a> 端口，需要用户站在带宽的角度来考量整个架构。</p>
+<h2 id="存储瓶颈常发区域:">存储瓶颈常发区域:</h2><h3 id="存储区域网络（Storage-area_network,_SAN）/阵列前端口">存储区域网络（Storage-area network, SAN）/阵列前端口</h3><p>存储部署于集中化SAN环境时，需考虑服务器和SAN之间的潜在网络瓶颈。例如，运行多部虚拟机的整合服务器可能不具备支持工作负载要求的足够网络端口。添加网络端口或转移网络密集型工作负载至其他服务器可解决这一问题。如前所述，对于带宽集中型应用，需考虑NFS有多少<a href="http://searchstorage.techtarget.com/definition/Fibre-Channel" target="_blank" rel="external">Fiber Channel</a> 端口, or <a href="http://searchstorage.techtarget.com/definition/iSCSI" target="_blank" rel="external">iSCSI</a> 端口 or <a href="http://searchnetworking.techtarget.com/definition/Ethernet" target="_blank" rel="external">Ethernet</a> 端口，需要用户站在带宽的角度来考量整个架构。</p>
 <p>可能发生的问题包括：</p>
 <ul>
 <li>如果阵列中端口数量不够，就会发生过饱和/过度使用。</li>
@@ -131,8 +126,7 @@
 <li>交换机间链路争用/流量负荷过重</li>
 <li>如某一HBA端口负载过重将导致HBA拥塞。使用虚拟机会导致问题更加严重。</li>
 </ul>
-<h3 id="存储控制器">存储控制器</h3>
-<p>一个标准的主动——被动或主动——主动控制器都有一个性能极限。接近这条上限取决于用户有多少块磁盘，因为每块磁盘的IOPS和吞吐量是固定的。</p>
+<h3 id="存储控制器">存储控制器</h3><p>一个标准的主动——被动或主动——主动控制器都有一个性能极限。接近这条上限取决于用户有多少块磁盘，因为每块磁盘的IOPS和吞吐量是固定的。</p>
 <p>可能出现的问题包括：</p>
 <ul>
 <li>控制器I/O过饱和，使得从缓存到阵列能够处理的IOPS受到限制</li>
@@ -140,8 +134,7 @@
 <li>CPU过载/处理器功率不足</li>
 <li>性能无法跟上SSD</li>
 </ul>
-<h3 id="Cache">Cache</h3>
-<p>由于服务器内存和CPU远比机械磁盘快得多，需为磁盘添加高速内存以缓存读写数据。例如，写入磁盘的数据存储在缓存中直到磁盘能够跟上，同时磁盘中的读数据放入缓存中直到能被主机读取。Cache比磁盘快1000倍，因此将数据写入和读出Cache对性能影响巨大。智能缓存算法能够预测你需要查找的数据，你是否会对此数据频繁访问，甚至是将访问频繁的随机数据放在缓存中。</p>
+<h3 id="Cache">Cache</h3><p>由于服务器内存和CPU远比机械磁盘快得多，需为磁盘添加高速内存以缓存读写数据。例如，写入磁盘的数据存储在缓存中直到磁盘能够跟上，同时磁盘中的读数据放入缓存中直到能被主机读取。Cache比磁盘快1000倍，因此将数据写入和读出Cache对性能影响巨大。智能缓存算法能够预测你需要查找的数据，你是否会对此数据频繁访问，甚至是将访问频繁的随机数据放在缓存中。</p>
 <p>可能发生的问题包括：</p>
 <ul>
 <li>Cache memory不足</li>
@@ -149,8 +142,7 @@
 <li>频繁访问顺序性数据引起cache超负荷</li>
 <li>Cache中需要持续不断地写入新数据，因此如果cache总是在refill，将无法从cache获益。</li>
 </ul>
-<h3 id="磁盘">磁盘</h3>
-<p>磁盘瓶颈与磁盘转速有关, 慢速磁盘会引入较多延时。存储性能问题的排查首先考虑的因素就是磁盘速度，同时有多少块磁盘可进行并发读写。而另一因素是磁盘接口。采用更快的接口能够缓解磁盘瓶颈，但更重要的是在快速接口与相应更大的缓存大小以及转速之间取得平衡。同样，应避免将快速和慢速磁盘混入同一接口，因为慢速磁盘将会造成快速接口与快速磁盘的性能浪费。</p>
+<h3 id="磁盘">磁盘</h3><p>磁盘瓶颈与磁盘转速有关, 慢速磁盘会引入较多延时。存储性能问题的排查首先考虑的因素就是磁盘速度，同时有多少块磁盘可进行并发读写。而另一因素是磁盘接口。采用更快的接口能够缓解磁盘瓶颈，但更重要的是在快速接口与相应更大的缓存大小以及转速之间取得平衡。同样，应避免将快速和慢速磁盘混入同一接口，因为慢速磁盘将会造成快速接口与快速磁盘的性能浪费。</p>
 <p>可能引发的问题包括：</p>
 <ul>
 <li>过多应用命中磁盘</li>
@@ -158,8 +150,7 @@
 <li>磁盘速度过慢无法满足性能需求及支持繁重工作负荷</li>
 <li>Disk group往往是classic存储架构的潜在性能瓶颈，这种结构下RAID最多配置在16块磁盘。Thin结构通常每个LUN拥有更多磁盘，从而数据分布于更多spindle，因增加的并发性而减少了成为瓶颈的可能。</li>
 </ul>
-<h2 id="需要监控的指标：">需要监控的指标：</h2>
-<p>曾经一度存储厂商们强调的是IOPS和吞吐量，但现在重点逐渐转变成为响应时间。也就是说，不是数据移动的速度有多快，而在于对请求的响应速度有多快。</p>
+<h2 id="需要监控的指标：">需要监控的指标：</h2><p>曾经一度存储厂商们强调的是IOPS和吞吐量，但现在重点逐渐转变成为响应时间。也就是说，不是数据移动的速度有多快，而在于对请求的响应速度有多快。</p>
 <p>正常情况下，15,000 rpm Fibre Channel磁盘响应时间为4ms，SAS磁盘响应时间约为5ms至6ms，SATA为10ms，而SSD少于1ms。如果发现Fibre Channel磁盘响应时间为12ms，或SSD响应时间变成5ms，那么就说明可能产生了争用，可能芯片发生了故障。</p>
 <p>除了响应时间，其他需要监控的指标包括：</p>
 <ul>
@@ -170,8 +161,7 @@
 <li>读写所占比例；</li>
 <li>容量（空闲，使用和保留）。</li>
 </ul>
-<h2 id="数据存储性能最佳实践：">数据存储性能最佳实践：</h2>
-<p>性能调优和改进的方式有很多种，用户当然可以通过添加磁盘，端口，多核处理器，内存来改善，但问题是：性价比，以及对业务是否实用。本文建议的方式是在预算范围内找寻性能最大化的解决方案。另外一个需要考虑的方面是环境并非一尘不变，系统部署方案要能够适应环境的改变需求。</p>
+<h2 id="数据存储性能最佳实践：">数据存储性能最佳实践：</h2><p>性能调优和改进的方式有很多种，用户当然可以通过添加磁盘，端口，多核处理器，内存来改善，但问题是：性价比，以及对业务是否实用。本文建议的方式是在预算范围内找寻性能最大化的解决方案。另外一个需要考虑的方面是环境并非一尘不变，系统部署方案要能够适应环境的改变需求。</p>
 <p>首先需要考虑刷数据的性能特征，需要了解IO工作情况是怎样的。是否是cache友好型？是否是CPU集中型？业务数据很大数量很少，还是很小但数量很多？另外一方面就是构成存储环境的组件。包括应用，存储系统本身，网络。。。瓶颈可能在哪里，改善哪里最有效？</p>
 <p>以下是一些常规建议：</p>
 <ol>
@@ -184,19 +174,12 @@
 <li>有些性能分析工具涵盖从应用到磁盘，有些仅局限于存储系统本身。由于性能是一个连锁反应包含很多变量，所以需要全面地分析数据。</li>
 <li>以数据仅写入磁盘外部扇区的方式格式化磁盘。因减少数据定位时间而在高I/O环境下提升性能。负面作用是相当一部分磁盘容量未能得以使用。</li>
 </ol>
-<h2 id="应用于">应用于</h2>
-<hr>
+<h2 id="应用于">应用于</h2><hr>
 <p>存储性能分析、定位与排查<br><a href="https://community.emc.com/docs/DOC-34921" target="_blank" rel="external">阅读原文</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
-<!--
-<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
-<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"32"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
-<div class="article-share" id="share">
--->
-
-
+<div class="article-catetags">
 
 <div class="article-categories">
   <span></span>
@@ -204,23 +187,28 @@
 </div>
 
 
-
-<div class="article-share" id="share">
-
-
-  <div data-url="http://wsgzao.github.io/post/storage-performence/" data-title="存储性能瓶颈的成因、定位与排查 | HelloDog" data-tsina="wsgzao" class="share clearfix">
-  </div>
-
-
 </div>
-</footer>   	       
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://wsgzao.github.io/post/storage-performence/" data-title="存储性能瓶颈的成因、定位与排查 | HelloDog" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
 	</article>
 	
 <nav class="article-nav clearfix">
  
  <div class="prev" >
  <a href="/post/jailbreak-ipad/" title="iPad越狱小结">
-  <strong>PREVIOUS:</strong><br/>
+  <strong>上一篇：</strong><br/>
   <span>
   iPad越狱小结</span>
 </a>
@@ -229,7 +217,7 @@
 
 <div class="next">
 <a href="/post/hello-world/"  title="Hello World">
- <strong>NEXT:</strong><br/> 
+ <strong>下一篇：</strong><br/> 
  <span>Hello World
 </span>
 </a>
@@ -238,16 +226,19 @@
 </nav>
 
 	
-<section class="comment">
-	<div class="ds-thread"></div>
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="post/storage-performence/" data-title="存储性能瓶颈的成因、定位与排查" data-url="http://wsgzao.github.io/post/storage-performence/"></div>
 </section>
+
 
 </div>  
       <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#介绍"><span class="toc-number">1.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据存储瓶颈的四个常见场景："><span class="toc-number">3.</span> <span class="toc-text">数据存储瓶颈的四个常见场景：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#存储瓶颈常发区域:"><span class="toc-number">4.</span> <span class="toc-text">存储瓶颈常发区域:</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#存储区域网络（Storage-area_network,_SAN）/阵列前端口"><span class="toc-number">4.1.</span> <span class="toc-text">存储区域网络（Storage-area network, SAN）/阵列前端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#存储控制器"><span class="toc-number">4.2.</span> <span class="toc-text">存储控制器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cache"><span class="toc-number">4.3.</span> <span class="toc-text">Cache</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#磁盘"><span class="toc-number">4.4.</span> <span class="toc-text">磁盘</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#需要监控的指标："><span class="toc-number">5.</span> <span class="toc-text">需要监控的指标：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据存储性能最佳实践："><span class="toc-number">6.</span> <span class="toc-text">数据存储性能最佳实践：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#应用于"><span class="toc-number">7.</span> <span class="toc-text">应用于</span></a></li></ol>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#介绍"><span class="toc-number">1.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据存储瓶颈的四个常见场景："><span class="toc-number">3.</span> <span class="toc-text">数据存储瓶颈的四个常见场景：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#存储瓶颈常发区域:"><span class="toc-number">4.</span> <span class="toc-text">存储瓶颈常发区域:</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#存储区域网络（Storage-area_network,_SAN）/阵列前端口"><span class="toc-number">4.1.</span> <span class="toc-text">存储区域网络（Storage-area network, SAN）/阵列前端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#存储控制器"><span class="toc-number">4.2.</span> <span class="toc-text">存储控制器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cache"><span class="toc-number">4.3.</span> <span class="toc-text">Cache</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#磁盘"><span class="toc-number">4.4.</span> <span class="toc-text">磁盘</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#需要监控的指标："><span class="toc-number">5.</span> <span class="toc-text">需要监控的指标：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据存储性能最佳实践："><span class="toc-number">6.</span> <span class="toc-text">数据存储性能最佳实践：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#应用于"><span class="toc-number">7.</span> <span class="toc-text">应用于</span></a></li></ol>
+ 
   </div>
 
 <div id="asidepart">
@@ -259,29 +250,48 @@
 	<p class="asidetitle">分类</p>
 		<ul>
 		
-			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>5</sup></a></li>
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>4</sup></a></li>
+		  
 		
-			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>4</sup></a></li>
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>5</sup></a></li>
+		  
 		
+		  
 			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>5</sup></a></li>
+		  
 		
+		  
 			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>6</sup></a></li>
+		  
 		
 		</ul>
 </div>
 
 
+  
+
   <div class="linkslist">
   <p class="asidetitle">友情链接</p>
     <ul>
-      <li><a href="http://yangjian.me" target="_blank" title="YangJian">Alimon's Blog</a></li>
-      <li><a href="http://zipperary.com/" target="_blank" title="Zipperary">Zipperary's Blog</a></li>
-      <li><a href="http://wuchong.me/" target="_blank" title="WuChong">Jark's Blog</a></li>
-      <li><a href="http://zespia.tw/hexo" target="_blank" title="Hexo">Hexo</a></li>
-
-      
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
     </ul>
 </div>
+
+  
 
 
   <div class="rsspart">
@@ -304,31 +314,32 @@
 			Try to do better.</p>
 	</section>
 	 
-	<div class="social-font clearfix">
-		
-		<a href="http://weibo.com/wsgzao" target="_blank" title="weibo"></a>
+	<div class="social-font" class="clearfix">
 		
 		
-		<a href="https://twitter.com/wsgzao" target="_blank" title="twitter"></a>
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
 		
 		
-		<a href="https://github.com/wsgzao" target="_blank" title="github"></a>
 		
 		
-		<a href="https://www.facebook.com/wsgzao" target="_blank" title="facebook"></a>
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
 		
 		
-        <a href="https://www.linkedin.com/in/aowang" target="_blank" title="linkedin"></a>
-        
+		
+		
+		
 	</div>
-		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2015 
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
 		
-		<a href="http://wsgzao.github.io" target="_blank" title="wsgzao">wsgzao</a>
+		<a href="http://wsgzao.github.io/about" target="_blank" title="wsgzao">wsgzao</a>
 		
 		</p>
 </div>
 </footer>
-    <script src="/js/jquery-2.1.0.min.js"></script>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
 
 <script type="text/javascript">
 $(document).ready(function(){ 
@@ -416,15 +427,16 @@ $(document).ready(function(){
       url = $this.attr('data-url'),
       encodedUrl = encodeURIComponent(url),
       title = $this.attr('data-title'),
-      tsina = $this.attr('data-tsina');
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
   var html = [
   '<a href="#" class="overlay" id="qrcode"></a>',
-  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
-  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
   '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
-  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
   '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
-  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
   '<span title="Share to"></span>'
   ].join('');
   $this.append(html);
@@ -439,8 +451,9 @@ $(document).ready(function(){
 </script>
 
 
+
 <script type="text/javascript">
-  var duoshuoQuery = {short_name:"wsgzao"};
+  var duoshuoQuery = {short_name:"wsgzao## e.g. wuchong   your duoshuo short name."};
   (function() {
     var ds = document.createElement('script');
     ds.type = 'text/javascript';ds.async = true;
@@ -455,34 +468,58 @@ $(document).ready(function(){
 
 
 
-<div style="display:none;">
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
 <script type="text/javascript">
 var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
 document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fc2c5fc7d844d0973d9f77abd87f49c3c' type='text/javascript'%3E%3C/script%3E"));
 </script>
-</div>
 
 
-<script>
-var option = {
-  engineKey: '4ac092ad8d749fdc6293'
-};
-(function(w,d,t,u,n,s,e){
-  s = d.createElement(t);
-  s.src = u;
-  s.async = 1;
-  w[n] = function(r){
-    w[n].opts = r;
-  };
-  e = d.getElementsByTagName(t)[0];
-  e.parentNode.insertBefore(s, e);
-})(window,document,'script','//tinysou-cdn.b0.upaiyun.com/ts.js','_ts');
-_ts(option);
-</script>
 
-<div id="totop" style="position:fixed;bottom:150px;right:50px;cursor: pointer;">
-<a title="返回顶部"><img src="/img/scrollup.png"/></a>
-</div>
-<script src="/js/totop.js"></script>
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
   </body>
 </html>
