@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Keep Calm and Carry On]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://wsgzao.github.io/"/>
-  <updated>2015-03-21T13:10:16.000Z</updated>
+  <updated>2015-03-22T08:28:38.000Z</updated>
   <id>http://wsgzao.github.io/</id>
   
   <author>
@@ -15,13 +15,233 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title><![CDATA[使用GitHub和Hexo搭建免费静态Blog]]></title>
+    <link href="http://wsgzao.github.io/post/hexo-guide/"/>
+    <id>http://wsgzao.github.io/post/hexo-guide/</id>
+    <published>2015-03-22T12:40:07.000Z</published>
+    <updated>2015-03-22T08:28:38.000Z</updated>
+    <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/5bb7J7NT.png" alt=""></p>
+<h2 id="前言">前言</h2><p>习惯自己写Blog的朋友一定不会陌生Wordpress，或许也曾在新浪博客和QQ空间留过脚印，但静心认真思考一下，似乎我们又总是向往更加简单自由的写作方式。GitHub给我们提供了一个无限的空间，我们需要珍惜使用，而Hexo的出现从某种意义上来说代替了Jekyll，让我们可以更专注于写作本身。本文主要介绍自己的实践心得并不断完善内容，衍生知识和原理推荐大家认真阅读官网的手册，其它推荐参考内容链接在文中也会标注出来。</p>
+<blockquote>
+<p><a href="http://www.ruanyifeng.com/blog/2012/08/blogging_with_jekyll.html" target="_blank" rel="external">阮一峰 - 喜欢写Blog的人，会经历三个阶段</a></p>
+</blockquote>
+<p>第一阶段，刚接触Blog，觉得很新鲜，试着选择一个免费空间来写。<br>第二阶段，发现免费空间限制太多，就自己购买域名和空间，搭建独立博客。<br>第三阶段，觉得独立博客的管理太麻烦，最好在保留控制权的前提下，让别人来管，自己只负责写文章。</p>
+<hr>
+<h2 id="更新历史">更新历史</h2><p>2015年03月22日 - 更新Windows下Hexo 3.0安装和升级，感谢<a href="http://ippotsuko.com/" target="_blank" rel="external">@机智的阿卡林酱</a><br>2015年03月10日 - 增加Hexo 3.0降级 2.8<br>2014年12月19日 - 完善内容<br>2014年12月09日 - 更新Hexo配置修改部分<br>2014年06月19日 - 更新全部基础架构，待完善配置修改部分<br>2014年06月17日 - 更新部分Hexo建站过程，待完善<br>2014年05月29日 - 撰写初稿</p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/hexo-guide/" target="_blank" rel="external">http://wsgzao.github.io/post/hexo-guide/</a></p>
+<p>扩展阅读</p>
+<ul>
+<li>Hexo Docs - <a href="http://hexo.io/docs/" target="_blank" rel="external">http://hexo.io/docs/</a></li>
+<li>HelloDog Index - <a href="http://wsgzao.github.io/index/#Hexo" target="_blank" rel="external">http://wsgzao.github.io/index/#Hexo</a></li>
+</ul>
+<hr>
+<h2 id="准备工作">准备工作</h2><p><strong>注意</strong> 本文主要针对<code>Windows</code>平台和<code>Hexo 3.x</code></p>
+<h3 id="了解Hexo">了解Hexo</h3><blockquote>
+<p>A fast, simple &amp; powerful blog framework</p>
+</blockquote>
+<p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。<br><a href="http://hexo.io/" target="_blank" rel="external">hexo.io</a></p>
+<h3 id="安装GIT">安装GIT</h3><p><a href="https://windows.github.com/" target="_blank" rel="external">GitHub Windows</a></p>
+<p>简单可依赖，安装完成后依据提示操作即可，So Easy</p>
+<h3 id="安装Node-JS">安装Node.JS</h3><p><a href="http://nodejs.org/" target="_blank" rel="external">Node.JS</a></p>
+<p><strong>注意</strong> 安装完成后添加Path环境变量，使<code>npm</code>命令生效</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">;C:\Program Files\nodejs\node_modules\npm</span><br></pre></td></tr></table></figure>
+<h3 id="安装Hexo">安装Hexo</h3><p>配置好<code>GitHub</code>家目录后，双击桌面上的<code>Git Shell</code>，输入<code>npm</code>命令即可安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install -g hexo-cli</span><br><span class="line">npm install hexo --save</span><br></pre></td></tr></table></figure>
+<p><a href="http://hexo.io/zh-cn/docs/" target="_blank" rel="external">http://hexo.io/zh-cn/docs/</a></p>
+<hr>
+<h2 id="Hexo初始化配置">Hexo初始化配置</h2><h3 id="创建Hexo文件夹">创建Hexo文件夹</h3><p>安装完成后，根据自己喜好建立目录（如<code>E:\kuaipan\GitHub\hexo</code>），进入<code>Git Shell</code>切换到该路径下<code>E:\kuaipan\GitHub\hexo</code>执行以下指令<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure></p>
+<h3 id="安装Hexo插件">安装Hexo插件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-generator-index --save</span><br><span class="line">npm install hexo-generator-archive --save</span><br><span class="line">npm install hexo-generator-category --save</span><br><span class="line">npm install hexo-generator-tag --save</span><br><span class="line">npm install hexo-server --save</span><br><span class="line">npm install hexo-deployer-git --save</span><br><span class="line">npm install hexo-deployer-heroku --save</span><br><span class="line">npm install hexo-deployer-rsync --save</span><br><span class="line">npm install hexo-deployer-openshift --save</span><br><span class="line">npm install hexo-renderer-marked@<span class="number">0.2</span> --save</span><br><span class="line">npm install hexo-renderer-stylus@<span class="number">0.2</span> --save</span><br><span class="line">npm install hexo-generator-feed@<span class="number">1</span> --save</span><br><span class="line">npm install hexo-generator-sitemap@<span class="number">1</span> --save</span><br></pre></td></tr></table></figure>
+<h3 id="本地查看效果">本地查看效果</h3><p>继续执行以下命令，成功后可登录<code>localhost:4000</code>查看效果<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo server</span><br></pre></td></tr></table></figure></p>
+<h3 id="Hexo简写命令">Hexo简写命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo n <span class="comment">#new</span></span><br><span class="line">hexo g <span class="comment">#generate</span></span><br><span class="line">hexo s <span class="comment">#server</span></span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="部署静态网页到GitHub">部署静态网页到GitHub</h2><h3 id="注册设置GitHub">注册设置GitHub</h3><ol>
+<li>登录<a href="https://github.com/" target="_blank" rel="external">GitHub</a>，注册自定义用户名如<code>wsgzao</code></li>
+<li>在主页右下角创建<code>New repository</code>，name必须和用户名一致如<code>wsgzao.github.io</code></li>
+<li>首次创建耐心等待10分钟左右审核，之后即可访问静态主页如<a href="http://wsgzao.github.io" target="_blank" rel="external">http://wsgzao.github.io</a></li>
+</ol>
+<h3 id="同步内容至GitHub">同步内容至GitHub</h3><ol>
+<li>下载<a href="https://windows.github.com/" target="_blank" rel="external">GitHub Windows</a></li>
+<li>设置<code>Local path</code>如<code>E:\快盘\GitHub\</code></li>
+<li>运行<code>Git Shell</code>切换到如<code>E:\快盘\GitHub\hexo</code>路径下</li>
+<li>执行<code>hexo g</code>命令生成<code>public</code>文件夹</li>
+<li>把生成的内容全部拷贝到<code>Local path</code>或其子目录</li>
+<li>运行<code>GitHub</code>确认修改信息后执行右上角的<code>Sync</code>同步</li>
+<li>最后访问主页观察效果</li>
+</ol>
+<p><a href="https://pages.github.com/" target="_blank" rel="external">https://pages.github.com/</a></p>
+<hr>
+<h2 id="域名和DNS">域名和DNS</h2><h3 id="域名推荐">域名推荐</h3><blockquote>
+<p>GoDaddy makes registering Domain Names fast, simple, and affordable.<br>【推荐理由】两个字“靠谱”，支持支付宝，附优惠码链接</p>
+</blockquote>
+<p><a href="http://www.godaddy.com/" target="_blank" rel="external">http://www.godaddy.com/</a><br><a href="http://www.gdcodecoupon.com/" target="_blank" rel="external">http://www.gdcodecoupon.com/</a></p>
+<h3 id="DNS推荐">DNS推荐</h3><blockquote>
+<p>致力于为您提供最稳定、最安全的域名解析服务<br>【推荐理由】依然是两个字“靠谱”，感谢他们一直以来对于公益的坚持</p>
+</blockquote>
+<p><a href="https://www.dnspod.cn/" target="_blank" rel="external">https://www.dnspod.cn/</a></p>
+<h3 id="设置CNAME">设置CNAME</h3><ol>
+<li>在Github的网站目录下创建<code>CNAME</code>文件</li>
+<li>填写自己的域名如<code>hellodog.com</code>，保存结束</li>
+<li>登录DNSPod，先添加域名，然后添加记录，设置如下</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>主机记录</th>
+<th>记录类型</th>
+<th>线路类型</th>
+<th>记录值</th>
+<th>MX优先级</th>
+<th>TTL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>@</td>
+<td>CNAME</td>
+<td>默认</td>
+<td>wsgzao.github.io.</td>
+<td>-</td>
+<td>10</td>
+</tr>
+<tr>
+<td>www</td>
+<td>CNAME</td>
+<td>默认</td>
+<td>wsgzao.github.io.</td>
+<td>-</td>
+<td>10</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="Hexo配置修改">Hexo配置修改</h2><blockquote>
+<p>告诉自己为什么要选择Hexo</p>
+</blockquote>
+<h3 id="知识储备">知识储备</h3><p>1.勤学勤练Markdown</p>
+<blockquote>
+<p>本地+云端备份数据是一种习惯</p>
+</blockquote>
+<ul>
+<li>Markdown学习路径 - <a href="http://wsgzao.github.io/post/markdown/" target="_blank" rel="external">http://wsgzao.github.io/post/markdown/</a></li>
+</ul>
+<p>2.使用性感的文本编辑器</p>
+<blockquote>
+<p>工欲善其事必先利其器</p>
+</blockquote>
+<ul>
+<li>Notepad2</li>
+<li>Sublime Text</li>
+</ul>
+<p><a href="http://wsgzao.github.io/post/windows/#文本编辑器" target="_blank" rel="external">http://wsgzao.github.io/post/windows/#文本编辑器</a></p>
+<h3 id="Hexo主题">Hexo主题</h3><blockquote>
+<p>选择主题建议遵循<code>KISS</code>原则</p>
+</blockquote>
+<ul>
+<li>Hexo Themes - <a href="http://hexo.io/themes/" target="_blank" rel="external">http://hexo.io/themes/</a></li>
+<li><del>Pacman - <a href="http://wsgzao.github.io/post/hexo-pacman/" target="_blank" rel="external">http://wsgzao.github.io/post/hexo-pacman/</a></del></li>
+<li>Jacman - <a href="http://wsgzao.github.io/post/hexo-jacman/" target="_blank" rel="external">http://wsgzao.github.io/post/hexo-jacman/</a></li>
+</ul>
+<h3 id="常见问题">常见问题</h3><p>1.修改配置文件时注意<code>YAML</code>语法，参数<code>冒号:</code>后一定要留<code>空格</code><br>2.中文乱码请修改文件编码格式为<code>UTF-8</code></p>
+<h3 id="如何迁移至Hexo">如何迁移至Hexo</h3><p><a href="http://hexo.io/zh-cn/docs/migration.html" target="_blank" rel="external">http://hexo.io/zh-cn/docs/migration.html</a></p>
+<h3 id="Hexo_2-X_升级_3-0">Hexo 2.X 升级 3.0</h3><p>1.做好相关配置文件和文章的备份<br>2.做任何修改前不要忘记第一件事备份</p>
+<p><a href="https://github.com/hexojs/hexo/wiki/Migrating-from-2.x-to-3.0" target="_blank" rel="external">https://github.com/hexojs/hexo/wiki/Migrating-from-2.x-to-3.0</a></p>
+<h3 id="Hexo_3-0_降级_2-X">Hexo 3.0 降级 2.X</h3><p><a href="http://sandylaw.tk/2015/03/07/hexo3to2/" target="_blank" rel="external">http://sandylaw.tk/2015/03/07/hexo3to2/</a></p>
+<h2 id="推荐阅读">推荐阅读</h2><ul>
+<li><a href="http://cnfeat.com/2014/05/10/2014-05-11-how-to-build-a-blog/" target="_blank" rel="external">如何搭建一个独立博客——简明Github Pages与Hexo教程</a></li>
+<li><a href="http://zipperary.com/categories/hexo/" target="_blank" rel="external">Zippera hexo系列教程</a></li>
+<li><a href="http://user.qzone.qq.com/644273006/blog/1418698244" target="_blank" rel="external">前端工程精粹 | 张云龙</a></li>
+<li><a href="http://ippotsuko.com/build-your-hexo-blog-3" target="_blank" rel="external">Hexo 3.0 静态博客使用指南</a></li>
+</ul>
+]]></content>
+    <summary type="html">
+    <![CDATA[持续更新Hexo的摸索过程，记录生活的点滴]]>
+    
+    </summary>
+    
+      <category term="Hexo" scheme="http://wsgzao.github.io/categories/Hexo/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[Jacman基于Pacman修改的Hexo主题]]></title>
+    <link href="http://wsgzao.github.io/post/hexo-jacman/"/>
+    <id>http://wsgzao.github.io/post/hexo-jacman/</id>
+    <published>2015-03-22T09:11:20.000Z</published>
+    <updated>2015-03-22T09:42:00.000Z</updated>
+    <content type="html"><![CDATA[<h2 id="前言">前言</h2><p>由于Pacman已经暂停更新，加上Hexo已经升级为3.0，很多主题需要重新适配，而Jacman是基于Pacman修改而来，在前端设计样式和功能上做了很多合理的修改和完善，相信你也一定可以很快上手。</p>
+<blockquote>
+<p>Jacman是一款基于Pacman修改并坚持更新的Hexo主题。</p>
+</blockquote>
+<hr>
+<h2 id="更新历史">更新历史</h2><p>2015年03月22日 - 初稿</p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/hexo-pacman/" target="_blank" rel="external">http://wsgzao.github.io/post/hexo-pacman/</a></p>
+<p>扩展阅读</p>
+<ul>
+<li>Jacman - <a href="https://github.com/wuchong/jacman" target="_blank" rel="external">https://github.com/wuchong/jacman</a></li>
+<li>HelloDog Index - <a href="http://wsgzao.github.io/index/#Hexo" target="_blank" rel="external">http://wsgzao.github.io/index/#Hexo</a></li>
+</ul>
+<hr>
+<h2 id="主题安装">主题安装</h2><blockquote>
+<p>设置很简单，请参考原文中文说明</p>
+</blockquote>
+<h3 id="Jacman">Jacman</h3><p><a href="http://wuchong.me/blog/2014/11/20/how-to-use-jacman/" target="_blank" rel="external">http://wuchong.me/blog/2014/11/20/how-to-use-jacman/</a></p>
+<hr>
+<h2 id="配置yml">配置yml</h2><blockquote>
+<p>这是我自己的真实配置文件，请参考原文注释做修改</p>
+</blockquote>
+<h3 id="全局yml">全局yml</h3><figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line"><span class="header"># Hexo Configuration</span></span><br><span class="line"><span class="header">## Docs: http://hexo.io/docs/configuration.html</span></span><br><span class="line"><span class="header">## Source: https://github.com/hexojs/hexo/</span></span><br><span class="line"></span><br><span class="line"><span class="header"># Site</span></span><br><span class="line">title: HelloDog</span><br><span class="line">subtitle: Keep Calm and Carry On</span><br><span class="line">description: HelloDog是一个基于Github和Hexo的静态Blog，希望用简单而清晰的写作方式Markdown分享自己的心得体会。</span><br><span class="line">author: wsgzao</span><br><span class="line">language: zh-CN</span><br><span class="line">timezone:</span><br><span class="line"></span><br><span class="line"><span class="header"># URL</span></span><br><span class="line"><span class="header">## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'</span></span><br><span class="line">url: http://wsgzao.github.io/</span><br><span class="line">root: /</span><br><span class="line">permalink: post/:title/</span><br><span class="line">permalink_defaults:</span><br><span class="line"></span><br><span class="line"><span class="header"># Directory</span></span><br><span class="line">source_dir: source</span><br><span class="line">public_dir: public</span><br><span class="line">tag_dir: tags</span><br><span class="line">archive_dir: archives</span><br><span class="line">category_dir: categories</span><br><span class="line">code_dir: downloads/code</span><br><span class="line">i18n_dir: :lang</span><br><span class="line">skip_render:</span><br><span class="line"></span><br><span class="line"><span class="header"># Writing</span></span><br><span class="line">new<span class="emphasis">_post_</span>name: :title.md # File name of new posts</span><br><span class="line">default_layout: post</span><br><span class="line">titlecase: false # Transform title into titlecase</span><br><span class="line">external_link: true # Open external links in new tab</span><br><span class="line">filename_case: 0</span><br><span class="line">render_drafts: false</span><br><span class="line">post<span class="emphasis">_asset_</span>folder: false</span><br><span class="line">relative_link: false</span><br><span class="line">future: true</span><br><span class="line">highlight:</span><br><span class="line">  enable: true</span><br><span class="line">  line_number: true</span><br><span class="line">  tab_replace:</span><br><span class="line"></span><br><span class="line"><span class="header"># Category &amp; Tag</span></span><br><span class="line">default_category: uncategorized</span><br><span class="line">category_map:</span><br><span class="line">tag_map:</span><br><span class="line"></span><br><span class="line"><span class="header"># Date / Time format</span></span><br><span class="line"><span class="header">## Hexo uses Moment.js to parse and display date</span></span><br><span class="line"><span class="header">## You can customize the date format as defined in</span></span><br><span class="line"><span class="header">## http://momentjs.com/docs/#/displaying/format/</span></span><br><span class="line">date_format: YYYY-MM-DD</span><br><span class="line">time_format: HH:mm:ss</span><br><span class="line"></span><br><span class="line"><span class="header"># Pagination</span></span><br><span class="line"><span class="header">## Set per_page to 0 to disable pagination</span></span><br><span class="line">per_page: 10</span><br><span class="line">pagination_dir: page</span><br><span class="line"></span><br><span class="line"><span class="header"># Extensions</span></span><br><span class="line"><span class="header">## Plugins: http://hexo.io/plugins/</span></span><br><span class="line"><span class="header">## Themes: http://hexo.io/themes/</span></span><br><span class="line">theme: jacman</span><br><span class="line"></span><br><span class="line"><span class="header"># Deployment</span></span><br><span class="line"><span class="header">## Docs: http://hexo.io/docs/deployment.html</span></span><br><span class="line">deploy:</span><br><span class="line">  type:</span><br><span class="line"></span><br><span class="line"><span class="header"># Others</span></span><br><span class="line">index_generator:</span><br><span class="line">  per_page: 5 ##首页默认10篇文章标题 如果值为0不分页</span><br><span class="line"></span><br><span class="line">archive_generator:</span><br><span class="line"><span class="code">    per_page: 0 ##归档页面默认10篇文章标题</span></span><br><span class="line"><span class="code">    yearly: true  ##生成年视图</span></span><br><span class="line"><span class="code">    monthly: true ##生成月视图</span></span><br><span class="line"></span><br><span class="line">tag_generator:</span><br><span class="line"><span class="code">    per_page: 0 ##标签分类页面默认10篇文章</span></span><br><span class="line"></span><br><span class="line">category_generator: </span><br><span class="line"><span class="code">    per_page: 0 ###分类页面默认10篇文章</span></span><br><span class="line"></span><br><span class="line">feed:</span><br><span class="line"><span class="code">    type: atom ##feed类型 atom或者rss2</span></span><br><span class="line"><span class="code">    path: atom.xml ##feed路径</span></span><br><span class="line"><span class="code">    limit: 20  ##feed文章最小数量</span></span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="主题yml">主题yml</h3><figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br></pre></td><td class="code"><pre><span class="line"><span class="header">##### Menu</span></span><br><span class="line">menu:</span><br><span class="line">  主页 | Home: /</span><br><span class="line">  索引 | Index: /index</span><br><span class="line">  归档 | Archives: /archives</span><br><span class="line">  简介 | About: /about</span><br><span class="line"><span class="header">## you can create `tags` and `categories` folders in `../source`.</span></span><br><span class="line"><span class="header">## And create a `index.md` file in each of them.</span></span><br><span class="line"><span class="header">## set `front-matter`as</span></span><br><span class="line"><span class="header">## layout: tags (or categories)</span></span><br><span class="line"><span class="header">## title: tags (or categories)</span></span><br><span class="line"><span class="header">## ---</span></span><br><span class="line"></span><br><span class="line"><span class="header">#### Widgets</span></span><br><span class="line">widgets: </span><br><span class="line"><span class="bullet">- </span>category</span><br><span class="line"><span class="bullet">- </span>tag</span><br><span class="line"><span class="bullet">- </span>links</span><br><span class="line"><span class="bullet">- </span>douban</span><br><span class="line"><span class="bullet">- </span>rss</span><br><span class="line"><span class="header">## provide seven widgets:category,tag,rss,archive,tagcloud,links,weibo,douban</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="header">#### RSS </span></span><br><span class="line">rss: /atom.xml ## RSS address.</span><br><span class="line"></span><br><span class="line"><span class="header">#### Image</span></span><br><span class="line">imglogo:</span><br><span class="line">  enable: true             ## display image logo true/false.</span><br><span class="line">  src: img/logo.png        ## <span class="code">`.svg`</span> and <span class="code">`.png`</span> are recommended,please put image into the theme folder <span class="code">`/jacman/source/img`</span>.</span><br><span class="line">favicon: img/favicon.ico   ## size:32px*32px,<span class="code">`.ico`</span> is recommended,please put image into the theme folder <span class="code">`/jacman/source/img`</span>.     </span><br><span class="line">apple_icon: img/jacman.jpg ## size:114px*114px,please put image into the theme folder <span class="code">`/jacman/source/img`</span>.</span><br><span class="line">author_img: img/author.jpg ## size:220px*220px.display author avatar picture.if don't want to display,please don't set this.</span><br><span class="line">banner_img: #img/banner.jpg ## size:1920px*200px+. Banner Picture</span><br><span class="line"><span class="header">### Theme Color </span></span><br><span class="line">theme_color:</span><br><span class="line"><span class="code">    theme: '#ea6753'    ##the defaut theme color is blue</span></span><br><span class="line"></span><br><span class="line"><span class="header">#### index post is expanding or not </span></span><br><span class="line">index:</span><br><span class="line">  expand: false           ## default is unexpanding,so you can only see the short description of each post.</span><br><span class="line">  excerpt_link: Read More  </span><br><span class="line">  </span><br><span class="line"><span class="header">#### Author information</span></span><br><span class="line">author:</span><br><span class="line">  intro_line1:  "Hello, I'm OX. This is my blog on GitHub."    ## your introduction on the bottom of the page</span><br><span class="line">  intro_line2:  "Try to do better."  ## the 2nd line</span><br><span class="line">  weibo:  ## e.g. wuchong1014 or 2176287895 for http://weibo.com/2176287895</span><br><span class="line">  weibo_verifier:  ## e.g. b3593ceb Your weibo-show widget verifier ,if you use weibo-show it is needed.</span><br><span class="line">  tsina:      ## e.g. 2176287895  Your weibo ID,It will be used in share button.</span><br><span class="line">  douban:     ## e.g. wuchong1014 or your id for https://www.douban.com/people/wuchong1014</span><br><span class="line">  zhihu:      ## e.g. jark  for http://www.zhihu.com/people/jark</span><br><span class="line">  email:      ## e.g. imjark@gmail.com</span><br><span class="line">  twitter:    ## e.g. jarkwu for https://twitter.com/jarkwu</span><br><span class="line">  github: wsgzao    ## e.g. wuchong for https://github.com/wuchong</span><br><span class="line">  facebook:   ## e.g. imjark for https://facebook.com/imjark</span><br><span class="line">  linkedin: aowang  ## e.g. wuchong1014 for https://www.linkedin.com/in/wuchong1014</span><br><span class="line">  google_plus:    ## e.g. "111190881341800841449" for https://plus.google.com/u/0/111190881341800841449, the "" is needed!</span><br><span class="line">  stackoverflow:  ## e.g. 3222790 for http://stackoverflow.com/users/3222790/jark</span><br><span class="line"><span class="header">## if you set them, the corresponding  share button will show on the footer</span></span><br><span class="line"></span><br><span class="line"><span class="header">#### Toc</span></span><br><span class="line">toc:</span><br><span class="line">  article: true   ## show contents in article.</span><br><span class="line">  aside: true     ## show contents in aside.</span><br><span class="line"><span class="header">## you can set both of the value to true of neither of them.</span></span><br><span class="line"><span class="header">## if you don't want display contents in a specified post,you can modify `front-matter` and add `toc: false`.</span></span><br><span class="line"></span><br><span class="line"><span class="header">#### Links</span></span><br><span class="line">links:</span><br><span class="line">  码农圈: https://coderq.com,一个面向程序员交流分享的新一代社区</span><br><span class="line">  Jark's Blog: http://wuchong.me</span><br><span class="line"></span><br><span class="line"><span class="header">#### Comment</span></span><br><span class="line">duoshuo_shortname: wsgzao ## e.g. wuchong   your duoshuo short name.</span><br><span class="line">disqus_shortname:  ## e.g. wuchong   your disqus short name.</span><br><span class="line"></span><br><span class="line"><span class="header">#### Share button</span></span><br><span class="line">jiathis:</span><br><span class="line">  enable: false ## if you use jiathis as your share tool,the built-in share tool won't be display.</span><br><span class="line">  id:    ## e.g. 1889330 your jiathis ID. </span><br><span class="line">  tsina: ## e.g. 2176287895 Your weibo id,It will be used in share button.</span><br><span class="line">  </span><br><span class="line"><span class="header">#### Analytics</span></span><br><span class="line">google_analytics:</span><br><span class="line">  enable: false</span><br><span class="line">  id:        ## e.g. UA-46321946-2 your google analytics ID.</span><br><span class="line">  site:      ## e.g. wuchong.me your google analytics site or set the value as auto.</span><br><span class="line"><span class="header">## You MUST upgrade to Universal Analytics first!</span></span><br><span class="line"><span class="header">## https://developers.google.com/analytics/devguides/collection/upgrade/?hl=zh_CN</span></span><br><span class="line">baidu_tongji:</span><br><span class="line">  enable: true</span><br><span class="line">  sitecode: c2c5fc7d844d0973d9f77abd87f49c3c ## e.g. e6d1f421bbc9962127a50488f9ed37d1 your baidu tongji site code</span><br><span class="line">cnzz_tongji:</span><br><span class="line">  enable: false</span><br><span class="line">  siteid:    ## e.g. 1253575964 your cnzz tongji site id</span><br><span class="line"></span><br><span class="line"><span class="header">#### Miscellaneous</span></span><br><span class="line">ShowCustomFont: true  ## you can change custom font in <span class="code">`variable.styl`</span> and <span class="code">`font.styl`</span> which in the theme folder <span class="code">`/jacman/source/css`</span>.</span><br><span class="line">fancybox: true        ## if you use gallery post or want use fancybox please set the value to true.</span><br><span class="line">totop: true           ## if you want to scroll to top in every post set the value to true</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="header">#### Custom Search</span></span><br><span class="line">google_cse: </span><br><span class="line">  enable: false</span><br><span class="line">  cx:   ## e.g. 018294693190868310296:abnhpuysycw your Custom Search ID.</span><br><span class="line"><span class="header">## https://www.google.com/cse/ </span></span><br><span class="line"><span class="header">## To enable the custom search You must create a "search" folder in '/source' and a "index.md" file</span></span><br><span class="line"><span class="header">## set the 'front-matter' as</span></span><br><span class="line"><span class="header">## layout: search </span></span><br><span class="line"><span class="header">## title: search</span></span><br><span class="line"><span class="header">## ---</span></span><br><span class="line">baidu_search:     ## http://zn.baidu.com/</span><br><span class="line">  enable: false</span><br><span class="line">  id: "3783770861532079376"  ## e.g. "783281470518440642"  for your baidu search id</span><br><span class="line">  site: http://zhannei.baidu.com/cse/search  ## your can change to your site instead of the default site</span><br><span class="line"></span><br><span class="line">tinysou_search:     ## http://tinysou.com/</span><br><span class="line">  enable: true</span><br><span class="line">  id: 4ac092ad8d749fdc6293</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="内容发布">内容发布</h2><h3 id="修改post预设格式">修改post预设格式</h3><blockquote>
+<p>建议按照个人习惯修改<code>hexo\scaffolds</code>中的<code>post.md</code></p>
+</blockquote>
+<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">title: &#123;&#123; title &#125;&#125;</span><br><span class="line">date: &#123;&#123; date &#125;&#125;</span><br><span class="line">categories:</span><br><span class="line">description:</span><br></pre></td></tr></table></figure>
+<h3 id="生成文章">生成文章</h3><blockquote>
+<p>文章如含有有中文请修改编码为<code>UTF-8</code>避免乱码</p>
+</blockquote>
+<p>1.命令生成初始文章，文件名空格会自动加<code>-</code>hyphen中横线</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo n <span class="string">"hexo post"</span></span><br></pre></td></tr></table></figure>
+<p>2.在<code>hexo\source\_posts</code>中编辑生成出来的<code>hexo-post</code>文件</p>
+<figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">title: hexo post #可以改成中文的，如“新文章”</span><br><span class="line">date: 2015-01-14 21:31:42 #发表日期，可自定义修改排序</span><br><span class="line">categories: blog #文章文类</span><br><span class="line"><span class="header">tags: [博客,文章] #文章标签，可以加入多标签</span><br><span class="line">---</span></span><br><span class="line"><span class="header">#这里是正文，用Markdown书写</span></span><br></pre></td></tr></table></figure>
+<p>3.本地预览文章内容，登录<code>localhost:4000</code>查看效果<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo s</span><br></pre></td></tr></table></figure></p>
+<p>4.发布内容到<code>public</code>文件夹，然后我选择手动复制同步到GitHub<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo g</span><br></pre></td></tr></table></figure></p>
+<h3 id="导航栏添加自定义页面">导航栏添加自定义页面</h3><p>1.命令手动生成自定义页面<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo n page <span class="string">"about"</span></span><br></pre></td></tr></table></figure></p>
+<p>2.编辑<code>hexo/source/about/index.md</code>内容<br>3.修改<code>themes/jacman/_config.yml</code>文件<br><figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">menu:</span><br><span class="line">  关于: /about</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h2 id="其它修改">其它修改</h2><h3 id="RSS和sitemap">RSS和sitemap</h3><p>1.安装RSS和sitemap插件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-generator-feed@<span class="number">1</span> --save</span><br><span class="line">npm install hexo-generator-sitemap@<span class="number">1</span> --save</span><br></pre></td></tr></table></figure></p>
+<p>2.开启RSS和sitemap功能，编辑<code>hexo/_config.yml</code><br><figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">feed:</span><br><span class="line">  type: atom       #feed 类型 (atom/rss2)</span><br><span class="line">  path: atom.xml   #rss 路径</span><br><span class="line">  limit: 20        #在 rss 中最多生成的文章数(0显示所有)</span><br></pre></td></tr></table></figure></p>
+<p>3.修改<code>thems/jacman/_config.yml</code>，编辑Widgets和rss<br><figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="header">#### Widgets</span></span><br><span class="line">widgets: </span><br><span class="line"><span class="bullet">- </span>rss</span><br><span class="line"></span><br><span class="line">rss: /atom.xml</span><br></pre></td></tr></table></figure></p>
+<p>4.手动提交生成出来的<code>atom.xml</code>文件给搜索引擎</p>
+<h3 id="添加404页面">添加404页面</h3><p>在GitHub根目录下如<code>wsgzao.github.io</code>设置404.html即可，建议使用<code>腾讯公益404</code><br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">meta</span> <span class="attribute">charset</span>=<span class="value">"UTF-8"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">title</span>&gt;</span>404 | HelloDog<span class="tag">&lt;/<span class="title">title</span>&gt;</span>                                                                                               </span><br><span class="line"><span class="tag">&lt;/<span class="title">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span> <span class="attribute">src</span>=<span class="value">"http://www.qq.com/404/search_children.js"</span> <span class="attribute">charset</span>=<span class="value">"utf-8"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">html</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="网站统计">网站统计</h3><p>Jacman自带的选择足够了</p>
+<h3 id="站内搜索">站内搜索</h3><blockquote>
+<p>已提交微搜索(swiftype也很不错)的Pull Request给Jacman，欢迎大家体验</p>
+</blockquote>
+<p>微搜索 - <a href="http://tinysou.com/" target="_blank" rel="external">http://tinysou.com/</a><br>swiftype - <a href="https://swiftype.com/" target="_blank" rel="external">https://swiftype.com/</a></p>
+<h2 id="常见错误">常见错误</h2><ol>
+<li>修改配置文件时注意<code>YAML</code>语法，参数<code>冒号:</code>后一定要留<code>空格</code></li>
+<li>中文乱码请修改文件编码格式为<code>UTF-8</code></li>
+<li>GitHub同步慢或者失败请使用翻墙代理加速</li>
+</ol>
+]]></content>
+    <summary type="html">
+    <![CDATA[Jacman 基于 Pacman 主题修改而来]]>
+    
+    </summary>
+    
+      <category term="Hexo" scheme="http://wsgzao.github.io/categories/Hexo/"/>
+    
+  </entry>
+  
+  <entry>
     <title><![CDATA[Android Apps 推荐]]></title>
     <link href="http://wsgzao.github.io/post/android/"/>
     <id>http://wsgzao.github.io/post/android/</id>
     <published>2015-03-21T11:49:05.000Z</published>
-    <updated>2015-03-21T13:10:16.000Z</updated>
+    <updated>2015-03-22T05:29:07.000Z</updated>
     <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/4cxZK13p.jpeg" alt=""></p>
-<h2 id="前言">前言</h2><p>Android作为开源项目让全球的用户和厂商共同受益，我们有幸见证了小米带给大家的各种惊喜（饥饿营销解决库存压力），同时也带坏了不少实力厂商一起雄起，这里要为华为/联发科/汇顶科技点赞（不断努力掌握核心科技），总之对我们消费者来说始终是利大于弊。Android应用大多数都是以免费+广告或内购的形式出现，虽然质量上总体不如iOS但自由度很高，而系统易用性上的差距也越来越小，大家各取所需喜欢就好。</p>
+<h2 id="前言">前言</h2><p>Android作为开源项目让全球的用户和厂商共同受益，我们有幸见证了小米带给大家的各种惊喜（饥饿营销解决库存压力），同时也带坏了不少实力厂商一起雄起，这里要为<code>华为/联发科/汇顶科技</code>点赞（不断努力掌握核心科技），总之对我们消费者来说始终是利大于弊。Android应用大多数都是以免费+广告或内购的形式出现，虽然质量上总体不如iOS但自由度很高，而系统易用性上的差距也越来越小，大家各取所需喜欢就好。</p>
 <p>父母或老人推荐<code>华为荣耀畅玩4X/iPhone</code>，个人推荐的话<code>iPhone/小米/魅族/一加/华为</code>等随心选择吧。</p>
 <blockquote>
 <p>Choose Android, Choose to be different.</p>
@@ -1220,158 +1440,11 @@ npath=/tmp/nmon/<span class="built_in">log</span>
   </entry>
   
   <entry>
-    <title><![CDATA[使用GitHub和Hexo搭建免费静态Blog]]></title>
-    <link href="http://wsgzao.github.io/post/hexo-guide/"/>
-    <id>http://wsgzao.github.io/post/hexo-guide/</id>
-    <published>2014-12-19T12:40:07.000Z</published>
-    <updated>2015-03-11T01:13:19.000Z</updated>
-    <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/5bb7J7NT.png" alt=""></p>
-<h2 id="前言">前言</h2><p>习惯自己写Blog的朋友一定不会陌生Wordpress，或许也曾在新浪博客和QQ空间留过脚印，但静心认真思考一下，似乎我们又总是向往更加简单自由的写作方式。GitHub给我们提供了一个无限的空间，我们需要珍惜使用，而Hexo的出现从某种意义上来说代替了Jekyll，让我们可以更专注于写作本身，努力培养自己的提炼表述能力。本文主要介绍自己的实践心得，也会不断完善内容，衍生知识和原理推荐大家认真阅读官网的手册，相关链接基本都会附加在每一章节之后，内容如有错误和改善点也希望大家积极反馈哈！</p>
-<blockquote>
-<p><a href="http://www.ruanyifeng.com/blog/2012/08/blogging_with_jekyll.html" target="_blank" rel="external">阮一峰 - 喜欢写Blog的人，会经历三个阶段</a></p>
-</blockquote>
-<p>第一阶段，刚接触Blog，觉得很新鲜，试着选择一个免费空间来写。<br>第二阶段，发现免费空间限制太多，就自己购买域名和空间，搭建独立博客。<br>第三阶段，觉得独立博客的管理太麻烦，最好在保留控制权的前提下，让别人来管，自己只负责写文章。</p>
-<hr>
-<h2 id="更新历史">更新历史</h2><p>2015年03月10日 - 增加Hexo降级 3.0 to 2.8<br>2014年12月19日 - 完善内容<br>2014年12月09日 - 更新Hexo配置修改部分<br>2014年06月19日 - 更新全部基础架构，待完善配置修改部分<br>2014年06月17日 - 更新部分Hexo建站过程，待完善<br>2014年05月29日 - 撰写初稿</p>
-<p>阅读原文 - <a href="http://wsgzao.github.io/post/hexo-guide/" target="_blank" rel="external">http://wsgzao.github.io/post/hexo-guide/</a></p>
-<p>扩展阅读</p>
-<ul>
-<li>Hexo Docs - <a href="http://hexo.io/docs/" target="_blank" rel="external">http://hexo.io/docs/</a></li>
-<li>HelloDog Index - <a href="http://wsgzao.github.io/index/#Hexo" target="_blank" rel="external">http://wsgzao.github.io/index/#Hexo</a></li>
-</ul>
-<hr>
-<h2 id="准备工作">准备工作</h2><p><strong>注意</strong> 本文主要针对<code>Windows</code>平台和<code>Hexo 2.x</code></p>
-<h3 id="了解Hexo">了解Hexo</h3><p>Hexo是一个由Node.js驱动的,简单、快速、强大的Blog框架。可以快速的生成静态网页托管在GitHub、BAE等平台上。对Markdown有很好的支持，并支持从Wordpress、Octopress迁移。</p>
-<blockquote>
-<p>A fast, simple &amp; powerful blog framework,powered by Node.js.</p>
-</blockquote>
-<p><a href="http://hexo.io/" target="_blank" rel="external">hexo.io</a></p>
-<h3 id="安装GIT">安装GIT</h3><p><a href="https://windows.github.com/" target="_blank" rel="external">GitHub Windows</a></p>
-<p>简单可依赖，安装完成后依据提示操作即可，So Easy</p>
-<h3 id="安装Node-JS">安装Node.JS</h3><p><a href="http://nodejs.org/" target="_blank" rel="external">Node.JS</a></p>
-<p><strong>注意</strong> 安装完成后添加Path环境变量，使<code>npm</code>命令生效</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">;D:\Program Files\nodejs\node_modules\npm</span><br></pre></td></tr></table></figure>
-<h3 id="安装Hexo">安装Hexo</h3><p>配置好<code>GitHub</code>家目录后，双击桌面上的<code>Git Shell</code>，输入<code>npm</code>命令即可安装</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g hexo</span><br></pre></td></tr></table></figure>
-<h2 id="Hexo初始化配置">Hexo初始化配置</h2><hr>
-<h3 id="创建Hexo文件夹">创建Hexo文件夹</h3><p>安装完成后，根据自己喜好建立目录（如<code>E:\快盘\GitHub\hexo</code>），进入<code>Git Shell</code>切换到该路径下<code>E:\快盘\GitHub\hexo</code>执行以下指令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure></p>
-<h3 id="新版本注意点">新版本注意点</h3><p><a href="https://github.com/tommy351/hexo/releases" target="_blank" rel="external">EJS, Stylus, Marked not built-in anymore</a>,请手动安装以下插件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-renderer-ejs --save</span><br><span class="line">npm install hexo-renderer-stylus --save</span><br><span class="line">npm install hexo-renderer-marked --save</span><br></pre></td></tr></table></figure></p>
-<h3 id="本地查看效果">本地查看效果</h3><p>继续执行以下命令，成功后可登录<code>localhost:4000</code>查看效果<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure></p>
-<h3 id="Hexo简写命令">Hexo简写命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo n <span class="comment">#new</span></span><br><span class="line">hexo g <span class="comment">#generate</span></span><br><span class="line">hexo s <span class="comment">#server</span></span><br></pre></td></tr></table></figure>
-<h3 id="Hexo更新">Hexo更新</h3><p>注意备份<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm update -g hexo</span><br></pre></td></tr></table></figure></p>
-<h3 id="Hexo降级">Hexo降级</h3><p><a href="http://sandylaw.tk/2015/03/07/hexo3to2/" target="_blank" rel="external">http://sandylaw.tk/2015/03/07/hexo3to2/</a></p>
-<p><a href="http://hexo.io/zh-cn/docs/index.html" target="_blank" rel="external">http://hexo.io/zh-cn/docs/index.html</a></p>
-<hr>
-<h2 id="部署静态网页到GitHub">部署静态网页到GitHub</h2><h3 id="注册设置GitHub">注册设置GitHub</h3><ol>
-<li>登录<a href="https://github.com/" target="_blank" rel="external">GitHub</a>，注册自定义用户名如<code>wsgzao</code></li>
-<li>在主页右下角创建<code>New repository</code>，name必须和用户名一致如<code>wsgzao.github.io</code></li>
-<li>首次创建耐心等待10分钟左右审核，之后即可访问静态主页如<a href="http://wsgzao.github.io" target="_blank" rel="external">http://wsgzao.github.io</a></li>
-</ol>
-<h3 id="同步内容至GitHub">同步内容至GitHub</h3><ol>
-<li>下载<a href="https://windows.github.com/" target="_blank" rel="external">GitHub Windows</a></li>
-<li>设置<code>Local path</code>如<code>E:\快盘\GitHub\</code></li>
-<li>运行<code>Git Shell</code>切换到如<code>E:\快盘\GitHub\hexo</code>路径下</li>
-<li>执行<code>hexo g</code>命令生成<code>public</code>文件夹</li>
-<li>把生成的内容全部拷贝到<code>Local path</code>或其子目录</li>
-<li>运行<code>GitHub</code>确认修改信息后执行右上角的<code>Sync</code>同步</li>
-<li>最后访问主页观察效果</li>
-</ol>
-<p><a href="https://pages.github.com/" target="_blank" rel="external">https://pages.github.com/</a></p>
-<hr>
-<h2 id="域名和DNS">域名和DNS</h2><h3 id="域名推荐">域名推荐</h3><blockquote>
-<p>GoDaddy makes registering Domain Names fast, simple, and affordable.<br>【推荐理由】两个字“靠谱”，支持支付宝，附优惠码链接</p>
-</blockquote>
-<p><a href="http://www.godaddy.com/" target="_blank" rel="external">http://www.godaddy.com/</a><br><a href="http://www.gdcodecoupon.com/" target="_blank" rel="external">http://www.gdcodecoupon.com/</a></p>
-<h3 id="DNS推荐">DNS推荐</h3><blockquote>
-<p>致力于为您提供最稳定、最安全的域名解析服务<br>【推荐理由】依然是两个字“靠谱”，感谢他们一直以来对于公益的坚持</p>
-</blockquote>
-<p><a href="https://www.dnspod.cn/" target="_blank" rel="external">https://www.dnspod.cn/</a></p>
-<h3 id="设置CNAME">设置CNAME</h3><ol>
-<li>在Github的网站目录下创建<code>CNAME</code>文件</li>
-<li>填写自己的域名如<code>hellodog.com</code>，保存结束</li>
-<li>登录DNSPod，先添加域名，然后添加记录，设置如下</li>
-</ol>
-<table>
-<thead>
-<tr>
-<th>主机记录</th>
-<th>记录类型</th>
-<th>线路类型</th>
-<th>记录值</th>
-<th>MX优先级</th>
-<th>TTL</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>@</td>
-<td>CNAME</td>
-<td>默认</td>
-<td>wsgzao.github.io.</td>
-<td>-</td>
-<td>10</td>
-</tr>
-<tr>
-<td>www</td>
-<td>CNAME</td>
-<td>默认</td>
-<td>wsgzao.github.io.</td>
-<td>-</td>
-<td>10</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="Hexo配置修改">Hexo配置修改</h2><blockquote>
-<p>告诉自己为什么要选择Hexo</p>
-</blockquote>
-<h3 id="知识储备">知识储备</h3><p>1.勤学勤练Markdown</p>
-<blockquote>
-<p>本地+云端备份数据是一种习惯</p>
-</blockquote>
-<ul>
-<li>Markdown学习路径 - <a href="http://wsgzao.github.io/post/markdown/" target="_blank" rel="external">http://wsgzao.github.io/post/markdown/</a></li>
-</ul>
-<p>2.使用性感的文本编辑器</p>
-<blockquote>
-<p>工欲善其事必先利其器</p>
-</blockquote>
-<ul>
-<li>Notepad2</li>
-<li>Sublime Text</li>
-</ul>
-<p><a href="http://wsgzao.github.io/post/windows/#文本编辑器" target="_blank" rel="external">http://wsgzao.github.io/post/windows/#文本编辑器</a></p>
-<h3 id="Pacman主题">Pacman主题</h3><blockquote>
-<p>选择主题建议遵循<code>KISS</code>原则</p>
-</blockquote>
-<ul>
-<li>Hexo Themes - <a href="http://hexo.io/themes/" target="_blank" rel="external">http://hexo.io/themes/</a></li>
-<li>Pacman - <a href="http://wsgzao.github.io/post/hexo-pacman/" target="_blank" rel="external">http://wsgzao.github.io/post/hexo-pacman/</a></li>
-</ul>
-<h3 id="常见问题">常见问题</h3><blockquote>
-<p>修改配置文件时注意<code>YAML</code>语法，参数<code>冒号:</code>后一定要留<code>空格</code><br>中文乱码请修改文件编码格式为<code>UTF-8</code></p>
-</blockquote>
-<h2 id="推荐阅读">推荐阅读</h2><ul>
-<li><a href="http://cnfeat.com/2014/05/10/2014-05-11-how-to-build-a-blog/" target="_blank" rel="external">如何搭建一个独立博客——简明Github Pages与Hexo教程</a></li>
-<li><a href="http://zipperary.com/categories/hexo/" target="_blank" rel="external">Zippera hexo系列教程</a></li>
-<li><a href="http://user.qzone.qq.com/644273006/blog/1418698244" target="_blank" rel="external">前端工程精粹 | 张云龙</a></li>
-</ul>
-]]></content>
-    <summary type="html">
-    <![CDATA[持续更新Hexo的摸索过程，记录生活的点滴]]>
-    
-    </summary>
-    
-      <category term="Hexo" scheme="http://wsgzao.github.io/categories/Hexo/"/>
-    
-  </entry>
-  
-  <entry>
     <title><![CDATA[Pacman为Hexo量身定制的响应式主题]]></title>
     <link href="http://wsgzao.github.io/post/hexo-pacman/"/>
     <id>http://wsgzao.github.io/post/hexo-pacman/</id>
     <published>2014-12-19T09:11:20.000Z</published>
-    <updated>2015-03-10T08:37:59.000Z</updated>
+    <updated>2015-03-22T09:19:37.000Z</updated>
     <content type="html"><![CDATA[<h2 id="前言">前言</h2><p>Hexo就不用多做介绍了，经过简单的基础配置即可使用，当然默认主题也未必适合所有人，我自己采用的Theme是<code>Pacman</code>，同时也推荐一下<code>Jacman</code>，在扩展阅读中已经附上链接，下面将具体分享自己的修改经验，让大家少走一些弯路。</p>
 <blockquote>
 <p>Pacman是一款为Hexo打造的一款扁平化，有着响应式设计的主题。</p>
@@ -1381,9 +1454,7 @@ npath=/tmp/nmon/<span class="built_in">log</span>
 <p>阅读原文 - <a href="http://wsgzao.github.io/post/hexo-pacman/" target="_blank" rel="external">http://wsgzao.github.io/post/hexo-pacman/</a></p>
 <p>扩展阅读</p>
 <ul>
-<li>Hexo Themes - <a href="https://github.com/hexojs/hexo/wiki/Themes" target="_blank" rel="external">https://github.com/hexojs/hexo/wiki/Themes</a></li>
 <li>Pacman - <a href="https://github.com/A-limon/pacman" target="_blank" rel="external">https://github.com/A-limon/pacman</a></li>
-<li>Jacman - <a href="https://github.com/wuchong/jacman" target="_blank" rel="external">https://github.com/wuchong/jacman</a></li>
 <li>HelloDog Index - <a href="http://wsgzao.github.io/index/#Hexo" target="_blank" rel="external">http://wsgzao.github.io/index/#Hexo</a></li>
 </ul>
 <hr>
@@ -1825,98 +1896,6 @@ npath=/tmp/nmon/<span class="built_in">log</span>
     </summary>
     
       <category term="生活 | Life" scheme="http://wsgzao.github.io/categories/%E7%94%9F%E6%B4%BB-Life/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[存储性能瓶颈的成因、定位与排查]]></title>
-    <link href="http://wsgzao.github.io/post/storage-performence/"/>
-    <id>http://wsgzao.github.io/post/storage-performence/</id>
-    <published>2014-06-22T13:03:23.000Z</published>
-    <updated>2014-12-19T13:10:01.000Z</updated>
-    <content type="html"><![CDATA[<h2 id="介绍">介绍</h2><p>企业数据存储性能瓶颈常常会发生在端口，控制器和磁盘，难点在于找出引起拥塞的单元，往往需要应用多重工具以及丰富的经验来查找并解决。</p>
-<p>本文详细阐述存储瓶颈发生最常见的四种情况，可能发生的拥塞点，需要监控的参数指标，以及部署存储系统的最佳实践。</p>
-<hr>
-<h2 id="更新历史">更新历史</h2><p>2014年6月22日 - 转载修改初稿</p>
-<p>阅读原文 - <a href="http://wsgzao.github.io/post/storage-performence/" target="_blank" rel="external">http://wsgzao.github.io/post/storage-performence/</a></p>
-<hr>
-<h2 id="数据存储瓶颈的四个常见场景：">数据存储瓶颈的四个常见场景：</h2><p>以下是储瓶颈发生最常见的四种典型情况：</p>
-<ol>
-<li><p>当多个用户同时访问某一业务应用，无论是邮件服务器，企业资源规划（ERP）系统或数据库，数据请求会累积在队列中。单个I/O的响应时间开始增长，短暂延时开始转变成为漫长的等待。<br>这类响应时间敏感型应用的特征是，很多随机请求，读取比写入更多，I/O较小。最好的方法是：将负载分布在多块磁盘上，否则可能造成性能瓶颈。<br>如果应用增加了更多用户，或应用IOPS请求增加，则可能需要在RAID组中添加更多磁盘，或数据可能需要跨越更多磁盘，在更多层级做条带化。<br>存储在这样的情况下往往首先被怀疑，但大多数情况下并非存储引发，原因可能在于网络、应用或服务器。</p>
-</li>
-<li><p>带宽敏感型应用——如数据备份，视频流或安全登录，这类应用当多个用户同时访问大型文件或数据流时可能造成瓶颈。<br>定位这一问题存储管理员应当从备份服务器开始一路向下检查至磁盘，原因可能存在于这一通路的任何地方。<br>问题不一定发生在存储，可能是由于备份应用创建的方式或是磁带系统的工作方式引起的。如果瓶颈定位于存储，那么可能是由于服务I/O的磁盘数量不足，在控制器造成争用，或是阵列前端口带宽不足。<br>性能调优需要针对不同应用程序负载来完成。针对大型文件和流数据的调优并不适合于小型文件，反之亦然。这也就是为什么在大多数存储系统中往往做一个平衡，需要用户尝试并找出系统的折中。用户通常需要优化吞吐量或IOPS，但并不需要对两者同时优化。</p>
-</li>
-<li><p>RAID组中的磁盘故障。特别是在RAID 5中会造成性能的下降，因为系统需要重建校验数据。相比数据读写操作，重建会对性能造成更大影响。<br>即便坏盘是造成故障的根源，但控制器还是可能成为瓶颈，因为在重建过程中它需要不停地服务数据。当重建完成时，性能才会恢复正常。</p>
-</li>
-<li><p>部署了一种新的应用，而卷存在于处理繁忙邮件系统的同一磁盘。如果新的应用变得繁忙，邮件系统性能将会遭受影响。额外的流量最终会将磁盘完全覆盖。</p>
-</li>
-</ol>
-<h2 id="存储瓶颈常发区域:">存储瓶颈常发区域:</h2><h3 id="存储区域网络（Storage-area_network,_SAN）/阵列前端口">存储区域网络（Storage-area network, SAN）/阵列前端口</h3><p>存储部署于集中化SAN环境时，需考虑服务器和SAN之间的潜在网络瓶颈。例如，运行多部虚拟机的整合服务器可能不具备支持工作负载要求的足够网络端口。添加网络端口或转移网络密集型工作负载至其他服务器可解决这一问题。如前所述，对于带宽集中型应用，需考虑NFS有多少<a href="http://searchstorage.techtarget.com/definition/Fibre-Channel" target="_blank" rel="external">Fiber Channel</a> 端口, or <a href="http://searchstorage.techtarget.com/definition/iSCSI" target="_blank" rel="external">iSCSI</a> 端口 or <a href="http://searchnetworking.techtarget.com/definition/Ethernet" target="_blank" rel="external">Ethernet</a> 端口，需要用户站在带宽的角度来考量整个架构。</p>
-<p>可能发生的问题包括：</p>
-<ul>
-<li>如果阵列中端口数量不够，就会发生过饱和/过度使用。</li>
-<li>虚拟服务器环境下的过量预定</li>
-<li>端口间负载不均衡</li>
-<li>交换机间链路争用/流量负荷过重</li>
-<li>如某一HBA端口负载过重将导致HBA拥塞。使用虚拟机会导致问题更加严重。</li>
-</ul>
-<h3 id="存储控制器">存储控制器</h3><p>一个标准的主动——被动或主动——主动控制器都有一个性能极限。接近这条上限取决于用户有多少块磁盘，因为每块磁盘的IOPS和吞吐量是固定的。</p>
-<p>可能出现的问题包括：</p>
-<ul>
-<li>控制器I/O过饱和，使得从缓存到阵列能够处理的IOPS受到限制</li>
-<li>吞吐量“淹没“处理器</li>
-<li>CPU过载/处理器功率不足</li>
-<li>性能无法跟上SSD</li>
-</ul>
-<h3 id="Cache">Cache</h3><p>由于服务器内存和CPU远比机械磁盘快得多，需为磁盘添加高速内存以缓存读写数据。例如，写入磁盘的数据存储在缓存中直到磁盘能够跟上，同时磁盘中的读数据放入缓存中直到能被主机读取。Cache比磁盘快1000倍，因此将数据写入和读出Cache对性能影响巨大。智能缓存算法能够预测你需要查找的数据，你是否会对此数据频繁访问，甚至是将访问频繁的随机数据放在缓存中。</p>
-<p>可能发生的问题包括：</p>
-<ul>
-<li>Cache memory不足</li>
-<li>Cache写入过载，引起性能降低</li>
-<li>频繁访问顺序性数据引起cache超负荷</li>
-<li>Cache中需要持续不断地写入新数据，因此如果cache总是在refill，将无法从cache获益。</li>
-</ul>
-<h3 id="磁盘">磁盘</h3><p>磁盘瓶颈与磁盘转速有关, 慢速磁盘会引入较多延时。存储性能问题的排查首先考虑的因素就是磁盘速度，同时有多少块磁盘可进行并发读写。而另一因素是磁盘接口。采用更快的接口能够缓解磁盘瓶颈，但更重要的是在快速接口与相应更大的缓存大小以及转速之间取得平衡。同样，应避免将快速和慢速磁盘混入同一接口，因为慢速磁盘将会造成快速接口与快速磁盘的性能浪费。</p>
-<p>可能引发的问题包括：</p>
-<ul>
-<li>过多应用命中磁盘</li>
-<li>磁盘数量不足以满足应用所需的IOPS或吞吐量</li>
-<li>磁盘速度过慢无法满足性能需求及支持繁重工作负荷</li>
-<li>Disk group往往是classic存储架构的潜在性能瓶颈，这种结构下RAID最多配置在16块磁盘。Thin结构通常每个LUN拥有更多磁盘，从而数据分布于更多spindle，因增加的并发性而减少了成为瓶颈的可能。</li>
-</ul>
-<h2 id="需要监控的指标：">需要监控的指标：</h2><p>曾经一度存储厂商们强调的是IOPS和吞吐量，但现在重点逐渐转变成为响应时间。也就是说，不是数据移动的速度有多快，而在于对请求的响应速度有多快。</p>
-<p>正常情况下，15,000 rpm Fibre Channel磁盘响应时间为4ms，SAS磁盘响应时间约为5ms至6ms，SATA为10ms，而SSD少于1ms。如果发现Fibre Channel磁盘响应时间为12ms，或SSD响应时间变成5ms，那么就说明可能产生了争用，可能芯片发生了故障。</p>
-<p>除了响应时间，其他需要监控的指标包括：</p>
-<ul>
-<li>队列长度，队列中一次积累的请求数量，平均磁盘队列长度；</li>
-<li>平均I/O大小千字节数；</li>
-<li>IOPS （读和写，随机和顺序，整体平均IOPS）；</li>
-<li>每秒百万字节吞吐量；</li>
-<li>读写所占比例；</li>
-<li>容量（空闲，使用和保留）。</li>
-</ul>
-<h2 id="数据存储性能最佳实践：">数据存储性能最佳实践：</h2><p>性能调优和改进的方式有很多种，用户当然可以通过添加磁盘，端口，多核处理器，内存来改善，但问题是：性价比，以及对业务是否实用。本文建议的方式是在预算范围内找寻性能最大化的解决方案。另外一个需要考虑的方面是环境并非一尘不变，系统部署方案要能够适应环境的改变需求。</p>
-<p>首先需要考虑刷数据的性能特征，需要了解IO工作情况是怎样的。是否是cache友好型？是否是CPU集中型？业务数据很大数量很少，还是很小但数量很多？另外一方面就是构成存储环境的组件。包括应用，存储系统本身，网络。。。瓶颈可能在哪里，改善哪里最有效？</p>
-<p>以下是一些常规建议：</p>
-<ol>
-<li>不要仅仅根据空闲空间来分配存储，而需要结合考虑性能需求，确保为吞吐量或IOPS分配足够多的磁盘。</li>
-<li>在磁盘间均衡分布应用负载，以减少热点地区的产生。</li>
-<li>理解应用负载类型，并针对负载选择匹配的RAID类型。例如，写密集型应用建议使用RAID 1而不是RAID 5。因为当写入RAID 5时，需要计算校验位，需耗费较多时间。而RAID 1，写入两块磁盘速度快得多，无需计算。</li>
-<li>磁盘类型（Fibre Channel, SAS, SATA）与期望性能相匹配。对于关键业务应用部署高性能磁盘，例如15,000 rpm Fibre Channel。</li>
-<li>对于I/O密集型应用考虑采用SSD，但并不适用于写性能重要型应用。只要没有达到控制器瓶颈，SSD对读性能提升显著，但对写性能提升并没有明显效果。</li>
-<li>采用端对端的监控工具，特别是虚拟服务器环境。虚拟端与物理端之间有一道防火墙，所以，需要穿透防火墙进行端到端的监控。</li>
-<li>有些性能分析工具涵盖从应用到磁盘，有些仅局限于存储系统本身。由于性能是一个连锁反应包含很多变量，所以需要全面地分析数据。</li>
-<li>以数据仅写入磁盘外部扇区的方式格式化磁盘。因减少数据定位时间而在高I/O环境下提升性能。负面作用是相当一部分磁盘容量未能得以使用。</li>
-</ol>
-<h2 id="应用于">应用于</h2><hr>
-<p>存储性能分析、定位与排查<br><a href="https://community.emc.com/docs/DOC-34921" target="_blank" rel="external">阅读原文</a></p>
-]]></content>
-    <summary type="html">
-    <![CDATA[存储性能分析、定位与排查]]>
-    
-    </summary>
-    
-      <category term="学习 | Study" scheme="http://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
     
   </entry>
   
