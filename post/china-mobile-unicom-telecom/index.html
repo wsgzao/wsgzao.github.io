@@ -68,10 +68,11 @@
 					
 					<li>
  					
-						<form class="search">
-							<label>Search</label>
-						<input type="text" id="ts-search-input" name="q" size="30" placeholder="搜索"><br>
-						</form>
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:wsgzao.github.io">
+					</form>
 					
 					</li>
 				</ul>
@@ -172,8 +173,7 @@
 <h3 id="移动4G流量和MIFI活动">移动4G流量和MIFI活动</h3><blockquote>
 <p>因为上述套餐的关系你懂的，骚年们请根据实际情况自由搭配吧</p>
 </blockquote>
-<p><a href="http://www.10086.cn/4G/shangwangliuliang/" target="_blank" rel="external">http://www.10086.cn/4G/shangwangliuliang/</a></p>
-<p><a href="http://www.sh.10086.cn/shop/mall/page/activity/2014032815590885/index.html" target="_blank" rel="external">http://www.sh.10086.cn/shop/mall/page/activity/2014032815590885/index.html</a></p>
+<p><a href="http://10086.cn/" target="_blank" rel="external">http://10086.cn/</a></p>
 <h3 id="苏宁互联至惠年卡">苏宁互联至惠年卡</h3><blockquote>
 <p>我有备机需求，顺势办理，大家可以视自身情况而定</p>
 </blockquote>
@@ -395,8 +395,6 @@ $(document).ready(function(){
   var ai = $('.article-content>iframe'),
       ae = $('.article-content>embed'),
       t  = $('#toc'),
-      h  = $('article h2')
-      ah = $('article h2'),
       ta = $('#toc.toc-aside'),
       o  = $('.openaside'),
       c  = $('.closeaside');
@@ -406,19 +404,18 @@ $(document).ready(function(){
   if(ae.length>0){
    ae.wrap('<div class="video-container" />');
   };
-  if(ah.length==0){
-    t.css('display','none');
-  }else{
-    c.click(function(){
-      ta.css('display', 'block').addClass('fadeIn');
-    });
-    o.click(function(){
-      ta.css('display', 'none');
-    });
-    $(window).scroll(function(){
-      ta.css("top",Math.max(140,320-$(this).scrollTop()));
-    });
-  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+  
+    c.click();
+    
 });
 </script>
 
@@ -523,26 +520,10 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 
 <!-- MathJax End -->
 
-<!-- Tinysou Begin -->
+<!-- Tiny_search Begin -->
 
-<script>
-var option = {
-  engineKey: '4ac092ad8d749fdc6293'
-};
-(function(w,d,t,u,n,s,e){
-  s = d.createElement(t);
-  s.src = u;
-  s.async = 1;
-  w[n] = function(r){
-    w[n].opts = r;
-  };
-  e = d.getElementsByTagName(t)[0];
-  e.parentNode.insertBefore(s, e);
-})(window,document,'script','//tinysou-cdn.b0.upaiyun.com/ts.js','_ts');
-_ts(option);
-</script>
+<!-- Tiny_search End -->
 
-<!-- Tinysou End -->
 
   </body>
 </html>
