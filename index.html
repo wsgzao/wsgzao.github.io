@@ -36,7 +36,8 @@
 
   <body>
     <header>
-      <div>
+      
+<div>
 		
 			<div id="imglogo">
 				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
@@ -78,6 +79,26 @@
   
 <section class="post" itemscope itemprop="blogitem">
   
+    <a href="/post/windows/" title="Windows常用软件推荐" itemprop="url">
+  
+    <h1 itemprop="name">Windows常用软件推荐</h1>
+    
+     
+      <p itemprop="description" >包含Windows下的各种特殊特荐</p>
+      
+    
+    <time datetime="2015-04-15T16:05:27.000Z" itemprop="datePublished">2015-04-16</time>
+  </a>
+</section>
+
+
+
+
+
+
+  
+<section class="post" itemscope itemprop="blogitem">
+  
     <a href="/post/wisdom-tooth/" title="我是如何做到花8000元拔智齿的" itemprop="url">
   
     <h1 itemprop="name">我是如何做到花8000元拔智齿的</h1>
@@ -107,26 +128,6 @@
       
     
     <time datetime="2015-04-02T08:28:27.000Z" itemprop="datePublished">2015-04-02</time>
-  </a>
-</section>
-
-
-
-
-
-
-  
-<section class="post" itemscope itemprop="blogitem">
-  
-    <a href="/post/windows/" title="Windows常用软件推荐" itemprop="url">
-  
-    <h1 itemprop="name">Windows常用软件推荐</h1>
-    
-     
-      <p itemprop="description" >包含Windows下的各种特殊特荐</p>
-      
-    
-    <time datetime="2015-03-30T16:05:27.000Z" itemprop="datePublished">2015-03-31</time>
   </a>
 </section>
 
@@ -278,7 +279,7 @@
 		<p class="copyright">
 		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
 		
-		<a href="http://wsgzao.github.io/about" target="_blank" title="wsgzao">wsgzao</a>
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
 		
 		
 		</p>
@@ -353,6 +354,27 @@ $(document).ready(function(){
 
 
 
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
 
 
 
