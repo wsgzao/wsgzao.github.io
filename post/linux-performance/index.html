@@ -37,7 +37,8 @@
 
   <body>
     <header>
-      <div>
+      
+<div>
 		
 			<div id="imglogo">
 				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
@@ -84,7 +85,7 @@
   </h1>
   <p class="article-author">By
        
-		<a href="http://wsgzao.github.io/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
 		
   <p class="article-time">
     <time datetime="2015-03-06T07:40:47.000Z" itemprop="datePublished"> 发表于 2015-03-06</time>
@@ -226,9 +227,9 @@ npath=/tmp/nmon/<span class="built_in">log</span>
 
 
 <div class="next">
-<a href="/post/windows/"  title="Windows常用软件推荐">
+<a href="/post/mac/"  title="Mac OS X/iOS Apps 推荐">
  <strong>下一篇：</strong><br/> 
- <span>Windows常用软件推荐
+ <span>Mac OS X/iOS Apps 推荐
 </span>
 </a>
 </div>
@@ -265,7 +266,7 @@ npath=/tmp/nmon/<span class="built_in">log</span>
 		  
 		
 		  
-			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>5</sup></a></li>
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>6</sup></a></li>
 		  
 		
 		  
@@ -340,9 +341,14 @@ npath=/tmp/nmon/<span class="built_in">log</span>
 		
 		
 	</div>
-		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+			
 		
-		<a href="http://wsgzao.github.io/about" target="_blank" title="wsgzao">wsgzao</a>
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
 		
 		</p>
 </div>
@@ -368,20 +374,6 @@ $(document).ready(function(){
       a = $('#asidepart'),
       c = $('.closeaside'),
       o = $('.openaside');
-  $(window).resize(function(){
-    getSize(); 
-    if (myWidth >= 1024) {
-      $('header nav').removeClass('shownav');
-    }else
-    {
-      m.removeClass('moveMain');
-      a.css('display', 'block').removeClass('fadeOut');
-      o.css('display', 'none');
-      
-      $('#toc.toc-aside').css('display', 'none');
-        
-    }
-  });
   c.click(function(){
     a.addClass('fadeOut').css('display', 'none');
     o.css('display', 'block').addClass('fadeIn');
@@ -395,6 +387,25 @@ $(document).ready(function(){
   $(window).scroll(function(){
     o.css("top",Math.max(80,260-$(this).scrollTop()));
   });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
 });
 </script>
 
@@ -403,8 +414,6 @@ $(document).ready(function(){
   var ai = $('.article-content>iframe'),
       ae = $('.article-content>embed'),
       t  = $('#toc'),
-      h  = $('article h2')
-      ah = $('article h2'),
       ta = $('#toc.toc-aside'),
       o  = $('.openaside'),
       c  = $('.closeaside');
@@ -414,19 +423,15 @@ $(document).ready(function(){
   if(ae.length>0){
    ae.wrap('<div class="video-container" />');
   };
-  if(ah.length==0){
-    t.css('display','none');
-  }else{
-    c.click(function(){
-      ta.css('display', 'block').addClass('fadeIn');
-    });
-    o.click(function(){
-      ta.css('display', 'none');
-    });
-    $(window).scroll(function(){
-      ta.css("top",Math.max(140,320-$(this).scrollTop()));
-    });
-  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
 });
 </script>
 
@@ -467,15 +472,12 @@ $(document).ready(function(){
   (function() {
     var ds = document.createElement('script');
     ds.type = 'text/javascript';ds.async = true;
-    ds.src = '//static.duoshuo.com/embed.js';
+    ds.src = '//wsgzao.github.io/embed.js';
     ds.charset = 'UTF-8';
     (document.getElementsByTagName('head')[0] 
     || document.getElementsByTagName('body')[0]).appendChild(ds);
   })();
 </script> 
-
-
-
 
 
 
@@ -531,7 +533,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 
 <!-- MathJax End -->
 
-<!-- Tinysou Begin -->
+<!-- Tiny_search Begin -->
 
 <script>
 var option = {
@@ -550,7 +552,8 @@ var option = {
 _ts(option);
 </script>
 
-<!-- Tinysou End -->
+<!-- Tiny_search End -->
+
 
   </body>
 </html>
