@@ -18,7 +18,7 @@ function ua(e) {
 			outputer = '<span class="ua_firefox">Mozilla FireFox' + ' ' + r1[1]
 		} else if (r = e.match(/Maxthon([\d]*)\/([^\s]+)/ig)) {
 			var r1 = r[0].split("/");
-			outputer = '<span class="ua_maxthon">Maxthon'
+			outputer = '<span class="ua_maxthon">Maxthon' + ' ' + r1[1]
 		} else if (r = e.match(/UBrowser([\d]*)\/([^\s]+)/ig)) {
 			var r1 = r[0].split("/");
 			outputer = '<span class="ua_ucweb">UCBrowser' + ' ' + r1[1]
