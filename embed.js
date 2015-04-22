@@ -12,15 +12,23 @@ function ua(e) {
 		var r = new Array;
 		var outputer = '';
 		if (r = e.match(/MSIE\s([^\s|;]+)/gi)) {
+<<<<<<< HEAD
 			outputer = '<span class="ua_ie">Internet Explorer' + ' ' + r[0]/*.replace('MSIE', '').split('.')[0]*/
 		} else if (r = e.match(/FireFox\/([^\s]+)/ig)) {
 			var r1 = r[0].split("/");
 			outputer = '<span class="ua_firefox">Mozilla FireFox' + ' ' + r1[1]
+=======
+			outputer = '<span class="ua_ie">Internet Explorer' + '|' + r[0]/*.replace('MSIE', '').split('.')[0]*/
+		} else if (r = e.match(/FireFox\/([^\s]+)/ig)) {
+			var r1 = r[0].split("/");
+			outputer = '<span class="ua_firefox">Mozilla FireFox' + '|' + r1[1]
+>>>>>>> origin/master
 		} else if (r = e.match(/Maxthon([\d]*)\/([^\s]+)/ig)) {
 			var r1 = r[0].split("/");
 			outputer = '<span class="ua_maxthon">Maxthon'
 		} else if (r = e.match(/UBrowser([\d]*)\/([^\s]+)/ig)) {
 			var r1 = r[0].split("/");
+<<<<<<< HEAD
 			outputer = '<span class="ua_ucweb">UCBrowser' + ' ' + r1[1]
 		} else if (r = e.match(/MetaSr/ig)) {
 			outputer = '<span class="ua_sogou">搜狗浏览器'
@@ -28,10 +36,20 @@ function ua(e) {
 			outputer = '<span class="ua_2345explorer">2345王牌浏览器'
 		} else if (r = e.match(/2345chrome/ig)) {
 			outputer = '<span class="ua_2345chrome">2345加速浏览器'
+=======
+			outputer = '<span class="ua_ucweb">UCBrowser' + '|' + r1[1]
+		} else if (r = e.match(/MetaSr/ig)) {
+			outputer = '<span class="ua_sogou">搜狗浏览器'
+		} else if (r = e.match(/2345Explorer/ig)) {
+			outputer = '<span class="ua_2345explorer"><a href="http://www.91txh.com/2345download.php?id=2" target="_blank" style="color:#FFFFFF!important;">2345王牌浏览器</a>'
+		} else if (r = e.match(/2345chrome/ig)) {
+			outputer = '<span class="ua_2345chrome"><a href="http://www.91txh.com/2345download.php?id=3" target="_blank" style="color:#FFFFFF!important;">2345加速浏览器</a>'
+>>>>>>> origin/master
 		} else if (r = e.match(/LBBROWSER/ig)) {
 			outputer = '<span class="ua_lbbrowser">猎豹安全浏览器'
 		} else if (r = e.match(/MicroMessenger\/([^\s]+)/ig)) {
 			var r1 = r[0].split("/");
+<<<<<<< HEAD
 			outputer = '<span class="ua_qq">微信' + ' ' + r1[1]/*.split('/')[0]*/
 		} else if (r = e.match(/QQBrowser\/([^\s]+)/ig)) {
 			var r1 = r[0].split("/");
@@ -51,6 +69,27 @@ function ua(e) {
 		} else if (r = e.match(/Opera[\s|\/]([^\s]+)/ig)) {
 			var r1 = r[0].split("/");
 			outputer = '<span class="ua_opera">Opera' + ' ' + r[1]
+=======
+			outputer = '<span class="ua_qq">微信' + '|' + r1[1]/*.split('/')[0]*/
+		} else if (r = e.match(/QQBrowser\/([^\s]+)/ig)) {
+			var r1 = r[0].split("/");
+			outputer = '<span class="ua_qq">QQ浏览器' + '|' + r1[1]/*.split('/')[0]*/
+		} else if (r = e.match(/QQ\/([^\s]+)/ig)) {
+			var r1 = r[0].split("/");
+			outputer = '<span class="ua_qq">QQ浏览器' + '|' + r1[1]/*.split('/')[0]*/
+		} else if (r = e.match(/MiuiBrowser\/([^\s]+)/ig)) {
+			var r1 = r[0].split("/");
+			outputer = '<span class="ua_mi">Miui浏览器' + '|' + r1[1]/*.split('/')[0]*/
+		} else if (r = e.match(/Chrome([\d]*)\/([^\s]+)/ig)) {
+			var r1 = r[0].split("/");
+			outputer = '<span class="ua_chrome">Chrome' + '|' + r1[1]/*.split('.')[0]*/
+		} else if (r = e.match(/safari\/([^\s]+)/ig)) {
+			var r1 = r[0].split("/");
+			outputer = '<span class="ua_apple">Apple Safari' + '|' + r1[1]
+		} else if (r = e.match(/Opera[\s|\/]([^\s]+)/ig)) {
+			var r1 = r[0].split("/");
+			outputer = '<span class="ua_opera">Opera' + '|' + r[1]
+>>>>>>> origin/master
 		} else if (r = e.match(/Trident\/7.0/gi)) {
 			outputer = '<span class="ua_ie">Internet Explorer 11'
 		} else {
