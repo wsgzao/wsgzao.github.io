@@ -38,7 +38,11 @@ function ua(e) {
         outputer = '<span class="ua_firefox"><i class="fa fa-globe"></i> Mozilla FireFox' + ' ' + r1[1]
     } else if (r = e.match(/Maxthon([\d]*)\/([^\s]+)/ig)) {
         var r1 = r[0].split("/");
+<<<<<<< HEAD
         outputer = '<span class="ua_maxthon"><i class="fa fa-globe"></i> Maxthon' + ' ' + r1[1]
+=======
+        outputer = '<span class="ua_maxthon"><i class="fa fa-globe"></i> Maxthon'
+>>>>>>> origin/master
     } else if (r = e.match(/BIDUBrowser([\d]*)\/([^\s]+)/ig)) {
         var r1 = r[0].split("/");
         outputer = '<span class="ua_ucweb"><i class="fa fa-globe"></i> 百度浏览器' + ' ' + r1[1]
