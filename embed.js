@@ -117,8 +117,8 @@ function os(e) {
         } else {
             os = '<span class="os_windows"><i class="fa fa-desktop"></i> Windows'
         }
-    } else if (e.match(/(android) ?([^; )]*)/ig)) {
-        os = '<span class="os_android"><i class="fa fa-android"></i> r[0]
+    } else if (e.match(/android/ig)) {
+        os = '<span class="os_android"><i class="fa fa-android"></i> Android'
     } else if (e.match(/ubuntu/ig)) {
         os = '<span class="os_ubuntu"><i class="fa fa-desktop"></i> Ubuntu'
     } else if (e.match(/linux/ig)) {
