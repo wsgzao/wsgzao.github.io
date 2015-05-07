@@ -1,140 +1,12 @@
-//HelloDog -  http://wsgzao.github.io/post/duoshuo/
-//移动客户端判断开始
-function checkMobile() {
-    var isiPad = navigator.userAgent.match(/iPad/i) != null;
-    if (isiPad) {
-        return false;
+//UA Start
+ function show_ua(string){
+        console.log(string)
+        $.ua.set(string);
+        var sua=$.ua;
+        if(sua.os.version=='x86_64')sua.os.version='x64';
+        return '<span class="this_ua platform '+sua.os.name+'">'+sua.os.name+' '+sua.os.version+'</span><span class="this_ua browser '+sua.browser.name+'">'+sua.browser.name+' '+sua.browser.version+'</span>';
     }
-    var isMobile = navigator.userAgent.match(/iphone|android|phone|mobile|wap|netfront|x11|java|opera mobi|opera mini|ucweb|windows ce|symbian|symbianos|series|webos|sony|blackberry|dopod|nokia|samsung|palmsource|xda|pieplus|meizu|midp|cldc|motorola|foma|docomo|up.browser|up.link|blazer|helio|hosin|huawei|novarra|coolpad|webos|techfaith|palmsource|alcatel|amoi|ktouch|nexian|ericsson|philips|sagem|wellcom|bunjalloo|maui|smartphone|iemobile|spice|bird|zte-|longcos|pantech|gionee|portalmmm|jig browser|hiptop|benq|haier|^lct|320x320|240x320|176x220/i) != null;
-    if (isMobile) {
-        return true;
-    }
-    return false;
-}
-//移动客户端判断结束
-//管理员判断开始
-function sskadmin(e) {
-    var ssk = '';
-    if (e.user_id == 867394) {
-        if (checkMobile()) {
-            ssk = '<span class="ua"><span class="sskadmin">R00T</span></span><br><br>';
-        } else {
-            ssk = '<span class="ua"><span class="sskadmin">R00T</span></span>';
-        }
-    } else {
-        if (checkMobile()) {
-            ssk = '<br><br>';
-        }
-    }
-    return ssk;
-}
-//管理员判断结束
-//显UA开始
-function ua(e) {
-    var r = new Array;
-    var outputer = '';
-    if (r = e.match(/FireFox\/([^\s]+)/ig)) {
-        var r1 = r[0].split("/");
-        outputer = '<span class="ua_firefox"><i class="fa fa-globe"></i> Mozilla FireFox' + ' ' + r1[1]
-    } else if (r = e.match(/Maxthon([\d]*)\/([^\s]+)/ig)) {
-        var r1 = r[0].split("/");
-        outputer = '<span class="ua_maxthon"><i class="fa fa-globe"></i> Maxthon' + ' ' + r1[1]
-    } else if (r = e.match(/BIDUBrowser([\d]*)\/([^\s]+)/ig)) {
-        var r1 = r[0].split("/");
-        outputer = '<span class="ua_ucweb"><i class="fa fa-globe"></i> 百度浏览器' + ' ' + r1[1]
-    } else if (r = e.match(/UBrowser([\d]*)\/([^\s]+)/ig)) {
-        var r1 = r[0].split("/");
-        outputer = '<span class="ua_ucweb"><i class="fa fa-globe"></i> UCBrowser' + ' ' + r1[1]
-    } else if (r = e.match(/UCBrowser([\d]*)\/([^\s]+)/ig)) {
-        var r1 = r[0].split("/");
-        outputer = '<span class="ua_ucweb"><i class="fa fa-globe"></i> UCBrowser' + ' ' + r1[1]
-    } else if (r = e.match(/MetaSr/ig)) {
-        outputer = '<span class="ua_sogou"><i class="fa fa-globe"></i> 搜狗浏览器'
-    } else if (r = e.match(/2345Explorer/ig)) {
-        outputer = '<span class="ua_2345explorer"><i class="fa fa-globe"></i> 2345王牌浏览器'
-    } else if (r = e.match(/2345chrome/ig)) {
-        outputer = '<span class="ua_2345chrome"><i class="fa fa-globe"></i> 2345加速浏览器'
-    } else if (r = e.match(/LBBROWSER/ig)) {
-        outputer = '<span class="ua_lbbrowser"><i class="fa fa-globe"></i> 猎豹安全浏览器'
-    } else if (r = e.match(/MicroMessenger\/([^\s]+)/ig)) {
-        var r1 = r[0].split("/");
-        outputer = '<span class="ua_qq"><i class="fa fa-weixin"></i> 微信' + ' ' + r1[1]
-        /*.split('/')[0]*/
-    } else if (r = e.match(/QQBrowser\/([^\s]+)/ig)) {
-        var r1 = r[0].split("/");
-        outputer = '<span class="ua_qq"><i class="fa fa-globe"></i> QQ浏览器' + ' ' + r1[1]
-        /*.split('/')[0]*/
-    } else if (r = e.match(/QQ\/([^\s]+)/ig)) {
-        var r1 = r[0].split("/");
-        outputer = '<span class="ua_qq"><i class="fa fa-globe"></i> QQ浏览器' + ' ' + r1[1]
-        /*.split('/')[0]*/
-    } else if (r = e.match(/MiuiBrowser\/([^\s]+)/ig)) {
-        var r1 = r[0].split("/");
-        outputer = '<span class="ua_mi"><i class="fa fa-globe"></i> Miui浏览器' + ' ' + r1[1]
-        /*.split('/')[0]*/
-    } else if (r = e.match(/Chrome([\d]*)\/([^\s]+)/ig)) {
-        var r1 = r[0].split("/");
-        outputer = '<span class="ua_chrome"><i class="fa fa-globe"></i> Chrome' + ' ' + r1[1]
-        /*.split('.')[0]*/
-    } else if (r = e.match(/safari\/([^\s]+)/ig)) {
-        var r1 = r[0].split("/");
-        outputer = '<span class="ua_apple"><i class="fa fa-globe"></i> Apple Safari' + ' ' + r1[1]
-    } else if (r = e.match(/Opera[\s|\/]([^\s]+)/ig)) {
-        var r1 = r[0].split("/");
-        outputer = '<span class="ua_opera"><i class="fa fa-globe"></i> Opera' + ' ' + r1[1]
-    } else if (r = e.match(/Trident\/7.0/gi)) {
-        outputer = '<span class="ua_ie"><i class="fa fa-globe"></i> Internet Explorer 11'
-    } else if (r = e.match(/MSIE\s([^\s|;]+)/gi)) {
-        outputer = '<span class="ua_ie"><i class="fa fa-globe"></i> Internet Explorer' + ' ' + r[0]
-        /*.replace('MSIE', '').split('.')[0]*/
-    } else {
-        outputer = '<span class="ua_other"><i class="fa fa-globe"></i> 其它浏览器'
-    }
-    if (checkMobile()) {
-        Mobile = '<br><br>';
-    } else {
-        Mobile = '';
-    }
-    return outputer + "</span>" + Mobile;
-}
-function os(e) {
-    var os = '';
-    if (e.match(/win/ig)) {
-        if (e.match(/nt 5.1/ig)) {
-            os = '<span class="os_xp"><i class="fa fa-desktop"></i> Windows XP'
-        } else if (e.match(/nt 6.1/ig)) {
-            os = '<span class="os_7"><i class="fa fa-desktop"></i> Windows 7'
-        } else if (e.match(/nt 6.2/ig)) {
-            os = '<span class="os_8"><i class="fa fa-desktop"></i> Windows 8'
-        } else if (e.match(/nt 6.3/ig)) {
-            os = '<span class="os_8_1"><i class="fa fa-desktop"></i> Windows 8.1'
-        } else if (e.match(/nt 10.0/ig)) {
-            os = '<span class="os_8_1"><i class="fa fa-desktop"></i> Windows 10'
-        } else if (e.match(/nt 6.0/ig)) {
-            os = '<span class="os_vista"><i class="fa fa-desktop"></i> Windows Vista'
-        } else if (e.match(/nt 5/ig)) {
-            os = '<span class="os_2000"><i class="fa fa-desktop"></i> Windows 2000'
-        } else {
-            os = '<span class="os_windows"><i class="fa fa-desktop"></i> Windows'
-        }
-    } else if (e.match(/android/ig)) {
-        os = '<span class="os_android"><i class="fa fa-android"></i> Android'
-    } else if (e.match(/ubuntu/ig)) {
-        os = '<span class="os_ubuntu"><i class="fa fa-desktop"></i> Ubuntu'
-    } else if (e.match(/linux/ig)) {
-        os = '<span class="os_linux"><i class="fa fa-linux"></i> Linux'
-    } else if (e.match(/mac/ig)) {
-        os = '<span class="os_mac"><i class="fa fa-desktop"></i> Mac OS X'
-    } else if (e.match(/unix/ig)) {
-        os = '<span class="os_unix"><i class="fa fa-desktop"></i> Unix'
-    } else if (e.match(/symbian/ig)) {
-        os = '<span class="os_nokia"><i class="fa fa-mobile"></i> Nokia SymbianOS'
-    } else {
-        os = '<span class="os_other"><i class="fa fa-desktop"></i> 其它操作系统'
-    }
-    return os + "</span>";
-}
-//显UA结束
+//UA End
 
 (function(e, t, n) {
     function at(e, t) {
@@ -1622,7 +1494,7 @@ function os(e) {
                 break;
             default:
             }
-            return '<li class="ds-post" data-post-id="' + e.post_id + '"><div class="ds-post-self" data-post-id="' + e.post_id + '" data-thread-id="' + e.thread_id + '" data-root-id="' + e.root_id + '" data-source="' + e.source + '"><div class="ds-avatar"' + r + ">" + J.avatar(n) + (w.sourceName[e.source] ? J.serviceIcon(e.source) : "") + '</div><div class="ds-comment-body"><div class="ds-comment-header">' + (n.url ? '<a class="ds-user-name ds-highlight" data-qqt-account="' + s + '" href="' + p(n.url) + '" ' + (n.user_id ? " onclick=\"this.href='" + w.hostUrl + "/user-url/?user_id=" + n.user_id + "';\"": "") + ' rel="nofollow" target="_blank"' + r + ">" + p(n.name) + "</a>": '<span class="ds-user-name"' + r + ' data-qqt-account="'+s+'">'+p(n.name)+"</span>") +"<span class=\"ua\">" + sskadmin(e.author) + "</span><span class=\"ua\">" + ua(e.agent) +"</span><span class=\"ua\">"+ os(e.agent) + "</span>" +"</div>" + (t.max_depth == 1 && t.show_context && u.length ? '<ol id="ds-ctx">' + i.map(u,
+            return '<li class="ds-post" data-post-id="' + e.post_id + '"><div class="ds-post-self" data-post-id="' + e.post_id + '" data-thread-id="' + e.thread_id + '" data-root-id="' + e.root_id + '" data-source="' + e.source + '"><div class="ds-avatar"' + r + ">" + J.avatar(n) + (w.sourceName[e.source] ? J.serviceIcon(e.source) : "") + '</div><div class="ds-comment-body"><div class="ds-comment-header">' + (n.url ? '<a class="ds-user-name ds-highlight" data-qqt-account="' + s + '" href="' + p(n.url) + '" ' + (n.user_id ? " onclick=\"this.href='" + w.hostUrl + "/user-url/?user_id=" + n.user_id + "';\"": "") + ' rel="nofollow" target="_blank"' + r + ">" + p(n.name) + "</a>": '<span class="ds-user-name"' + r + ' data-qqt-account="'+s+'">'+p(n.name)+"</span>") + "<span class=\"ua\">" + show_ua(e.agent) + "</div>" + (t.max_depth == 1 && t.show_context && u.length ? '<ol id="ds-ctx">' + i.map(u,
             function(e, t) {
                 return (t == 1 && u.length > 2 ? '<li class="ds-ctx-entry"><a href="javascript:void(0);" class="ds-expand">\u8fd8\u6709' + (u.length - 2) + "\u6761\u8bc4\u8bba</a></li>": "") + (ot[e] ? J.ctxPost(ot[e].data, t, t && t < u.length - 1) : "")
             }).join("") + "</ol>": "") + "<p>" + (u.length >= t.max_depth && (!t.show_context || t.max_depth > 1) && e.parent_id && ot[e.parent_id] ? '<a class="ds-comment-context" data-post-id="' + e.post_id + '" data-parent-id="' + e.parent_id + '">' + k.reply_to + p(K(ot[e.parent_id].data).name) + ": </a>": "") + e.message + '</p><div class="ds-comment-footer ds-comment-actions' + (e.vote > 0 ? " ds-post-liked": "") + '">' + o + "</div></div></div>" + (t.max_depth > 1 && (e.childrenArray || e.children) && e.source != "weibo" && e.source != "qqt" ? '<ul class="ds-children">' + i.map(e.childrenArray || e.children,
