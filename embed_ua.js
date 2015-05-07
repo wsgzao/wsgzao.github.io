@@ -17,9 +17,9 @@ function sskadmin(e) {
     var ssk = '';
     if (e.user_id == 867394) {
         if (checkMobile()) {
-            ssk = '<span class="this_ua admin"><span class="sskadmin">R00T</span></span><br><br>';
+            ssk = '<span class="this_ua sskadmin">R00T</span><br><br>';
         } else {
-            ssk = '<span class="this_ua admin"><span class="sskadmin">R00T</span></span>';
+            ssk = '<span class="this_ua sskadmin">R00T</span>';
         }
     } else {
         if (checkMobile()) {
