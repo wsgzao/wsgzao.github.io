@@ -320,36 +320,6 @@
 <script src="/js/gallery.js"></script>
 <script src="/js/ua-parser.min.js"></script>
 
-<!-- 先下载并加载faisalman的ua-parser.min.js -->
-<script src="/js/ua-parser.min.js"></script>
-		<!-- 然后设置duoshuoQuery和加载多说，并设置自定义的getUAString -->
-		<script>
-			// 先初始化UAParser
-			var parser=new UAParser();
-			// 准备好生成显示字串的函数
-			parser.getString=function(o,def){
-				var s=o.name;
-				if(s) {
-					if(o.version) s+=' '+o.version;
-				} else s=def||'';
-				return s;
-			};
-			// 然后设置duoshuoQuery
-			var duoshuoQuery={
-				short_name:'wsgzao',
-				myIds:[867394],
-				getUAString:function(local){
-					parser.setUA(local.agent);
-					var result=parser.getResult();
-					return '<div class="ds-os">'+parser.getString(result.os,'山寨操作系统')+'</div>'+
-						'<div class="ds-br">'+parser.getString(result.browser,'山寨浏览器')+'</div>'+
-						(local.webmaster?'<div class=ds-webmaster>站长</div>':'');
-				},
-			};
-		</script>
-<script src="/js/duoshuo-ua-with-css.min.js"></script>
-
-
 <script type="text/javascript">
 $(document).ready(function(){ 
   $('.navbar').click(function(){
@@ -403,11 +373,7 @@ $(document).ready(function(){
   (function() {
     var ds = document.createElement('script');
     ds.type = 'text/javascript';ds.async = true;
-<<<<<<< HEAD
     ds.src = '//wsgzao.github.io/embed_ua.js';
-=======
-    ds.src = '//static.duoshuo.com/embed.js';
->>>>>>> origin/master
     ds.charset = 'UTF-8';
     (document.getElementsByTagName('head')[0] 
     || document.getElementsByTagName('body')[0]).appendChild(ds);
