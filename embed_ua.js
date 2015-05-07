@@ -1,3 +1,34 @@
+//HelloDog -  http://wsgzao.github.io/post/duoshuo/
+//Mobile Start
+function checkMobile() {
+    var isiPad = navigator.userAgent.match(/iPad/i) != null;
+    if (isiPad) {
+        return false;
+    }
+    var isMobile = navigator.userAgent.match(/iphone|android|phone|mobile|wap|netfront|x11|java|opera mobi|opera mini|ucweb|windows ce|symbian|symbianos|series|webos|sony|blackberry|dopod|nokia|samsung|palmsource|xda|pieplus|meizu|midp|cldc|motorola|foma|docomo|up.browser|up.link|blazer|helio|hosin|huawei|novarra|coolpad|webos|techfaith|palmsource|alcatel|amoi|ktouch|nexian|ericsson|philips|sagem|wellcom|bunjalloo|maui|smartphone|iemobile|spice|bird|zte-|longcos|pantech|gionee|portalmmm|jig browser|hiptop|benq|haier|^lct|320x320|240x320|176x220/i) != null;
+    if (isMobile) {
+        return true;
+    }
+    return false;
+}
+//Mobile End
+//Admin Start
+function sskadmin(e) {
+    var ssk = '';
+    if (e.user_id == 867394) {
+        if (checkMobile()) {
+            ssk = '<span class="ua"><span class="sskadmin">R00T</span></span><br><br>';
+        } else {
+            ssk = '<span class="ua"><span class="sskadmin">R00T</span></span>';
+        }
+    } else {
+        if (checkMobile()) {
+            ssk = '<br><br>';
+        }
+    }
+    return ssk;
+}
+//Admin End
 //UA Start
  function show_ua(string){
         console.log(string)
