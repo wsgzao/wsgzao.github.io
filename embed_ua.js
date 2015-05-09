@@ -35,7 +35,11 @@ function sskadmin(e) {
         $.ua.set(string);
         var sua=$.ua;
         if(sua.os.version=='x86_64')sua.os.version='x64';
+        if (checkMobile()) {
+        return '<span class="this_ua platform '+sua.os.name+'">'+sua.os.name+' '+sua.os.version+'</span><br><br><span class="this_ua browser '+sua.browser.name+'">'+sua.browser.name+' '+sua.browser.version+'</span>';
+        } else {  
         return '<span class="this_ua platform '+sua.os.name+'">'+sua.os.name+' '+sua.os.version+'</span><span class="this_ua browser '+sua.browser.name+'">'+sua.browser.name+' '+sua.browser.version+'</span>';
+        }
     }
 //UA End
 
