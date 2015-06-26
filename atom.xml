@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Keep Calm and Carry On]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://wsgzao.github.io/"/>
-  <updated>2015-06-19T07:21:25.807Z</updated>
+  <updated>2015-06-26T07:24:28.940Z</updated>
   <id>http://wsgzao.github.io/</id>
   
   <author>
@@ -13,6 +13,62 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[NTP配置实践]]></title>
+    <link href="http://wsgzao.github.io/post/ntp/"/>
+    <id>http://wsgzao.github.io/post/ntp/</id>
+    <published>2015-06-26T06:10:20.000Z</published>
+    <updated>2015-06-26T07:24:28.940Z</updated>
+    <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/R4iWUNbV.png" alt=""></p>
+<h2 id="前言">前言</h2><p>NTP（Network Time Protocol，网络时间协议）是用来使网络中的各个计算机时间同步的一种协议。无论是平时使用的私人计算机还是在工作中搭建的服务器集群，时间的统一性和准确性是十分重要的。本文以自己公司的NTP配置实践过程为例，过程本身并不复杂，原理部分请参考扩展阅读。</p>
+<blockquote>
+<p>时间同步真的很重要 </p>
+</blockquote>
+<hr>
+<h2 id="更新历史">更新历史</h2><p>2015年06月26日 - 初稿</p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/ntp/" target="_blank" rel="external">http://wsgzao.github.io/post/ntp/</a></p>
+<p>扩展阅读</p>
+<ul>
+<li>NTP - <a href="http://www.ntp.org/" target="_blank" rel="external">http://www.ntp.org/</a></li>
+<li>NTP 服务器 - <a href="http://vbird.dic.ksu.edu.tw/linux_server/0440ntp.php" target="_blank" rel="external">http://vbird.dic.ksu.edu.tw/linux_server/0440ntp.php</a></li>
+</ul>
+<hr>
+<h2 id="准备工作">准备工作</h2><h3 id="检查NTP是否安装">检查NTP是否安装</h3><blockquote>
+<p>如果缺少NTP服务,请从官方下载适合自己系统的版本</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#检查rpm包 </span></span><br><span class="line">rpm -qa | grep ntp</span><br><span class="line"></span><br><span class="line">ntp-<span class="number">4.2</span>.<span class="number">4</span>p8-<span class="number">1.16</span>.<span class="number">1</span></span><br><span class="line">yast2-ntp-client-<span class="number">2.17</span>.<span class="number">14</span>-<span class="number">1.10</span>.<span class="number">14</span></span><br></pre></td></tr></table></figure>
+<h3 id="手动修改时间">手动修改时间</h3><blockquote>
+<p>选择正确的时区，控制误差在5分钟以内</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#查看当前时间</span></span><br><span class="line">date</span><br><span class="line"></span><br><span class="line"><span class="number">2008</span>年 <span class="number">12</span>月 <span class="number">12</span>日 星期五 <span class="number">14</span>:<span class="number">44</span>:<span class="number">12</span> CST</span><br><span class="line">Fri Jun <span class="number">26</span> <span class="number">14</span>:<span class="number">51</span>:<span class="number">37</span> CST <span class="number">2015</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#手动修改时间（月/日/年时:分:秒）</span></span><br><span class="line">date <span class="operator">-s</span> <span class="string">"1/1/09 00:01"</span></span><br><span class="line"></span><br><span class="line"><span class="number">2009</span>年 <span class="number">01</span>月 <span class="number">01</span>日 星期四 <span class="number">00</span>:<span class="number">01</span>:<span class="number">00</span> CST</span><br><span class="line"> </span><br><span class="line"><span class="comment">#手动修改分秒</span></span><br><span class="line">date <span class="operator">-s</span> <span class="number">21</span>:<span class="number">21</span></span><br></pre></td></tr></table></figure>
+<h2 id="NTP配置">NTP配置</h2><h3 id="NTP服务端配置">NTP服务端配置</h3><blockquote>
+<p>服务端时间来源选择上海交通大学网络中心NTP服务器地址</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#NTP服务端系统版本</span></span><br><span class="line">cat /etc/SuSE-release </span><br><span class="line"></span><br><span class="line">SUSE Linux Enterprise Server <span class="number">11</span> (x86_64)</span><br><span class="line">VERSION = <span class="number">11</span></span><br><span class="line">PATCHLEVEL = <span class="number">2</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#编辑ntp配置文件</span></span><br><span class="line">vi /etc/ntp.conf</span><br><span class="line"></span><br><span class="line">server <span class="number">202.120</span>.<span class="number">2.101</span> prefer</span><br><span class="line"><span class="comment">#server ntp.sjtu.edu.cn</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#加入自动启动</span></span><br><span class="line">chkconfig ntp on</span><br><span class="line"></span><br><span class="line"><span class="comment">#启动ntp服务</span></span><br><span class="line">service ntp start</span><br><span class="line">service ntp status</span><br><span class="line">service ntp stop</span><br></pre></td></tr></table></figure>
+<p>完整的<code>/etc/ntp.conf</code>配置文件如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">################################################################################</span></span><br><span class="line"><span class="comment">## /etc/ntp.conf</span></span><br><span class="line"><span class="comment">##</span></span><br><span class="line"><span class="comment">## Sample NTP configuration file.</span></span><br><span class="line"><span class="comment">## See package 'ntp-doc' for documentation, Mini-HOWTO and FAQ.</span></span><br><span class="line"><span class="comment">## Copyright (c) 1998 S.u.S.E. GmbH Fuerth, Germany.</span></span><br><span class="line"><span class="comment">##</span></span><br><span class="line"><span class="comment">## Author: Michael Andres,  &lt;ma@suse.de&gt;</span></span><br><span class="line"><span class="comment">##         Michael Skibbe,  &lt;mskibbe@suse.de&gt;</span></span><br><span class="line"><span class="comment">##</span></span><br><span class="line"><span class="comment">################################################################################</span></span><br><span class="line"></span><br><span class="line"><span class="comment">##</span></span><br><span class="line"><span class="comment">## Radio and modem clocks by convention have addresses in the </span></span><br><span class="line"><span class="comment">## form 127.127.t.u, where t is the clock type and u is a unit </span></span><br><span class="line"><span class="comment">## number in the range 0-3. </span></span><br><span class="line"><span class="comment">##</span></span><br><span class="line"><span class="comment">## Most of these clocks require support in the form of a </span></span><br><span class="line"><span class="comment">## serial port or special bus peripheral. The particular  </span></span><br><span class="line"><span class="comment">## device is normally specified by adding a soft link </span></span><br><span class="line"><span class="comment">## /dev/device-u to the particular hardware device involved, </span></span><br><span class="line"><span class="comment">## where u correspond to the unit number above. </span></span><br><span class="line"><span class="comment">## </span></span><br><span class="line"><span class="comment">## Generic DCF77 clock on serial port (Conrad DCF77)</span></span><br><span class="line"><span class="comment">## Address:     127.127.8.u</span></span><br><span class="line"><span class="comment">## Serial Port: /dev/refclock-u</span></span><br><span class="line"><span class="comment">##  </span></span><br><span class="line"><span class="comment">## (create soft link /dev/refclock-0 to the particular ttyS?)</span></span><br><span class="line"><span class="comment">##</span></span><br><span class="line"><span class="comment"># server 127.127.8.0 mode 5 prefer</span></span><br><span class="line">server <span class="number">202.120</span>.<span class="number">2.101</span> prefer</span><br><span class="line"></span><br><span class="line"><span class="comment">##</span></span><br><span class="line"><span class="comment">## Undisciplined Local Clock. This is a fake driver intended for backup</span></span><br><span class="line"><span class="comment">## and when no outside source of synchronized time is available.</span></span><br><span class="line"><span class="comment">##</span></span><br><span class="line">server <span class="number">127.127</span>.<span class="number">1.0</span> </span><br><span class="line"><span class="comment"># local clock (LCL)</span></span><br><span class="line">fudge <span class="number">127.127</span>.<span class="number">1.0</span>  stratum <span class="number">10</span></span><br><span class="line"><span class="comment"># LCL is unsynchronized</span></span><br><span class="line"></span><br><span class="line"><span class="comment">##</span></span><br><span class="line"><span class="comment">## Add external Servers using</span></span><br><span class="line"><span class="comment">## # rcntp addserver &lt;yourserver&gt;</span></span><br><span class="line"><span class="comment">## </span></span><br><span class="line"></span><br><span class="line"><span class="comment">##</span></span><br><span class="line"><span class="comment">## Miscellaneous stuff</span></span><br><span class="line"><span class="comment">##</span></span><br><span class="line"></span><br><span class="line">driftfile /var/lib/ntp/drift/ntp.drift  </span><br><span class="line"><span class="comment"># path for drift file</span></span><br><span class="line"></span><br><span class="line">logfile /var/<span class="built_in">log</span>/ntp             </span><br><span class="line"><span class="comment"># alternate log file</span></span><br><span class="line"><span class="comment"># logconfig =syncstatus + sysevents</span></span><br><span class="line"><span class="comment"># logconfig =all</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># statsdir /tmp/                # directory for statistics files</span></span><br><span class="line"><span class="comment"># filegen peerstats  file peerstats  type day enable</span></span><br><span class="line"><span class="comment"># filegen loopstats  file loopstats  type day enable</span></span><br><span class="line"><span class="comment"># filegen clockstats file clockstats type day enable</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Authentication stuff</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">keys /etc/ntp.keys               </span><br><span class="line"><span class="comment"># path for keys file</span></span><br><span class="line">trustedkey <span class="number">1</span>                     </span><br><span class="line"><span class="comment"># define trusted keys</span></span><br><span class="line">requestkey <span class="number">1</span>                     </span><br><span class="line"><span class="comment"># key (7) for accessing server variables</span></span><br><span class="line"><span class="comment"># controlkey 15                 # key (6) for accessing server variables</span></span><br></pre></td></tr></table></figure>
+<h3 id="NTP客户端配置">NTP客户端配置</h3><blockquote>
+<p>如无特殊要求，一般使用crontab计划任务同步时间</p>
+</blockquote>
+<p>1.crontab计划任务方式配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">crontab <span class="operator">-e</span></span><br><span class="line"></span><br><span class="line"><span class="number">0</span> <span class="number">0</span> * * * /usr/sbin/sntp -P no -r  <span class="number">172.16</span>.<span class="number">0.3</span>;hwclock -w</span><br></pre></td></tr></table></figure>
+<p>2.以服务进程方式实时同步</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#编辑客户端配置文件</span></span><br><span class="line">vi /etc/ntp.conf</span><br><span class="line"></span><br><span class="line">server <span class="number">198.16</span>.<span class="number">2.135</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#启动服务</span></span><br><span class="line">chkconfig ntp on</span><br><span class="line">service ntp restart</span><br><span class="line"></span><br><span class="line"><span class="comment">#如果相差时间较长,请先手动同步</span></span><br><span class="line">sntp -P no -r <span class="number">198.16</span>.<span class="number">2.135</span></span><br><span class="line">ntpdate –d <span class="number">198.16</span>.<span class="number">2.135</span></span><br></pre></td></tr></table></figure>
+<h3 id="检查NTP同步状态">检查NTP同步状态</h3><blockquote>
+<p>NTP协议为UDP端口是123，offset时间偏移量以毫秒为单位，注意防火墙的控制策略</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#查看服务连接和监听</span></span><br><span class="line">ntp:~ <span class="comment"># netstat -tlunp | grep ntp  </span></span><br><span class="line">udp        <span class="number">0</span>      <span class="number">0</span> <span class="number">198.17</span>.<span class="number">1.224</span>:<span class="number">123</span>        <span class="number">0.0</span>.<span class="number">0.0</span>:*                           <span class="number">28916</span>/ntpd          </span><br><span class="line">udp        <span class="number">0</span>      <span class="number">0</span> <span class="number">198.16</span>.<span class="number">2.224</span>:<span class="number">123</span>        <span class="number">0.0</span>.<span class="number">0.0</span>:*                           <span class="number">28916</span>/ntpd          </span><br><span class="line">udp        <span class="number">0</span>      <span class="number">0</span> <span class="number">127.0</span>.<span class="number">0.2</span>:<span class="number">123</span>           <span class="number">0.0</span>.<span class="number">0.0</span>:*                           <span class="number">28916</span>/ntpd          </span><br><span class="line">udp        <span class="number">0</span>      <span class="number">0</span> <span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">123</span>           <span class="number">0.0</span>.<span class="number">0.0</span>:*                           <span class="number">28916</span>/ntpd          </span><br><span class="line">udp        <span class="number">0</span>      <span class="number">0</span> <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">123</span>             <span class="number">0.0</span>.<span class="number">0.0</span>:*                           <span class="number">28916</span>/ntpd          </span><br><span class="line">udp        <span class="number">0</span>      <span class="number">0</span> ::<span class="number">1</span>:<span class="number">123</span>                 :::*                                <span class="number">28916</span>/ntpd          </span><br><span class="line">udp        <span class="number">0</span>      <span class="number">0</span> fe80::<span class="number">250</span>:<span class="number">56</span>ff:feb9:<span class="number">123</span> :::*                                <span class="number">28916</span>/ntpd          </span><br><span class="line">udp        <span class="number">0</span>      <span class="number">0</span> fe80::<span class="number">250</span>:<span class="number">56</span>ff:feb9:<span class="number">123</span> :::*                                <span class="number">28916</span>/ntpd          </span><br><span class="line">udp        <span class="number">0</span>      <span class="number">0</span> :::<span class="number">123</span>                  :::*                                <span class="number">28916</span>/ntpd          </span><br><span class="line"></span><br><span class="line"><span class="comment">#查看网络中的NTP服务器，同时显示客户端和每个服务器的关系</span></span><br><span class="line">ntp:~ <span class="comment"># ntpq -p  </span></span><br><span class="line">     remote           refid      st t when poll reach   delay   offset  jitter</span><br><span class="line">==============================================================================</span><br><span class="line">*<span class="number">202.120</span>.<span class="number">2.101</span>   <span class="number">202.118</span>.<span class="number">1.81</span>     <span class="number">3</span> u    <span class="number">5</span> <span class="number">1024</span>  <span class="number">377</span>  <span class="number">265.748</span>   -<span class="number">2.819</span>  <span class="number">16.138</span></span><br><span class="line"> LOCAL(<span class="number">0</span>)        .LOCL.          <span class="number">10</span> l   <span class="number">34</span>   <span class="number">64</span>  <span class="number">377</span>    <span class="number">0.000</span>    <span class="number">0.000</span>   <span class="number">0.001</span></span><br></pre></td></tr></table></figure>
+]]></content>
+    <summary type="html">
+    <![CDATA[时间同步真的很重要]]>
+    
+    </summary>
+    
+      <category term="学习 | Study" scheme="http://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[使用Bash Shell处理JSON文件]]></title>
@@ -2032,50 +2088,6 @@ npath=/tmp/nmon/<span class="built_in">log</span>
 ]]></content>
     <summary type="html">
     <![CDATA[基于Pacman的Hexo修改经验分享]]>
-    
-    </summary>
-    
-      <category term="Hexo" scheme="http://wsgzao.github.io/categories/Hexo/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[Markdown学习路径]]></title>
-    <link href="http://wsgzao.github.io/post/markdown/"/>
-    <id>http://wsgzao.github.io/post/markdown/</id>
-    <published>2014-12-10T02:36:01.000Z</published>
-    <updated>2014-12-19T13:18:43.345Z</updated>
-    <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/3CAMX9Z2.png" alt=""></p>
-<h2 id="前言">前言</h2><p>Markdown是一种轻量级的标记语言，流行程度已经得到了GitHub和Stack Overflow的广泛支持，作为普通人我们也可以轻松上手，结合Hexo我们可以十分优雅的分享知识，传递快乐。</p>
-<p>1.书写简单<br>2.展现美观</p>
-<blockquote>
-<p>简单易读专注内容，我选Markdown</p>
-</blockquote>
-<hr>
-<h2 id="更新记录">更新记录</h2><p>2014年12月10日 - 撰写初稿</p>
-<p>阅读原文 - <a href="http://wsgzao.github.io/post/markdown/" target="_blank" rel="external">http://wsgzao.github.io/post/markdown/</a></p>
-<p>扩展阅读</p>
-<ul>
-<li>HelloDog Index - <a href="http://wsgzao.github.io/index/" target="_blank" rel="external">http://wsgzao.github.io/index/</a></li>
-</ul>
-<hr>
-<h2 id="学习路径">学习路径</h2><h3 id="理解Markdown语法">理解Markdown语法</h3><blockquote>
-<p>原理语法理解要与实践相结合</p>
-</blockquote>
-<ul>
-<li>Markdown语法 - <a href="http://wowubuntu.com/markdown/" target="_blank" rel="external">http://wowubuntu.com/markdown/</a></li>
-</ul>
-<hr>
-<h3 id="实践Markdown">实践Markdown</h3><blockquote>
-<p>勤学勤练，分享知识，传递快乐</p>
-</blockquote>
-<ul>
-<li>Cmd Markdown - <a href="https://www.zybuluo.com/mdeditor" target="_blank" rel="external">https://www.zybuluo.com/mdeditor</a></li>
-<li>简书 - <a href="http://www.jianshu.com/users/d9e9b31534af/latest_articles" target="_blank" rel="external">http://www.jianshu.com/users/d9e9b31534af/latest_articles</a></li>
-</ul>
-]]></content>
-    <summary type="html">
-    <![CDATA[在实践中轻轻松松学习Markdown]]>
     
     </summary>
     
