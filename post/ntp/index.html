@@ -1,0 +1,501 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>NTP配置实践 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="时间同步真的很重要">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTP配置实践">
+<meta property="og:url" content="http://wsgzao.github.io/post/ntp/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="时间同步真的很重要">
+<meta property="og:image" content="http://i.v2ex.co/R4iWUNbV.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTP配置实践">
+<meta name="twitter:description" content="时间同步真的很重要">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index">索引 | Index</a></li>
+					
+						<li><a href="/archives">归档 | Archives</a></li>
+					
+						<li><a href="/about">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="ts-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/ntp/" title="NTP配置实践" itemprop="url">NTP配置实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2015-06-26T06:10:20.000Z" itemprop="datePublished"> 发表于 2015-06-26</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#准备工作"><span class="toc-number">3.</span> <span class="toc-text">准备工作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#检查NTP是否安装"><span class="toc-number">3.1.</span> <span class="toc-text">检查NTP是否安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#手动修改时间"><span class="toc-number">3.2.</span> <span class="toc-text">手动修改时间</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NTP配置"><span class="toc-number">4.</span> <span class="toc-text">NTP配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NTP服务端配置"><span class="toc-number">4.1.</span> <span class="toc-text">NTP服务端配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NTP客户端配置"><span class="toc-number">4.2.</span> <span class="toc-text">NTP客户端配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#检查NTP同步状态"><span class="toc-number">4.3.</span> <span class="toc-text">检查NTP同步状态</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<p><img src="http://i.v2ex.co/R4iWUNbV.png" alt=""></p>
+<h2 id="前言">前言</h2><p>NTP（Network Time Protocol，网络时间协议）是用来使网络中的各个计算机时间同步的一种协议。无论是平时使用的私人计算机还是在工作中搭建的服务器集群，时间的统一性和准确性是十分重要的。本文以自己公司的NTP配置实践过程为例，过程本身并不复杂，原理部分请参考扩展阅读。</p>
+<blockquote>
+<p>时间同步真的很重要 </p>
+</blockquote>
+<hr>
+<h2 id="更新历史">更新历史</h2><p>2015年06月26日 - 初稿</p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/ntp/" target="_blank" rel="external">http://wsgzao.github.io/post/ntp/</a></p>
+<p>扩展阅读</p>
+<ul>
+<li>NTP - <a href="http://www.ntp.org/" target="_blank" rel="external">http://www.ntp.org/</a></li>
+<li>NTP 服务器 - <a href="http://vbird.dic.ksu.edu.tw/linux_server/0440ntp.php" target="_blank" rel="external">http://vbird.dic.ksu.edu.tw/linux_server/0440ntp.php</a></li>
+</ul>
+<hr>
+<h2 id="准备工作">准备工作</h2><h3 id="检查NTP是否安装">检查NTP是否安装</h3><blockquote>
+<p>如果缺少NTP服务,请从官方下载适合自己系统的版本</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#检查rpm包 </span></span><br><span class="line">rpm -qa | grep ntp</span><br><span class="line"></span><br><span class="line">ntp-<span class="number">4.2</span>.<span class="number">4</span>p8-<span class="number">1.16</span>.<span class="number">1</span></span><br><span class="line">yast2-ntp-client-<span class="number">2.17</span>.<span class="number">14</span>-<span class="number">1.10</span>.<span class="number">14</span></span><br></pre></td></tr></table></figure>
+<h3 id="手动修改时间">手动修改时间</h3><blockquote>
+<p>选择正确的时区，控制误差在5分钟以内</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#查看当前时间</span></span><br><span class="line">date</span><br><span class="line"></span><br><span class="line"><span class="number">2008</span>年 <span class="number">12</span>月 <span class="number">12</span>日 星期五 <span class="number">14</span>:<span class="number">44</span>:<span class="number">12</span> CST</span><br><span class="line">Fri Jun <span class="number">26</span> <span class="number">14</span>:<span class="number">51</span>:<span class="number">37</span> CST <span class="number">2015</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#手动修改时间（月/日/年时:分:秒）</span></span><br><span class="line">date <span class="operator">-s</span> <span class="string">"1/1/09 00:01"</span></span><br><span class="line"></span><br><span class="line"><span class="number">2009</span>年 <span class="number">01</span>月 <span class="number">01</span>日 星期四 <span class="number">00</span>:<span class="number">01</span>:<span class="number">00</span> CST</span><br><span class="line"> </span><br><span class="line"><span class="comment">#手动修改分秒</span></span><br><span class="line">date <span class="operator">-s</span> <span class="number">21</span>:<span class="number">21</span></span><br></pre></td></tr></table></figure>
+<h2 id="NTP配置">NTP配置</h2><h3 id="NTP服务端配置">NTP服务端配置</h3><blockquote>
+<p>服务端时间来源选择上海交通大学网络中心NTP服务器地址</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#NTP服务端系统版本</span></span><br><span class="line">cat /etc/SuSE-release </span><br><span class="line"></span><br><span class="line">SUSE Linux Enterprise Server <span class="number">11</span> (x86_64)</span><br><span class="line">VERSION = <span class="number">11</span></span><br><span class="line">PATCHLEVEL = <span class="number">2</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#编辑ntp配置文件</span></span><br><span class="line">vi /etc/ntp.conf</span><br><span class="line"></span><br><span class="line">server <span class="number">202.120</span>.<span class="number">2.101</span> prefer</span><br><span class="line"><span class="comment">#server ntp.sjtu.edu.cn</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#加入自动启动</span></span><br><span class="line">chkconfig ntp on</span><br><span class="line"></span><br><span class="line"><span class="comment">#启动ntp服务</span></span><br><span class="line">service ntp start</span><br><span class="line">service ntp status</span><br><span class="line">service ntp stop</span><br></pre></td></tr></table></figure>
+<p>完整的<code>/etc/ntp.conf</code>配置文件如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">################################################################################</span></span><br><span class="line"><span class="comment">## /etc/ntp.conf</span></span><br><span class="line"><span class="comment">##</span></span><br><span class="line"><span class="comment">## Sample NTP configuration file.</span></span><br><span class="line"><span class="comment">## See package 'ntp-doc' for documentation, Mini-HOWTO and FAQ.</span></span><br><span class="line"><span class="comment">## Copyright (c) 1998 S.u.S.E. GmbH Fuerth, Germany.</span></span><br><span class="line"><span class="comment">##</span></span><br><span class="line"><span class="comment">## Author: Michael Andres,  &lt;ma@suse.de&gt;</span></span><br><span class="line"><span class="comment">##         Michael Skibbe,  &lt;mskibbe@suse.de&gt;</span></span><br><span class="line"><span class="comment">##</span></span><br><span class="line"><span class="comment">################################################################################</span></span><br><span class="line"></span><br><span class="line"><span class="comment">##</span></span><br><span class="line"><span class="comment">## Radio and modem clocks by convention have addresses in the </span></span><br><span class="line"><span class="comment">## form 127.127.t.u, where t is the clock type and u is a unit </span></span><br><span class="line"><span class="comment">## number in the range 0-3. </span></span><br><span class="line"><span class="comment">##</span></span><br><span class="line"><span class="comment">## Most of these clocks require support in the form of a </span></span><br><span class="line"><span class="comment">## serial port or special bus peripheral. The particular  </span></span><br><span class="line"><span class="comment">## device is normally specified by adding a soft link </span></span><br><span class="line"><span class="comment">## /dev/device-u to the particular hardware device involved, </span></span><br><span class="line"><span class="comment">## where u correspond to the unit number above. </span></span><br><span class="line"><span class="comment">## </span></span><br><span class="line"><span class="comment">## Generic DCF77 clock on serial port (Conrad DCF77)</span></span><br><span class="line"><span class="comment">## Address:     127.127.8.u</span></span><br><span class="line"><span class="comment">## Serial Port: /dev/refclock-u</span></span><br><span class="line"><span class="comment">##  </span></span><br><span class="line"><span class="comment">## (create soft link /dev/refclock-0 to the particular ttyS?)</span></span><br><span class="line"><span class="comment">##</span></span><br><span class="line"><span class="comment"># server 127.127.8.0 mode 5 prefer</span></span><br><span class="line">server <span class="number">202.120</span>.<span class="number">2.101</span> prefer</span><br><span class="line"></span><br><span class="line"><span class="comment">##</span></span><br><span class="line"><span class="comment">## Undisciplined Local Clock. This is a fake driver intended for backup</span></span><br><span class="line"><span class="comment">## and when no outside source of synchronized time is available.</span></span><br><span class="line"><span class="comment">##</span></span><br><span class="line">server <span class="number">127.127</span>.<span class="number">1.0</span> </span><br><span class="line"><span class="comment"># local clock (LCL)</span></span><br><span class="line">fudge <span class="number">127.127</span>.<span class="number">1.0</span>  stratum <span class="number">10</span></span><br><span class="line"><span class="comment"># LCL is unsynchronized</span></span><br><span class="line"></span><br><span class="line"><span class="comment">##</span></span><br><span class="line"><span class="comment">## Add external Servers using</span></span><br><span class="line"><span class="comment">## # rcntp addserver &lt;yourserver&gt;</span></span><br><span class="line"><span class="comment">## </span></span><br><span class="line"></span><br><span class="line"><span class="comment">##</span></span><br><span class="line"><span class="comment">## Miscellaneous stuff</span></span><br><span class="line"><span class="comment">##</span></span><br><span class="line"></span><br><span class="line">driftfile /var/lib/ntp/drift/ntp.drift  </span><br><span class="line"><span class="comment"># path for drift file</span></span><br><span class="line"></span><br><span class="line">logfile /var/<span class="built_in">log</span>/ntp             </span><br><span class="line"><span class="comment"># alternate log file</span></span><br><span class="line"><span class="comment"># logconfig =syncstatus + sysevents</span></span><br><span class="line"><span class="comment"># logconfig =all</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># statsdir /tmp/                # directory for statistics files</span></span><br><span class="line"><span class="comment"># filegen peerstats  file peerstats  type day enable</span></span><br><span class="line"><span class="comment"># filegen loopstats  file loopstats  type day enable</span></span><br><span class="line"><span class="comment"># filegen clockstats file clockstats type day enable</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Authentication stuff</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">keys /etc/ntp.keys               </span><br><span class="line"><span class="comment"># path for keys file</span></span><br><span class="line">trustedkey <span class="number">1</span>                     </span><br><span class="line"><span class="comment"># define trusted keys</span></span><br><span class="line">requestkey <span class="number">1</span>                     </span><br><span class="line"><span class="comment"># key (7) for accessing server variables</span></span><br><span class="line"><span class="comment"># controlkey 15                 # key (6) for accessing server variables</span></span><br></pre></td></tr></table></figure>
+<h3 id="NTP客户端配置">NTP客户端配置</h3><blockquote>
+<p>如无特殊要求，一般使用crontab计划任务同步时间</p>
+</blockquote>
+<p>1.crontab计划任务方式配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">crontab <span class="operator">-e</span></span><br><span class="line"></span><br><span class="line"><span class="number">0</span> <span class="number">0</span> * * * /usr/sbin/sntp -P no -r  <span class="number">172.16</span>.<span class="number">0.3</span>;hwclock -w</span><br></pre></td></tr></table></figure>
+<p>2.以服务进程方式实时同步</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#编辑客户端配置文件</span></span><br><span class="line">vi /etc/ntp.conf</span><br><span class="line"></span><br><span class="line">server <span class="number">198.16</span>.<span class="number">2.135</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#启动服务</span></span><br><span class="line">chkconfig ntp on</span><br><span class="line">service ntp restart</span><br><span class="line"></span><br><span class="line"><span class="comment">#如果相差时间较长,请先手动同步</span></span><br><span class="line">sntp -P no -r <span class="number">198.16</span>.<span class="number">2.135</span></span><br><span class="line">ntpdate –d <span class="number">198.16</span>.<span class="number">2.135</span></span><br></pre></td></tr></table></figure>
+<h3 id="检查NTP同步状态">检查NTP同步状态</h3><blockquote>
+<p>NTP协议为UDP端口是123，offset时间偏移量以毫秒为单位，注意防火墙的控制策略</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#查看服务连接和监听</span></span><br><span class="line">ntp:~ <span class="comment"># netstat -tlunp | grep ntp  </span></span><br><span class="line">udp        <span class="number">0</span>      <span class="number">0</span> <span class="number">198.17</span>.<span class="number">1.224</span>:<span class="number">123</span>        <span class="number">0.0</span>.<span class="number">0.0</span>:*                           <span class="number">28916</span>/ntpd          </span><br><span class="line">udp        <span class="number">0</span>      <span class="number">0</span> <span class="number">198.16</span>.<span class="number">2.224</span>:<span class="number">123</span>        <span class="number">0.0</span>.<span class="number">0.0</span>:*                           <span class="number">28916</span>/ntpd          </span><br><span class="line">udp        <span class="number">0</span>      <span class="number">0</span> <span class="number">127.0</span>.<span class="number">0.2</span>:<span class="number">123</span>           <span class="number">0.0</span>.<span class="number">0.0</span>:*                           <span class="number">28916</span>/ntpd          </span><br><span class="line">udp        <span class="number">0</span>      <span class="number">0</span> <span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">123</span>           <span class="number">0.0</span>.<span class="number">0.0</span>:*                           <span class="number">28916</span>/ntpd          </span><br><span class="line">udp        <span class="number">0</span>      <span class="number">0</span> <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">123</span>             <span class="number">0.0</span>.<span class="number">0.0</span>:*                           <span class="number">28916</span>/ntpd          </span><br><span class="line">udp        <span class="number">0</span>      <span class="number">0</span> ::<span class="number">1</span>:<span class="number">123</span>                 :::*                                <span class="number">28916</span>/ntpd          </span><br><span class="line">udp        <span class="number">0</span>      <span class="number">0</span> fe80::<span class="number">250</span>:<span class="number">56</span>ff:feb9:<span class="number">123</span> :::*                                <span class="number">28916</span>/ntpd          </span><br><span class="line">udp        <span class="number">0</span>      <span class="number">0</span> fe80::<span class="number">250</span>:<span class="number">56</span>ff:feb9:<span class="number">123</span> :::*                                <span class="number">28916</span>/ntpd          </span><br><span class="line">udp        <span class="number">0</span>      <span class="number">0</span> :::<span class="number">123</span>                  :::*                                <span class="number">28916</span>/ntpd          </span><br><span class="line"></span><br><span class="line"><span class="comment">#查看网络中的NTP服务器，同时显示客户端和每个服务器的关系</span></span><br><span class="line">ntp:~ <span class="comment"># ntpq -p  </span></span><br><span class="line">     remote           refid      st t when poll reach   delay   offset  jitter</span><br><span class="line">==============================================================================</span><br><span class="line">*<span class="number">202.120</span>.<span class="number">2.101</span>   <span class="number">202.118</span>.<span class="number">1.81</span>     <span class="number">3</span> u    <span class="number">5</span> <span class="number">1024</span>  <span class="number">377</span>  <span class="number">265.748</span>   -<span class="number">2.819</span>  <span class="number">16.138</span></span><br><span class="line"> LOCAL(<span class="number">0</span>)        .LOCL.          <span class="number">10</span> l   <span class="number">34</span>   <span class="number">64</span>  <span class="number">377</span>    <span class="number">0.000</span>    <span class="number">0.000</span>   <span class="number">0.001</span></span><br></pre></td></tr></table></figure>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	<div class="share-jiathis">
+	  
+<div class="jiathis_style_24x24">
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_googleplus"></a>
+	<a class="jiathis_button_douban"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+    var jiathis_config={
+    data_track_clickback:true,
+    sm:"copy,renren,cqq",
+    pic:"",
+    summary:"",
+     ralateuid:{"tsina":"1913082125"},hideMore:false}
+    
+  </script> 
+<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=
+1503875" charset="utf-8"></script>      
+
+	 </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/post/bash-json/"  title="使用Bash Shell处理JSON文件">
+ <strong>下一篇：</strong><br/> 
+ <span>使用Bash Shell处理JSON文件
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="post/ntp/" data-title="NTP配置实践" data-url="http://wsgzao.github.io/post/ntp/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#准备工作"><span class="toc-number">3.</span> <span class="toc-text">准备工作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#检查NTP是否安装"><span class="toc-number">3.1.</span> <span class="toc-text">检查NTP是否安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#手动修改时间"><span class="toc-number">3.2.</span> <span class="toc-text">手动修改时间</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NTP配置"><span class="toc-number">4.</span> <span class="toc-text">NTP配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NTP服务端配置"><span class="toc-number">4.1.</span> <span class="toc-text">NTP服务端配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NTP客户端配置"><span class="toc-number">4.2.</span> <span class="toc-text">NTP客户端配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#检查NTP同步状态"><span class="toc-number">4.3.</span> <span class="toc-text">检查NTP同步状态</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>6</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Try to do better.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="http://faisalman.github.io/ua-parser-js/src/ua-parser.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"wsgzao"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//wsgzao.github.io/embed_ua.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fc2c5fc7d844d0973d9f77abd87f49c3c' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<script>
+var option = {
+  engineKey: '4ac092ad8d749fdc6293'
+};
+(function(w,d,t,u,n,s,e){
+  s = d.createElement(t);
+  s.src = u;
+  s.async = 1;
+  w[n] = function(r){
+    w[n].opts = r;
+  };
+  e = d.getElementsByTagName(t)[0];
+  e.parentNode.insertBefore(s, e);
+})(window,document,'script','//tinysou-cdn.b0.upaiyun.com/ts.js','_ts');
+_ts(option);
+</script>
+
+<!-- Tiny_search End -->
+  </body>
+</html>
