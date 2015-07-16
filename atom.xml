@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Keep Calm and Carry On]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://wsgzao.github.io/"/>
-  <updated>2015-07-11T08:40:10.926Z</updated>
+  <updated>2015-07-16T05:51:26.968Z</updated>
   <id>http://wsgzao.github.io/</id>
   
   <author>
@@ -15,11 +15,50 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title><![CDATA[使用GoAccess分析Nginx日志以及sed/awk手动分析实践]]></title>
+    <link href="http://wsgzao.github.io/post/goaccess/"/>
+    <id>http://wsgzao.github.io/post/goaccess/</id>
+    <published>2015-07-16T02:48:05.000Z</published>
+    <updated>2015-07-16T05:51:26.968Z</updated>
+    <content type="html"><![CDATA[<p><img src="http://www.goaccess.io/images/goaccess-html-report.png" alt=""></p>
+<h2 id="前言">前言</h2><p>使用Nginx的网站可能会遇到访问流量异常、被友情检测、程序出现Bug等各种突然情况，这时大家的反应想必都是第一时间分析日志，然后发现日志有几十GB之多，又需要按照时间、错误类型或者关键字段检索信息时会不会有种醍醐灌顶、菊花一紧的错觉。文中介绍的方法不管是GoAccess还是sed/awk虽然可以解决一时的问题但未必能够治本，也许<code>ELK(Logstash+ElasticSearch+Kibana)</code>对我们大多数人来说是更合理的集中化日志管理解决方案。</p>
+<blockquote>
+<p>日志固然重要，但努力建设适合业务发展的集中化日志管理平台才是基础核心</p>
+</blockquote>
+<hr>
+<h2 id="更新历史">更新历史</h2><p>2015年07月16日 - 初稿</p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/goaccess/" target="_blank" rel="external">http://wsgzao.github.io/post/goaccess/</a></p>
+<p>扩展阅读</p>
+<p>GoAccess - <a href="http://goaccess.io/" target="_blank" rel="external">http://goaccess.io/</a><br>用GoAccess分析Nginx的日志 - <a href="http://www.fancycoding.com/log-analyse-using-goaccess/" target="_blank" rel="external">http://www.fancycoding.com/log-analyse-using-goaccess/</a><br>sed 简明教程 - <a href="http://coolshell.cn/articles/9104.html" target="_blank" rel="external">http://coolshell.cn/articles/9104.html</a><br>AWK 简明教程 - <a href="http://coolshell.cn/articles/9070.html" target="_blank" rel="external">http://coolshell.cn/articles/9070.html</a></p>
+<hr>
+<h2 id="安装GoAccess">安装GoAccess</h2><blockquote>
+<p>各平台都有灰常简单的部署方案 - <a href="http://goaccess.io/download" target="_blank" rel="external">http://goaccess.io/download</a></p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">wget http://tar.goaccess.io/goaccess-<span class="number">0.9</span>.<span class="number">2</span>.tar.gz</span><br><span class="line">tar -xzvf goaccess-<span class="number">0.9</span>.<span class="number">2</span>.tar.gz</span><br><span class="line"><span class="built_in">cd</span> goaccess-<span class="number">0.9</span>.<span class="number">2</span>/</span><br><span class="line">./configure --enable-utf8</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+<h2 id="使用方式">使用方式</h2><blockquote>
+<p>更多常见问题请参考官方FAQ - <a href="http://goaccess.io/faq" target="_blank" rel="external">http://goaccess.io/faq</a></p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#直接打开</span></span><br><span class="line">goaccess <span class="operator">-f</span> access.log</span><br><span class="line"></span><br><span class="line"><span class="comment">#选择日志格式</span></span><br><span class="line">NCSA Combined Log Format</span><br><span class="line"></span><br><span class="line"><span class="comment">#剩下的操作都蛮简单的，参考扩展阅读和官方文档吧</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#导出HTML报告会遇到的问题</span></span><br><span class="line">goaccess <span class="operator">-f</span> time_access.log <span class="operator">-a</span> &gt; report.html</span><br><span class="line"></span><br><span class="line">GoAccess - version <span class="number">0.9</span>.<span class="number">2</span> - Jul <span class="number">15</span> <span class="number">2015</span> <span class="number">16</span>:<span class="number">23</span>:<span class="number">20</span></span><br><span class="line">Config file: /usr/<span class="built_in">local</span>/etc/goaccess.conf</span><br><span class="line"></span><br><span class="line">Fatal error has occurred</span><br><span class="line">Error occured at: src/parser.c - verify_formats - <span class="number">1691</span></span><br><span class="line">No time format was found on your conf file.</span><br><span class="line"></span><br><span class="line"><span class="comment">#添加配置文件</span></span><br><span class="line">vi ~/.goaccessrc</span><br><span class="line"></span><br><span class="line">time-format %T</span><br><span class="line">date-format %d/%b/%Y</span><br><span class="line"><span class="built_in">log</span>-format %h %^[%d:%t %^] <span class="string">"%r"</span> %s %b <span class="string">"%R"</span> <span class="string">"%u"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#重新指定配置文件后执行</span></span><br><span class="line">goaccess <span class="operator">-f</span> time_access.log -p ~/.goaccessrc <span class="operator">-a</span> &gt; report.html</span><br></pre></td></tr></table></figure>
+<h2 id="使用bash/sed/awk手动查找Nginx日志">使用bash/sed/awk手动查找Nginx日志</h2><blockquote>
+<p>更多技巧可以参考扩展阅读，Python的处理效率或者更优</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#按日期查找时间段</span></span><br><span class="line">sed -n <span class="string">"/14\/Jul\/2015:00:00:00/,/15\/Jul\/2015:15:00:00/"</span>p access.log &gt; time_access.log</span><br><span class="line"></span><br><span class="line"><span class="comment">#查找504错误的页面和数量</span></span><br><span class="line">awk <span class="string">'($9 ~ /504/)'</span> time_access.log | awk <span class="string">'&#123;print $7&#125;'</span> | sort | uniq -c | sort -rn &gt; <span class="number">504</span>.log</span><br><span class="line"></span><br><span class="line"><span class="comment">#查找访问最多的20个IP及访问次数</span></span><br><span class="line">awk <span class="string">'&#123;print $1&#125;'</span> time_access.log | sort | uniq -c | sort -n -k <span class="number">1</span> -r | head -n <span class="number">20</span> &gt; top.log</span><br></pre></td></tr></table></figure>
+]]></content>
+    <summary type="html">
+    <![CDATA[日志固然重要，但努力建设适合业务发展的集中化日志管理平台才是基础核心]]>
+    
+    </summary>
+    
+      <category term="学习 | Study" scheme="http://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
+    
+  </entry>
+  
+  <entry>
     <title><![CDATA[中文文案排版指北]]></title>
     <link href="http://wsgzao.github.io/post/chinese-copywriting-guidelines/"/>
     <id>http://wsgzao.github.io/post/chinese-copywriting-guidelines/</id>
     <published>2015-07-11T07:31:24.000Z</published>
-    <updated>2015-07-11T08:40:10.926Z</updated>
+    <updated>2015-07-11T08:40:10.000Z</updated>
     <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/ekrNgJeK.jpeg" alt=""></p>
 <h2 id="前言">前言</h2><blockquote>
 <p>统一中文文案、排版的相关用法，降低团队成员之间的沟通成本，增强网站气质。</p>
@@ -366,7 +405,7 @@
     <link href="http://wsgzao.github.io/post/samba/"/>
     <id>http://wsgzao.github.io/post/samba/</id>
     <published>2015-07-11T06:31:57.000Z</published>
-    <updated>2015-07-11T06:59:01.604Z</updated>
+    <updated>2015-07-11T06:59:01.000Z</updated>
     <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/Pbu91VnP.png" alt=""></p>
 <h2 id="前言">前言</h2><p>一直以来都以为FTP和NFS是局域网文件共享的常用方式，但是在最近接触Samba之后，了解到一些用户需要简化访问学习成本，满足基础的权限控制管理，并支持实时编辑和保存文件，我才明白这些需求使用之前的方法都是很难满足的，而Samba却可以完美的支持上述需求，虽然在开始接触时花了一些时间学习，但把配置和语法梳理清楚之后就很简单了。</p>
 <blockquote>
@@ -407,7 +446,7 @@
     <link href="http://wsgzao.github.io/post/ssh/"/>
     <id>http://wsgzao.github.io/post/ssh/</id>
     <published>2015-07-07T04:18:44.000Z</published>
-    <updated>2015-07-07T04:23:13.000Z</updated>
+    <updated>2015-07-07T04:23:13.759Z</updated>
     <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/zv9SM4PO.png" alt=""></p>
 <h2 id="前言">前言</h2><p>无论是个人的VPS还是企业允许公网访问的服务器，如果开放22端口的SSH密码登录验证方式，被众多黑客暴力猜解捅破菊花也可能是经常发生的惨剧。企业可以通过防火墙来做限制，普通用户也可能借助修改22端口和强化弱口令等方式防护，但目前相对安全和简单的方案则是让SSH使用密钥登录并禁止口令登录。</p>
 <blockquote>
@@ -455,7 +494,7 @@
     <link href="http://wsgzao.github.io/post/ntp/"/>
     <id>http://wsgzao.github.io/post/ntp/</id>
     <published>2015-06-26T06:10:20.000Z</published>
-    <updated>2015-06-26T07:24:28.940Z</updated>
+    <updated>2015-06-26T07:24:28.000Z</updated>
     <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/R4iWUNbV.png" alt=""></p>
 <h2 id="前言">前言</h2><p>NTP（Network Time Protocol，网络时间协议）是用来使网络中的各个计算机时间同步的一种协议。无论是平时使用的私人计算机还是在工作中搭建的服务器集群，时间的统一性和准确性是十分重要的。本文以自己公司的NTP配置实践过程为例，过程本身并不复杂，原理部分请参考扩展阅读。</p>
 <blockquote>
@@ -511,7 +550,7 @@
     <link href="http://wsgzao.github.io/post/bash-json/"/>
     <id>http://wsgzao.github.io/post/bash-json/</id>
     <published>2015-06-19T06:46:15.000Z</published>
-    <updated>2015-06-19T07:21:25.807Z</updated>
+    <updated>2015-06-19T07:21:25.000Z</updated>
     <content type="html"><![CDATA[<p><img src="http://json.org/img/json160.gif" alt=""></p>
 <h2 id="前言">前言</h2><p>JSON(JavaScript Object Notation) 是一种轻量级的数据交换格式，易于人阅读和编写，同时也易于机器解析和生成。本文提供一个真实的测试用例需求，设计逻辑类似<code>Makefile</code>，我以Bash处理JSON为例，Coding水平有限，请各位多多包涵哈，欢迎大家一起学习和挑战各种不同的语言来实现。 </p>
 <blockquote>
@@ -562,7 +601,7 @@
     <link href="http://wsgzao.github.io/post/linux-memory/"/>
     <id>http://wsgzao.github.io/post/linux-memory/</id>
     <published>2015-06-04T08:23:07.000Z</published>
-    <updated>2015-06-05T05:59:52.314Z</updated>
+    <updated>2015-06-05T05:59:52.000Z</updated>
     <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/ZwWMTwiI.jpeg" alt=""></p>
 <h2 id="前言">前言</h2><p>相信大家更换自己笔记本电脑的内存时一定是得心应手，即便是一名新手也可以很轻松的动手实现，其实服务器的内存更换也很简单，关机-&gt;挪盖-&gt;按指定顺序插拔。不过这里有一个很重要的共性前提，需要清楚了解当前硬件所匹配的内存大小型号和插槽数量等依赖关系，这样我们在更换内存时才会更加游刃有余哈。</p>
 <blockquote>
@@ -611,7 +650,7 @@
     <link href="http://wsgzao.github.io/post/windows/"/>
     <id>http://wsgzao.github.io/post/windows/</id>
     <published>2015-05-28T16:05:27.000Z</published>
-    <updated>2015-05-29T08:44:43.826Z</updated>
+    <updated>2015-05-29T08:44:43.000Z</updated>
     <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/l6zV1ws3.jpeg" alt=""></p>
 <h2 id="前言">前言</h2><p>很多人都认为我是计算机高手，其实我只会帮你修理下你的电脑啦，曾几何时我也帮助过好多好多的同学和老师，尝试和体验各种各样的软件，但谁又能想到我曾今也对你们的电脑做过很多失败的坑爹操作，把你们最宝贵的数据撸得灰飞烟灭，这里要感谢当时允许我不断尝试失败的大白鼠 @王纪华 tommy(249033945)，使我养成了发散思维、逆向思维和创造性思维的解决问题之道。作为一名非职业HelpDesk，我一定不是最最优秀的那一群技术大牛，但我也努力超越了99.99%的从业者，Because I just love and enjoy thinking to do better and better.</p>
 <p>如果你认同<code>高效，实用</code>的软件使用理念就跟着我走吧，让我们一起寻找<code>适合自己的好用软件</code>。</p>
@@ -1036,7 +1075,7 @@
     <link href="http://wsgzao.github.io/post/autoyast/"/>
     <id>http://wsgzao.github.io/post/autoyast/</id>
     <published>2015-05-27T06:59:49.000Z</published>
-    <updated>2015-05-29T08:06:12.260Z</updated>
+    <updated>2015-05-29T08:06:12.000Z</updated>
     <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/u2hch34d.png" alt=""></p>
 <h2 id="前言">前言</h2><p>在金融行业中我所接触的操作系统主要是<code>AIX</code>和<code>SLES(SuSE Linux Enterprise Server)</code>，也许大家平时用得更多是<code>CentOS</code>，虽然有部分差异但原理都是相通的，<code>SMIT</code>和<code>YaST</code>也是灰常实用的功能，推荐大家有机会尝试体验下。因为网上关于SuSE自动化部署的参考文章较少，这套自动化部署方案已经被验证并在生产系统使用了1年半，配置相对成熟和稳定。遵循<code>Don&#39;t Repeat Yourself</code>原则，本文主要介绍基于AutoYaST实现半自动化SuSE定制光盘和PXE网络全自动化安装SuSE的实践过程，如需了解更加详细的参数说明可以参考扩展阅读中的SuSE官网。</p>
 <blockquote>
@@ -1244,7 +1283,7 @@
     <link href="http://wsgzao.github.io/post/fq/"/>
     <id>http://wsgzao.github.io/post/fq/</id>
     <published>2015-05-22T15:22:32.000Z</published>
-    <updated>2015-05-22T08:48:54.236Z</updated>
+    <updated>2015-05-22T08:48:54.000Z</updated>
     <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/Ur503skA.jpeg" alt=""></p>
 <h2 id="前言">前言</h2><p>政府无限的权力，都是大部分人自己放弃的。假货坑爹，让政府审核。孩子管不好，让政府关网吧。有人在微博骂我，让政府去删。房价太高，让政府去限购。我们的文化实在太独特，创造出了家长式威权政府，GFW 正是在这种背景下产生的，一个社会矛盾的终极调和器，最终生活不能自理的你每天做的每一件事情都要给政府审查一遍，以免伤害到其他同样生活不能自理的人。这是一个零和游戏，越和这样的用户打交道，越对未来持悲观态度，觉得 GFW 可能永远也不会消失，而墙内的这个局域网看起来还似乎生机勃勃的自成一体，真是让人绝望。</p>
 <p>Via <a href="https://twitter.com/clowwindy" target="_blank" rel="external">@clowwindy</a> - <a href="https://www.v2ex.com/t/166417#reply121" target="_blank" rel="external">https://www.v2ex.com/t/166417#reply121</a></p>
@@ -1348,7 +1387,7 @@
     <link href="http://wsgzao.github.io/post/kickstart/"/>
     <id>http://wsgzao.github.io/post/kickstart/</id>
     <published>2015-05-20T07:06:46.000Z</published>
-    <updated>2015-06-19T06:42:15.573Z</updated>
+    <updated>2015-06-19T06:42:15.000Z</updated>
     <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/9a5au33Z.png" alt=""></p>
 <h2 id="前言">前言</h2><p>因为需要在浪潮的x86服务器中集中部署CentOS搭建基于Hadoop的大数据平台，平时接触SLES(SuSE Linux Enterprise Server)较多并且已经实现基于Autoyast方式使用光盘或者PXE网络自动化安装(后续会分享具体实现方法)。这次主要通过学习Kisckstart实现最简单的光盘方式自动化安装CentOS，而网上的大多数教程并不完全适用于自身的环境，本文将不再赘述Kickstart相关概念，细节可参考扩展阅读。</p>
 <blockquote>
@@ -1405,7 +1444,7 @@
     <link href="http://wsgzao.github.io/post/3033889/"/>
     <id>http://wsgzao.github.io/post/3033889/</id>
     <published>2015-05-12T08:28:27.000Z</published>
-    <updated>2015-05-12T08:54:38.313Z</updated>
+    <updated>2015-05-12T08:54:38.000Z</updated>
     <content type="html"><![CDATA[<h2 id="前言">前言</h2><p>我自己的操作系统是Windows 8.1（现在为Windows 10），微软在2015年03月11日推送了新的更新补丁，重新启动计算机后发现Windows资源管理器频繁卡顿假死导致不停重启，资源管理器CPU会异常升高，使得Windows资源管理器停止响应。这个问题困扰了我大半个月时间，差点就直接怒降Windows 7或者提前入坑Windows 10预览版（也有各种地雷Bug在等你来踩），现在终于找到了解决方法，分享给大家以供参考。</p>
 <blockquote>
 <p>微软这次的升级补丁测试得可真到位</p>
@@ -1456,7 +1495,7 @@
     <link href="http://wsgzao.github.io/post/android/"/>
     <id>http://wsgzao.github.io/post/android/</id>
     <published>2015-05-08T11:49:05.000Z</published>
-    <updated>2015-05-08T14:07:51.656Z</updated>
+    <updated>2015-05-08T14:07:51.000Z</updated>
     <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/4cxZK13p.jpeg" alt=""></p>
 <h2 id="前言">前言</h2><p>Android作为开源项目让全球的用户和厂商共同受益，我们有幸见证了小米带给大家的各种惊喜（饥饿营销解决库存压力），同时也带坏了不少实力厂商一起雄起，这里要为<code>华为/联发科/汇顶科技</code>点赞（不断努力掌握核心科技），总之对我们消费者来说始终是利大于弊。Android应用大多数都是以免费+广告或内购的形式出现，虽然质量上总体不如iOS但自由度很高，而系统易用性上的差距也越来越小，大家各取所需喜欢就好。</p>
 <p>父母或老人推荐<code>华为荣耀畅玩4X/iPhone</code>，个人推荐的话<code>iPhone/小米/魅族/一加/华为</code>等随心选择吧。</p>
@@ -1605,7 +1644,7 @@
     <link href="http://wsgzao.github.io/post/duoshuo/"/>
     <id>http://wsgzao.github.io/post/duoshuo/</id>
     <published>2015-04-23T11:32:03.000Z</published>
-    <updated>2015-04-25T05:49:57.000Z</updated>
+    <updated>2015-04-25T05:49:57.287Z</updated>
     <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/kNlD5E2c.png" alt=""></p>
 <h2 id="前言">前言</h2><p>多说是一款社会化评论系统，她改变了网站与用户之间，用户与用户之间的互动方式。当然Disqus在大家心目中可能更加具有影响力，而我选择多说的原因也很简单，一句话概括来说就是“接地气的本地化评论托管服务”。之前看到很多朋友自豪的使用WordPress时会选择多说作为第三方评论插件，民间的高手们也根据官方的API开发出一些十分有趣的隐藏属性。因为现在自己使用GitHub+Hexo搭建的静态Blog，也希望通过多说自定义CSS和多说评论显示User Agent让评论动感起来，文章记录了自己所执行的真实步骤，扩展阅读和原文中也会标注参考链接和注意点，embed.default.css和embed.js文件托管在GitHub上，欢迎大家分享自己的经验，我们一起完善这些简单而有趣的小功能。</p>
 <blockquote>
@@ -1687,7 +1726,7 @@
     <link href="http://wsgzao.github.io/post/wisdom-tooth/"/>
     <id>http://wsgzao.github.io/post/wisdom-tooth/</id>
     <published>2015-04-03T08:34:32.000Z</published>
-    <updated>2015-04-03T08:59:15.009Z</updated>
+    <updated>2015-04-03T08:43:01.000Z</updated>
     <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/369OkhR3l.jpeg" alt=""></p>
 <h2 id="前言">前言</h2><p>这是一个真实的故事，从来不用年假的我竟然把5天全部用在了拔智齿上，治疗费用中80%为自费部分，我相信自己所付出的代价可能已经远远超出8000元这个可以被量化的数字，你或许也会很好奇为什么我拔个牙齿会如此坑爹，一般人花500元已经很了不起了。写这篇文章一方面是对这段惨痛经历的总结，但更希望自己的这段故事能够帮助大家在拔智齿这个小问题上少走点弯路，甚至可以避免付出类似高昂的代价。在扩展阅读中推荐了果壳网上关于智齿的医学知识感谢<a href="http://www.guokr.com/i/2037007953/" target="_blank" rel="external">@熊猫牙疼</a>，也欢迎大家在知乎上分享自己的经验，让更多的朋友重视牙齿健康问题。</p>
 <blockquote>
@@ -1773,7 +1812,7 @@
     <link href="http://wsgzao.github.io/post/hexo-guide/"/>
     <id>http://wsgzao.github.io/post/hexo-guide/</id>
     <published>2015-03-22T12:40:07.000Z</published>
-    <updated>2015-03-22T08:28:38.000Z</updated>
+    <updated>2015-03-22T08:28:38.863Z</updated>
     <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/5bb7J7NT.png" alt=""></p>
 <h2 id="前言">前言</h2><p>习惯自己写Blog的朋友一定不会陌生Wordpress，或许也曾在新浪博客和QQ空间留过脚印，但静心认真思考一下，似乎我们又总是向往更加简单自由的写作方式。GitHub给我们提供了一个无限的空间，我们需要珍惜使用，而Hexo的出现从某种意义上来说代替了Jekyll，让我们可以更专注于写作本身。本文主要介绍自己的实践心得并不断完善内容，衍生知识和原理推荐大家认真阅读官网的手册，其它推荐参考内容链接在文中也会标注出来。</p>
 <blockquote>
@@ -1921,7 +1960,7 @@
     <link href="http://wsgzao.github.io/post/hexo-jacman/"/>
     <id>http://wsgzao.github.io/post/hexo-jacman/</id>
     <published>2015-03-22T09:11:20.000Z</published>
-    <updated>2015-03-22T09:42:00.000Z</updated>
+    <updated>2015-03-22T09:42:00.965Z</updated>
     <content type="html"><![CDATA[<h2 id="前言">前言</h2><p>由于Pacman已经暂停更新，加上Hexo已经升级为3.0，很多主题需要重新适配，而Jacman是基于Pacman修改而来，在前端设计样式和功能上做了很多合理的修改和完善，相信你也一定可以很快上手。</p>
 <blockquote>
 <p>Jacman是一款基于Pacman修改并坚持更新的Hexo主题。</p>
@@ -1993,7 +2032,7 @@
     <link href="http://wsgzao.github.io/post/oracle-sql/"/>
     <id>http://wsgzao.github.io/post/oracle-sql/</id>
     <published>2015-03-13T06:38:54.000Z</published>
-    <updated>2015-03-13T06:53:41.329Z</updated>
+    <updated>2015-03-13T06:53:41.000Z</updated>
     <content type="html"><![CDATA[<h2 id="前言">前言</h2><p>原作者@EricHu写的Oracle SQL经典查询联手系列文章已经很详细了，我根据Oracle 11g的实践过程重新做了梳理，之后会在扩展阅读中增加一部分Oracle官方培训教材供大家参考学习。</p>
 <blockquote>
 <p>不懂装懂，永世饭桶</p>
@@ -2088,7 +2127,7 @@
     <link href="http://wsgzao.github.io/post/linux-performance/"/>
     <id>http://wsgzao.github.io/post/linux-performance/</id>
     <published>2015-03-06T07:40:47.000Z</published>
-    <updated>2015-03-06T07:51:29.560Z</updated>
+    <updated>2015-03-06T07:51:29.000Z</updated>
     <content type="html"><![CDATA[<p><img src="http://www.brendangregg.com/Perf/linux_benchmarking_tools.png" alt=""></p>
 <h2 id="前言">前言</h2><p>Linux性能测试、监控、优化是一个持续的过程，上图为LinuxCon上Brendan D. Gregg分享的<code>Linux benchmarking tools</code>示意图，涵盖面十分广泛。我们可以通过成熟的监控方案如BMC Patrol，Zabbix来捕获大部分信息，在实际工作中我们会经常关注I/O性能，一般可以使用dd/ORION/IOzone做简单的测试，如果需要获取更加全面详细的报告可以使用nmon，本文将主要介绍Super PI /dd/nmon三种简单而有效的监测方法。</p>
 <blockquote>
@@ -2190,7 +2229,7 @@ npath=/tmp/nmon/<span class="built_in">log</span>
     <link href="http://wsgzao.github.io/post/mac/"/>
     <id>http://wsgzao.github.io/post/mac/</id>
     <published>2015-02-20T10:43:14.000Z</published>
-    <updated>2015-03-05T02:43:41.323Z</updated>
+    <updated>2015-03-05T02:43:41.000Z</updated>
     <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/y2JB0IAD.png" alt=""></p>
 <h2 id="前言">前言</h2><p>大学时期折腾过黑苹果，VMware vSphere也搭建了虚拟环境测试，现在除了满大街的iPhone外，使用MacBook的朋友也越来越多，尽管对我而言也是触手可及，但总觉得少了当初的某种特殊追求。所以严格来说我没有资格来推荐Mac/iOS上的应用，希望使用苹果的你能帮助我一起补充。</p>
 <p>扩展阅读中推荐了小闷的水果店（appled.cc）- 做最靠谱的苹果代购。</p>
@@ -2269,94 +2308,6 @@ npath=/tmp/nmon/<span class="built_in">log</span>
     </summary>
     
       <category term="软件 | Soft" scheme="http://wsgzao.github.io/categories/%E8%BD%AF%E4%BB%B6-Soft/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[中国移动/联通/电信纯净版套餐方案分享]]></title>
-    <link href="http://wsgzao.github.io/post/china-mobile-unicom-telecom/"/>
-    <id>http://wsgzao.github.io/post/china-mobile-unicom-telecom/</id>
-    <published>2015-02-19T09:08:36.000Z</published>
-    <updated>2015-03-26T09:25:18.422Z</updated>
-    <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/Npeg15V0.jpeg" alt=""></p>
-<h2 id="前言">前言</h2><p>4G和百兆宽带的到来预示着移动市场的无限可能，以前我们为了上网查资料享受着拨号上网时龟速般的快感，不知道垫底了多少年的宽带现在终于提速了，被各大移动运营商们绑架多年的移动资费也下降了，但是我们面前又冒出来各种眼花缭乱且不合实际的套餐，而我所想做的就一件事，通过自己的亲身实践为大家分享比较合理而实实在在的套餐，在享受高速上网的同时去感受移动通信，移动支付，移动游戏，智能家庭和可穿戴设备带给我们的全新体验，让科技惠及到身边每一个人。</p>
-<blockquote>
-<p>选择简单而纯粹的套餐</p>
-</blockquote>
-<hr>
-<h2 id="更新记录">更新记录</h2><p>2015年02月19日 - 更新上海移动集团B2套餐，增加苏宁互联至惠年卡<br>2014年09月20日 - 初稿</p>
-<p>阅读原文 - <a href="http://wsgzao.github.io/post/china-mobile-unicom-telecom/" target="_blank" rel="external">http://wsgzao.github.io/post/china-mobile-unicom-telecom/</a></p>
-<hr>
-<h2 id="自用套餐预览">自用套餐预览</h2><blockquote>
-<p>当前主用MX2，购入MIFI做4G随身路由，大可乐3使用苏宁互联作为备机<br>联通凭借当年引入iPhone的合约机用户积累和稳定的通信上网质量为自己赢得口碑<br>电信通过与校企合作绑定赠送形式强制插入，期待联发科全网通后与光纤宽带融合套餐的发力</p>
-</blockquote>
-<table>
-<thead>
-<tr>
-<th>购买项</th>
-<th>价格</th>
-<th>套餐简述 </th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>电信宽带</td>
-<td>3600元/两年</td>
-<td>无任何捆绑，实实在在的100M光纤独享</td>
-</tr>
-<tr>
-<td>移动语音</td>
-<td>14.5元/每月</td>
-<td>无任何捆绑，500分钟本地通话+一坨免费功能</td>
-</tr>
-<tr>
-<td>移动4G流量</td>
-<td>50元/每月</td>
-<td>独立选购，每月1G流量，4G/3G/2G通用，用满1G额外赠送1G</td>
-</tr>
-<tr>
-<td>移动MIFI</td>
-<td>389元</td>
-<td>月承诺消费满50元，24个月协议，每月返还25元，共450元话费，送2两张主副卡免月租</td>
-</tr>
-<tr>
-<td>苏宁互联</td>
-<td>24元/1年</td>
-<td>每月赠送50分钟全国通话，有效期内不清零，联通虚拟运营商，唯一缺点无来电显示</td>
-</tr>
-</tbody>
-</table>
-<p><img src="http://ww3.sinaimg.cn/large/7207510dgw1ejxvjsllfxj20jy06pmy7.jpg" alt=""></p>
-<p><img src="http://ww3.sinaimg.cn/large/7207510dgw1ekj5yyb8t0j20k00f4407.jpg" alt=""></p>
-<p><img src="http://ww4.sinaimg.cn/large/7207510dgw1epejvazuh8j20mg06qq5b.jpg" alt=""></p>
-<hr>
-<h3 id="电信宽带办理渠道">电信宽带办理渠道</h3><blockquote>
-<p>8年的有线通用户，1年的电信机顶盒30M捆绑用户，国内上网请认证电信官方纯净版套餐<br>切勿贪图低价诱惑拒绝无用捆绑，其它说了都是泪</p>
-</blockquote>
-<p><img src="http://ww1.sinaimg.cn/large/7207510dgw1ekj5q9mv9dg208q0atweo.gif" alt=""></p>
-<p><a href="http://sh.189.cn/internet/kdlb/14644.html" target="_blank" rel="external">http://sh.189.cn/internet/kdlb/14644.html</a></p>
-<hr>
-<h3 id="移动语音套餐办理渠道">移动语音套餐办理渠道</h3><blockquote>
-<p>淘宝办理请你谨慎思考，和父母，同事共同使用1年之久，10086官方确认通过</p>
-</blockquote>
-<p><img src="http://ww2.sinaimg.cn/large/7207510dgw1epejvpekavj20ku0ki7cu.jpg" alt=""></p>
-<p><a href="http://item.taobao.com/item.htm?spm=a1z10.1-c.w4023-4949110648.4.TPYaJe&amp;id=42541085535" target="_blank" rel="external">http://item.taobao.com/item.htm?spm=a1z10.1-c.w4023-4949110648.4.TPYaJe&amp;id=42541085535</a></p>
-<hr>
-<h3 id="移动4G流量和MIFI活动">移动4G流量和MIFI活动</h3><blockquote>
-<p>因为上述套餐的关系你懂的，骚年们请根据实际情况自由搭配吧</p>
-</blockquote>
-<p><a href="http://10086.cn/" target="_blank" rel="external">http://10086.cn/</a></p>
-<h3 id="苏宁互联至惠年卡">苏宁互联至惠年卡</h3><blockquote>
-<p>我有备机需求，顺势办理，大家可以视自身情况而定</p>
-</blockquote>
-<p><a href="http://sale.suning.com/images/advertise/yam/snhl15tjg/index.html" target="_blank" rel="external">http://sale.suning.com/images/advertise/yam/snhl15tjg/index.html</a></p>
-]]></content>
-    <summary type="html">
-    <![CDATA[探讨中国移动/联通/电信优惠套餐办理方案]]>
-    
-    </summary>
-    
-      <category term="生活 | Life" scheme="http://wsgzao.github.io/categories/%E7%94%9F%E6%B4%BB-Life/"/>
     
   </entry>
   
