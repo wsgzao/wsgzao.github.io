@@ -499,19 +499,6 @@
   </entry>
   
   <entry>
-    <title><![CDATA[ltmp]]></title>
-    <link href="http://wsgzao.github.io/post/ltmp/"/>
-    <id>http://wsgzao.github.io/post/ltmp/</id>
-    <published>2015-07-31T07:42:19.000Z</published>
-    <updated>2015-07-31T07:42:19.000Z</updated>
-    <content type="html"></content>
-    <summary type="html">
-    
-    </summary>
-    
-  </entry>
-  
-  <entry>
     <title><![CDATA[iptables配置实践]]></title>
     <link href="http://wsgzao.github.io/post/iptables/"/>
     <id>http://wsgzao.github.io/post/iptables/</id>
@@ -2088,6 +2075,154 @@
     </summary>
     
       <category term="生活 | Life" scheme="http://wsgzao.github.io/categories/%E7%94%9F%E6%B4%BB-Life/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[使用GitHub和Hexo搭建免费静态Blog]]></title>
+    <link href="http://wsgzao.github.io/post/hexo-guide/"/>
+    <id>http://wsgzao.github.io/post/hexo-guide/</id>
+    <published>2015-03-22T12:40:07.000Z</published>
+    <updated>2015-03-22T08:28:38.000Z</updated>
+    <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/5bb7J7NT.png" alt=""></p>
+<h2 id="前言">前言</h2><p>习惯自己写Blog的朋友一定不会陌生Wordpress，或许也曾在新浪博客和QQ空间留过脚印，但静心认真思考一下，似乎我们又总是向往更加简单自由的写作方式。GitHub给我们提供了一个无限的空间，我们需要珍惜使用，而Hexo的出现从某种意义上来说代替了Jekyll，让我们可以更专注于写作本身。本文主要介绍自己的实践心得并不断完善内容，衍生知识和原理推荐大家认真阅读官网的手册，其它推荐参考内容链接在文中也会标注出来。</p>
+<blockquote>
+<p><a href="http://www.ruanyifeng.com/blog/2012/08/blogging_with_jekyll.html" target="_blank" rel="external">阮一峰 - 喜欢写Blog的人，会经历三个阶段</a></p>
+</blockquote>
+<p>第一阶段，刚接触Blog，觉得很新鲜，试着选择一个免费空间来写。<br>第二阶段，发现免费空间限制太多，就自己购买域名和空间，搭建独立博客。<br>第三阶段，觉得独立博客的管理太麻烦，最好在保留控制权的前提下，让别人来管，自己只负责写文章。</p>
+<hr>
+<h2 id="更新历史">更新历史</h2><p>2015年03月22日 - 更新Windows下Hexo 3.0安装和升级，感谢<a href="http://ippotsuko.com/" target="_blank" rel="external">@机智的阿卡林酱</a><br>2015年03月10日 - 增加Hexo 3.0降级 2.8<br>2014年12月19日 - 完善内容<br>2014年12月09日 - 更新Hexo配置修改部分<br>2014年06月19日 - 更新全部基础架构，待完善配置修改部分<br>2014年06月17日 - 更新部分Hexo建站过程，待完善<br>2014年05月29日 - 撰写初稿</p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/hexo-guide/" target="_blank" rel="external">http://wsgzao.github.io/post/hexo-guide/</a></p>
+<p>扩展阅读</p>
+<ul>
+<li>Hexo Docs - <a href="http://hexo.io/docs/" target="_blank" rel="external">http://hexo.io/docs/</a></li>
+<li>HelloDog Index - <a href="http://wsgzao.github.io/index/#Hexo" target="_blank" rel="external">http://wsgzao.github.io/index/#Hexo</a></li>
+</ul>
+<hr>
+<h2 id="准备工作">准备工作</h2><p><strong>注意</strong> 本文主要针对<code>Windows</code>平台和<code>Hexo 3.x</code></p>
+<h3 id="了解Hexo">了解Hexo</h3><blockquote>
+<p>A fast, simple &amp; powerful blog framework</p>
+</blockquote>
+<p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。<br><a href="http://hexo.io/" target="_blank" rel="external">hexo.io</a></p>
+<h3 id="安装GIT">安装GIT</h3><p><a href="https://windows.github.com/" target="_blank" rel="external">GitHub Windows</a></p>
+<p>简单可依赖，安装完成后依据提示操作即可，So Easy</p>
+<h3 id="安装Node-JS">安装Node.JS</h3><p><a href="http://nodejs.org/" target="_blank" rel="external">Node.JS</a></p>
+<p><strong>注意</strong> 安装完成后添加Path环境变量，使<code>npm</code>命令生效</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">;C:\Program Files\nodejs\node_modules\npm</span><br></pre></td></tr></table></figure>
+<h3 id="安装Hexo">安装Hexo</h3><p>配置好<code>GitHub</code>家目录后，双击桌面上的<code>Git Shell</code>，输入<code>npm</code>命令即可安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install -g hexo-cli</span><br><span class="line">npm install hexo --save</span><br></pre></td></tr></table></figure>
+<p><a href="http://hexo.io/zh-cn/docs/" target="_blank" rel="external">http://hexo.io/zh-cn/docs/</a></p>
+<hr>
+<h2 id="Hexo初始化配置">Hexo初始化配置</h2><h3 id="创建Hexo文件夹">创建Hexo文件夹</h3><p>安装完成后，根据自己喜好建立目录（如<code>E:\kuaipan\GitHub\hexo</code>），进入<code>Git Shell</code>切换到该路径下<code>E:\kuaipan\GitHub\hexo</code>执行以下指令<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure></p>
+<h3 id="安装Hexo插件">安装Hexo插件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-generator-index --save</span><br><span class="line">npm install hexo-generator-archive --save</span><br><span class="line">npm install hexo-generator-category --save</span><br><span class="line">npm install hexo-generator-tag --save</span><br><span class="line">npm install hexo-server --save</span><br><span class="line">npm install hexo-deployer-git --save</span><br><span class="line">npm install hexo-deployer-heroku --save</span><br><span class="line">npm install hexo-deployer-rsync --save</span><br><span class="line">npm install hexo-deployer-openshift --save</span><br><span class="line">npm install hexo-renderer-marked@<span class="number">0.2</span> --save</span><br><span class="line">npm install hexo-renderer-stylus@<span class="number">0.2</span> --save</span><br><span class="line">npm install hexo-generator-feed@<span class="number">1</span> --save</span><br><span class="line">npm install hexo-generator-sitemap@<span class="number">1</span> --save</span><br></pre></td></tr></table></figure>
+<h3 id="本地查看效果">本地查看效果</h3><p>继续执行以下命令，成功后可登录<code>localhost:4000</code>查看效果<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo server</span><br></pre></td></tr></table></figure></p>
+<h3 id="Hexo简写命令">Hexo简写命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo n <span class="comment">#new</span></span><br><span class="line">hexo g <span class="comment">#generate</span></span><br><span class="line">hexo s <span class="comment">#server</span></span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="部署静态网页到GitHub">部署静态网页到GitHub</h2><h3 id="注册设置GitHub">注册设置GitHub</h3><ol>
+<li>登录<a href="https://github.com/" target="_blank" rel="external">GitHub</a>，注册自定义用户名如<code>wsgzao</code></li>
+<li>在主页右下角创建<code>New repository</code>，name必须和用户名一致如<code>wsgzao.github.io</code></li>
+<li>首次创建耐心等待10分钟左右审核，之后即可访问静态主页如<a href="http://wsgzao.github.io" target="_blank" rel="external">http://wsgzao.github.io</a></li>
+</ol>
+<h3 id="同步内容至GitHub">同步内容至GitHub</h3><ol>
+<li>下载<a href="https://windows.github.com/" target="_blank" rel="external">GitHub Windows</a></li>
+<li>设置<code>Local path</code>如<code>E:\快盘\GitHub\</code></li>
+<li>运行<code>Git Shell</code>切换到如<code>E:\快盘\GitHub\hexo</code>路径下</li>
+<li>执行<code>hexo g</code>命令生成<code>public</code>文件夹</li>
+<li>把生成的内容全部拷贝到<code>Local path</code>或其子目录</li>
+<li>运行<code>GitHub</code>确认修改信息后执行右上角的<code>Sync</code>同步</li>
+<li>最后访问主页观察效果</li>
+</ol>
+<p><a href="https://pages.github.com/" target="_blank" rel="external">https://pages.github.com/</a></p>
+<hr>
+<h2 id="域名和DNS">域名和DNS</h2><h3 id="域名推荐">域名推荐</h3><blockquote>
+<p>GoDaddy makes registering Domain Names fast, simple, and affordable.<br>【推荐理由】两个字“靠谱”，支持支付宝，附优惠码链接</p>
+</blockquote>
+<p><a href="http://www.godaddy.com/" target="_blank" rel="external">http://www.godaddy.com/</a><br><a href="http://www.gdcodecoupon.com/" target="_blank" rel="external">http://www.gdcodecoupon.com/</a></p>
+<h3 id="DNS推荐">DNS推荐</h3><blockquote>
+<p>致力于为您提供最稳定、最安全的域名解析服务<br>【推荐理由】依然是两个字“靠谱”，感谢他们一直以来对于公益的坚持</p>
+</blockquote>
+<p><a href="https://www.dnspod.cn/" target="_blank" rel="external">https://www.dnspod.cn/</a></p>
+<h3 id="设置CNAME">设置CNAME</h3><ol>
+<li>在Github的网站目录下创建<code>CNAME</code>文件</li>
+<li>填写自己的域名如<code>hellodog.com</code>，保存结束</li>
+<li>登录DNSPod，先添加域名，然后添加记录，设置如下</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>主机记录</th>
+<th>记录类型</th>
+<th>线路类型</th>
+<th>记录值</th>
+<th>MX优先级</th>
+<th>TTL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>@</td>
+<td>CNAME</td>
+<td>默认</td>
+<td>wsgzao.github.io.</td>
+<td>-</td>
+<td>10</td>
+</tr>
+<tr>
+<td>www</td>
+<td>CNAME</td>
+<td>默认</td>
+<td>wsgzao.github.io.</td>
+<td>-</td>
+<td>10</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="Hexo配置修改">Hexo配置修改</h2><blockquote>
+<p>告诉自己为什么要选择Hexo</p>
+</blockquote>
+<h3 id="知识储备">知识储备</h3><p>1.勤学勤练Markdown</p>
+<blockquote>
+<p>本地+云端备份数据是一种习惯</p>
+</blockquote>
+<ul>
+<li>Markdown学习路径 - <a href="http://wsgzao.github.io/post/markdown/" target="_blank" rel="external">http://wsgzao.github.io/post/markdown/</a></li>
+</ul>
+<p>2.使用性感的文本编辑器</p>
+<blockquote>
+<p>工欲善其事必先利其器</p>
+</blockquote>
+<ul>
+<li>Notepad2</li>
+<li>Sublime Text</li>
+</ul>
+<p><a href="http://wsgzao.github.io/post/windows/#文本编辑器" target="_blank" rel="external">http://wsgzao.github.io/post/windows/#文本编辑器</a></p>
+<h3 id="Hexo主题">Hexo主题</h3><blockquote>
+<p>选择主题建议遵循<code>KISS</code>原则</p>
+</blockquote>
+<ul>
+<li>Hexo Themes - <a href="http://hexo.io/themes/" target="_blank" rel="external">http://hexo.io/themes/</a></li>
+<li><del>Pacman - <a href="http://wsgzao.github.io/post/hexo-pacman/" target="_blank" rel="external">http://wsgzao.github.io/post/hexo-pacman/</a></del></li>
+<li>Jacman - <a href="http://wsgzao.github.io/post/hexo-jacman/" target="_blank" rel="external">http://wsgzao.github.io/post/hexo-jacman/</a></li>
+</ul>
+<h3 id="常见问题">常见问题</h3><p>1.修改配置文件时注意<code>YAML</code>语法，参数<code>冒号:</code>后一定要留<code>空格</code><br>2.中文乱码请修改文件编码格式为<code>UTF-8</code></p>
+<h3 id="如何迁移至Hexo">如何迁移至Hexo</h3><p><a href="http://hexo.io/zh-cn/docs/migration.html" target="_blank" rel="external">http://hexo.io/zh-cn/docs/migration.html</a></p>
+<h3 id="Hexo_2-X_升级_3-0">Hexo 2.X 升级 3.0</h3><p>1.做好相关配置文件和文章的备份<br>2.做任何修改前不要忘记第一件事备份</p>
+<p><a href="https://github.com/hexojs/hexo/wiki/Migrating-from-2.x-to-3.0" target="_blank" rel="external">https://github.com/hexojs/hexo/wiki/Migrating-from-2.x-to-3.0</a></p>
+<h3 id="Hexo_3-0_降级_2-X">Hexo 3.0 降级 2.X</h3><p><a href="http://sandylaw.tk/2015/03/07/hexo3to2/" target="_blank" rel="external">http://sandylaw.tk/2015/03/07/hexo3to2/</a></p>
+<h2 id="推荐阅读">推荐阅读</h2><ul>
+<li><a href="http://cnfeat.com/2014/05/10/2014-05-11-how-to-build-a-blog/" target="_blank" rel="external">如何搭建一个独立博客——简明Github Pages与Hexo教程</a></li>
+<li><a href="http://zipperary.com/categories/hexo/" target="_blank" rel="external">Zippera hexo系列教程</a></li>
+<li><a href="http://user.qzone.qq.com/644273006/blog/1418698244" target="_blank" rel="external">前端工程精粹 | 张云龙</a></li>
+<li><a href="http://ippotsuko.com/build-your-hexo-blog-3" target="_blank" rel="external">Hexo 3.0 静态博客使用指南</a></li>
+</ul>
+]]></content>
+    <summary type="html">
+    <![CDATA[持续更新Hexo的摸索过程，记录生活的点滴]]>
+    
+    </summary>
+    
+      <category term="Hexo" scheme="http://wsgzao.github.io/categories/Hexo/"/>
     
   </entry>
   
