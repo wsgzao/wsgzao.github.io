@@ -1,0 +1,519 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>iptables配置实践 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="建立防火墙白名单机制很重要">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iptables配置实践">
+<meta property="og:url" content="http://wsgzao.github.io/post/iptables/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="建立防火墙白名单机制很重要">
+<meta property="og:image" content="//i.v2ex.co/4WFXrnn2.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iptables配置实践">
+<meta name="twitter:description" content="建立防火墙白名单机制很重要">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index">索引 | Index</a></li>
+					
+						<li><a href="/archives">归档 | Archives</a></li>
+					
+						<li><a href="/about">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="ts-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/iptables/" title="iptables配置实践" itemprop="url">iptables配置实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2015-07-24T07:52:17.000Z" itemprop="datePublished"> 发表于 2015-07-24</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基础知识"><span class="toc-number">3.</span> <span class="toc-text">基础知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#关闭iptables"><span class="toc-number">3.1.</span> <span class="toc-text">关闭iptables</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#基础语法"><span class="toc-number">3.2.</span> <span class="toc-text">基础语法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置iptables白名单机制"><span class="toc-number">4.</span> <span class="toc-text">配置iptables白名单机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设置crontab脚本"><span class="toc-number">5.</span> <span class="toc-text">设置crontab脚本</span></a></li></ol>
+		
+		</div>
+		
+		<p><img src="//i.v2ex.co/4WFXrnn2.png" alt=""></p>
+<h2 id="前言">前言</h2><p>在大企业中防火墙角色主要交给硬件来支持，效果自然没话说只是需要增加一点点成本，但对于大多数个人或者互联网公司来说选择系统自带的<code>iptables</code>或者第三方云防火墙似乎是更加合适的选择，通过一些合理的优化和灵活的配置，我们也可以很轻松实现硬件防火墙的部分功能，够用就好。</p>
+<blockquote>
+<p>建立防火墙白名单机制很重要   </p>
+</blockquote>
+<hr>
+<h2 id="更新历史">更新历史</h2><p>2015年07月24日 - 初稿</p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/iptables/" target="_blank" rel="external">http://wsgzao.github.io/post/iptables/</a></p>
+<p>扩展阅读</p>
+<p>防火墙与 NAT 服务器 - <a href="http://vbird.dic.ksu.edu.tw/linux_server/0250simple_firewall_3.php" target="_blank" rel="external">http://vbird.dic.ksu.edu.tw/linux_server/0250simple_firewall_3.php</a><br>Linux 防火墙和 iptables - <a href="http://liaoph.com/iptables/" target="_blank" rel="external">http://liaoph.com/iptables/</a></p>
+<hr>
+<h2 id="基础知识">基础知识</h2><blockquote>
+<p>原理部分请参考扩展阅读</p>
+</blockquote>
+<h3 id="关闭iptables">关闭iptables</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/etc/init.d/iptables stop</span><br><span class="line">chkconfig iptables off</span><br></pre></td></tr></table></figure>
+<h3 id="基础语法">基础语法</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#规则的观察与清除</span></span><br><span class="line"></span><br><span class="line">     iptables [-t tables] [-L] [-nv]</span><br><span class="line"></span><br><span class="line">选项与参数：</span><br><span class="line">-t ：后面接 table ，例如 nat 或 filter ，若省略此项目，则使用默认的 filter</span><br><span class="line">-L ：列出目前的 table 的规则</span><br><span class="line">-n ：不进行 IP 与 HOSTNAME 的反查，显示讯息的速度会快很多！</span><br><span class="line">-v ：列出更多的信息，包括通过该规则的封包总位数、相关的网络接口等</span><br><span class="line"></span><br><span class="line">     iptables [-t tables] [-FXZ]</span><br><span class="line"></span><br><span class="line">选项与参数：</span><br><span class="line">-F ：清除所有的已订定的规则；</span><br><span class="line">-X ：杀掉所有使用者 <span class="string">"自定义"</span> 的 chain (应该说的是 tables ）啰；</span><br><span class="line">-Z ：将所有的 chain 的计数与流量统计都归零</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#封包的基础比对：IP, 网域及接口装置</span></span><br><span class="line"></span><br><span class="line">    iptables [-AI 链名] [-io 网络接口] [-p 协议] [<span class="operator">-s</span> 来源IP/网域] [<span class="operator">-d</span> 目标IP/网域] -j [ACCEPT|DROP|REJECT|LOG]</span><br><span class="line"></span><br><span class="line">选项与参数：</span><br><span class="line">-AI 链名：针对某的链进行规则的 <span class="string">"插入"</span> 或 <span class="string">"累加"</span></span><br><span class="line">    -A ：新增加一条规则，该规则增加在原本规则的最后面。例如原本已经有四条规则，</span><br><span class="line">         使用 -A 就可以加上第五条规则！</span><br><span class="line">    -I ：插入一条规则。如果没有指定此规则的顺序，默认是插入变成第一条规则。</span><br><span class="line">         例如原本有四条规则，使用 -I 则该规则变成第一条，而原本四条变成 <span class="number">2</span>~<span class="number">5</span> 号</span><br><span class="line">    链 ：有 INPUT, OUTPUT, FORWARD 等，此链名称又与 -io 有关，请看底下。</span><br><span class="line"></span><br><span class="line">-io 网络接口：设定封包进出的接口规范</span><br><span class="line">    -i ：封包所进入的那个网络接口，例如 eth0, lo 等接口。需与 INPUT 链配合；</span><br><span class="line">    -o ：封包所传出的那个网络接口，需与 OUTPUT 链配合；</span><br><span class="line"></span><br><span class="line">-p 协定：设定此规则适用于哪种封包格式</span><br><span class="line">   主要的封包格式有： tcp, udp, icmp 及 all 。</span><br><span class="line"></span><br><span class="line"><span class="operator">-s</span> 来源 IP/网域：设定此规则之封包的来源项目，可指定单纯的 IP 或包括网域，例如：</span><br><span class="line">   IP  ：<span class="number">192.168</span>.<span class="number">0.100</span></span><br><span class="line">   网域：<span class="number">192.168</span>.<span class="number">0.0</span>/<span class="number">24</span>, <span class="number">192.168</span>.<span class="number">0.0</span>/<span class="number">255.255</span>.<span class="number">255.0</span> 均可。</span><br><span class="line">   若规范为『不许』时，则加上 ! 即可，例如：</span><br><span class="line">   <span class="operator">-s</span> ! <span class="number">192.168</span>.<span class="number">100.0</span>/<span class="number">24</span> 表示不许 <span class="number">192.168</span>.<span class="number">100.0</span>/<span class="number">24</span> 之封包来源；</span><br><span class="line"></span><br><span class="line"><span class="operator">-d</span> 目标 IP/网域：同 <span class="operator">-s</span> ，只不过这里指的是目标的 IP 或网域。</span><br><span class="line"></span><br><span class="line">-j ：后面接动作，主要的动作有接受(ACCEPT)、丢弃(DROP)、拒绝(REJECT)及记录(LOG)</span><br><span class="line"></span><br><span class="line"><span class="comment">#TCP, UDP 的规则比对：针对端口设定</span></span><br><span class="line"></span><br><span class="line">    iptables [-AI 链] [-io 网络接口] [-p tcp,udp] [<span class="operator">-s</span> 来源IP/网域] [--sport 埠口范围] [<span class="operator">-d</span> 目标IP/网域] [--dport 端口范围] -j [ACCEPT|DROP|REJECT]</span><br><span class="line"></span><br><span class="line">选项与参数：</span><br><span class="line">--sport 埠口范围：限制来源的端口号码，端口号码可以是连续的，例如 <span class="number">1024</span>:<span class="number">65535</span></span><br><span class="line">--dport 埠口范围：限制目标的端口号码。</span><br><span class="line"></span><br><span class="line"><span class="comment">#iptables 外挂模块：mac 与 state</span></span><br><span class="line"></span><br><span class="line">    iptables -A INPUT [-m state] [--state 状态]</span><br><span class="line"></span><br><span class="line">选项与参数：</span><br><span class="line">-m ：一些 iptables 的外挂模块，主要常见的有：</span><br><span class="line">     state ：状态模块</span><br><span class="line">     mac   ：网络卡硬件地址 (hardware address)</span><br><span class="line">--state ：一些封包的状态，主要有：</span><br><span class="line">     INVALID    ：无效的封包，例如数据破损的封包状态</span><br><span class="line">     ESTABLISHED：已经联机成功的联机状态；</span><br><span class="line">     NEW        ：想要新建立联机的封包状态；</span><br><span class="line">     RELATED    ：这个最常用！表示这个封包是与我们主机发送出去的封包有关</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#ICMP 封包规则的比对：针对是否响应 ping 来设计</span></span><br><span class="line"></span><br><span class="line">    iptables -A INPUT [-p icmp] [--icmp-type 类型] -j ACCEPT</span><br><span class="line"></span><br><span class="line">选项与参数：</span><br><span class="line">--icmp-type ：后面必须要接 ICMP 的封包类型，也可以使用代号，</span><br><span class="line">              例如 <span class="number">8</span>  代表 <span class="built_in">echo</span> request 的意思。</span><br></pre></td></tr></table></figure>
+<h2 id="配置iptables白名单机制">配置iptables白名单机制</h2><blockquote>
+<p>配置iptables白名单是相对简单有效的管理手段</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#清除所有规则(慎用)</span></span><br><span class="line">iptables -F</span><br><span class="line">iptables -X</span><br><span class="line">iptables -Z</span><br><span class="line"></span><br><span class="line"><span class="comment">#查看iptable和行号</span></span><br><span class="line">iptables -nL --line-number</span><br><span class="line"></span><br><span class="line"><span class="comment">#保存当前防火墙配置</span></span><br><span class="line">service iptables save</span><br><span class="line"></span><br><span class="line"><span class="comment">#手动编辑防火墙策略</span></span><br><span class="line">vi /etc/sysconfig/iptables</span><br><span class="line"></span><br><span class="line"><span class="comment"># Generated by iptables-save v1.4.7 on Fri Jul 24 09:42:09 2015</span></span><br><span class="line">*filter</span><br><span class="line">:INPUT ACCEPT [<span class="number">0</span>:<span class="number">0</span>]</span><br><span class="line">:FORWARD ACCEPT [<span class="number">0</span>:<span class="number">0</span>]</span><br><span class="line">:OUTPUT ACCEPT [<span class="number">0</span>:<span class="number">0</span>]</span><br><span class="line"><span class="comment">#开放本地和Ping</span></span><br><span class="line">-A INPUT -i lo -j ACCEPT  </span><br><span class="line">-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT </span><br><span class="line">-A INPUT -p icmp -j ACCEPT</span><br><span class="line"><span class="comment">#配置内网白名单</span></span><br><span class="line">-A INPUT <span class="operator">-s</span> <span class="number">10.0</span>.<span class="number">0.0</span>/<span class="number">8</span> -j ACCEPT</span><br><span class="line">-A INPUT <span class="operator">-s</span> <span class="number">172.16</span>.<span class="number">0.0</span>/<span class="number">12</span> -j ACCEPT</span><br><span class="line">-A INPUT <span class="operator">-s</span> <span class="number">192.168</span>.<span class="number">0.0</span>/<span class="number">16</span> -j ACCEPT</span><br><span class="line"><span class="comment">#配置外网白名单</span></span><br><span class="line">-A INPUT <span class="operator">-s</span> <span class="number">180.168</span>.<span class="number">36.198</span> -j ACCEPT </span><br><span class="line">-A INPUT <span class="operator">-s</span> <span class="number">180.168</span>.<span class="number">34.218</span> -j ACCEPT </span><br><span class="line">-A INPUT <span class="operator">-s</span> <span class="number">222.73</span>.<span class="number">202.251</span> -j ACCEPT </span><br><span class="line"><span class="comment">#控制端口</span></span><br><span class="line">-A INPUT -p tcp --dport <span class="number">80</span> -j ACCEPT </span><br><span class="line">-A INPUT -p tcp --dport <span class="number">22</span> -j ACCEPT</span><br><span class="line"><span class="comment">#拒绝其它</span></span><br><span class="line">-A INPUT -j DROP </span><br><span class="line">-A FORWARD -j DROP </span><br><span class="line"><span class="comment">#开放出口</span></span><br><span class="line">-A OUTPUT -j ACCEPT </span><br><span class="line">COMMIT</span><br><span class="line"><span class="comment"># Completed on Fri Jul 24 09:40:16 2015 </span></span><br><span class="line"></span><br><span class="line"><span class="comment">#重启生效</span></span><br><span class="line">service iptables restart</span><br><span class="line"></span><br><span class="line"><span class="comment">#复查结果</span></span><br><span class="line"></span><br><span class="line">iptables -nL --line-number</span><br><span class="line"></span><br><span class="line">Chain INPUT (policy ACCEPT)</span><br><span class="line">num  target     prot opt <span class="built_in">source</span>               destination         </span><br><span class="line"><span class="number">1</span>    ACCEPT     all  --  <span class="number">0.0</span>.<span class="number">0.0</span>/<span class="number">0</span>            <span class="number">0.0</span>.<span class="number">0.0</span>/<span class="number">0</span>           </span><br><span class="line"><span class="number">2</span>    ACCEPT     all  --  <span class="number">0.0</span>.<span class="number">0.0</span>/<span class="number">0</span>            <span class="number">0.0</span>.<span class="number">0.0</span>/<span class="number">0</span>           state RELATED,ESTABLISHED </span><br><span class="line"><span class="number">3</span>    ACCEPT     icmp --  <span class="number">0.0</span>.<span class="number">0.0</span>/<span class="number">0</span>            <span class="number">0.0</span>.<span class="number">0.0</span>/<span class="number">0</span>           </span><br><span class="line"><span class="number">4</span>    ACCEPT     all  --  <span class="number">10.0</span>.<span class="number">0.0</span>/<span class="number">8</span>           <span class="number">0.0</span>.<span class="number">0.0</span>/<span class="number">0</span>           </span><br><span class="line"><span class="number">5</span>    ACCEPT     all  --  <span class="number">172.16</span>.<span class="number">0.0</span>/<span class="number">12</span>        <span class="number">0.0</span>.<span class="number">0.0</span>/<span class="number">0</span>           </span><br><span class="line"><span class="number">6</span>    ACCEPT     all  --  <span class="number">192.168</span>.<span class="number">0.0</span>/<span class="number">16</span>       <span class="number">0.0</span>.<span class="number">0.0</span>/<span class="number">0</span>           </span><br><span class="line"><span class="number">7</span>    ACCEPT     all  --  <span class="number">180.168</span>.<span class="number">36.198</span>       <span class="number">0.0</span>.<span class="number">0.0</span>/<span class="number">0</span>           </span><br><span class="line"><span class="number">8</span>    ACCEPT     all  --  <span class="number">180.168</span>.<span class="number">34.218</span>       <span class="number">0.0</span>.<span class="number">0.0</span>/<span class="number">0</span>           </span><br><span class="line"><span class="number">9</span>    ACCEPT     all  --  <span class="number">222.73</span>.<span class="number">202.251</span>       <span class="number">0.0</span>.<span class="number">0.0</span>/<span class="number">0</span>           </span><br><span class="line"><span class="number">10</span>   ACCEPT     tcp  --  <span class="number">0.0</span>.<span class="number">0.0</span>/<span class="number">0</span>            <span class="number">0.0</span>.<span class="number">0.0</span>/<span class="number">0</span>           tcp dpt:<span class="number">80</span> </span><br><span class="line"><span class="number">11</span>   ACCEPT     tcp  --  <span class="number">0.0</span>.<span class="number">0.0</span>/<span class="number">0</span>            <span class="number">0.0</span>.<span class="number">0.0</span>/<span class="number">0</span>           tcp dpt:<span class="number">22</span> </span><br><span class="line"><span class="number">12</span>   DROP       all  --  <span class="number">0.0</span>.<span class="number">0.0</span>/<span class="number">0</span>            <span class="number">0.0</span>.<span class="number">0.0</span>/<span class="number">0</span>           </span><br><span class="line"></span><br><span class="line">Chain FORWARD (policy ACCEPT)</span><br><span class="line">num  target     prot opt <span class="built_in">source</span>               destination         </span><br><span class="line"><span class="number">1</span>    DROP       all  --  <span class="number">0.0</span>.<span class="number">0.0</span>/<span class="number">0</span>            <span class="number">0.0</span>.<span class="number">0.0</span>/<span class="number">0</span>           </span><br><span class="line"></span><br><span class="line">Chain OUTPUT (policy ACCEPT)</span><br><span class="line">num  target     prot opt <span class="built_in">source</span>               destination         </span><br><span class="line"><span class="number">1</span>    ACCEPT     all  --  <span class="number">0.0</span>.<span class="number">0.0</span>/<span class="number">0</span>            <span class="number">0.0</span>.<span class="number">0.0</span>/<span class="number">0</span></span><br></pre></td></tr></table></figure>
+<h2 id="设置crontab脚本">设置crontab脚本</h2><blockquote>
+<p>便于运维集中化管理扩展</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">vi /root/start_iptables.sh</span><br><span class="line"></span><br><span class="line"><span class="shebang">#!/bin/bash</span></span><br><span class="line"><span class="comment">#0 0 * * * /root/start_iptables.sh</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#清除配置</span></span><br><span class="line">/sbin/iptables -P INPUT ACCEPT</span><br><span class="line">/sbin/iptables -F</span><br><span class="line">/sbin/iptables -X</span><br><span class="line"><span class="comment">#开放本地和Ping</span></span><br><span class="line">/sbin/iptables -A INPUT -i lo -j ACCEPT  </span><br><span class="line">/sbin/iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT </span><br><span class="line">/sbin/iptables -A INPUT -p icmp -j ACCEPT</span><br><span class="line"><span class="comment">#配置内网白名单</span></span><br><span class="line">/sbin/iptables -A INPUT <span class="operator">-s</span> <span class="number">10.0</span>.<span class="number">0.0</span>/<span class="number">8</span> -j ACCEPT</span><br><span class="line">/sbin/iptables -A INPUT <span class="operator">-s</span> <span class="number">172.16</span>.<span class="number">0.0</span>/<span class="number">12</span> -j ACCEPT</span><br><span class="line">/sbin/iptables -A INPUT <span class="operator">-s</span> <span class="number">192.168</span>.<span class="number">0.0</span>/<span class="number">16</span> -j ACCEPT</span><br><span class="line"><span class="comment">#配置外网白名单</span></span><br><span class="line">/sbin/iptables -A INPUT <span class="operator">-s</span> <span class="number">180.168</span>.<span class="number">36.198</span> -j ACCEPT </span><br><span class="line">/sbin/iptables -A INPUT <span class="operator">-s</span> <span class="number">180.168</span>.<span class="number">34.218</span> -j ACCEPT </span><br><span class="line">/sbin/iptables -A INPUT <span class="operator">-s</span> <span class="number">222.73</span>.<span class="number">202.251</span> -j ACCEPT </span><br><span class="line"><span class="comment">#控制端口</span></span><br><span class="line">/sbin/iptables -A INPUT -p tcp --dport <span class="number">80</span> -j ACCEPT </span><br><span class="line">/sbin/iptables -A INPUT -p tcp --dport <span class="number">22</span> -j ACCEPT</span><br><span class="line"><span class="comment">#拒绝其它</span></span><br><span class="line">/sbin/iptables -A INPUT -j DROP </span><br><span class="line">/sbin/iptables -A FORWARD -j DROP </span><br><span class="line"><span class="comment">#开放出口</span></span><br><span class="line">/sbin/iptables -A OUTPUT -j ACCEPT </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">chmod <span class="number">755</span> /root/start_iptables.sh</span><br><span class="line">crontab <span class="operator">-e</span></span><br><span class="line"><span class="number">0</span> <span class="number">0</span> * * * /root/start_iptables.sh</span><br></pre></td></tr></table></figure>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://wsgzao.github.io/post/iptables/" data-title="iptables配置实践 | HelloDog" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/ltmp/" title="ltmp">
+  <strong>上一篇：</strong><br/>
+  <span>
+  ltmp</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/cygwin/"  title="使用Cygwin在Windows上体验Linux的快感">
+ <strong>下一篇：</strong><br/> 
+ <span>使用Cygwin在Windows上体验Linux的快感
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="post/iptables/" data-title="iptables配置实践" data-url="http://wsgzao.github.io/post/iptables/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基础知识"><span class="toc-number">3.</span> <span class="toc-text">基础知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#关闭iptables"><span class="toc-number">3.1.</span> <span class="toc-text">关闭iptables</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#基础语法"><span class="toc-number">3.2.</span> <span class="toc-text">基础语法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置iptables白名单机制"><span class="toc-number">4.</span> <span class="toc-text">配置iptables白名单机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设置crontab脚本"><span class="toc-number">5.</span> <span class="toc-text">设置crontab脚本</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>18</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>6</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Try to do better.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="//faisalman.github.io/ua-parser-js/src/ua-parser.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"wsgzao"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//wsgzao.github.io/embed_ua.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fc2c5fc7d844d0973d9f77abd87f49c3c' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<script>
+var option = {
+  engineKey: '4ac092ad8d749fdc6293'
+};
+(function(w,d,t,u,n,s,e){
+  s = d.createElement(t);
+  s.src = u;
+  s.async = 1;
+  w[n] = function(r){
+    w[n].opts = r;
+  };
+  e = d.getElementsByTagName(t)[0];
+  e.parentNode.insertBefore(s, e);
+})(window,document,'script','//tinysou-cdn.b0.upaiyun.com/ts.js','_ts');
+_ts(option);
+</script>
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
