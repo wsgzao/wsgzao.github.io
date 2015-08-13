@@ -88,7 +88,7 @@
 		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
 		
   <p class="article-time">
-    <time datetime="2015-07-07T04:18:44.000Z" itemprop="datePublished"> 发表于 2015-07-07</time>
+    <time datetime="2015-08-13T04:18:44.000Z" itemprop="datePublished"> 发表于 2015-08-13</time>
     
   </p>
 </header>
@@ -107,7 +107,7 @@
 <p>这是最相对安全的登录管理方式</p>
 </blockquote>
 <hr>
-<h2 id="更新历史">更新历史</h2><p>2015年07月07日 - 初稿</p>
+<h2 id="更新历史">更新历史</h2><p>2015年08月13日 - 增加Bash Shell自动修改脚本<br>2015年07月07日 - 初稿</p>
 <p>阅读原文 - <a href="http://wsgzao.github.io/post/ssh/" target="_blank" rel="external">http://wsgzao.github.io/post/ssh/</a></p>
 <p>扩展阅读</p>
 <ul>
@@ -124,7 +124,7 @@
 <p>也可以手动在客户端建立目录和authorized_keys，注意修改权限</p>
 </blockquote>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#复制公钥到无密码登录的服务器上,22端口改变可以使用下面的命令</span></span><br><span class="line"><span class="comment">#ssh-copy-id -i ~/.ssh/id_rsa.pub "-p 10022 user@server"</span></span><br><span class="line">ssh-copy-id -i ~/.ssh/id_rsa.pub root@<span class="number">192.168</span>.<span class="number">15.241</span></span><br></pre></td></tr></table></figure>
-<h2 id="修改SSH配置文件">修改SSH配置文件</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#编辑sshd_config文件</span></span><br><span class="line">vi /etc/ssh/sshd_config</span><br><span class="line"></span><br><span class="line"><span class="comment">#禁用密码验证</span></span><br><span class="line">PasswordAuthentication no</span><br><span class="line"><span class="comment">#启用密钥验证</span></span><br><span class="line">RSAAuthentication yes</span><br><span class="line">PubkeyAuthentication yes</span><br><span class="line"><span class="comment">#指定公钥数据库文件</span></span><br><span class="line">AuthorsizedKeysFile .ssh/authorized_keys</span><br></pre></td></tr></table></figure>
+<h2 id="修改SSH配置文件">修改SSH配置文件</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#编辑sshd_config文件</span></span><br><span class="line">vi /etc/ssh/sshd_config</span><br><span class="line"></span><br><span class="line"><span class="comment">#禁用密码验证</span></span><br><span class="line">PasswordAuthentication no</span><br><span class="line"><span class="comment">#启用密钥验证</span></span><br><span class="line">RSAAuthentication yes</span><br><span class="line">PubkeyAuthentication yes</span><br><span class="line"><span class="comment">#指定公钥数据库文件</span></span><br><span class="line">AuthorsizedKeysFile .ssh/authorized_keys</span><br><span class="line"></span><br><span class="line">sed -i <span class="string">"s/^PasswordAuthentication.*/PasswordAuthentication no/g"</span> /etc/ssh/sshd_config</span><br><span class="line">sed -i <span class="string">"s/^#RSAAuthentication.*/RSAAuthentication yes/g"</span> /etc/ssh/sshd_config</span><br><span class="line">sed -i <span class="string">"s/^#PubkeyAuthentication.*/PubkeyAuthentication yes/g"</span> /etc/ssh/sshd_config</span><br><span class="line">sed -i <span class="string">"s/^#AuthorizedKeysFile.*/AuthorizedKeysFile .ssh\/authorized_keys/g"</span> /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>重启SSH服务前建议多保留一个会话以防不测</p>
 </blockquote>
@@ -164,18 +164,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/post/samba/" title="使用Samba实现Linux与Windows文件共享实践">
+ <a href="/post/sersync/" title="sersync基于rsync+inotify实现数据实时同步">
   <strong>上一篇：</strong><br/>
   <span>
-  使用Samba实现Linux与Windows文件共享实践</span>
+  sersync基于rsync+inotify实现数据实时同步</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/post/ntp/"  title="NTP配置实践">
+<a href="/post/fq/"  title="GFW翻墙小结">
  <strong>下一篇：</strong><br/> 
- <span>NTP配置实践
+ <span>GFW翻墙小结
 </span>
 </a>
 </div>
@@ -212,7 +212,7 @@
 		  
 		
 		  
-			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>21</sup></a></li>
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>22</sup></a></li>
 		  
 		
 		  
