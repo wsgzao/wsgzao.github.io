@@ -88,18 +88,11 @@
 		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
 		
   <p class="article-time">
-    <time datetime="2015-07-16T02:48:05.000Z" itemprop="datePublished"> 发表于 2015-07-16</time>
+    <time datetime="2015-08-31T02:48:05.000Z" itemprop="datePublished"> 发表于 2015-08-31</time>
     
   </p>
 </header>
 	<div class="article-content">
-		
-		<div id="toc" class="toc-article">
-			<strong class="toc-title">文章目录</strong>
-		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装GoAccess"><span class="toc-number">3.</span> <span class="toc-text">安装GoAccess</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用方式"><span class="toc-number">4.</span> <span class="toc-text">使用方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用bash/sed/awk手动查找Nginx日志"><span class="toc-number">5.</span> <span class="toc-text">使用bash/sed/awk手动查找Nginx日志</span></a></li></ol>
-		
-		</div>
 		
 		<p><img src="http://www.goaccess.io/images/goaccess-html-report.png" alt=""></p>
 <h2 id="前言">前言</h2><p>使用Nginx的网站可能会遇到访问流量异常、被友情检测、程序出现Bug等各种突然情况，这时大家的反应想必都是第一时间分析日志，然后发现日志有几十GB之多，又需要按照时间、错误类型或者关键字段检索信息时会不会有种醍醐灌顶、菊花一紧的错觉。文中介绍的方法不管是GoAccess还是sed/awk虽然可以解决一时的问题但未必能够治本，也许<code>ELK(Logstash+ElasticSearch+Kibana)</code>对我们大多数人来说是更合理的集中化日志管理解决方案。</p>
@@ -107,10 +100,10 @@
 <p>日志固然重要，但努力建设适合业务发展的集中化日志管理平台才是基础核心</p>
 </blockquote>
 <hr>
-<h2 id="更新历史">更新历史</h2><p>2015年07月16日 - 初稿</p>
+<h2 id="更新历史">更新历史</h2><p>2015年08月31日 - 增加Nginx日志按时间分割<br>2015年07月16日 - 初稿</p>
 <p>阅读原文 - <a href="http://wsgzao.github.io/post/goaccess/" target="_blank" rel="external">http://wsgzao.github.io/post/goaccess/</a></p>
 <p>扩展阅读</p>
-<p>GoAccess - <a href="http://goaccess.io/" target="_blank" rel="external">http://goaccess.io/</a><br>用GoAccess分析Nginx的日志 - <a href="http://www.fancycoding.com/log-analyse-using-goaccess/" target="_blank" rel="external">http://www.fancycoding.com/log-analyse-using-goaccess/</a><br>sed 简明教程 - <a href="http://coolshell.cn/articles/9104.html" target="_blank" rel="external">http://coolshell.cn/articles/9104.html</a><br>AWK 简明教程 - <a href="http://coolshell.cn/articles/9070.html" target="_blank" rel="external">http://coolshell.cn/articles/9070.html</a></p>
+<p>GoAccess - <a href="http://goaccess.io/" target="_blank" rel="external">http://goaccess.io/</a><br>用GoAccess分析Nginx的日志 - <a href="http://www.fancycoding.com/log-analyse-using-goaccess/" target="_blank" rel="external">http://www.fancycoding.com/log-analyse-using-goaccess/</a><br>sed 简明教程 - <a href="http://coolshell.cn/articles/9104.html" target="_blank" rel="external">http://coolshell.cn/articles/9104.html</a><br>AWK 简明教程 - <a href="http://coolshell.cn/articles/9070.html" target="_blank" rel="external">http://coolshell.cn/articles/9070.html</a><br>LTMP索引 - <a href="http://wsgzao.github.io/index/#LTMP" target="_blank" rel="external">http://wsgzao.github.io/index/#LTMP</a></p>
 <hr>
 <h2 id="安装GoAccess">安装GoAccess</h2><blockquote>
 <p>各平台都有灰常简单的部署方案 - <a href="http://goaccess.io/download" target="_blank" rel="external">http://goaccess.io/download</a></p>
@@ -123,7 +116,11 @@
 <h2 id="使用bash/sed/awk手动查找Nginx日志">使用bash/sed/awk手动查找Nginx日志</h2><blockquote>
 <p>更多技巧可以参考扩展阅读，Python的处理效率或者更优</p>
 </blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#按日期查找时间段</span></span><br><span class="line">sed -n <span class="string">"/14\/Jul\/2015:00:00:00/,/15\/Jul\/2015:15:00:00/"</span>p access.log &gt; time_access.log</span><br><span class="line"></span><br><span class="line"><span class="comment">#查找504错误的页面和数量</span></span><br><span class="line">awk <span class="string">'($9 ~ /504/)'</span> time_access.log | awk <span class="string">'&#123;print $7&#125;'</span> | sort | uniq -c | sort -rn &gt; <span class="number">504</span>.log</span><br><span class="line"></span><br><span class="line"><span class="comment">#查找访问最多的20个IP及访问次数</span></span><br><span class="line">awk <span class="string">'&#123;print $1&#125;'</span> time_access.log | sort | uniq -c | sort -n -k <span class="number">1</span> -r | head -n <span class="number">20</span> &gt; top.log</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#按日期查找时间段</span></span><br><span class="line">sed -n <span class="string">"/30\/Aug\/2015:00:00:01/,/30\/Aug\/2015:23:59:59/"</span>p access.log &gt; time_access.log</span><br><span class="line"></span><br><span class="line"><span class="comment">#查找504错误的页面和数量</span></span><br><span class="line">awk <span class="string">'($9 ~ /504/)'</span> time_access.log | awk <span class="string">'&#123;print $7&#125;'</span> | sort | uniq -c | sort -rn &gt; <span class="number">504</span>.log</span><br><span class="line"></span><br><span class="line"><span class="comment">#查找访问最多的20个IP及访问次数</span></span><br><span class="line">awk <span class="string">'&#123;print $1&#125;'</span> time_access.log | sort | uniq -c | sort -n -k <span class="number">1</span> -r | head -n <span class="number">20</span> &gt; top.log</span><br></pre></td></tr></table></figure>
+<h2 id="Nginx日志按时间分割">Nginx日志按时间分割</h2><blockquote>
+<p>这个脚本可以作为通用模板，其它业务需求也可以参照</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#增加自定义脚本</span></span><br><span class="line">vi nginx_log.sh</span><br><span class="line"></span><br><span class="line"><span class="shebang">#!/bin/bash</span></span><br><span class="line"><span class="comment">#设置crontab -e为每日凌晨3点</span></span><br><span class="line"><span class="comment">#0 3 * * * /root/OMCS/script/nginx_log.sh</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> ngix_i <span class="keyword">in</span> `ls /app/<span class="built_in">local</span>`</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">     <span class="comment">#设置临时变量</span></span><br><span class="line">     nginx_dir=`basename <span class="variable">$&#123;ngix_i&#125;</span>`</span><br><span class="line">     <span class="keyword">if</span> ( <span class="built_in">echo</span> <span class="string">"<span class="variable">$nginx_dir</span>"</span>|grep <span class="string">"nginx"</span> &gt; /dev/null ); <span class="keyword">then</span></span><br><span class="line">          <span class="comment"># echo $nginx_dir</span></span><br><span class="line">          <span class="comment">#设置日志文件存放目录</span></span><br><span class="line">          logs_path=<span class="string">"/app/local/<span class="variable">$nginx_dir</span>/logs/"</span></span><br><span class="line">          <span class="comment">#设置备份日志存放目录</span></span><br><span class="line">          logs_bak=<span class="string">"/app/local/<span class="variable">$nginx_dir</span>/logs/bak/"</span></span><br><span class="line">          <span class="comment">#设置pid文件</span></span><br><span class="line">          pid_path=<span class="string">"/app/local/<span class="variable">$nginx_dir</span>/logs/nginx.pid"</span></span><br><span class="line">         </span><br><span class="line">          <span class="comment">#判断目录是否存在</span></span><br><span class="line">          <span class="keyword">if</span>  [ ! <span class="operator">-d</span>  <span class="string">"<span class="variable">$logs_path</span>"</span> ]; <span class="keyword">then</span> </span><br><span class="line">               <span class="built_in">continue</span></span><br><span class="line">          <span class="keyword">fi</span></span><br><span class="line">          <span class="comment">#判断文件是否存在</span></span><br><span class="line">          <span class="keyword">if</span>  [ ! <span class="operator">-e</span>  <span class="string">"<span class="variable">$pid_path</span>"</span> ]; <span class="keyword">then</span> </span><br><span class="line">               <span class="built_in">continue</span></span><br><span class="line">          <span class="keyword">fi</span></span><br><span class="line">         </span><br><span class="line">          <span class="comment">#判断目录是否存在</span></span><br><span class="line">          <span class="keyword">if</span>  [ ! <span class="operator">-d</span>  <span class="string">"<span class="variable">$logs_bak</span>"</span> ]; <span class="keyword">then</span> </span><br><span class="line">               mkdir -p <span class="string">"<span class="variable">$logs_bak</span>"</span> </span><br><span class="line">          <span class="keyword">fi</span> </span><br><span class="line">         </span><br><span class="line">          <span class="built_in">cd</span> <span class="variable">$&#123;logs_path&#125;</span></span><br><span class="line">          logfiles=(`ls *.log`)</span><br><span class="line"></span><br><span class="line">          array_i=<span class="number">0</span></span><br><span class="line">          <span class="comment">#迁移日志循环模块</span></span><br><span class="line">          <span class="keyword">for</span> i <span class="keyword">in</span> <span class="variable">$&#123;logfiles[@]&#125;</span>;</span><br><span class="line">          <span class="keyword">do</span></span><br><span class="line">               <span class="comment">#设置临时变量</span></span><br><span class="line">               j=`basename <span class="variable">$&#123;i&#125;</span>`</span><br><span class="line">               <span class="comment">#重命名并迁移日志文件</span></span><br><span class="line">               baklogname=<span class="variable">$&#123;j&#125;</span>_$(date <span class="operator">-d</span> <span class="string">"yesterday"</span> +<span class="string">"%Y%m%d%H%M%S"</span>)</span><br><span class="line">               baklognames[<span class="variable">$array_i</span>]=<span class="variable">$baklogname</span></span><br><span class="line">               mv <span class="variable">$&#123;i&#125;</span> <span class="variable">$&#123;logs_bak&#125;</span><span class="variable">$&#123;baklogname&#125;</span></span><br><span class="line">               array_i=`expr <span class="variable">$array_i</span> + <span class="number">1</span>`</span><br><span class="line">          <span class="keyword">done</span></span><br><span class="line"></span><br><span class="line">          <span class="comment">#向nginx主进程发信号重新打开日志</span></span><br><span class="line">          <span class="built_in">kill</span> -USR1 `cat <span class="variable">$&#123;pid_path&#125;</span>`</span><br><span class="line">         </span><br><span class="line">          <span class="built_in">cd</span> <span class="variable">$&#123;logs_bak&#125;</span></span><br><span class="line">          <span class="comment">#压缩日志循环模块</span></span><br><span class="line">          <span class="keyword">for</span> i <span class="keyword">in</span> <span class="variable">$&#123;baklognames[@]&#125;</span>;</span><br><span class="line">          <span class="keyword">do</span></span><br><span class="line">               <span class="comment">#压缩并删除原日志</span></span><br><span class="line">               tar -zcvf <span class="variable">$&#123;i&#125;</span>.tar.gz <span class="variable">$&#123;i&#125;</span> --remove-files &gt; /dev/null <span class="number">2</span>&gt;&amp;<span class="number">1</span></span><br><span class="line">          <span class="keyword">done</span></span><br><span class="line"></span><br><span class="line">          <span class="comment">#清理7天前的日志</span></span><br><span class="line">          find <span class="variable">$&#123;logs_bak&#125;</span> -name <span class="string">'*'</span>  -mtime +<span class="number">90</span> | xargs rm -rf &#123;&#125;</span><br><span class="line">             </span><br><span class="line">     <span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#增加执行权限</span></span><br><span class="line">chmod u+x nginx_log.sh</span><br><span class="line"></span><br><span class="line"><span class="comment">#设置crontab -e为每日凌晨3点</span></span><br><span class="line">crontab <span class="operator">-e</span></span><br><span class="line"></span><br><span class="line"><span class="number">0</span> <span class="number">3</span> * * * /root/OMCS/script/nginx_log.sh</span><br></pre></td></tr></table></figure>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -155,18 +152,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/post/vagrant/" title="Windows上使用Vagrant打造Laravel Homestead可协同跨平台开发环境">
+ <a href="/post/elk/" title="使用ELK(Elasticsearch + Logstash + Kibana) 搭建日志集中分析平台实践">
   <strong>上一篇：</strong><br/>
   <span>
-  Windows上使用Vagrant打造Laravel Homestead可协同跨平台开发环境</span>
+  使用ELK(Elasticsearch + Logstash + Kibana) 搭建日志集中分析平台实践</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/post/chinese-copywriting-guidelines/"  title="中文文案排版指北">
+<a href="/post/stay-hungry-stay-foolish/"  title="乔布斯在斯坦福大学毕业典礼上的演讲">
  <strong>下一篇：</strong><br/> 
- <span>中文文案排版指北
+ <span>乔布斯在斯坦福大学毕业典礼上的演讲
 </span>
 </a>
 </div>
@@ -185,7 +182,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装GoAccess"><span class="toc-number">3.</span> <span class="toc-text">安装GoAccess</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用方式"><span class="toc-number">4.</span> <span class="toc-text">使用方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用bash/sed/awk手动查找Nginx日志"><span class="toc-number">5.</span> <span class="toc-text">使用bash/sed/awk手动查找Nginx日志</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装GoAccess"><span class="toc-number">3.</span> <span class="toc-text">安装GoAccess</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用方式"><span class="toc-number">4.</span> <span class="toc-text">使用方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用bash/sed/awk手动查找Nginx日志"><span class="toc-number">5.</span> <span class="toc-text">使用bash/sed/awk手动查找Nginx日志</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nginx日志按时间分割"><span class="toc-number">6.</span> <span class="toc-text">Nginx日志按时间分割</span></a></li></ol>
  
   </div>
 
@@ -203,11 +200,11 @@
 		  
 		
 		  
-			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>18</sup></a></li>
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>25</sup></a></li>
 		  
 		
 		  
-			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>5</sup></a></li>
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>6</sup></a></li>
 		  
 		
 		  
@@ -238,9 +235,6 @@
         
     </ul>
 </div>
-
-  
-
 
   <div class="rsspart">
 	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
