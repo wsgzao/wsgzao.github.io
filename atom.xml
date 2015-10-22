@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Keep Calm and Carry On]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://wsgzao.github.io/"/>
-  <updated>2015-10-20T03:12:10.662Z</updated>
+  <updated>2015-10-22T06:27:16.720Z</updated>
   <id>http://wsgzao.github.io/</id>
   
   <author>
@@ -13,6 +13,59 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[VMware ESXi自动化部署实践]]></title>
+    <link href="http://wsgzao.github.io/post/esxi/"/>
+    <id>http://wsgzao.github.io/post/esxi/</id>
+    <published>2015-10-22T08:17:05.000Z</published>
+    <updated>2015-10-22T06:27:16.720Z</updated>
+    <content type="html"><![CDATA[<p><img src="//i.v2ex.co/27Vl3JxT.png" alt=""></p>
+<h2 id="前言">前言</h2><p>VMware ESXi本身部署就很简单，任何人分分钟钟即可掌握，但是在短时间内需要部署几十台ESXi就显得力不从心了，本文主要介绍通过镜像定制kickstart自动化部署ESXi，PXE网络部署可参考扩展阅读部分。</p>
+<blockquote>
+<p>让ESXi的部署速度再快一点</p>
+</blockquote>
+<hr>
+<h2 id="更新记录">更新记录</h2><p>2015年10月22日 - 初稿</p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/esxi/" target="_blank" rel="external">http://wsgzao.github.io/post/esxi/</a></p>
+<p>扩展阅读</p>
+<p>VMware - <a href="http://www.vmware.com/support.html" target="_blank" rel="external">http://www.vmware.com/support.html</a><br>(周剑辉)VMware vSphere 5.1 学习系列之三：安装 ESXi - <a href="http://m.educity.cn/linux/1149107.html" target="_blank" rel="external">http://m.educity.cn/linux/1149107.html</a><br>Autoinst索引 - <a href="http://wsgzao.github.io/index/#Autoinst" target="_blank" rel="external">http://wsgzao.github.io/index/#Autoinst</a></p>
+<hr>
+<h2 id="下载ESXi镜像">下载ESXi镜像</h2><blockquote>
+<p>经验证ESXi 5和6均可使用此方法</p>
+</blockquote>
+<p>ESXi版本：VMware-VMvisor-Installer-5.5.0.update02-2718055.x86_64-Dell_Customized-A05.iso</p>
+<p>其它版本下载地址：<a href="https://my.vmware.com/web/vmware/downloads" target="_blank" rel="external">https://my.vmware.com/web/vmware/downloads</a></p>
+<h2 id="配置自动化文件">配置自动化文件</h2><h3 id="ks-cfg">ks.cfg</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Sample scripted installation file</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Accept the VMware End User License Agreement</span></span><br><span class="line">vmaccepteula</span><br><span class="line"></span><br><span class="line"><span class="comment"># Set the root password for the DCUI and Tech Support Mode</span></span><br><span class="line">rootpw vmware</span><br><span class="line"></span><br><span class="line"><span class="comment"># Install on the first local disk available on machine</span></span><br><span class="line">install --firstdisk --overwritevmfs</span><br><span class="line"></span><br><span class="line"><span class="comment"># Set the network to DHCP on the first network adapter</span></span><br><span class="line">network --bootproto=dhcp --device=vmnic0</span><br><span class="line"></span><br><span class="line"><span class="comment"># Reboot at the end</span></span><br><span class="line">reboot</span><br><span class="line"></span><br><span class="line"><span class="comment"># A sample post-install script</span></span><br><span class="line">%post --interpreter=python --ignorefailure=<span class="literal">true</span></span><br><span class="line">import time</span><br><span class="line">stampFile = open(<span class="string">'/finished.stamp'</span>, mode=<span class="string">'w'</span>)</span><br><span class="line">stampFile.write( time.asctime() )</span><br></pre></td></tr></table></figure>
+<h3 id="ISOLINUX-CFG">ISOLINUX.CFG</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">DEFAULT menu.c32</span><br><span class="line">MENU TITLE Dell-ESXi-<span class="number">5.5</span>U2-<span class="number">2718055</span>-A05 Boot Menu</span><br><span class="line">NOHALT <span class="number">1</span></span><br><span class="line">PROMPT <span class="number">0</span></span><br><span class="line">TIMEOUT <span class="number">80</span></span><br><span class="line">LABEL install</span><br><span class="line">  KERNEL mboot.c32</span><br><span class="line">  APPEND -c boot.cfg ks=cdrom:/KS.CFG</span><br><span class="line">  MENU LABEL Dell-ESXi-<span class="number">5.5</span>U2-<span class="number">2718055</span>-A05 ^Installer</span><br><span class="line">LABEL hddboot</span><br><span class="line">  LOCALBOOT <span class="number">0</span>x80</span><br><span class="line">  MENU LABEL ^Boot from <span class="built_in">local</span> disk</span><br></pre></td></tr></table></figure>
+<h2 id="整合镜像文件">整合镜像文件</h2><p>整合工具我使用UltraISO，下载地址如下</p>
+<p><a href="http://wsgzao.github.io/post/windows/#光盘刻录" target="_blank" rel="external">http://wsgzao.github.io/post/windows/#光盘刻录</a></p>
+<blockquote>
+<p>使用方法</p>
+</blockquote>
+<ol>
+<li>Windows下使用UltraISO打开官方镜像</li>
+<li>把ks.cfg和ISOLINUX.CFG添加并覆盖至根目录</li>
+<li>点击保存即可</li>
+</ol>
+<p>Linux编译保存镜像请参考官方手册<br><a href="http://pubs.vmware.com/vsphere-55/topic/com.vmware.vsphere.install.doc/GUID-C03EADEA-A192-4AB4-9B71-9256A9CB1F9C.html" target="_blank" rel="external">http://pubs.vmware.com/vsphere-55/topic/com.vmware.vsphere.install.doc/GUID-C03EADEA-A192-4AB4-9B71-9256A9CB1F9C.html</a></p>
+<blockquote>
+<p>测试方案</p>
+</blockquote>
+<ol>
+<li>建议先通过VMware Workstation模拟测试</li>
+<li>在生产环境中验证可行性</li>
+</ol>
+<p>GitHub源码 - <a href="https://github.com/wsgzao/autoinstall/" target="_blank" rel="external">https://github.com/wsgzao/autoinstall/</a></p>
+]]></content>
+    <summary type="html">
+    <![CDATA[让ESXi的部署速度再快一点]]>
+    
+    </summary>
+    
+      <category term="学习 | Study" scheme="http://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[使用fio测试磁盘I/O性能]]></title>
@@ -2409,56 +2462,6 @@ vi /usr/share/elasticsearch/bin/elasticsearch.in.sh
     </summary>
     
       <category term="学习 | Study" scheme="http://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[苹果越狱小结]]></title>
-    <link href="http://wsgzao.github.io/post/jailbreak/"/>
-    <id>http://wsgzao.github.io/post/jailbreak/</id>
-    <published>2015-08-03T13:35:54.000Z</published>
-    <updated>2015-08-03T14:00:23.082Z</updated>
-    <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/dNgjdLEg.png" alt=""></p>
-<h2 id="前言">前言</h2><p>本来一直都没有苹果的产品除了第一代的iPod(没怎么使用最后大学送人了 @李清纯(255270520) ，巧合的是老妈学校发了一台iPad mini Retina正好赶上mini第2代，也算是比较成熟的产品了就顺手撸过来仔细体验一把。本想像Android一样不用root(iOS称为Jailbreak越狱)也能安心使用，但手机习惯了魅族和小米的良好用户体验，iOS如此”严格”的限制对我这样一个喜欢追求自由舒爽简称“懒”的人来说真心不习惯，我们这次越狱的目的是为了让iOS系统用起来更加润滑，随着支付渠道的完善我也希望大家给予背后的开发者一些应有的正版支持。</p>
-<blockquote>
-<p>我们开始尊重版权并抵制盗版但不能否认自己也是盗版的受益者</p>
-</blockquote>
-<hr>
-<h2 id="更新记录">更新记录</h2><p>2015年08月03日 - 更新iOS 8.4，真的还需要越狱么？<br>2015年02月02日 - 更新iOS 8.1.2<br>2014年07月20日 - 修改【iOS】文字错误，去除178盗版源<br>2014年07月18日 - 更新iOS 7.1.2和部分推荐插件<br>2014年02月06日 - 撰写初稿</p>
-<p>阅读原文 - <a href="http://wsgzao.github.io/post/jailbreak/" target="_blank" rel="external">http://wsgzao.github.io/post/jailbreak/</a></p>
-<hr>
-<h2 id="基础信息">基础信息</h2><p>设备型号：iPad mini (Retina) Wi-Fi 16 GB (白色)<br>系统版本： <code>8.4</code></p>
-<p>序列号：DQTLQWNTFCM8</p>
-<p>苹果信息查询：<a href="http://www.25pp.com/xuliehao/" target="_blank" rel="external">http://www.25pp.com/xuliehao/</a></p>
-<p>【备注】了解产品的背后信息很重要</p>
-<h2 id="升级固件">升级固件</h2><p>选择支持设备越狱的版本，安装iTunes使用<code>Shift</code>+<code>鼠标左键</code>点击恢复</p>
-<p><a href="http://jailbreak.25pp.com/gujian/" target="_blank" rel="external">http://jailbreak.25pp.com/gujian/</a></p>
-<h2 id="Jailbreak-越狱">Jailbreak.越狱</h2><p>参照图文教程一步一步执行即可，So Easy</p>
-<p><a href="http://jailbreak.25pp.com/" target="_blank" rel="external">http://jailbreak.25pp.com/</a></p>
-<blockquote>
-<p>唯一提醒1点，无论升级还是越狱，备份数据都是必须哒</p>
-</blockquote>
-<h2 id="越狱后插件推荐">越狱后插件推荐</h2><blockquote>
-<p>添加Cydia软件源</p>
-</blockquote>
-<p><code>-&gt;打开Cydia-&gt;软件源-&gt;右上角编辑-&gt;左上角添加</code></p>
-<pre><code><span class="string">http:</span><span class="comment">//apt.25pp.com</span>
-</code></pre><blockquote>
-<p>安装插件</p>
-</blockquote>
-<p><code>-&gt;打开Cydia-&gt;右下角搜索</code></p>
-<p>【捆绑】PP助手</p>
-<p>【必装】Apple File Conduit”2”</p>
-<p>【推荐】百度输入法(iPad)</p>
-<p>【推荐】SwitchSpring，任务切换时可以一键关闭所有应用</p>
-<p>【推荐】Shadowsocks，简单的iOS翻墙方式</p>
-]]></content>
-    <summary type="html">
-    <![CDATA[只为更加自由的使用iOS]]>
-    
-    </summary>
-    
-      <category term="生活 | Life" scheme="http://wsgzao.github.io/categories/%E7%94%9F%E6%B4%BB-Life/"/>
     
   </entry>
   
