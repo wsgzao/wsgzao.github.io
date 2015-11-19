@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Keep Calm and Carry On]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://wsgzao.github.io/"/>
-  <updated>2015-11-16T08:08:51.456Z</updated>
+  <updated>2015-11-19T03:30:53.619Z</updated>
   <id>http://wsgzao.github.io/</id>
   
   <author>
@@ -13,6 +13,217 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[ThinkPad X1 Carbon使用经验分享(解决Windows 10高分辨率模糊)]]></title>
+    <link href="http://wsgzao.github.io/post/thinkpad/"/>
+    <id>http://wsgzao.github.io/post/thinkpad/</id>
+    <published>2015-11-19T03:43:14.000Z</published>
+    <updated>2015-11-19T03:30:53.619Z</updated>
+    <content type="html"><![CDATA[<p><img src="//i.v2ex.co/WnBWyuqk.jpeg" alt=""></p>
+<h2 id="前言">前言</h2><p>虽然ThinkPad已经不再属于IBM，性价比依旧不够给力，但是在我的真实体验中小黑依然给我留下了优质的印象。我没有使用过T系列，平时工作主要以x220i和X1为主，没有花一分钱购买笔记本电脑也要感谢父母单位和公司的慷慨，如果大家依靠自己能力购买MacBook也是极好的。因为2年前ThinkPad X1 Carbon第一代出来时就推荐同事购买，但当时在极短时间内没有搞清楚UEFI和GPT导致部署系统时出现差池，现在终于有机会重新完整实践一遍了。</p>
+<blockquote>
+<p>ThinkPad X1 Carbon “碳”为观止</p>
+</blockquote>
+<hr>
+<h2 id="更新记录">更新记录</h2><p>2015年11月19日 - 初稿</p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/thinkpad/" target="_blank" rel="external">http://wsgzao.github.io/post/thinkpad/</a></p>
+<p>扩展阅读</p>
+<ul>
+<li>ThinkPad - <a href="http://think.lenovo.com.cn/" target="_blank" rel="external">http://think.lenovo.com.cn/</a></li>
+</ul>
+<hr>
+<h2 id="机型配置和操作系统">机型配置和操作系统</h2><blockquote>
+<p>10小时续航一体化轻薄设计，8G内存和256G SSD固态硬盘会成为大家的标配</p>
+</blockquote>
+<p>ThinkPad X1 carbon （2015版）- <a href="http://detail.zol.com.cn/series/16/32108/param_18925_0_1.html" target="_blank" rel="external">http://detail.zol.com.cn/series/16/32108/param_18925_0_1.html</a></p>
+<p>Win10 TH2 - <a href="http://zxkh19501.blog.163.com/" target="_blank" rel="external">http://zxkh19501.blog.163.com/</a></p>
+<h2 id="BIOS设置">BIOS设置</h2><blockquote>
+<p>Setup中的设置非常重要，主要目的是开启虚拟化支持和调整操作系统兼容性，请务必理解每一步的含义</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="number">1</span>. 启动ThinkPad X1 Carbon超极本，然后按下`F1`，进入ThinkPad Setup（即BIOS）</span><br><span class="line"></span><br><span class="line"><span class="number">2</span>. 选择`Security`中的`Virtualization`，回车后修改以下<span class="number">2</span>个选项为`Enabled`</span><br><span class="line"></span><br><span class="line">Intel Virtualization Technology [Enabled]</span><br><span class="line">Intel VT<span class="operator">-d</span> Feature [Enabled]</span><br><span class="line"></span><br><span class="line"><span class="number">3</span>. 选择`Security`中的`Secure Boot`，回车后修改以下<span class="number">1</span>个选项为`Disabled`</span><br><span class="line"></span><br><span class="line">Secure Boot [Disabled]</span><br><span class="line"></span><br><span class="line"><span class="number">4</span>. 选择`Startup`修改以下<span class="number">3</span>个选项分别为</span><br><span class="line"></span><br><span class="line">UEFI/Lagacy Boot [Both]</span><br><span class="line">- UEFI/Lagacy Boot Priority [Legacy First]</span><br><span class="line">- CSM Support [Yes]</span><br><span class="line"></span><br><span class="line"><span class="number">5</span>. 按F10保存并退出Setup配置，重启电脑准备安装系统</span><br></pre></td></tr></table></figure>
+<h2 id="系统部署">系统部署</h2><blockquote>
+<p>我比较懒也不追求完美，选择U盘启动PE，分区表使用传统MBR，只为看着干净些，不必学我</p>
+</blockquote>
+<p>U盘装机助理 - <a href="http://www.itiankong.net/forum-usbzl-1.html" target="_blank" rel="external">http://www.itiankong.net/forum-usbzl-1.html</a></p>
+<p>安装过程过于简单，就略过吧，其它常用软件可参考我写的另一篇文章</p>
+<p>Windows常用软件推荐 - <a href="http://wsgzao.github.io/post/windows/" target="_blank" rel="external">http://wsgzao.github.io/post/windows/</a></p>
+<p>UEFI+GPT模式也很简单，前提是你要理解为什么，善用搜索引擎</p>
+<blockquote>
+<p>最后注意三点</p>
+</blockquote>
+<ol>
+<li>做任何事情都要记得提前做好重要数据备份</li>
+<li>尽可能使用原版系统和官方驱动，必要时可升级固件</li>
+<li>SSD固态硬盘分区选择4K对齐，UEFI+GPT自由选择吧</li>
+</ol>
+<h2 id="Windows_10高分辨率问题">Windows 10高分辨率问题</h2><blockquote>
+<p>1920x1080以上高分辨率在Windows 10下的表现有些不尽如人意</p>
+</blockquote>
+<p>在Window 7/8.1的时候把DPI调整为125%是一个最佳值，但在Windows 10中却并不理想，这里我推荐大家使用一个小工具<code>Windows10_DPI_FIX</code> 来修复这个问题，最后还是希望微软官方可以解决高分辨率这个痛点。</p>
+<p><a href="http://windows10_dpi_blurry_fix.xpexplorer.com/" target="_blank" rel="external">http://windows10_dpi_blurry_fix.xpexplorer.com/</a></p>
+<blockquote>
+<p>使用步骤很简单</p>
+</blockquote>
+<p><img src="http://windows10_dpi_blurry_fix.xpexplorer.com/screenshot.jpg" alt=""></p>
+<ol>
+<li>下载程序<a href="http://www.xpexplorer.com/installers/Windows10_DPI_FIX.exe" target="_blank" rel="external">http://www.xpexplorer.com/installers/Windows10_DPI_FIX.exe</a></li>
+<li>按图勾选<code>Use Windows 8.1 DPI scaling</code>，选择DPI Scale为<code>125%</code>，重启就可以看到效果</li>
+</ol>
+]]></content>
+    <summary type="html">
+    <![CDATA[ThinkPad X1 Carbon “碳”为观止]]>
+    
+    </summary>
+    
+      <category term="生活 | Life" scheme="http://wsgzao.github.io/categories/%E7%94%9F%E6%B4%BB-Life/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[使用GitHub和Hexo搭建免费静态Blog]]></title>
+    <link href="http://wsgzao.github.io/post/hexo-guide/"/>
+    <id>http://wsgzao.github.io/post/hexo-guide/</id>
+    <published>2015-11-18T12:40:07.000Z</published>
+    <updated>2015-11-19T03:39:35.724Z</updated>
+    <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/5bb7J7NT.png" alt=""></p>
+<h2 id="前言">前言</h2><p>习惯自己写Blog的朋友一定不会陌生Wordpress，或许也曾在新浪博客和QQ空间留过脚印，但静心认真思考一下，似乎我们又总是向往更加简单自由的写作方式。GitHub给我们提供了一个无限的空间，我们需要珍惜使用，而Hexo的出现从某种意义上来说代替了Jekyll，让我们可以更专注于写作本身。本文主要介绍自己的实践心得并不断完善内容，衍生知识和原理推荐大家认真阅读官网的手册，其它推荐参考内容链接在文中也会标注出来。</p>
+<blockquote>
+<p><a href="http://www.ruanyifeng.com/blog/2012/08/blogging_with_jekyll.html" target="_blank" rel="external">阮一峰 - 喜欢写Blog的人，会经历三个阶段</a></p>
+</blockquote>
+<p>第一阶段，刚接触Blog，觉得很新鲜，试着选择一个免费空间来写。<br>第二阶段，发现免费空间限制太多，就自己购买域名和空间，搭建独立博客。<br>第三阶段，觉得独立博客的管理太麻烦，最好在保留控制权的前提下，让别人来管，自己只负责写文章。</p>
+<hr>
+<h2 id="更新历史">更新历史</h2><p>2015年11月18日 - 推荐iissnan的主题，完善细节内容<br>2015年09月03日 - 完善Windows 10安装Hexo中的细节<br>2015年03月22日 - 更新Windows下Hexo 3.0安装和升级，感谢<a href="http://akarin.xyz" target="_blank" rel="external">@机智的阿卡林酱</a><br>2015年03月10日 - 增加Hexo 3.0降级 2.8<br>2014年12月19日 - 完善内容<br>2014年12月09日 - 更新Hexo配置修改部分<br>2014年06月19日 - 更新全部基础架构，待完善配置修改部分<br>2014年06月17日 - 更新部分Hexo建站过程，待完善<br>2014年05月29日 - 撰写初稿</p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/hexo-guide/" target="_blank" rel="external">http://wsgzao.github.io/post/hexo-guide/</a></p>
+<p>扩展阅读</p>
+<ul>
+<li>Hexo Docs - <a href="http://hexo.io/docs/" target="_blank" rel="external">http://hexo.io/docs/</a></li>
+<li>HelloDog Index - <a href="http://wsgzao.github.io/index/#Hexo" target="_blank" rel="external">http://wsgzao.github.io/index/#Hexo</a></li>
+</ul>
+<hr>
+<h2 id="准备工作">准备工作</h2><p><strong>注意</strong> 本文主要针对<code>Windows</code>平台和<code>Hexo 3.x</code></p>
+<h3 id="了解Hexo">了解Hexo</h3><blockquote>
+<p>A fast, simple &amp; powerful blog framework</p>
+</blockquote>
+<p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。<br><a href="http://hexo.io/" target="_blank" rel="external">hexo.io</a></p>
+<h3 id="安装GIT">安装GIT</h3><p><a href="https://windows.github.com/" target="_blank" rel="external">GitHub Windows</a></p>
+<p>简单可依赖，安装完成后依据提示操作即可，So Easy</p>
+<h3 id="安装Node-JS">安装Node.JS</h3><p><a href="http://nodejs.org/" target="_blank" rel="external">Node.JS</a></p>
+<p><strong>注意</strong> 安装完成后添加Path环境变量，使<code>npm</code>命令生效。新版已经会自动配置Path</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">;C:\Program Files\nodejs\node_modules\npm</span><br></pre></td></tr></table></figure>
+<h3 id="安装Hexo">安装Hexo</h3><p>配置好<code>GitHub</code>家目录后，双击桌面上的<code>Git Shell</code>，输入<code>npm</code>命令即可安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">npm install hexo --save</span><br><span class="line"></span><br><span class="line"><span class="comment">#如果命令无法运行，可以尝试更换taobao的npm源</span></span><br><span class="line">npm install -g cnpm --registry=https://registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="Hexo初始化配置">Hexo初始化配置</h2><h3 id="创建Hexo文件夹">创建Hexo文件夹</h3><p>安装完成后，根据自己喜好建立目录（如<code>E:\kuaipan\GitHub\hexo</code>），进入<code>Git Shell</code>切换到该路径下<code>E:\kuaipan\GitHub\hexo</code>执行以下指令<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init&#10;&#10;#&#23433;&#35013; Hexo &#23436;&#25104;&#21518;&#65292;&#35831;&#25191;&#34892;&#19979;&#21015;&#21629;&#20196;&#65292;Hexo &#23558;&#20250;&#22312;&#25351;&#23450;&#25991;&#20214;&#22841;&#20013;&#26032;&#24314;&#25152;&#38656;&#35201;&#30340;&#25991;&#20214;&#12290;&#10;$ hexo init &#60;folder&#62;&#10;$ cd &#60;folder&#62;&#10;$ npm install&#10;&#10;#&#26032;&#24314;&#23436;&#25104;&#21518;&#65292;&#25351;&#23450;&#25991;&#20214;&#22841;&#30340;&#30446;&#24405;&#22914;&#19979;&#10;.&#10;&#9500;&#9472;&#9472; _config.yml&#10;&#9500;&#9472;&#9472; package.json&#10;&#9500;&#9472;&#9472; scaffolds&#10;&#9500;&#9472;&#9472; scripts&#10;&#9500;&#9472;&#9472; source&#10;|      &#9500;&#9472;&#9472; _drafts&#10;|      &#9492;&#9472;&#9472; _posts&#10;&#9492;&#9472;&#9472; themes</span><br></pre></td></tr></table></figure></p>
+<h3 id="安装Hexo插件">安装Hexo插件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-generator-index --save</span><br><span class="line">npm install hexo-generator-archive --save</span><br><span class="line">npm install hexo-generator-category --save</span><br><span class="line">npm install hexo-generator-tag --save</span><br><span class="line">npm install hexo-server --save</span><br><span class="line">npm install hexo-deployer-git --save</span><br><span class="line">npm install hexo-deployer-heroku --save</span><br><span class="line">npm install hexo-deployer-rsync --save</span><br><span class="line">npm install hexo-deployer-openshift --save</span><br><span class="line">npm install hexo-renderer-marked@<span class="number">0.2</span> --save</span><br><span class="line">npm install hexo-renderer-stylus@<span class="number">0.2</span> --save</span><br><span class="line">npm install hexo-generator-feed@<span class="number">1</span> --save</span><br><span class="line">npm install hexo-generator-sitemap@<span class="number">1</span> --save</span><br></pre></td></tr></table></figure>
+<h3 id="本地查看效果">本地查看效果</h3><p>继续执行以下命令，成功后可登录<code>localhost:4000</code>查看效果<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo server</span><br></pre></td></tr></table></figure></p>
+<h3 id="Hexo简写命令">Hexo简写命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hexo n <span class="comment">#生成文章，或者source\_posts手动编辑</span></span><br><span class="line">hexo s <span class="comment">#本地发布预览效果</span></span><br><span class="line">hexo g <span class="comment">#生成public静态文件</span></span><br><span class="line">最后我选择手动同步更新至GitHub</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="部署静态网页到GitHub">部署静态网页到GitHub</h2><h3 id="注册设置GitHub">注册设置GitHub</h3><ol>
+<li>登录<a href="https://github.com/" target="_blank" rel="external">GitHub</a>，注册自定义用户名如<code>wsgzao</code></li>
+<li>在主页右下角创建<code>New repository</code>，name必须和用户名一致如<code>wsgzao.github.io</code></li>
+<li>首次创建耐心等待10分钟左右审核，之后即可访问静态主页如<a href="http://wsgzao.github.io" target="_blank" rel="external">http://wsgzao.github.io</a></li>
+</ol>
+<h3 id="同步内容至GitHub">同步内容至GitHub</h3><ol>
+<li>下载<a href="https://windows.github.com/" target="_blank" rel="external">GitHub Windows</a></li>
+<li>设置<code>Local path</code>如<code>E:\快盘\GitHub\</code></li>
+<li>运行<code>Git Shell</code>切换到如<code>E:\快盘\GitHub\hexo</code>路径下</li>
+<li>执行<code>hexo g</code>命令生成<code>public</code>文件夹</li>
+<li>把生成的内容全部拷贝到<code>Local path</code>或其子目录</li>
+<li>运行<code>GitHub</code>确认修改信息后执行右上角的<code>Sync</code>同步</li>
+<li>最后访问主页观察效果</li>
+</ol>
+<p><a href="https://pages.github.com/" target="_blank" rel="external">https://pages.github.com/</a></p>
+<hr>
+<h2 id="域名和DNS">域名和DNS</h2><h3 id="域名推荐">域名推荐</h3><blockquote>
+<p>GoDaddy makes registering Domain Names fast, simple, and affordable.<br>【推荐理由】两个字“靠谱”，支持支付宝，附优惠码链接</p>
+</blockquote>
+<p><a href="http://www.godaddy.com/" target="_blank" rel="external">http://www.godaddy.com/</a><br><a href="http://www.gdcodecoupon.com/" target="_blank" rel="external">http://www.gdcodecoupon.com/</a></p>
+<h3 id="DNS推荐">DNS推荐</h3><blockquote>
+<p>致力于为您提供最稳定、最安全的域名解析服务<br>【推荐理由】依然是两个字“靠谱”，感谢他们一直以来对于公益的坚持</p>
+</blockquote>
+<p><a href="https://www.dnspod.cn/" target="_blank" rel="external">https://www.dnspod.cn/</a></p>
+<h3 id="设置CNAME">设置CNAME</h3><ol>
+<li>在Github的网站目录下创建<code>CNAME</code>文件</li>
+<li>填写自己的域名如<code>hellodog.com</code>，保存结束</li>
+<li>登录DNSPod，先添加域名，然后添加记录，设置如下</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>主机记录</th>
+<th>记录类型</th>
+<th>线路类型</th>
+<th>记录值</th>
+<th>MX优先级</th>
+<th>TTL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>@</td>
+<td>CNAME</td>
+<td>默认</td>
+<td>wsgzao.github.io.</td>
+<td>-</td>
+<td>10</td>
+</tr>
+<tr>
+<td>www</td>
+<td>CNAME</td>
+<td>默认</td>
+<td>wsgzao.github.io.</td>
+<td>-</td>
+<td>10</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="Hexo配置修改">Hexo配置修改</h2><blockquote>
+<p>告诉自己为什么要选择Hexo</p>
+</blockquote>
+<h3 id="知识储备">知识储备</h3><p>1.勤学勤练Markdown</p>
+<blockquote>
+<p>本地+云端备份数据是一种习惯</p>
+</blockquote>
+<ul>
+<li>Markdown学习路径 - <a href="http://wsgzao.github.io/post/markdown/" target="_blank" rel="external">http://wsgzao.github.io/post/markdown/</a></li>
+</ul>
+<p>2.使用性感的文本编辑器</p>
+<blockquote>
+<p>工欲善其事必先利其器</p>
+</blockquote>
+<ul>
+<li>Notepad2</li>
+<li>Sublime Text</li>
+</ul>
+<p><a href="http://wsgzao.github.io/post/windows/#文本编辑器" target="_blank" rel="external">http://wsgzao.github.io/post/windows/#文本编辑器</a></p>
+<h3 id="Hexo主题">Hexo主题</h3><blockquote>
+<p>选择主题建议遵循<code>KISS</code>原则</p>
+</blockquote>
+<ul>
+<li>Hexo Themes - <a href="http://hexo.io/themes/" target="_blank" rel="external">http://hexo.io/themes/</a></li>
+<li><del>Pacman - <a href="http://wsgzao.github.io/post/hexo-pacman/" target="_blank" rel="external">http://wsgzao.github.io/post/hexo-pacman/</a></del></li>
+<li>Jacman - <a href="http://wsgzao.github.io/post/hexo-jacman/" target="_blank" rel="external">http://wsgzao.github.io/post/hexo-jacman/</a></li>
+<li>iissnan - <a href="http://notes.iissnan.com" target="_blank" rel="external">http://notes.iissnan.com</a></li>
+</ul>
+<h3 id="常见问题">常见问题</h3><p>1.修改配置文件时注意<code>YAML</code>语法，参数<code>冒号:</code>后一定要留<code>空格</code><br>2.中文乱码请修改文件编码格式为<code>UTF-8</code></p>
+<h3 id="如何迁移至Hexo">如何迁移至Hexo</h3><p><a href="http://hexo.io/zh-cn/docs/migration.html" target="_blank" rel="external">http://hexo.io/zh-cn/docs/migration.html</a></p>
+<h2 id="推荐阅读">推荐阅读</h2><ul>
+<li><a href="http://cnfeat.com/2014/05/10/2014-05-11-how-to-build-a-blog/" target="_blank" rel="external">如何搭建一个独立博客——简明Github Pages与Hexo教程</a></li>
+<li><a href="http://zipperary.com/categories/hexo/" target="_blank" rel="external">Zippera hexo系列教程</a></li>
+<li><a href="http://user.qzone.qq.com/644273006/blog/1418698244" target="_blank" rel="external">前端工程精粹 | 张云龙</a></li>
+<li><a href="http://akarin.xyz/build-your-hexo-blog/" target="_blank" rel="external">Hexo 3.0 静态博客使用指南</a></li>
+</ul>
+]]></content>
+    <summary type="html">
+    <![CDATA[持续更新Hexo的摸索过程，记录生活的点滴]]>
+    
+    </summary>
+    
+      <category term="Hexo" scheme="http://wsgzao.github.io/categories/Hexo/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[自己收集的好电影]]></title>
@@ -2180,153 +2391,6 @@
   </entry>
   
   <entry>
-    <title><![CDATA[使用GitHub和Hexo搭建免费静态Blog]]></title>
-    <link href="http://wsgzao.github.io/post/hexo-guide/"/>
-    <id>http://wsgzao.github.io/post/hexo-guide/</id>
-    <published>2015-09-03T12:40:07.000Z</published>
-    <updated>2015-09-03T11:55:09.736Z</updated>
-    <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/5bb7J7NT.png" alt=""></p>
-<h2 id="前言">前言</h2><p>习惯自己写Blog的朋友一定不会陌生Wordpress，或许也曾在新浪博客和QQ空间留过脚印，但静心认真思考一下，似乎我们又总是向往更加简单自由的写作方式。GitHub给我们提供了一个无限的空间，我们需要珍惜使用，而Hexo的出现从某种意义上来说代替了Jekyll，让我们可以更专注于写作本身。本文主要介绍自己的实践心得并不断完善内容，衍生知识和原理推荐大家认真阅读官网的手册，其它推荐参考内容链接在文中也会标注出来。</p>
-<blockquote>
-<p><a href="http://www.ruanyifeng.com/blog/2012/08/blogging_with_jekyll.html" target="_blank" rel="external">阮一峰 - 喜欢写Blog的人，会经历三个阶段</a></p>
-</blockquote>
-<p>第一阶段，刚接触Blog，觉得很新鲜，试着选择一个免费空间来写。<br>第二阶段，发现免费空间限制太多，就自己购买域名和空间，搭建独立博客。<br>第三阶段，觉得独立博客的管理太麻烦，最好在保留控制权的前提下，让别人来管，自己只负责写文章。</p>
-<hr>
-<h2 id="更新历史">更新历史</h2><p>2015年09月03日 - 完善Windows 10安装Hexo中的细节<br>2015年03月22日 - 更新Windows下Hexo 3.0安装和升级，感谢<a href="http://akarin.xyz" target="_blank" rel="external">@机智的阿卡林酱</a><br>2015年03月10日 - 增加Hexo 3.0降级 2.8<br>2014年12月19日 - 完善内容<br>2014年12月09日 - 更新Hexo配置修改部分<br>2014年06月19日 - 更新全部基础架构，待完善配置修改部分<br>2014年06月17日 - 更新部分Hexo建站过程，待完善<br>2014年05月29日 - 撰写初稿</p>
-<p>阅读原文 - <a href="http://wsgzao.github.io/post/hexo-guide/" target="_blank" rel="external">http://wsgzao.github.io/post/hexo-guide/</a></p>
-<p>扩展阅读</p>
-<ul>
-<li>Hexo Docs - <a href="http://hexo.io/docs/" target="_blank" rel="external">http://hexo.io/docs/</a></li>
-<li>HelloDog Index - <a href="http://wsgzao.github.io/index/#Hexo" target="_blank" rel="external">http://wsgzao.github.io/index/#Hexo</a></li>
-</ul>
-<hr>
-<h2 id="准备工作">准备工作</h2><p><strong>注意</strong> 本文主要针对<code>Windows</code>平台和<code>Hexo 3.x</code></p>
-<h3 id="了解Hexo">了解Hexo</h3><blockquote>
-<p>A fast, simple &amp; powerful blog framework</p>
-</blockquote>
-<p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。<br><a href="http://hexo.io/" target="_blank" rel="external">hexo.io</a></p>
-<h3 id="安装GIT">安装GIT</h3><p><a href="https://windows.github.com/" target="_blank" rel="external">GitHub Windows</a></p>
-<p>简单可依赖，安装完成后依据提示操作即可，So Easy</p>
-<h3 id="安装Node-JS">安装Node.JS</h3><p><a href="http://nodejs.org/" target="_blank" rel="external">Node.JS</a></p>
-<p><strong>注意</strong> 安装完成后添加Path环境变量，使<code>npm</code>命令生效。新版已经会自动配置Path</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">;C:\Program Files\nodejs\node_modules\npm</span><br></pre></td></tr></table></figure>
-<h3 id="安装Hexo">安装Hexo</h3><p>配置好<code>GitHub</code>家目录后，双击桌面上的<code>Git Shell</code>，输入<code>npm</code>命令即可安装</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">npm install hexo --save</span><br><span class="line"></span><br><span class="line"><span class="comment">#如果命令无法运行，可以尝试更换taobao的npm源</span></span><br><span class="line">npm install -g cnpm --registry=https://registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="Hexo初始化配置">Hexo初始化配置</h2><h3 id="创建Hexo文件夹">创建Hexo文件夹</h3><p>安装完成后，根据自己喜好建立目录（如<code>E:\kuaipan\GitHub\hexo</code>），进入<code>Git Shell</code>切换到该路径下<code>E:\kuaipan\GitHub\hexo</code>执行以下指令<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init&#10;&#10;#&#23433;&#35013; Hexo &#23436;&#25104;&#21518;&#65292;&#35831;&#25191;&#34892;&#19979;&#21015;&#21629;&#20196;&#65292;Hexo &#23558;&#20250;&#22312;&#25351;&#23450;&#25991;&#20214;&#22841;&#20013;&#26032;&#24314;&#25152;&#38656;&#35201;&#30340;&#25991;&#20214;&#12290;&#10;$ hexo init &#60;folder&#62;&#10;$ cd &#60;folder&#62;&#10;$ npm install&#10;&#10;#&#26032;&#24314;&#23436;&#25104;&#21518;&#65292;&#25351;&#23450;&#25991;&#20214;&#22841;&#30340;&#30446;&#24405;&#22914;&#19979;&#10;.&#10;&#9500;&#9472;&#9472; _config.yml&#10;&#9500;&#9472;&#9472; package.json&#10;&#9500;&#9472;&#9472; scaffolds&#10;&#9500;&#9472;&#9472; scripts&#10;&#9500;&#9472;&#9472; source&#10;|      &#9500;&#9472;&#9472; _drafts&#10;|      &#9492;&#9472;&#9472; _posts&#10;&#9492;&#9472;&#9472; themes</span><br></pre></td></tr></table></figure></p>
-<h3 id="安装Hexo插件">安装Hexo插件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-generator-index --save</span><br><span class="line">npm install hexo-generator-archive --save</span><br><span class="line">npm install hexo-generator-category --save</span><br><span class="line">npm install hexo-generator-tag --save</span><br><span class="line">npm install hexo-server --save</span><br><span class="line">npm install hexo-deployer-git --save</span><br><span class="line">npm install hexo-deployer-heroku --save</span><br><span class="line">npm install hexo-deployer-rsync --save</span><br><span class="line">npm install hexo-deployer-openshift --save</span><br><span class="line">npm install hexo-renderer-marked@<span class="number">0.2</span> --save</span><br><span class="line">npm install hexo-renderer-stylus@<span class="number">0.2</span> --save</span><br><span class="line">npm install hexo-generator-feed@<span class="number">1</span> --save</span><br><span class="line">npm install hexo-generator-sitemap@<span class="number">1</span> --save</span><br></pre></td></tr></table></figure>
-<h3 id="本地查看效果">本地查看效果</h3><p>继续执行以下命令，成功后可登录<code>localhost:4000</code>查看效果<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo server</span><br></pre></td></tr></table></figure></p>
-<h3 id="Hexo简写命令">Hexo简写命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo n <span class="comment">#new</span></span><br><span class="line">hexo g <span class="comment">#generate</span></span><br><span class="line">hexo s <span class="comment">#server</span></span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="部署静态网页到GitHub">部署静态网页到GitHub</h2><h3 id="注册设置GitHub">注册设置GitHub</h3><ol>
-<li>登录<a href="https://github.com/" target="_blank" rel="external">GitHub</a>，注册自定义用户名如<code>wsgzao</code></li>
-<li>在主页右下角创建<code>New repository</code>，name必须和用户名一致如<code>wsgzao.github.io</code></li>
-<li>首次创建耐心等待10分钟左右审核，之后即可访问静态主页如<a href="http://wsgzao.github.io" target="_blank" rel="external">http://wsgzao.github.io</a></li>
-</ol>
-<h3 id="同步内容至GitHub">同步内容至GitHub</h3><ol>
-<li>下载<a href="https://windows.github.com/" target="_blank" rel="external">GitHub Windows</a></li>
-<li>设置<code>Local path</code>如<code>E:\快盘\GitHub\</code></li>
-<li>运行<code>Git Shell</code>切换到如<code>E:\快盘\GitHub\hexo</code>路径下</li>
-<li>执行<code>hexo g</code>命令生成<code>public</code>文件夹</li>
-<li>把生成的内容全部拷贝到<code>Local path</code>或其子目录</li>
-<li>运行<code>GitHub</code>确认修改信息后执行右上角的<code>Sync</code>同步</li>
-<li>最后访问主页观察效果</li>
-</ol>
-<p><a href="https://pages.github.com/" target="_blank" rel="external">https://pages.github.com/</a></p>
-<hr>
-<h2 id="域名和DNS">域名和DNS</h2><h3 id="域名推荐">域名推荐</h3><blockquote>
-<p>GoDaddy makes registering Domain Names fast, simple, and affordable.<br>【推荐理由】两个字“靠谱”，支持支付宝，附优惠码链接</p>
-</blockquote>
-<p><a href="http://www.godaddy.com/" target="_blank" rel="external">http://www.godaddy.com/</a><br><a href="http://www.gdcodecoupon.com/" target="_blank" rel="external">http://www.gdcodecoupon.com/</a></p>
-<h3 id="DNS推荐">DNS推荐</h3><blockquote>
-<p>致力于为您提供最稳定、最安全的域名解析服务<br>【推荐理由】依然是两个字“靠谱”，感谢他们一直以来对于公益的坚持</p>
-</blockquote>
-<p><a href="https://www.dnspod.cn/" target="_blank" rel="external">https://www.dnspod.cn/</a></p>
-<h3 id="设置CNAME">设置CNAME</h3><ol>
-<li>在Github的网站目录下创建<code>CNAME</code>文件</li>
-<li>填写自己的域名如<code>hellodog.com</code>，保存结束</li>
-<li>登录DNSPod，先添加域名，然后添加记录，设置如下</li>
-</ol>
-<table>
-<thead>
-<tr>
-<th>主机记录</th>
-<th>记录类型</th>
-<th>线路类型</th>
-<th>记录值</th>
-<th>MX优先级</th>
-<th>TTL</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>@</td>
-<td>CNAME</td>
-<td>默认</td>
-<td>wsgzao.github.io.</td>
-<td>-</td>
-<td>10</td>
-</tr>
-<tr>
-<td>www</td>
-<td>CNAME</td>
-<td>默认</td>
-<td>wsgzao.github.io.</td>
-<td>-</td>
-<td>10</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="Hexo配置修改">Hexo配置修改</h2><blockquote>
-<p>告诉自己为什么要选择Hexo</p>
-</blockquote>
-<h3 id="知识储备">知识储备</h3><p>1.勤学勤练Markdown</p>
-<blockquote>
-<p>本地+云端备份数据是一种习惯</p>
-</blockquote>
-<ul>
-<li>Markdown学习路径 - <a href="http://wsgzao.github.io/post/markdown/" target="_blank" rel="external">http://wsgzao.github.io/post/markdown/</a></li>
-</ul>
-<p>2.使用性感的文本编辑器</p>
-<blockquote>
-<p>工欲善其事必先利其器</p>
-</blockquote>
-<ul>
-<li>Notepad2</li>
-<li>Sublime Text</li>
-</ul>
-<p><a href="http://wsgzao.github.io/post/windows/#文本编辑器" target="_blank" rel="external">http://wsgzao.github.io/post/windows/#文本编辑器</a></p>
-<h3 id="Hexo主题">Hexo主题</h3><blockquote>
-<p>选择主题建议遵循<code>KISS</code>原则</p>
-</blockquote>
-<ul>
-<li>Hexo Themes - <a href="http://hexo.io/themes/" target="_blank" rel="external">http://hexo.io/themes/</a></li>
-<li><del>Pacman - <a href="http://wsgzao.github.io/post/hexo-pacman/" target="_blank" rel="external">http://wsgzao.github.io/post/hexo-pacman/</a></del></li>
-<li>Jacman - <a href="http://wsgzao.github.io/post/hexo-jacman/" target="_blank" rel="external">http://wsgzao.github.io/post/hexo-jacman/</a></li>
-</ul>
-<h3 id="常见问题">常见问题</h3><p>1.修改配置文件时注意<code>YAML</code>语法，参数<code>冒号:</code>后一定要留<code>空格</code><br>2.中文乱码请修改文件编码格式为<code>UTF-8</code></p>
-<h3 id="如何迁移至Hexo">如何迁移至Hexo</h3><p><a href="http://hexo.io/zh-cn/docs/migration.html" target="_blank" rel="external">http://hexo.io/zh-cn/docs/migration.html</a></p>
-<h3 id="Hexo_2-X_升级_3-0">Hexo 2.X 升级 3.0</h3><p>1.做好相关配置文件和文章的备份<br>2.做任何修改前不要忘记第一件事备份</p>
-<p><a href="https://github.com/hexojs/hexo/wiki/Migrating-from-2.x-to-3.0" target="_blank" rel="external">https://github.com/hexojs/hexo/wiki/Migrating-from-2.x-to-3.0</a></p>
-<h3 id="Hexo_3-0_降级_2-X">Hexo 3.0 降级 2.X</h3><p><a href="http://sandylaw.tk/2015/03/07/hexo3to2/" target="_blank" rel="external">http://sandylaw.tk/2015/03/07/hexo3to2/</a></p>
-<h2 id="推荐阅读">推荐阅读</h2><ul>
-<li><a href="http://cnfeat.com/2014/05/10/2014-05-11-how-to-build-a-blog/" target="_blank" rel="external">如何搭建一个独立博客——简明Github Pages与Hexo教程</a></li>
-<li><a href="http://zipperary.com/categories/hexo/" target="_blank" rel="external">Zippera hexo系列教程</a></li>
-<li><a href="http://user.qzone.qq.com/644273006/blog/1418698244" target="_blank" rel="external">前端工程精粹 | 张云龙</a></li>
-<li><a href="http://akarin.xyz/build-your-hexo-blog/" target="_blank" rel="external">Hexo 3.0 静态博客使用指南</a></li>
-</ul>
-]]></content>
-    <summary type="html">
-    <![CDATA[持续更新Hexo的摸索过程，记录生活的点滴]]>
-    
-    </summary>
-    
-      <category term="Hexo" scheme="http://wsgzao.github.io/categories/Hexo/"/>
-    
-  </entry>
-  
-  <entry>
     <title><![CDATA[常用操作系统分享]]></title>
     <link href="http://wsgzao.github.io/post/os/"/>
     <id>http://wsgzao.github.io/post/os/</id>
@@ -2790,70 +2854,6 @@ vi /usr/share/elasticsearch/bin/elasticsearch.in.sh
 ]]></content>
     <summary type="html">
     <![CDATA[LTMP(CentOS/Tengine/MySQL/PHP)]]>
-    
-    </summary>
-    
-      <category term="学习 | Study" scheme="http://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[sersync基于rsync+inotify实现数据实时同步]]></title>
-    <link href="http://wsgzao.github.io/post/sersync/"/>
-    <id>http://wsgzao.github.io/post/sersync/</id>
-    <published>2015-08-14T05:18:44.000Z</published>
-    <updated>2015-08-14T09:58:15.000Z</updated>
-    <content type="html"><![CDATA[<p><img src="//i.v2ex.co/27qp456L.png" alt=""></p>
-<h2 id="前言">前言</h2><p>提到数据同步就必然会谈到<code>rsync</code>，一般简单的服务器数据传输会使用<code>ftp/sftp</code>等方式，但是这样的方式效率不高，不支持差异化增量同步也不支持实时传输。针对数据实时同步需求大多数人会选择<code>rsync+inotify-tools</code>的解决方案，但是这样的方案也存在一些缺陷（文章中会具体指出），<code>sersync</code>是国人基于前两者开发的工具，不仅保留了优点同时还强化了实时监控，文件过滤，简化配置等功能，帮助用户提高运行效率，节省时间和网络资源。</p>
-<blockquote>
-<p>可靠高效的数据实时同步方式</p>
-</blockquote>
-<hr>
-<h2 id="更新历史">更新历史</h2><p>2015年08月14日 - 更新GitHub源码安装包<br>2015年08月13日 - 初稿</p>
-<p>阅读原文 - <a href="http://wsgzao.github.io/post/sersync/" target="_blank" rel="external">http://wsgzao.github.io/post/sersync/</a></p>
-<p>扩展阅读</p>
-<p>基于rsync+sersync的服务器文件同步实战 - <a href="http://www.markdream.com/technologies/server/syncfile-by-rsync.shtml" target="_blank" rel="external">http://www.markdream.com/technologies/server/syncfile-by-rsync.shtml</a><br>通过 rsync sersync 实现高效的数据实时同步架构 - <a href="https://www.cnhzz.com/rsync_sersync/" target="_blank" rel="external">https://www.cnhzz.com/rsync_sersync/</a><br>Rsync+sersync实现数据实时同步 - <a href="http://www.cnblogs.com/wjoyxt/p/4581410.html" target="_blank" rel="external">http://www.cnblogs.com/wjoyxt/p/4581410.html</a><br>rsync - <a href="https://rsync.samba.org/" target="_blank" rel="external">https://rsync.samba.org/</a><br>inotify-tools - <a href="https://github.com/rvoicilas/inotify-tools" target="_blank" rel="external">https://github.com/rvoicilas/inotify-tools</a><br>sersync - <a href="http://code.google.com/p/sersync/" target="_blank" rel="external">http://code.google.com/p/sersync/</a></p>
-<hr>
-<h2 id="原理">原理</h2><blockquote>
-<p>Synchronize files and folders between servers -using inotiy and rsync with c++ 服务器实时同步文件，服务器镜像解决方案</p>
-</blockquote>
-<p><code>sersync</code>主要用于服务器同步，web镜像等功能。基于boost1.43.0,inotify api,rsync command.开发。目前使用的比较多的同步解决方案是<code>inotify-tools+rsync</code> ，另外一个是google开源项目<code>Openduckbill</code>（依赖于inotify- tools），这两个都是基于脚本语言编写的。相比较上面两个项目，本项目优点是：</p>
-<ol>
-<li>sersync是使用c++编写，而且对linux系统文件系统产生的临时文件和重复的文件操作进行过滤（详细见附录，这个过滤脚本程序没有实现），所以在结合rsync同步的时候，节省了运行时耗和网络资源。因此更快。</li>
-<li>相比较上面两个项目，sersync配置起来很简单，其中bin目录下已经有基本上静态编译的2进制文件，配合bin目录下的xml配置文件直接使用即可。</li>
-<li>另外本项目相比较其他脚本开源项目，使用多线程进行同步，尤其在同步较大文件时，能够保证多个服务器实时保持同步状态。</li>
-<li>本项目有出错处理机制，通过失败队列对出错的文件重新同步，如果仍旧失败，则按设定时长对同步失败的文件重新同步。</li>
-<li>本项目自带crontab功能，只需在xml配置文件中开启，即可按您的要求，隔一段时间整体同步一次。无需再额外配置crontab功能。</li>
-<li>本项目socket与http插件扩展，满足您二次开发的需要。</li>
-</ol>
-<blockquote>
-<p>针对上图的设计架构，这里做几点说明，来帮助大家阅读和理解该图</p>
-</blockquote>
-<p>1 ) <code>线程组线程</code>是等待线程队列的守护线程，当事件队列中有事件产生的时候，线程组守护线程就会逐个唤醒同步线程。当队列中 Inotify 事件较多的时候，同步线程就会被全部唤醒一起工作。这样设计的目的是为了能够同时处理多个 Inotify 事件，从而提升服务器的并发同步能力。同步线程的最佳数量=核数 x 2 + 2。<br>2 ) 那么之所以称之为<code>线程组线程</code>，是因为每个线程在工作的时候，会根据服务器上新写入文件的数量去建立子线程，子线程可以保证所有的文件与各个服务器同时同步。当要同步的文件较大的时候，这样的设计可以保证每个远程服务器都可以同时获得需要同步的文件。<br>3 ) 服务线程的作用有三个：</p>
-<ul>
-<li>处理同步失败的文件，将这些文件再次同步，对于再次同步失败的文件会生成 rsync_fail_log.sh 脚本，记录失败的事件。</li>
-<li>每隔10个小时执行 rsync_fail_log.sh 脚本一次，同时清空脚本。</li>
-<li>crontab功能，可以每隔一定时间，将所有路径整体同步一次。</li>
-</ul>
-<p>4 ) <code>过滤队列</code>的建立是为了过滤短时间内产生的重复的inotify信息，例如在删除文件夹的时候，inotify就会同时产生删除文件夹里的文件与删除文件夹的事件，通过过滤队列，当删除文件夹事件产生的时候，会将之前加入队列的删除文件的事件全部过滤掉，这样只产生一条删除文件夹的事件，从而减轻了同步的负担。同时对于修改文件的操作的时候，会产生临时文件的重复操作。</p>
-<h2 id="角色">角色</h2><blockquote>
-<p>注意主从配置的区别，记得调整SELinux和防火墙</p>
-</blockquote>
-<p>iptables配置实践 - <a href="http://wsgzao.github.io/post/iptables/" target="_blank" rel="external">http://wsgzao.github.io/post/iptables/</a><br>LTMP手动编译安装以及全自动化部署实践 - <a href="http://wsgzao.github.io/post/ltmp/" target="_blank" rel="external">http://wsgzao.github.io/post/ltmp/</a></p>
-<ol>
-<li>服务器A（主服务器）</li>
-<li>服务器B（从服务器/备份服务器）</li>
-<li>rsync默认TCP端口为873</li>
-</ol>
-<h3 id="服务器B">服务器B</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#在服务器B上安装rsync</span></span><br><span class="line"><span class="built_in">cd</span> /app/<span class="built_in">local</span></span><br><span class="line">wget  http://rsync.samba.org/ftp/rsync/src/rsync-<span class="number">3.1</span>.<span class="number">1</span>.tar.gz</span><br><span class="line">tar zxf rsync-<span class="number">3.1</span>.<span class="number">1</span>.tar.gz</span><br><span class="line"><span class="built_in">cd</span> rsync-<span class="number">3.1</span>.<span class="number">1</span></span><br><span class="line">./configure</span><br><span class="line">make &amp;&amp; make install</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#设置rsync的配置文件</span></span><br><span class="line">vi /etc/rsyncd.conf</span><br><span class="line"></span><br><span class="line"><span class="comment">#服务器B上的rsyncd.conf文件内容</span></span><br><span class="line">uid=root</span><br><span class="line">gid=root</span><br><span class="line"><span class="comment">#最大连接数</span></span><br><span class="line">max connections=<span class="number">36000</span></span><br><span class="line"><span class="comment">#默认为true，修改为no，增加对目录文件软连接的备份 </span></span><br><span class="line">use chroot=no</span><br><span class="line"><span class="comment">#定义日志存放位置</span></span><br><span class="line"><span class="built_in">log</span> file=/var/<span class="built_in">log</span>/rsyncd.log</span><br><span class="line"><span class="comment">#忽略无关错误</span></span><br><span class="line">ignore errors = yes</span><br><span class="line"><span class="comment">#设置rsync服务端文件为读写权限</span></span><br><span class="line"><span class="built_in">read</span> only = no </span><br><span class="line"><span class="comment">#认证的用户名与系统帐户无关在认证文件做配置，如果没有这行则表明是匿名</span></span><br><span class="line">auth users = rsync</span><br><span class="line"><span class="comment">#密码认证文件，格式(虚拟用户名:密码）</span></span><br><span class="line">secrets file = /etc/rsync.pass</span><br><span class="line"><span class="comment">#这里是认证的模块名，在client端需要指定，可以设置多个模块和路径</span></span><br><span class="line">[rsync]</span><br><span class="line"><span class="comment">#自定义注释</span></span><br><span class="line">comment  = rsync</span><br><span class="line"><span class="comment">#同步到B服务器的文件存放的路径</span></span><br><span class="line">path=/app/data/site/</span><br><span class="line">[img]</span><br><span class="line">comment  = img</span><br><span class="line">path=/app/data/site/img</span><br><span class="line"></span><br><span class="line"><span class="comment">#创建rsync认证文件  可以设置多个，每行一个用户名:密码，注意中间以“:”分割</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"rsync:rsync"</span> &gt; /etc/rsync.pass</span><br><span class="line"></span><br><span class="line"><span class="comment">#设置文件所有者读取、写入权限</span></span><br><span class="line">chmod <span class="number">600</span> /etc/rsyncd.conf  </span><br><span class="line">chmod <span class="number">600</span> /etc/rsync.pass  </span><br><span class="line"></span><br><span class="line"><span class="comment">#启动服务器B上的rsync服务</span></span><br><span class="line"><span class="comment">#rsync --daemon -v</span></span><br><span class="line">rsync --daemon</span><br><span class="line"></span><br><span class="line"><span class="comment">#监听端口873</span></span><br><span class="line">netstat -an | grep <span class="number">873</span></span><br><span class="line">lsof -i tcp:<span class="number">873</span></span><br><span class="line"></span><br><span class="line">COMMAND   PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME</span><br><span class="line">rsync   <span class="number">31445</span> root    <span class="number">4</span>u  IPv4 <span class="number">443872</span>      <span class="number">0</span>t0  TCP *:rsync (LISTEN)</span><br><span class="line">rsync   <span class="number">31445</span> root    <span class="number">5</span>u  IPv6 <span class="number">443873</span>      <span class="number">0</span>t0  TCP *:rsync (LISTEN)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#设置rsync为服务启动项（可选）</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"/usr/local/bin/rsync --daemon"</span> &gt;&gt; /etc/rc.local</span><br><span class="line"></span><br><span class="line"><span class="comment">#要 Kill rsync 进程，不要用 kill -HUP &#123;PID&#125; 的方式重启进程，以下3种方式任选</span></span><br><span class="line"><span class="comment">#ps -ef|grep rsync|grep -v grep|awk '&#123;print $2&#125;'|xargs kill -9</span></span><br><span class="line"><span class="comment">#cat /var/run/rsyncd.pid | xargs kill -9</span></span><br><span class="line">pkill rsync</span><br><span class="line"><span class="comment">#再次启动</span></span><br><span class="line">/usr/<span class="built_in">local</span>/bin/rsync --daemon</span><br></pre></td></tr></table></figure>
-<h3 id="服务器A">服务器A</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#安装rsync</span></span><br><span class="line"><span class="built_in">cd</span> /app/<span class="built_in">local</span></span><br><span class="line">wget  http://rsync.samba.org/ftp/rsync/src/rsync-<span class="number">3.1</span>.<span class="number">1</span>.tar.gz</span><br><span class="line">tar zxf rsync-<span class="number">3.1</span>.<span class="number">1</span>.tar.gz</span><br><span class="line"><span class="built_in">cd</span> rsync-<span class="number">3.1</span>.<span class="number">1</span></span><br><span class="line">./configure</span><br><span class="line">make &amp;&amp; make install</span><br><span class="line"></span><br><span class="line"><span class="comment">#安装inotify-tools</span></span><br><span class="line"><span class="built_in">cd</span> /app/<span class="built_in">local</span></span><br><span class="line">wget http://github.com/downloads/rvoicilas/inotify-tools/inotify-tools-<span class="number">3.14</span>.tar.gz</span><br><span class="line">tar zxf inotify-tools-<span class="number">3.14</span>.tar.gz</span><br><span class="line"><span class="built_in">cd</span> inotify-tools-<span class="number">3.14</span></span><br><span class="line">./configure --prefix=/app/<span class="built_in">local</span>/inotify </span><br><span class="line">make &amp;&amp; make install</span><br><span class="line"></span><br><span class="line"><span class="comment">#安装sersync</span></span><br><span class="line"><span class="built_in">cd</span> /app/<span class="built_in">local</span></span><br><span class="line">wget https://sersync.googlecode.com/files/sersync2.<span class="number">5.4</span>_64bit_binary_stable_final.tar.gz</span><br><span class="line">tar zxf sersync2.<span class="number">5.4</span>_64bit_binary_stable_final.tar.gz</span><br><span class="line">mv /app/<span class="built_in">local</span>/GNU-Linux-x86/ /app/<span class="built_in">local</span>/sersync</span><br><span class="line"><span class="built_in">cd</span> /app/<span class="built_in">local</span>/sersync</span><br><span class="line"><span class="comment">#配置下密码文件，因为这个密码是要访问服务器B需要的密码和上面服务器B的密码必须一致</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"rsync"</span> &gt; /app/<span class="built_in">local</span>/sersync/user.pass</span><br><span class="line"><span class="comment">#修改权限</span></span><br><span class="line">chmod <span class="number">600</span> /app/<span class="built_in">local</span>/sersync/user.pass</span><br><span class="line"><span class="comment">#修改confxml.conf</span></span><br><span class="line">vi /app/<span class="built_in">local</span>/sersync/confxml.xml</span><br></pre></td></tr></table></figure>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="pi">&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">head</span> <span class="attribute">version</span>=<span class="value">"2.5"</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">host</span> <span class="attribute">hostip</span>=<span class="value">"localhost"</span> <span class="attribute">port</span>=<span class="value">"8008"</span>&gt;</span><span class="tag">&lt;/<span class="title">host</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">debug</span> <span class="attribute">start</span>=<span class="value">"true"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">fileSystem</span> <span class="attribute">xfs</span>=<span class="value">"false"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">filter</span> <span class="attribute">start</span>=<span class="value">"false"</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">exclude</span> <span class="attribute">expression</span>=<span class="value">"(.*)\.php"</span>&gt;</span><span class="tag">&lt;/<span class="title">exclude</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">exclude</span> <span class="attribute">expression</span>=<span class="value">"^data/*"</span>&gt;</span><span class="tag">&lt;/<span class="title">exclude</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="title">filter</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">inotify</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">delete</span> <span class="attribute">start</span>=<span class="value">"true"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">createFolder</span> <span class="attribute">start</span>=<span class="value">"true"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">createFile</span> <span class="attribute">start</span>=<span class="value">"false"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">closeWrite</span> <span class="attribute">start</span>=<span class="value">"true"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">moveFrom</span> <span class="attribute">start</span>=<span class="value">"true"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">moveTo</span> <span class="attribute">start</span>=<span class="value">"true"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">attrib</span> <span class="attribute">start</span>=<span class="value">"false"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">modify</span> <span class="attribute">start</span>=<span class="value">"false"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="title">inotify</span>&gt;</span></span><br><span class="line"> </span><br><span class="line"> <span class="tag">&lt;<span class="title">sersync</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">localpath</span> <span class="attribute">watch</span>=<span class="value">"/home/"</span>&gt;</span> <span class="comment">&lt;!-- 这里填写服务器A要同步的文件夹路径--&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">remote</span> <span class="attribute">ip</span>=<span class="value">"8.8.8.8"</span> <span class="attribute">name</span>=<span class="value">"rsync"</span>/&gt;</span> <span class="comment">&lt;!-- 这里填写服务器B的IP地址和模块名--&gt;</span></span><br><span class="line"> <span class="comment">&lt;!--&lt;remote ip="192.168.28.39" name="tongbu"/&gt;--&gt;</span></span><br><span class="line"> <span class="comment">&lt;!--&lt;remote ip="192.168.28.40" name="tongbu"/&gt;--&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="title">localpath</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">rsync</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">commonParams</span> <span class="attribute">params</span>=<span class="value">"-artuz"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">auth</span> <span class="attribute">start</span>=<span class="value">"true"</span> <span class="attribute">users</span>=<span class="value">"rsync"</span> <span class="attribute">passwordfile</span>=<span class="value">"/app/local/sersync/user.pass"</span>/&gt;</span> <span class="comment">&lt;!-- rsync+密码文件 这里填写服务器B的认证信息--&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">userDefinedPort</span> <span class="attribute">start</span>=<span class="value">"false"</span> <span class="attribute">port</span>=<span class="value">"874"</span>/&gt;</span><span class="comment">&lt;!-- port=874 --&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">timeout</span> <span class="attribute">start</span>=<span class="value">"false"</span> <span class="attribute">time</span>=<span class="value">"100"</span>/&gt;</span><span class="comment">&lt;!-- timeout=100 --&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">ssh</span> <span class="attribute">start</span>=<span class="value">"false"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="title">rsync</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">failLog</span> <span class="attribute">path</span>=<span class="value">"/tmp/rsync_fail_log.sh"</span> <span class="attribute">timeToExecute</span>=<span class="value">"60"</span>/&gt;</span><span class="comment">&lt;!--default every 60mins execute once--&gt;</span><span class="comment">&lt;!-- 修改失败日志记录（可选）--&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">crontab</span> <span class="attribute">start</span>=<span class="value">"false"</span> <span class="attribute">schedule</span>=<span class="value">"600"</span>&gt;</span><span class="comment">&lt;!--600mins--&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">crontabfilter</span> <span class="attribute">start</span>=<span class="value">"false"</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">exclude</span> <span class="attribute">expression</span>=<span class="value">"*.php"</span>&gt;</span><span class="tag">&lt;/<span class="title">exclude</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">exclude</span> <span class="attribute">expression</span>=<span class="value">"info/*"</span>&gt;</span><span class="tag">&lt;/<span class="title">exclude</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="title">crontabfilter</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="title">crontab</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">plugin</span> <span class="attribute">start</span>=<span class="value">"false"</span> <span class="attribute">name</span>=<span class="value">"command"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="title">sersync</span>&gt;</span></span><br><span class="line"> </span><br><span class="line"> <span class="comment">&lt;!-- 下面这些有关于插件你可以忽略了 --&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">plugin</span> <span class="attribute">name</span>=<span class="value">"command"</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">param</span> <span class="attribute">prefix</span>=<span class="value">"/bin/sh"</span> <span class="attribute">suffix</span>=<span class="value">""</span> <span class="attribute">ignoreError</span>=<span class="value">"true"</span>/&gt;</span> <span class="comment">&lt;!--prefix /opt/tongbu/mmm.sh suffix--&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">filter</span> <span class="attribute">start</span>=<span class="value">"false"</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">include</span> <span class="attribute">expression</span>=<span class="value">"(.*)\.php"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">include</span> <span class="attribute">expression</span>=<span class="value">"(.*)\.sh"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="title">filter</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="title">plugin</span>&gt;</span></span><br><span class="line"> </span><br><span class="line"> <span class="tag">&lt;<span class="title">plugin</span> <span class="attribute">name</span>=<span class="value">"socket"</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">localpath</span> <span class="attribute">watch</span>=<span class="value">"/home/demo"</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">deshost</span> <span class="attribute">ip</span>=<span class="value">"210.36.158.xxx"</span> <span class="attribute">port</span>=<span class="value">"8009"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="title">localpath</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="title">plugin</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">plugin</span> <span class="attribute">name</span>=<span class="value">"refreshCDN"</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">localpath</span> <span class="attribute">watch</span>=<span class="value">"/data0/htdocs/cdn.markdream.com/site/"</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">cdninfo</span> <span class="attribute">domainname</span>=<span class="value">"cdn.chinacache.com"</span> <span class="attribute">port</span>=<span class="value">"80"</span> <span class="attribute">username</span>=<span class="value">"xxxx"</span> <span class="attribute">passwd</span>=<span class="value">"xxxx"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">sendurl</span> <span class="attribute">base</span>=<span class="value">"http://cdn.markdream.com/cms"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="title">regexurl</span> <span class="attribute">regex</span>=<span class="value">"false"</span> <span class="attribute">match</span>=<span class="value">"cdn.markdream.com/site([/a-zA-Z0-9]*).cdn.markdream.com/images"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="title">localpath</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="title">plugin</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">head</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#运行sersync</span></span><br><span class="line">nohup /app/<span class="built_in">local</span>/sersync/sersync2 -r <span class="operator">-d</span> -o /app/<span class="built_in">local</span>/sersync/confxml.xml &gt;/app/<span class="built_in">local</span>/sersync/rsync.log <span class="number">2</span>&gt;&amp;<span class="number">1</span> &amp;</span><br><span class="line">nohup /app/<span class="built_in">local</span>/sersync/sersync2 -r <span class="operator">-d</span> -o /app/<span class="built_in">local</span>/sersync/img.xml &gt;/app/<span class="built_in">local</span>/sersync/img.log <span class="number">2</span>&gt;&amp;<span class="number">1</span> &amp;</span><br><span class="line"></span><br><span class="line"><span class="operator">-d</span>:启用守护进程模式</span><br><span class="line">-r:在监控前，将监控目录与远程主机用rsync命令推送一遍</span><br><span class="line">-n: 指定开启守护线程的数量，默认为<span class="number">10</span>个</span><br><span class="line">-o:指定配置文件，默认使用confxml.xml文件</span><br></pre></td></tr></table></figure>
-<h2 id="GitHub源码仓库">GitHub源码仓库</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">file://E:\sersync   (<span class="number">0</span> folders, <span class="number">3</span> files, <span class="number">1.88</span> MB, <span class="number">1.88</span> MB <span class="keyword">in</span> total.)</span><br><span class="line">    inotify-tools-<span class="number">3.14</span>.tar.gz <span class="number">350.36</span> KB</span><br><span class="line">    rsync-<span class="number">3.1</span>.<span class="number">1</span>.tar.gz    <span class="number">869.26</span> KB</span><br><span class="line">    sersync2.<span class="number">5.4</span>_64bit_binary_stable_final.tar.gz <span class="number">710.24</span> KB</span><br></pre></td></tr></table></figure>
-<p>sersync - <a href="https://github.com/wsgzao/sersync" target="_blank" rel="external">https://github.com/wsgzao/sersync</a></p>
-]]></content>
-    <summary type="html">
-    <![CDATA[可靠高效的数据实时同步方式]]>
     
     </summary>
     
