@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>多说自定义CSS动感头像和多说评论显示User Agent的那些小事 | HelloDog</title>
+    <title>多说自定义CSS头像和多说评论显示UA | HelloDog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wsgzao">
@@ -13,7 +13,7 @@
     
     <meta name="description" content="让多说评论动感起来">
 <meta property="og:type" content="article">
-<meta property="og:title" content="多说自定义CSS动感头像和多说评论显示User Agent的那些小事">
+<meta property="og:title" content="多说自定义CSS头像和多说评论显示UA">
 <meta property="og:url" content="http://wsgzao.github.io/post/duoshuo/index.html">
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="让多说评论动感起来">
@@ -21,7 +21,7 @@
 <meta property="og:image" content="http://ww3.sinaimg.cn/large/7207510dgw1erhrcp15bzg20dj0bm7l2.gif">
 <meta property="og:image" content="http://ww1.sinaimg.cn/large/7207510dgw1ergrzty3c5j20mm0i4dj7.jpg">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="多说自定义CSS动感头像和多说评论显示User Agent的那些小事">
+<meta name="twitter:title" content="多说自定义CSS头像和多说评论显示UA">
 <meta name="twitter:description" content="让多说评论动感起来">
 
     
@@ -68,7 +68,7 @@
  					
 						<form class="search">
 							<label>Search</label>
-						<input type="text" id="ts-search-input" name="q" size="30" placeholder="搜索"><br>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
 						</form>
 					
 					</li>
@@ -83,14 +83,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/post/duoshuo/" title="多说自定义CSS动感头像和多说评论显示User Agent的那些小事" itemprop="url">多说自定义CSS动感头像和多说评论显示User Agent的那些小事</a>
+      <a href="/post/duoshuo/" title="多说自定义CSS头像和多说评论显示UA" itemprop="url">多说自定义CSS头像和多说评论显示UA</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
 		
   <p class="article-time">
-    <time datetime="2015-04-23T11:32:03.000Z" itemprop="datePublished"> 发表于 2015-04-23</time>
+    <time datetime="2015-11-29T11:32:03.000Z" itemprop="datePublished"> 发表于 2015-11-29</time>
     
   </p>
 </header>
@@ -109,13 +109,13 @@
 <p>感谢多说团队和那些无私的开发者们</p>
 </blockquote>
 <hr>
-<h2 id="更新历史">更新历史</h2><p>2015年04月25日 - 修复Font Awesome图标显示，增加动态效果图展示<br>2015年04月24日 - 初稿</p>
+<h2 id="更新历史">更新历史</h2><p>2015年11月29日 - 增加2个非本地化embedded.js让多说显示UA方案<br>2015年04月25日 - 修复Font Awesome图标显示，增加动态效果图展示<br>2015年04月24日 - 初稿</p>
 <p>阅读原文 - <a href="http://wsgzao.github.io/post/duoshuo/" target="_blank" rel="external">http://wsgzao.github.io/post/duoshuo/</a></p>
 <p>扩展阅读</p>
 <ul>
 <li>duoshuo-mod - <a href="https://github.com/wsgzao/duoshuo-mod" target="_blank" rel="external">https://github.com/wsgzao/duoshuo-mod</a></li>
 <li>出色的自定义效果展示 - <a href="http://dev.duoshuo.com/docs/4ff1cfd0397309552c000017" target="_blank" rel="external">http://dev.duoshuo.com/docs/4ff1cfd0397309552c000017</a></li>
-<li>HelloDog Index - <a href="http://wsgzao.github.io/index/#Hexo" target="_blank" rel="external">http://wsgzao.github.io/index/#Hexo</a> </li>
+<li>HelloDog Index - <a href="http://wsgzao.github.io/index/#Hexo" target="_blank" rel="external">http://wsgzao.github.io/index/#Hexo</a></li>
 </ul>
 <hr>
 <h2 id="多说自定义CSS">多说自定义CSS</h2><blockquote>
@@ -150,7 +150,7 @@
 <blockquote>
 <p>其它平台以此类推，我自己的做法ds.src = ‘//wsgzao.github.io/embed.js’;</p>
 </blockquote>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;script type=<span class="string">"text/javascript"</span>&gt;</span><br><span class="line">  <span class="keyword">var</span> duoshuoQuery = &#123;short_name:<span class="string">"&lt;%= theme.duoshuo_shortname %&gt;"</span>&#125;;</span><br><span class="line">  (<span class="function"><span class="keyword">function</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> ds = <span class="built_in">document</span>.createElement(<span class="string">'script'</span>);</span><br><span class="line">    ds.type = <span class="string">'text/javascript'</span>;ds.async = <span class="literal">true</span>;</span><br><span class="line">    ds.src = <span class="string">'//wsgzao.github.io/embed.js'</span>;</span><br><span class="line">    ds.charset = <span class="string">'UTF-8'</span>;</span><br><span class="line">    (<span class="built_in">document</span>.getElementsByTagName(<span class="string">'head'</span>)[<span class="number">0</span>] </span><br><span class="line">    || <span class="built_in">document</span>.getElementsByTagName(<span class="string">'body'</span>)[<span class="number">0</span>]).appendChild(ds);</span><br><span class="line">  &#125;)();</span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="title">script</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;script type=<span class="string">"text/javascript"</span>&gt;</span><br><span class="line">  <span class="keyword">var</span> duoshuoQuery = &#123;short_name:<span class="string">"&lt;%= theme.duoshuo_shortname %&gt;"</span>&#125;;</span><br><span class="line">  (<span class="function"><span class="keyword">function</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> ds = <span class="built_in">document</span>.createElement(<span class="string">'script'</span>);</span><br><span class="line">    ds.type = <span class="string">'text/javascript'</span>;ds.async = <span class="literal">true</span>;</span><br><span class="line">    ds.src = <span class="string">'//wsgzao.github.io/embed.js'</span>;</span><br><span class="line">    ds.charset = <span class="string">'UTF-8'</span>;</span><br><span class="line">    (<span class="built_in">document</span>.getElementsByTagName(<span class="string">'head'</span>)[<span class="number">0</span>]</span><br><span class="line">    || <span class="built_in">document</span>.getElementsByTagName(<span class="string">'body'</span>)[<span class="number">0</span>]).appendChild(ds);</span><br><span class="line">  &#125;)();</span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="title">script</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
 <p>6.增加Font Awesome</p>
 <p>官方下载压缩包 - <a href="http://fontawesome.io/" target="_blank" rel="external">http://fontawesome.io/</a><br>解压其中的fonts和css，根据你的Blog类型上传至指定目录引入CSS链接即可生效</p>
 <p>7.多说后台自定义CSS</p>
@@ -161,7 +161,8 @@
 <h2 id="其它开源方案">其它开源方案</h2><blockquote>
 <p>欢迎大家积极反馈，提出自己的想法^_^</p>
 </blockquote>
-<p>Make DUOSHUO Show UA - <a href="http://git.oschina.net/huhuhuhu/Make-DUOSHUO-Show-UA/tree/master" target="_blank" rel="external">http://git.oschina.net/huhuhuhu/Make-DUOSHUO-Show-UA/tree/master</a></p>
+<p>[多说]不本地化embed.js使多说评论显示UA - <a href="http://easun.org/blog/archives/make_duoshuo_show_ua.html" target="_blank" rel="external">http://easun.org/blog/archives/make_duoshuo_show_ua.html</a></p>
+<p>多说UA插件 - <a href="http://gerald.top/code/duoshuo-ua" target="_blank" rel="external">http://gerald.top/code/duoshuo-ua</a></p>
 <p>ua-parser-js - <a href="https://github.com/faisalman/ua-parser-js" target="_blank" rel="external">https://github.com/faisalman/ua-parser-js</a></p>
 <p>duoshuo-mod - <a href="https://github.com/wsgzao/duoshuo-mod" target="_blank" rel="external">https://github.com/wsgzao/duoshuo-mod</a></p>
 <h3 id="前端识别">前端识别</h3><blockquote>
@@ -186,7 +187,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://wsgzao.github.io/post/duoshuo/" data-title="多说自定义CSS动感头像和多说评论显示User Agent的那些小事 | HelloDog" data-tsina="null" class="share clearfix">
+	  <div data-url="http://wsgzao.github.io/post/duoshuo/" data-title="多说自定义CSS头像和多说评论显示UA | HelloDog" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -199,19 +200,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/post/android/" title="Android Apps 推荐">
-  <strong>上一篇：</strong><br/>
-  <span>
-  Android Apps 推荐</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/post/wisdom-tooth/"  title="我是如何做到花8000元拔智齿的">
+<a href="/post/hexo-jacman/"  title="Jacman基于Pacman修改的Hexo主题">
  <strong>下一篇：</strong><br/> 
- <span>我是如何做到花8000元拔智齿的
+ <span>Jacman基于Pacman修改的Hexo主题
 </span>
 </a>
 </div>
@@ -220,7 +213,7 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="post/duoshuo/" data-title="多说自定义CSS动感头像和多说评论显示User Agent的那些小事" data-url="http://wsgzao.github.io/post/duoshuo/"></div>
+	<div class="ds-thread" data-thread-key="post/duoshuo/" data-title="多说自定义CSS头像和多说评论显示UA" data-url="http://wsgzao.github.io/post/duoshuo/"></div>
 </section>
 
 
@@ -244,7 +237,7 @@
 		<ul>
 		
 		  
-			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>5</sup></a></li>
 		  
 		
 		  
@@ -535,26 +528,18 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 
 <!-- MathJax End -->
 
-<!-- Tiny_search Begin -->
+<!-- swiftype Begin -->
 
-<script>
-var option = {
-  engineKey: '4ac092ad8d749fdc6293'
-};
-(function(w,d,t,u,n,s,e){
-  s = d.createElement(t);
-  s.src = u;
-  s.async = 1;
-  w[n] = function(r){
-    w[n].opts = r;
-  };
-  e = d.getElementsByTagName(t)[0];
-  e.parentNode.insertBefore(s, e);
-})(window,document,'script','//tinysou-cdn.b0.upaiyun.com/ts.js','_ts');
-_ts(option);
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
 </script>
 
-<!-- Tiny_search End -->
+<!-- swiftype End -->
 
   </body>
 </html>
