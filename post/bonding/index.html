@@ -14,7 +14,7 @@
     <meta name="description" content="双网卡绑定模式详解">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux双网卡绑定实践">
-<meta property="og:url" content="http://wsgzao.github.io/post/bond-network/index.html">
+<meta property="og:url" content="http://wsgzao.github.io/post/bonding/index.html">
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="双网卡绑定模式详解">
 <meta property="og:image" content="http://i.v2ex.co/C7V6y3o6.png">
@@ -66,7 +66,7 @@
  					
 						<form class="search">
 							<label>Search</label>
-						<input type="text" id="ts-search-input" name="q" size="30" placeholder="搜索"><br>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
 						</form>
 					
 					</li>
@@ -81,7 +81,7 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/post/bond-network/" title="Linux双网卡绑定实践" itemprop="url">Linux双网卡绑定实践</a>
+      <a href="/post/bonding/" title="Linux双网卡绑定实践" itemprop="url">Linux双网卡绑定实践</a>
   </h1>
   <p class="article-author">By
        
@@ -109,7 +109,7 @@
 </blockquote>
 <hr>
 <h2 id="更新记录">更新记录</h2><p>2015年02月09日 - 初稿</p>
-<p>阅读原文 - <a href="http://wsgzao.github.io/post/bond-network/" target="_blank" rel="external">http://wsgzao.github.io/post/bond-network/</a></p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/bonding/" target="_blank" rel="external">http://wsgzao.github.io/post/bonding/</a></p>
 <p>扩展阅读</p>
 <ul>
 <li>七种网卡绑定模式详解 - <a href="http://blog.csdn.net/wuweilong/article/details/39720571" target="_blank" rel="external">http://blog.csdn.net/wuweilong/article/details/39720571</a></li>
@@ -145,7 +145,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="CentOS版本">CentOS版本</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">datanode01:~&gt;cat /etc/redhat-release </span><br><span class="line">CentOS release <span class="number">6.4</span> (Final)</span><br></pre></td></tr></table></figure>
+<h3 id="CentOS版本">CentOS版本</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">datanode01:~&gt;cat /etc/redhat-release</span><br><span class="line">CentOS release <span class="number">6.4</span> (Final)</span><br></pre></td></tr></table></figure>
 <h3 id="禁用NetworkManager">禁用NetworkManager</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#立即关闭禁用NetworkManager并禁用开机自启动</span></span><br><span class="line">/etc/init.d/NetworkManager stop</span><br><span class="line">chkconfig NetworkManager off</span><br><span class="line">/etc/init.d/network restart</span><br></pre></td></tr></table></figure>
 <h3 id="关闭iptables和selinux(可选)">关闭iptables和selinux(可选)</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#立即关闭iptables并禁用开机自启动</span></span><br><span class="line">/etc/init.d/iptables stop</span><br><span class="line">chkconfig iptables off</span><br><span class="line"></span><br><span class="line"><span class="comment">#立即关闭selinux并永久禁用</span></span><br><span class="line">setenforce <span class="number">0</span></span><br><span class="line">sed -i ‘s/SELINUX=enforcing/SELINUX=disabled/‘ /etc/selinux/config</span><br></pre></td></tr></table></figure>
 <h3 id="修改主机名">修改主机名</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/sysconfig/network</span><br><span class="line"></span><br><span class="line">NETWORKING=yes</span><br><span class="line">HOSTNAME=namenode01</span><br><span class="line"></span><br><span class="line"><span class="comment">#刷新生效</span></span><br><span class="line">hostname namnode01</span><br><span class="line"><span class="built_in">source</span> /etc/sysconfig/network</span><br></pre></td></tr></table></figure>
@@ -185,7 +185,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://wsgzao.github.io/post/bond-network/" data-title="Linux双网卡绑定实践 | HelloDog" data-tsina="null" class="share clearfix">
+	  <div data-url="http://wsgzao.github.io/post/bonding/" data-title="Linux双网卡绑定实践 | HelloDog" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -208,9 +208,9 @@
 
 
 <div class="next">
-<a href="/post/hexo-pacman/"  title="Pacman为Hexo量身定制的响应式主题">
+<a href="/post/markdown/"  title="Markdown学习路径">
  <strong>下一篇：</strong><br/> 
- <span>Pacman为Hexo量身定制的响应式主题
+ <span>Markdown学习路径
 </span>
 </a>
 </div>
@@ -219,7 +219,7 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="post/bond-network/" data-title="Linux双网卡绑定实践" data-url="http://wsgzao.github.io/post/bond-network/"></div>
+	<div class="ds-thread" data-thread-key="post/bonding/" data-title="Linux双网卡绑定实践" data-url="http://wsgzao.github.io/post/bonding/"></div>
 </section>
 
 
@@ -243,11 +243,11 @@
 		<ul>
 		
 		  
-			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>5</sup></a></li>
 		  
 		
 		  
-			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>29</sup></a></li>
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>30</sup></a></li>
 		  
 		
 		  
@@ -534,26 +534,18 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 
 <!-- MathJax End -->
 
-<!-- Tiny_search Begin -->
+<!-- swiftype Begin -->
 
-<script>
-var option = {
-  engineKey: '4ac092ad8d749fdc6293'
-};
-(function(w,d,t,u,n,s,e){
-  s = d.createElement(t);
-  s.src = u;
-  s.async = 1;
-  w[n] = function(r){
-    w[n].opts = r;
-  };
-  e = d.getElementsByTagName(t)[0];
-  e.parentNode.insertBefore(s, e);
-})(window,document,'script','//tinysou-cdn.b0.upaiyun.com/ts.js','_ts');
-_ts(option);
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
 </script>
 
-<!-- Tiny_search End -->
+<!-- swiftype End -->
 
   </body>
 </html>
