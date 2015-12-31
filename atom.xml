@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Keep Calm and Carry On]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://wsgzao.github.io/"/>
-  <updated>2015-12-30T08:36:09.706Z</updated>
+  <updated>2015-12-31T03:04:01.052Z</updated>
   <id>http://wsgzao.github.io/</id>
   
   <author>
@@ -13,6 +13,60 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Installing RHEL 7 or CentOS 7 on older HP RAID controllers]]></title>
+    <link href="http://wsgzao.github.io/post/cciss/"/>
+    <id>http://wsgzao.github.io/post/cciss/</id>
+    <published>2015-12-31T08:22:32.000Z</published>
+    <updated>2015-12-31T03:04:01.052Z</updated>
+    <content type="html"><![CDATA[<h2 id="前言">前言</h2><p>针对老的硬件安装新的操作系统，无论是Windows还是Linux很多时候都会遇到无法识别磁盘阵列卡的情况，一般情况下通过dd加载官方或者老版本ISO中的驱动识别RAID阵列卡即可，但这次遇到的HP DL580比较特别，需要修改引导参数来解决，详细原因可以参考扩展阅读。本文主要以在HP DL580上部署RHEL 7为例，灵感来源于国外的一篇文章Installing CentOS 7 on older HP ProLiants，在此表示由衷的感谢。</p>
+<blockquote>
+<p>使用hpsa.hpsa_allow_any=1忽略控制器检测识别磁盘阵列</p>
+</blockquote>
+<hr>
+<h2 id="更新记录">更新记录</h2><p>2015年12月31日 - 更新细节描述<br>2015年12月03日 - 初稿</p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/cciss/" target="_blank" rel="external">http://wsgzao.github.io/post/cciss/</a></p>
+<p>扩展阅读</p>
+<ul>
+<li>HP Smart Array CCISS driver - <a href="http://cciss.sourceforge.net/" target="_blank" rel="external">http://cciss.sourceforge.net/</a></li>
+<li>HP Proliant DL580 G5安装centos7 x64无法识别阵列卡问题 - <a href="http://blog.csdn.net/ztsinghua/article/details/48825013" target="_blank" rel="external">http://blog.csdn.net/ztsinghua/article/details/48825013</a></li>
+</ul>
+<hr>
+<h2 id="Problem">Problem</h2><p>A quick google brought up this StackOverflow article.</p>
+<p>CentOS 7 x64 and HP Proliant DL360 G5 SCSI Controller compatibility - <a href="http://serverfault.com/questions/611182/centos-7-x64-and-hp-proliant-dl360-g5-scsi-controller-compatibility" target="_blank" rel="external">http://serverfault.com/questions/611182/centos-7-x64-and-hp-proliant-dl360-g5-scsi-controller-compatibility</a></p>
+<blockquote>
+<p>PROBLEM: RHEL7 removes the the the CCSIS driver and you need to load the kernel component correctly before it can see any drives.</p>
+</blockquote>
+<p>There are two parts to this install:</p>
+<ol>
+<li>Loading the kernel component for the installer (or rather allow HPSA to load any old driver)</li>
+<li>Altering the bootloader to ensure that on boot the kernel uses the same HPSA directives, otherwise after install it’ll boot and guess what… it won’t see your drives!</li>
+</ol>
+<h2 id="RHEL_7">RHEL 7</h2><h3 id="第一次安装">第一次安装</h3><ol>
+<li>加载RHEL 7.1的ISO镜像引导至安装画面</li>
+<li>选择<code>Install Red Hat Enterprise Linux 7.1</code></li>
+<li>按一下<code>Tab</code>，在quiet后空格加入<code>hpsa.hpsa_simple_mode=1 hpsa.hpsa_allow_any=1</code></li>
+<li>按步骤一路执行，识别硬盘开始安装</li>
+</ol>
+<h3 id="安装重启修复引导">安装重启修复引导</h3><ol>
+<li>加载RHEL 7.1的ISO镜像引导至安装画面</li>
+<li>选择<code>Trubleshooting→Rescue a Red Hat Enterprise Linux system</code></li>
+<li>按一下<code>Tab</code>，在quiet后空格加入<code>hpsa.hpsa_simple_mode=1 hpsa.hpsa_allow_any=1</code></li>
+<li>按步骤一路执行，识别硬盘挂载系统分区至<code>/mnt/sysimage</code></li>
+<li>手动修改<code>/boot/grub2/grub.cfg</code>，重启后进入系统</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">chroot /mnt/sysimage</span><br><span class="line"><span class="built_in">cd</span> /boot/grub2/</span><br><span class="line">cp grub.cfg grub.cfg.bak</span><br><span class="line"></span><br><span class="line">vi grub.cfg</span><br><span class="line"><span class="comment">#在启动菜单处quiet空格加入参数，注意有两处请仔细甄别</span></span><br><span class="line">quiet hpsa.hpsa_simple_mode=<span class="number">1</span> hpsa.hpsa_allow_any=<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#保存退出重启</span></span><br><span class="line">:x</span><br><span class="line"><span class="built_in">exit</span></span><br><span class="line">init <span class="number">6</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#重启后卡住</span></span><br><span class="line">可以尝试第二个rescue启动项试试</span><br></pre></td></tr></table></figure>
+<h2 id="CentOS_7">CentOS 7</h2><p>CentOS 7 and older HP RAID controllers - <a href="http://jordanappleson.co.uk/linux/2014/09/18/centos-7-and-hp-raid-drivers/" target="_blank" rel="external">http://jordanappleson.co.uk/linux/2014/09/18/centos-7-and-hp-raid-drivers/</a></p>
+]]></content>
+    <summary type="html">
+    <![CDATA[使用hpsa.hpsa_allow_any=1忽略控制器检测识别磁盘阵列]]>
+    
+    </summary>
+    
+      <category term="学习 | Study" scheme="http://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[Jacman基于Pacman修改的Hexo主题]]></title>
@@ -1053,59 +1107,6 @@
     </summary>
     
       <category term="软件 | Soft" scheme="http://wsgzao.github.io/categories/%E8%BD%AF%E4%BB%B6-Soft/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[Installing RHEL 7 or CentOS 7 on older HP RAID controllers]]></title>
-    <link href="http://wsgzao.github.io/post/cciss/"/>
-    <id>http://wsgzao.github.io/post/cciss/</id>
-    <published>2015-12-03T08:22:32.000Z</published>
-    <updated>2015-12-03T08:54:08.160Z</updated>
-    <content type="html"><![CDATA[<h2 id="前言">前言</h2><p>针对老的硬件安装新的操作系统，无论是Windows还是Linux很多时候都会遇到无法识别磁盘阵列卡的情况，一般情况下通过dd加载官方或者老版本ISO中的驱动识别RAID阵列卡即可，但这次遇到的HP DL580比较特别，需要修改引导参数来解决，详细原因可以参考扩展阅读。本文主要以在HP DL580上部署RHEL 7为例，灵感来源于国外的一篇文章Installing CentOS 7 on older HP ProLiants，在此表示由衷的感谢。</p>
-<blockquote>
-<p>使用hpsa.hpsa_allow_any=1忽略控制器检测识别磁盘阵列</p>
-</blockquote>
-<hr>
-<h2 id="更新记录">更新记录</h2><p>2015年12月02日 - 初稿</p>
-<p>阅读原文 - <a href="http://wsgzao.github.io/post/cciss/" target="_blank" rel="external">http://wsgzao.github.io/post/cciss/</a></p>
-<p>扩展阅读</p>
-<ul>
-<li>HP Smart Array CCISS driver - <a href="http://cciss.sourceforge.net/" target="_blank" rel="external">http://cciss.sourceforge.net/</a></li>
-</ul>
-<hr>
-<h2 id="Problem">Problem</h2><p>A quick google brought up this StackOverflow article.</p>
-<p>CentOS 7 x64 and HP Proliant DL360 G5 SCSI Controller compatibility - <a href="http://serverfault.com/questions/611182/centos-7-x64-and-hp-proliant-dl360-g5-scsi-controller-compatibility" target="_blank" rel="external">http://serverfault.com/questions/611182/centos-7-x64-and-hp-proliant-dl360-g5-scsi-controller-compatibility</a></p>
-<blockquote>
-<p>PROBLEM: RHEL7 removes the the the CCSIS driver and you need to load the kernel component correctly before it can see any drives.</p>
-</blockquote>
-<p>There are two parts to this install:</p>
-<ol>
-<li>Loading the kernel component for the installer (or rather allow HPSA to load any old driver)</li>
-<li>Altering the bootloader to ensure that on boot the kernel uses the same HPSA directives, otherwise after install it’ll boot and guess what… it won’t see your drives!</li>
-</ol>
-<h2 id="RHEL_7">RHEL 7</h2><h3 id="第一次安装">第一次安装</h3><ol>
-<li>加载RHEL 7.1的ISO镜像引导至安装画面</li>
-<li>选择<code>Install Red Hat Enterprise Linux 7.1</code></li>
-<li>按一下<code>Tab</code>，在quiet后空格加入<code>quiet hpsa.hpsa_allow_any=1</code></li>
-<li>按步骤一路执行，识别硬盘开始安装</li>
-</ol>
-<h3 id="安装重启修复引导">安装重启修复引导</h3><ol>
-<li>加载RHEL 7.1的ISO镜像引导至安装画面</li>
-<li>选择<code>Trubleshooting→Rescue a Red Hat Enterprise Linux system</code></li>
-<li>按一下<code>Tab</code>，在quiet后空格加入<code>quiet hpsa.hpsa_allow_any=1</code></li>
-<li>按步骤一路执行，识别硬盘挂载系统分区至<code>/mnt/sysimage</code></li>
-<li>手动修改<code>/boot/grub2/grub.cfg</code>，重启后进入系统</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">chroot /mnt/sysimage</span><br><span class="line"><span class="built_in">cd</span> /boot/grub2/grub.cfg</span><br><span class="line">cp grub.cfg grub.cfg.bak</span><br><span class="line"></span><br><span class="line">vi grub.cfg</span><br><span class="line"><span class="comment">#在启动菜单处quiet空格加入参数</span></span><br><span class="line">quiet hpsa.hpsa_allow_any=<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#保存退出重启</span></span><br><span class="line">:x</span><br><span class="line"><span class="built_in">exit</span></span><br><span class="line">init <span class="number">6</span></span><br></pre></td></tr></table></figure>
-<h2 id="CentOS_7">CentOS 7</h2><p>CentOS 7 and older HP RAID controllers - <a href="http://jordanappleson.co.uk/linux/2014/09/18/centos-7-and-hp-raid-drivers/" target="_blank" rel="external">http://jordanappleson.co.uk/linux/2014/09/18/centos-7-and-hp-raid-drivers/</a></p>
-]]></content>
-    <summary type="html">
-    <![CDATA[使用hpsa.hpsa_allow_any=1忽略控制器检测识别磁盘阵列]]>
-    
-    </summary>
-    
-      <category term="学习 | Study" scheme="http://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
     
   </entry>
   
