@@ -87,7 +87,7 @@
 		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
 		
   <p class="article-time">
-    <time datetime="2015-12-18T08:22:32.000Z" itemprop="datePublished"> 发表于 2015-12-18</time>
+    <time datetime="2015-12-23T08:22:32.000Z" itemprop="datePublished"> 发表于 2015-12-23</time>
     
   </p>
 </header>
@@ -96,7 +96,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#静态路由表和策略路由的区别"><span class="toc-number">3.</span> <span class="toc-text">静态路由表和策略路由的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rt_tables"><span class="toc-number">4.</span> <span class="toc-text">rt_tables</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#策略性路由应用及分析(iproute2)"><span class="toc-number">5.</span> <span class="toc-text">策略性路由应用及分析(iproute2)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#环境配置"><span class="toc-number">6.</span> <span class="toc-text">环境配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#策略路由配置"><span class="toc-number">7.</span> <span class="toc-text">策略路由配置</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#静态路由表和策略路由的区别"><span class="toc-number">3.</span> <span class="toc-text">静态路由表和策略路由的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux添加静态路由最佳实践"><span class="toc-number">4.</span> <span class="toc-text">Linux添加静态路由最佳实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#临时路由"><span class="toc-number">4.1.</span> <span class="toc-text">临时路由</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#永久路由"><span class="toc-number">4.2.</span> <span class="toc-text">永久路由</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rt_tables"><span class="toc-number">5.</span> <span class="toc-text">rt_tables</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#策略性路由应用及分析(iproute2)"><span class="toc-number">6.</span> <span class="toc-text">策略性路由应用及分析(iproute2)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#环境配置"><span class="toc-number">7.</span> <span class="toc-text">环境配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#策略路由配置"><span class="toc-number">8.</span> <span class="toc-text">策略路由配置</span></a></li></ol>
 		
 		</div>
 		
@@ -105,7 +105,7 @@
 <p>rt_tables是一种更加简单灵活的策略路由实现方法</p>
 </blockquote>
 <hr>
-<h2 id="更新记录">更新记录</h2><p>2015年12月18日 - 修正动态路由为策略路由描述，完善内容，感谢<a href="http://www.v2ex.com/member/extreme" target="_blank" rel="external">@extreme</a><br>2015年12月17日 - 初稿</p>
+<h2 id="更新记录">更新记录</h2><p>2015年12月23日 - 增加Linux添加静态路由最佳实践<br>2015年12月18日 - 修正动态路由为策略路由描述，完善内容，感谢<a href="http://www.v2ex.com/member/extreme" target="_blank" rel="external">@extreme</a><br>2015年12月17日 - 初稿</p>
 <p>阅读原文 - <a href="http://wsgzao.github.io/post/iproute2/" target="_blank" rel="external">http://wsgzao.github.io/post/iproute2/</a></p>
 <p>扩展阅读</p>
 <ul>
@@ -118,6 +118,17 @@
 <h2 id="静态路由表和策略路由的区别">静态路由表和策略路由的区别</h2><p>通常我们维护静态路由表会手工填写所有IP地址段的路由规则，使用命令或者写入配置文件永久生效，先以Windows/Linux/AIX常用方法为例</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#Windows静态路由</span></span><br><span class="line">--键入 route -p add [目标] [mask &lt;网络掩码&gt;] [网关] [metric &lt;度量值&gt;] [<span class="keyword">if</span> &lt;接口&gt;]</span><br><span class="line">route <span class="built_in">print</span></span><br><span class="line">route delete</span><br><span class="line">route -p add <span class="number">172.16</span>.<span class="number">19.0</span> mask <span class="number">255.255</span>.<span class="number">255.0</span> <span class="number">198.15</span>.<span class="number">0.1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#RHEL静态路由</span></span><br><span class="line">vi /etc/sysconfig/network</span><br><span class="line">default via <span class="number">192.168</span>.<span class="number">3.1</span> dev eth0</span><br><span class="line"><span class="number">10.211</span>.<span class="number">6.0</span>/<span class="number">24</span> via <span class="number">192.168</span>.<span class="number">3.1</span> dev eth0</span><br><span class="line"><span class="number">10.0</span>.<span class="number">0.0</span>/<span class="number">8</span> via <span class="number">10.212</span>.<span class="number">52.1</span> dev eth1</span><br><span class="line"></span><br><span class="line"><span class="comment">#SuSE静态路由</span></span><br><span class="line">vi /etc/sysconfig/network/routes</span><br><span class="line">default <span class="number">192.168</span>.<span class="number">3.1</span> - -</span><br><span class="line"><span class="number">10.211</span>.<span class="number">6.0</span> <span class="number">192.168</span>.<span class="number">3.1</span> <span class="number">255.255</span>.<span class="number">255.0</span> eth0</span><br><span class="line"><span class="number">10.0</span>.<span class="number">0.0</span> <span class="number">10.212</span>.<span class="number">52.1</span> <span class="number">255.0</span>.<span class="number">0.0</span> eth1</span><br><span class="line"></span><br><span class="line"><span class="comment">#AIX静态路由</span></span><br><span class="line">smitty mkroute</span><br><span class="line"><span class="number">172.20</span>.<span class="number">14.0</span>/<span class="number">24</span> gw <span class="number">172.23</span>.<span class="number">14.254</span></span><br></pre></td></tr></table></figure>
 <p>这种办法针对少量的规则还可以轻松应对，但规则一旦增加麻烦也就接踵而至，网段地址不断变化就必须及时更新路由表，否则其他用户就无法访问。如果可以根据用户访问进来的路径设定策略路由就会方便很多，而rt_tables就是为此而生。</p>
+<h2 id="Linux添加静态路由最佳实践">Linux添加静态路由最佳实践</h2><blockquote>
+<p>按照RedHat官方介绍有三种方式添加永久静态路由，这里只列举最佳方式</p>
+</blockquote>
+<h3 id="临时路由">临时路由</h3><blockquote>
+<p>以下两种方法可以立即生效，但重启后会消失，切记使用场景</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#route命令参数，使用route命令，查看本机路由直接输入route -n回车即可</span></span><br><span class="line">add     增加路由</span><br><span class="line">del     删除路由</span><br><span class="line">-net    设置到某个网段的路由</span><br><span class="line">-host   设置到某台主机的路由</span><br><span class="line">gw      出口网关 IP地址</span><br><span class="line">dev     出口网关 物理设备名</span><br><span class="line"></span><br><span class="line"><span class="comment">#添加路由</span></span><br><span class="line">route add -net <span class="number">192.168</span>.<span class="number">0.0</span>/<span class="number">24</span> gw <span class="number">192.168</span>.<span class="number">0.1</span></span><br><span class="line">route add -host <span class="number">192.168</span>.<span class="number">1.1</span> dev <span class="number">192.168</span>.<span class="number">0.1</span></span><br><span class="line"><span class="comment">#删除路由</span></span><br><span class="line">route del -net <span class="number">192.168</span>.<span class="number">0.0</span>/<span class="number">24</span> gw <span class="number">192.168</span>.<span class="number">0.1</span></span><br><span class="line"><span class="comment">#添加默认路由</span></span><br><span class="line">route add default gw <span class="number">192.168</span>.<span class="number">0.1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#使用ip route 命令和route命令类似</span></span><br><span class="line">add 增加路由</span><br><span class="line">del 删除路由</span><br><span class="line">via 网关出口 IP地址</span><br><span class="line">dev 网关出口 物理设备名</span><br><span class="line"></span><br><span class="line"><span class="comment">#添加路由</span></span><br><span class="line">ip route add <span class="number">192.168</span>.<span class="number">0.0</span>/<span class="number">24</span> via <span class="number">192.168</span>.<span class="number">0.1</span></span><br><span class="line">ip route add <span class="number">192.168</span>.<span class="number">1.1</span> dev <span class="number">192.168</span>.<span class="number">0.1</span></span><br><span class="line"><span class="comment">#删除路由</span></span><br><span class="line">ip route del <span class="number">192.168</span>.<span class="number">0.0</span>/<span class="number">24</span> via <span class="number">192.168</span>.<span class="number">0.1</span></span><br><span class="line"><span class="comment">#增加默认路由</span></span><br><span class="line">ip route add default via <span class="number">192.168</span>.<span class="number">0.1</span> dev eth0</span><br></pre></td></tr></table></figure>
+<h3 id="永久路由">永久路由</h3><blockquote>
+<p>该方法需要重启网络会造成短暂的网络服务中断，但重启后优先级大于rc.local方式不会影响nfs</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#在/etc/sysconfig/static-routes文件里添加如下内容 (没有static-routes的话就手动建立一个这样的文件)</span></span><br><span class="line">any net <span class="number">192.168</span>.<span class="number">3.0</span>/<span class="number">24</span> gw <span class="number">192.168</span>.<span class="number">3.254</span></span><br><span class="line">any net <span class="number">10.250</span>.<span class="number">228.128</span> netmask <span class="number">255.255</span>.<span class="number">255.192</span> gw <span class="number">10.250</span>.<span class="number">228.129</span></span><br><span class="line"></span><br><span class="line">service network restart</span><br></pre></td></tr></table></figure>
 <h2 id="rt_tables">rt_tables</h2><blockquote>
 <p>rt_tables简单来说就是通过给表的命名使得管理简单化</p>
 </blockquote>
@@ -227,18 +238,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/post/linbell/" title="Linbell G2无线自发电门铃半年使用体验小结(最值得购买的实用智能硬件之一)">
+ <a href="/post/fq/" title="GFW翻墙小结">
   <strong>上一篇：</strong><br/>
   <span>
-  Linbell G2无线自发电门铃半年使用体验小结(最值得购买的实用智能硬件之一)</span>
+  GFW翻墙小结</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/post/windows/"  title="Windows常用软件推荐">
+<a href="/post/duoshuo/"  title="多说自定义CSS头像和多说评论显示UA">
  <strong>下一篇：</strong><br/> 
- <span>Windows常用软件推荐
+ <span>多说自定义CSS头像和多说评论显示UA
 </span>
 </a>
 </div>
@@ -257,13 +268,23 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#静态路由表和策略路由的区别"><span class="toc-number">3.</span> <span class="toc-text">静态路由表和策略路由的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rt_tables"><span class="toc-number">4.</span> <span class="toc-text">rt_tables</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#策略性路由应用及分析(iproute2)"><span class="toc-number">5.</span> <span class="toc-text">策略性路由应用及分析(iproute2)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#环境配置"><span class="toc-number">6.</span> <span class="toc-text">环境配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#策略路由配置"><span class="toc-number">7.</span> <span class="toc-text">策略路由配置</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#静态路由表和策略路由的区别"><span class="toc-number">3.</span> <span class="toc-text">静态路由表和策略路由的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux添加静态路由最佳实践"><span class="toc-number">4.</span> <span class="toc-text">Linux添加静态路由最佳实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#临时路由"><span class="toc-number">4.1.</span> <span class="toc-text">临时路由</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#永久路由"><span class="toc-number">4.2.</span> <span class="toc-text">永久路由</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rt_tables"><span class="toc-number">5.</span> <span class="toc-text">rt_tables</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#策略性路由应用及分析(iproute2)"><span class="toc-number">6.</span> <span class="toc-text">策略性路由应用及分析(iproute2)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#环境配置"><span class="toc-number">7.</span> <span class="toc-text">环境配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#策略路由配置"><span class="toc-number">8.</span> <span class="toc-text">策略路由配置</span></a></li></ol>
  
   </div>
 
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
 <aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
 
   
 <div class="categorieslist">
@@ -290,21 +311,19 @@
 </div>
 
 
-  
-
   <div class="linkslist">
   <p class="asidetitle">友情链接</p>
     <ul>
         
           <li>
             
-            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
             
           </li>
         
           <li>
             
-            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
             
           </li>
         
@@ -328,7 +347,7 @@
 	
 	<section class="info">
 		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
-			Try to do better.</p>
+			Doing is better than perfect.</p>
 	</section>
 	 
 	<div class="social-font" class="clearfix">
@@ -351,7 +370,7 @@
 		
 
 		<p class="copyright">
-		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
 		
 		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
 		
@@ -538,9 +557,14 @@ $(document).ready(function(){
 
 
 
-<script type="text/javascript">
-var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
-document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fc2c5fc7d844d0973d9f77abd87f49c3c' type='text/javascript'%3E%3C/script%3E"));
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
 </script>
 
 
