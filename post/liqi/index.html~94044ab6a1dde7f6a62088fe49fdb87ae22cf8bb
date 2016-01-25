@@ -4,23 +4,23 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Windows下使用EasyBCD安装Linux双系统实践 | HelloDog</title>
+    <title>利器 | HelloDog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wsgzao">
     
 
     
-    <meta name="description" content="轻轻松松实现Windows和Linux双系统">
+    <meta name="description" content="创造者和他们的工具">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Windows下使用EasyBCD安装Linux双系统实践">
-<meta property="og:url" content="http://wsgzao.github.io/post/easybcd/index.html">
+<meta property="og:title" content="利器">
+<meta property="og:url" content="http://wsgzao.github.io/post/liqi/index.html">
 <meta property="og:site_name" content="HelloDog">
-<meta property="og:description" content="轻轻松松实现Windows和Linux双系统">
-<meta property="og:image" content="//i.v2ex.co/9RYxcYnL.png">
+<meta property="og:description" content="创造者和他们的工具">
+<meta property="og:image" content="//i.v2ex.co/Gt4iYMe1.jpeg">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Windows下使用EasyBCD安装Linux双系统实践">
-<meta name="twitter:description" content="轻轻松松实现Windows和Linux双系统">
+<meta name="twitter:title" content="利器">
+<meta name="twitter:description" content="创造者和他们的工具">
 
     
     <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
@@ -81,14 +81,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/post/easybcd/" title="Windows下使用EasyBCD安装Linux双系统实践" itemprop="url">Windows下使用EasyBCD安装Linux双系统实践</a>
+      <a href="/post/liqi/" title="利器" itemprop="url">利器</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
 		
   <p class="article-time">
-    <time datetime="2015-11-26T08:22:32.000Z" itemprop="datePublished"> 发表于 2015-11-26</time>
+    <time datetime="2016-01-08T16:30:32.000Z" itemprop="datePublished"> 发表于 2016-01-09</time>
     
   </p>
 </header>
@@ -97,115 +97,52 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基础信息"><span class="toc-number">3.</span> <span class="toc-text">基础信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#准备工作"><span class="toc-number">4.</span> <span class="toc-text">准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#系统安装"><span class="toc-number">5.</span> <span class="toc-text">系统安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#引导修复"><span class="toc-number">6.</span> <span class="toc-text">引导修复</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">1.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#介绍一下你自己和所做的工作。"><span class="toc-number">2.</span> <span class="toc-text">介绍一下你自己和所做的工作。</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#你都在使用哪些硬件？"><span class="toc-number">3.</span> <span class="toc-text">你都在使用哪些硬件？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#软件呢？"><span class="toc-number">4.</span> <span class="toc-text">软件呢？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#你最理想的工作环境是什么？"><span class="toc-number">5.</span> <span class="toc-text">你最理想的工作环境是什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#你平时获得工作灵感的方式有哪些？"><span class="toc-number">6.</span> <span class="toc-text">你平时获得工作灵感的方式有哪些？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#推荐一件生活中的利器给大家。"><span class="toc-number">7.</span> <span class="toc-text">推荐一件生活中的利器给大家。</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#利器社群计划"><span class="toc-number">8.</span> <span class="toc-text">利器社群计划</span></a></li></ol>
 		
 		</div>
 		
-		<p><img src="//i.v2ex.co/9RYxcYnL.png" alt=""></p>
-<h2 id="前言">前言</h2><p>记得大学的时候折腾黑苹果实现Windows+Mac+Linux的时候很开心，虽然牺牲了不少时间但学习的过程仍然值得回味。现在自己基本以VMware虚拟化为主很少再使用物理机，这次因为其它工作原因帮助同事做了小小的实践，主要是通过EasyBCD硬盘安装Linux实现双系统独立共存，该方法也适用于RedHat/CentOS/Ubuntu等。</p>
+		<p><img src="//i.v2ex.co/Gt4iYMe1.jpeg" alt=""></p>
+<h2 id="更新记录">更新记录</h2><p>2016年01月09日 - 初稿</p>
+<h2 id="介绍一下你自己和所做的工作。">介绍一下你自己和所做的工作。</h2><p>我是<a href="https://www.linkedin.com/in/aowang" target="_blank" rel="external">王奥(OX)</a>，目前在中国三大赌场之一担任DevOps运维工程师。我几乎翻阅了<a href="http://liqi.io/community/" target="_blank" rel="external">利器社群计划</a>的每一个链接，无论软或硬每个人都有自己喜欢的利器和使用方式，我们可以用先进的IDE Coding，也可以用平凡的Office写小说。最初的纸笔已经转变为各种灵活多样的辅助工具呈现在我们面前，将灵感和科技融合通过适合自己的利器来实现，做一个分享者、创造者。</p>
+<h2 id="你都在使用哪些硬件？">你都在使用哪些硬件？</h2><blockquote>
+<p>好奇心驱使着我不断去探寻科技的乐趣</p>
+</blockquote>
+<p>零客户端, ThinkPad X220i, ThinkPad X1 Carbon, 魅蓝Metal, iPad Mini 2, Kindle Paperwhite 2</p>
+<h2 id="软件呢？">软件呢？</h2><blockquote>
+<p>因为工作需要主要基于Windows为主，我将如实交代和Windows愉快的相处过程</p>
+</blockquote>
+<ol>
+<li>操作系统是64位的Windows 10，推荐搭配8G内存和256GB固态硬盘提升幸福指数</li>
+<li>好压+看图王构成2345伪流氓阵营 ，Adobe Photoshop/Faststone Capture/QQ截图共存</li>
+<li>Listary用于代替Everything和Total Commander的效率神器，类比于Alfred</li>
+<li>浏览器Maxthon用于主力怀旧，360极速和QQ浏览器在不同设备交叉体验，跨平台数据同步</li>
+<li>没有绝对安全，好习惯很重要，腾讯电脑管家和360安全在不同设备针锋相对，一起耍流氓</li>
+<li>Everynote同步笔记，快盘同步数据文件，跨平台数据同步</li>
+<li>QQ/微信作为社交登录统一平台和安全中心，辐射第三方应用。移动端莫要忽视蚂蚁金服的影响力</li>
+<li>输入法搜狗/百度/腾讯拼音纯净版混合模式体验中</li>
+<li>百度网盘和360网盘互捅菊花</li>
+<li>Office 2016搭配Foxit PhantomPDF，移动端推荐WPS</li>
+<li>广告拦截ADSafe或阿呆喵</li>
+<li>邮件收发QQ邮箱搭配Foxmail，跨平台数据同步</li>
+<li>思维脑图FreeMind或XMind</li>
+<li>远程协助AnyDesk或TeamViewer</li>
+<li>终端管理Xmanager搭配MobaXterm</li>
+<li>开发环境Visual Studio/JetBrains/GitHub/Sublime Text/Notepad2</li>
+<li>虚拟化平台VMware Workstation/Horizon/vRealize</li>
+<li>付费翻墙Shadowsocks</li>
+<li>保持一份年轻的心</li>
+</ol>
 <blockquote>
-<p>轻轻松松实现Windows和Linux双系统</p>
+<p>分享两篇自己坚持更新的文章</p>
 </blockquote>
-<hr>
-<h2 id="更新记录">更新记录</h2><p>2015年11月27日 - 初稿</p>
-<p>阅读原文 - <a href="http://wsgzao.github.io/post/easybcd/" target="_blank" rel="external">http://wsgzao.github.io/post/easybcd/</a></p>
-<p>扩展阅读</p>
-<ul>
-<li>Win7下硬盘安装 Redhat Linux 6.0 ES - <a href="http://blog.csdn.net/shenkxiao/article/details/6747592" target="_blank" rel="external">http://blog.csdn.net/shenkxiao/article/details/6747592</a></li>
-</ul>
-<hr>
-<h2 id="基础信息">基础信息</h2><ol>
-<li>笔记本型号为4G内存的<code>ThinkPad x230</code></li>
-<li>部署的操作系统版本为<code>rhel-server-6.3-x86_64-dvd.iso</code></li>
-<li>EasyBCD版本为<code>EasyBCD 2.3</code></li>
+<p>自己整理的DevOps实用资源 - <a href="http://wsgzao.github.io/post/devops/" target="_blank" rel="external">http://wsgzao.github.io/post/devops/</a><br>Windows常用软件推荐 - <a href="http://wsgzao.github.io/post/windows/" target="_blank" rel="external">http://wsgzao.github.io/post/windows/</a></p>
+<h2 id="你最理想的工作环境是什么？">你最理想的工作环境是什么？</h2><p>和一群优秀的小伙伴协作+扯蛋</p>
+<h2 id="你平时获得工作灵感的方式有哪些？">你平时获得工作灵感的方式有哪些？</h2><p>浏览<a href="http://liqi.io" target="_blank" rel="external">利器</a></p>
+<h2 id="推荐一件生活中的利器给大家。">推荐一件生活中的利器给大家。</h2><ol>
+<li>好记性不如烂笔头，准备好<code>笔/本子/便利贴</code>，随时记录一切</li>
+<li>如果大家有中午冬眠的习惯，可以尝试下<code>零听眼罩</code>+<code>MUJI无印良品微粒贴身靠枕</code>的类似搭配</li>
 </ol>
-<ul>
-<li>EasyBCD - <a href="https://neosmart.net/EasyBCD/" target="_blank" rel="external">https://neosmart.net/EasyBCD/</a></li>
-<li>RHEL - <a href="http://www.redhat.com/rhel/server/" target="_blank" rel="external">http://www.redhat.com/rhel/server/</a></li>
-</ul>
-<h2 id="准备工作">准备工作</h2><blockquote>
-<p>RedHat由于版权原因只能识别FAT32</p>
-</blockquote>
-<ol>
-<li>建议分配3个FAT32逻辑分区，大小可根据实际情况调整</li>
-<li>将ISO镜像复制到存放系统镜像的分区并解压</li>
-<li>运行EasyBCD选择<code>添加新条目→Linux/BSD→选择ISO→添加镜像文件</code></li>
-</ol>
-<blockquote>
-<p>我的分区如下，仅供参考切勿照搬</p>
-</blockquote>
-<table>
-<thead>
-<tr>
-<th>分区名称</th>
-<th>分区编号</th>
-<th>分区格式</th>
-<th>备注</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>引导分区</td>
-<td>sda1</td>
-<td>NTFS</td>
-<td>Windows隐藏分区</td>
-</tr>
-<tr>
-<td>C盘</td>
-<td>sda2</td>
-<td>NTFS</td>
-<td>Windows系统分区</td>
-</tr>
-<tr>
-<td>D盘</td>
-<td>sda3</td>
-<td>NTFS</td>
-<td>数据盘</td>
-</tr>
-<tr>
-<td>E盘</td>
-<td>sda4</td>
-<td>NTFS</td>
-<td>数据盘</td>
-</tr>
-<tr>
-<td>F盘</td>
-<td>sda5</td>
-<td>FAT32</td>
-<td>部署Linux系统，/根分区存放点，20G</td>
-</tr>
-<tr>
-<td>G盘</td>
-<td>sda6</td>
-<td>FAT32</td>
-<td>存放ISO镜像和解压文件，10G</td>
-</tr>
-<tr>
-<td>H盘</td>
-<td>sda7</td>
-<td>FAT32</td>
-<td>作为SWAP交换分区，4G</td>
-</tr>
-</tbody>
-</table>
-<h2 id="系统安装">系统安装</h2><blockquote>
-<p>过程较为简单但一定注意boot loader的选择</p>
-</blockquote>
-<ol>
-<li>硬盘/光盘/U盘重启后引导进入安装过程</li>
-<li>操作系统安装步骤按照自己需求正常调整和执行</li>
-<li>分区时选择sda5作为/, sda7作为SWAP（<code>仅供参考切勿照搬</code>）</li>
-<li>查看<code>Change device</code>修改<code>boot loader</code>为你安装系统的分区如<code>/dev/sda5</code></li>
-<li>完成安装后重启设备</li>
-</ol>
-<h2 id="引导修复">引导修复</h2><blockquote>
-<p>轻松实现Windows和Linux双系统引导切换</p>
-</blockquote>
-<ol>
-<li>安装重启后回到Windows运行EasyBCD</li>
-<li>选择<code>编辑引导菜单</code>，删除ISO条目，选择<code>添加新条目→Linux/BSD→选择驱动器→添加条目</code></li>
-<li>重启后进入Linux完成收尾工作测试效果</li>
-</ol>
+<h2 id="利器社群计划">利器社群计划</h2><p>本文参与了「利器社群计划」，发现更多创造者和他们的工具：<a href="http://liqi.io/community/" target="_blank" rel="external">http://liqi.io/community/</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -213,7 +150,7 @@
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+  <a class="article-category-link" href="/categories/生活-Life/">生活 | Life</a>
 </div>
 
 
@@ -223,7 +160,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://wsgzao.github.io/post/easybcd/" data-title="Windows下使用EasyBCD安装Linux双系统实践 | HelloDog" data-tsina="null" class="share clearfix">
+	  <div data-url="http://wsgzao.github.io/post/liqi/" data-title="利器 | HelloDog" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -236,19 +173,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/post/teaming/" title="RHEL7 Teaming网卡绑定实践">
-  <strong>上一篇：</strong><br/>
-  <span>
-  RHEL7 Teaming网卡绑定实践</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/post/thinkpad/"  title="ThinkPad X1 Carbon使用经验分享(解决Windows 10高分屏模糊)">
+<a href="/post/fq/"  title="GFW翻墙小结">
  <strong>下一篇：</strong><br/> 
- <span>ThinkPad X1 Carbon使用经验分享(解决Windows 10高分屏模糊)
+ <span>GFW翻墙小结
 </span>
 </a>
 </div>
@@ -257,7 +186,7 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="post/easybcd/" data-title="Windows下使用EasyBCD安装Linux双系统实践" data-url="http://wsgzao.github.io/post/easybcd/"></div>
+	<div class="ds-thread" data-thread-key="post/liqi/" data-title="利器" data-url="http://wsgzao.github.io/post/liqi/"></div>
 </section>
 
 
@@ -267,7 +196,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基础信息"><span class="toc-number">3.</span> <span class="toc-text">基础信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#准备工作"><span class="toc-number">4.</span> <span class="toc-text">准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#系统安装"><span class="toc-number">5.</span> <span class="toc-text">系统安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#引导修复"><span class="toc-number">6.</span> <span class="toc-text">引导修复</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">1.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#介绍一下你自己和所做的工作。"><span class="toc-number">2.</span> <span class="toc-text">介绍一下你自己和所做的工作。</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#你都在使用哪些硬件？"><span class="toc-number">3.</span> <span class="toc-text">你都在使用哪些硬件？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#软件呢？"><span class="toc-number">4.</span> <span class="toc-text">软件呢？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#你最理想的工作环境是什么？"><span class="toc-number">5.</span> <span class="toc-text">你最理想的工作环境是什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#你平时获得工作灵感的方式有哪些？"><span class="toc-number">6.</span> <span class="toc-text">你平时获得工作灵感的方式有哪些？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#推荐一件生活中的利器给大家。"><span class="toc-number">7.</span> <span class="toc-text">推荐一件生活中的利器给大家。</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#利器社群计划"><span class="toc-number">8.</span> <span class="toc-text">利器社群计划</span></a></li></ol>
  
   </div>
 
@@ -295,7 +224,7 @@
 		  
 		
 		  
-			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>31</sup></a></li>
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>32</sup></a></li>
 		  
 		
 		  
