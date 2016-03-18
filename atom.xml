@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Keep Calm and Carry On]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://wsgzao.github.io/"/>
-  <updated>2016-03-18T03:27:05.667Z</updated>
+  <updated>2016-03-18T05:55:32.560Z</updated>
   <id>http://wsgzao.github.io/</id>
   
   <author>
@@ -15,11 +15,11 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title><![CDATA[LVM逻辑卷管理器配置小结]]></title>
+    <title><![CDATA[LVM逻辑卷管理配置小结]]></title>
     <link href="http://wsgzao.github.io/post/lvm/"/>
     <id>http://wsgzao.github.io/post/lvm/</id>
     <published>2016-03-18T06:59:49.000Z</published>
-    <updated>2016-03-18T03:27:05.667Z</updated>
+    <updated>2016-03-18T05:55:32.560Z</updated>
     <content type="html"><![CDATA[<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Lvm.svg/620px-Lvm.svg.png" alt=""></p>
 <h2 id="前言">前言</h2><p>Logical Volume Manager (LVM)，逻辑卷管理LVM是一个多才多艺的硬盘系统工具，无论在Linux或者其他类似的系统，都是非常的好用。传统分区使用固定大小分区，重新调整大小十分麻烦，但是LVM可以创建和管理“逻辑”卷，而不是直接使用物理硬盘，可以让管理员弹性的管理逻辑卷的扩大缩小，操作简单，而不损坏已存储的数据。可以随意将新的硬盘添加到LVM，以直接扩展已经存在的逻辑卷，LVM并不需要重启就可以让内核知道分区的存在。文章详细记录在PV/VG/LV中3个阶段的创建/添加/扩展/减小/删除等实战操作步骤，方便自己回顾一些基础用法，也希望能够帮助大家更好的理解LVM的原理。</p>
 <blockquote>
@@ -28,7 +28,7 @@
 <h2 id="更新历史">更新历史</h2><p>2016年03月18日 - 初稿</p>
 <p>阅读原文 - <a href="http://wsgzao.github.io/post/lvm/" target="_blank" rel="external">http://wsgzao.github.io/post/lvm/</a></p>
 <p><strong>扩展阅读</strong></p>
-<p>LVM - <a href="https://wiki.archlinux.org/index.php/LVM_(简体中文" target="_blank" rel="external">https://wiki.archlinux.org/index.php/LVM_(简体中文</a>)<br>Linux LVM简明教程 - <a href="https://linux.cn/article-3218-1.html" target="_blank" rel="external">https://linux.cn/article-3218-1.html</a></p>
+<p>逻辑卷轴管理员 (Logical Volume Manager) - <a href="http://vbird.dic.ksu.edu.tw/linux_basic/0420quota_3.php" target="_blank" rel="external">http://vbird.dic.ksu.edu.tw/linux_basic/0420quota_3.php</a><br>LVM - <a href="https://wiki.archlinux.org/index.php/LVM_(简体中文" target="_blank" rel="external">https://wiki.archlinux.org/index.php/LVM_(简体中文</a>)<br>Linux LVM简明教程 - <a href="https://linux.cn/article-3218-1.html" target="_blank" rel="external">https://linux.cn/article-3218-1.html</a></p>
 <hr>
 <h2 id="LVM基本组成">LVM基本组成</h2><p>LVM利用Linux内核的device-mapper来实现存储系统的虚拟化（系统分区独立于底层硬件）。 通过LVM，你可以实现存储空间的抽象化并在上面建立虚拟分区（virtual partitions），可以更简便地扩大和缩小分区，可以增删分区时无需担心某个硬盘上没有足够的连续空间， without getting caught up in the problems of fdisking a disk that is in use (and wondering whether the kernel is using the old or new partition table) and without having to move other partition out of the way. LVM是用来方便管理的，不会提供额外的安全保证。 However, it sits nicely with the other two technologies we are using.</p>
 <p>LVM的基本组成块（building blocks）如下：</p>
