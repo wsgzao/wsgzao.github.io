@@ -4,22 +4,22 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>使用rt_tables巧妙配置Linux多网卡多路由实现策略路由 | HelloDog</title>
+    <title>静态路由和策略路由的配置实践 | HelloDog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wsgzao">
     
 
     
-    <meta name="description" content="rt_tables是一种更加简单灵活的策略路由实现方法">
+    <meta name="description" content="策略路由的出现在某些业务场景下可能更优于静态路由">
 <meta property="og:type" content="article">
-<meta property="og:title" content="使用rt_tables巧妙配置Linux多网卡多路由实现策略路由">
-<meta property="og:url" content="http://wsgzao.github.io/post/iproute2/index.html">
+<meta property="og:title" content="静态路由和策略路由的配置实践">
+<meta property="og:url" content="http://wsgzao.github.io/post/static-routes/index.html">
 <meta property="og:site_name" content="HelloDog">
-<meta property="og:description" content="rt_tables是一种更加简单灵活的策略路由实现方法">
+<meta property="og:description" content="策略路由的出现在某些业务场景下可能更优于静态路由">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="使用rt_tables巧妙配置Linux多网卡多路由实现策略路由">
-<meta name="twitter:description" content="rt_tables是一种更加简单灵活的策略路由实现方法">
+<meta name="twitter:title" content="静态路由和策略路由的配置实践">
+<meta name="twitter:description" content="策略路由的出现在某些业务场景下可能更优于静态路由">
 
     
     <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
@@ -80,14 +80,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/post/iproute2/" title="使用rt_tables巧妙配置Linux多网卡多路由实现策略路由" itemprop="url">使用rt_tables巧妙配置Linux多网卡多路由实现策略路由</a>
+      <a href="/post/static-routes/" title="静态路由和策略路由的配置实践" itemprop="url">静态路由和策略路由的配置实践</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
 		
   <p class="article-time">
-    <time datetime="2015-12-23T08:22:32.000Z" itemprop="datePublished"> 发表于 2015-12-23</time>
+    <time datetime="2016-03-17T08:22:32.000Z" itemprop="datePublished"> 发表于 2016-03-17</time>
     
   </p>
 </header>
@@ -100,13 +100,13 @@
 		
 		</div>
 		
-		<h2 id="前言">前言</h2><p>一般在多网卡的网络访问关系中我们通常根据目标IP地址段来添加静态路由表，在主机系统配置层面这个需求一般都比较简单也不需要使用非常复杂的命令，说实话如果不是因为开发测试中心同事<a href="https://cn.linkedin.com/in/恒-谢-aa5598106" target="_blank" rel="external">@谢恒</a>的乱入启发，我也不会发现还有策略路由这样一种灵活通用的配置方法来实现Linux多网卡多路由的设定，灰常感谢。</p>
+		<h2 id="前言">前言</h2><p>一般在多网卡的网络访问关系中我们通常根据目标IP地址段来添加静态路由(static-routes)，在主机系统配置层面这个需求一般都比较简单也不需要使用非常复杂的命令，说实话如果不是因为开发测试中心同事<a href="https://cn.linkedin.com/in/恒-谢-aa5598106" target="_blank" rel="external">@谢恒</a>的乱入启发，我也不会发现还有策略路由这样一种灵活通用的配置方法来实现Linux多网卡多路由的设定，灰常感谢。</p>
 <blockquote>
-<p>rt_tables是一种更加简单灵活的策略路由实现方法</p>
+<p>策略路由的出现在某些业务场景下可能更优于静态路由</p>
 </blockquote>
 <hr>
-<h2 id="更新记录">更新记录</h2><p>2015年12月23日 - 增加Linux添加静态路由最佳实践<br>2015年12月18日 - 修正动态路由为策略路由描述，完善内容，感谢<a href="http://www.v2ex.com/member/extreme" target="_blank" rel="external">@extreme</a><br>2015年12月17日 - 初稿</p>
-<p>阅读原文 - <a href="http://wsgzao.github.io/post/iproute2/" target="_blank" rel="external">http://wsgzao.github.io/post/iproute2/</a></p>
+<h2 id="更新记录">更新记录</h2><p>2016年03月18日 - 更新静态路由配置和建议<br>2015年12月23日 - 增加Linux添加静态路由最佳实践<br>2015年12月18日 - 修正动态路由为策略路由描述，完善内容，感谢<a href="http://www.v2ex.com/member/extreme" target="_blank" rel="external">@extreme</a><br>2015年12月17日 - 初稿</p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/static-routes/" target="_blank" rel="external">http://wsgzao.github.io/post/static-routes/</a></p>
 <p>扩展阅读</p>
 <ul>
 <li>Routing Tables - <a href="http://linux-ip.net/html/routing-tables.html" target="_blank" rel="external">http://linux-ip.net/html/routing-tables.html</a></li>
@@ -128,7 +128,7 @@
 <h3 id="永久路由">永久路由</h3><blockquote>
 <p>该方法需要重启网络会造成短暂的网络服务中断，但重启后优先级大于rc.local方式不会影响nfs</p>
 </blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#在/etc/sysconfig/static-routes文件里添加如下内容 (没有static-routes的话就手动建立一个这样的文件)</span></span><br><span class="line">any net <span class="number">192.168</span>.<span class="number">3.0</span>/<span class="number">24</span> gw <span class="number">192.168</span>.<span class="number">3.254</span></span><br><span class="line">any net <span class="number">10.250</span>.<span class="number">228.128</span> netmask <span class="number">255.255</span>.<span class="number">255.192</span> gw <span class="number">10.250</span>.<span class="number">228.129</span></span><br><span class="line"></span><br><span class="line">service network restart</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#可以通过临时命令立即生效</span></span><br><span class="line">route add -net <span class="number">192.168</span>.<span class="number">3.0</span>/<span class="number">24</span> gw <span class="number">192.168</span>.<span class="number">3.254</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#在/etc/sysconfig/static-routes文件里添加如下内容 (没有static-routes的话就手动建立一个这样的文件)</span></span><br><span class="line">any net <span class="number">192.168</span>.<span class="number">3.0</span>/<span class="number">24</span> gw <span class="number">192.168</span>.<span class="number">3.254</span></span><br><span class="line">any net <span class="number">10.250</span>.<span class="number">228.128</span> netmask <span class="number">255.255</span>.<span class="number">255.192</span> gw <span class="number">10.250</span>.<span class="number">228.129</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#如果是生产系统可以考虑暂时不重启服务避免网络中断</span></span><br><span class="line">service network restart</span><br></pre></td></tr></table></figure>
 <h2 id="rt_tables">rt_tables</h2><blockquote>
 <p>rt_tables简单来说就是通过给表的命名使得管理简单化</p>
 </blockquote>
@@ -206,7 +206,7 @@
 <h2 id="策略路由配置">策略路由配置</h2><blockquote>
 <p>注意配置名称一定要吻合</p>
 </blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#编辑rt_tables</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"192 net_192 "</span> &gt;&gt; /etc/iproute2/rt_tables</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"196 net_196 "</span> &gt;&gt; /etc/iproute2/rt_tables</span><br><span class="line"></span><br><span class="line"><span class="comment">#清空net_192路由表</span></span><br><span class="line">ip route flush table net_192</span><br><span class="line"><span class="comment"># 添加一个路由规则到 net_192 表，这条规则是 net_192 这个路由表中数据包默认使用源 IP 172.31.192.201 通过 ens4f0 走网关 172.31.192.254</span></span><br><span class="line">ip route add default via <span class="number">172.31</span>.<span class="number">192.254</span> dev ens4f0 src <span class="number">172.31</span>.<span class="number">192.201</span> table net_192</span><br><span class="line"><span class="comment">#来自 172.31.192.201 的数据包，使用 net_192 路由表的路由规则</span></span><br><span class="line">ip rule add from <span class="number">172.31</span>.<span class="number">192.201</span> table net_192</span><br><span class="line"></span><br><span class="line"><span class="comment">#清空net_196路由表</span></span><br><span class="line">ip route flush table net_196</span><br><span class="line"><span class="comment">#添加一个路由规则到 net_196 表，这条规则是 net_196 这个路由表中数据包默认使用源 IP 172.31.196.1 通过 ens9f0 走网关 172.31.196.254 </span></span><br><span class="line">ip route add default via <span class="number">172.31</span>.<span class="number">196.254</span> dev ens9f0 src <span class="number">172.31</span>.<span class="number">196.1</span> table net_196</span><br><span class="line"><span class="comment">#来自 172.31.196.1 的数据包，使用 net_196 路由表的路由规则</span></span><br><span class="line">ip rule add from <span class="number">172.31</span>.<span class="number">196.1</span> table net_196</span><br><span class="line"></span><br><span class="line"><span class="comment">#添加默认网关</span></span><br><span class="line">route add default gw <span class="number">172.31</span>.<span class="number">192.254</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#如果需要自启动生效可以写进配置文件也可以加入rc.local</span></span><br><span class="line">vi /etc/rc.local</span><br><span class="line"></span><br><span class="line">ip route flush table net_192</span><br><span class="line">ip route add default via <span class="number">172.31</span>.<span class="number">192.254</span> dev ens4f0 src <span class="number">172.31</span>.<span class="number">192.201</span> table net_192</span><br><span class="line">ip rule add from <span class="number">172.31</span>.<span class="number">192.201</span> table net_192</span><br><span class="line">ip route flush table net_196</span><br><span class="line">ip route add default via <span class="number">172.31</span>.<span class="number">196.254</span> dev ens9f0 src <span class="number">172.31</span>.<span class="number">196.1</span> table net_196</span><br><span class="line">ip rule add from <span class="number">172.31</span>.<span class="number">196.1</span> table net_196</span><br><span class="line">route add default gw <span class="number">172.31</span>.<span class="number">192.254</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#查看路由表</span></span><br><span class="line">route -n</span><br><span class="line"></span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line"><span class="number">169.254</span>.<span class="number">0.0</span>     <span class="number">0.0</span>.<span class="number">0.0</span>         <span class="number">255.255</span>.<span class="number">0.0</span>     U     <span class="number">1006</span>   <span class="number">0</span>        <span class="number">0</span> ens9f0</span><br><span class="line"><span class="number">169.254</span>.<span class="number">0.0</span>     <span class="number">0.0</span>.<span class="number">0.0</span>         <span class="number">255.255</span>.<span class="number">0.0</span>     U     <span class="number">1008</span>   <span class="number">0</span>        <span class="number">0</span> ens4f0</span><br><span class="line"><span class="number">169.254</span>.<span class="number">0.0</span>     <span class="number">0.0</span>.<span class="number">0.0</span>         <span class="number">255.255</span>.<span class="number">0.0</span>     U     <span class="number">1014</span>   <span class="number">0</span>        <span class="number">0</span> br-ex</span><br><span class="line"><span class="number">169.254</span>.<span class="number">0.0</span>     <span class="number">0.0</span>.<span class="number">0.0</span>         <span class="number">255.255</span>.<span class="number">0.0</span>     U     <span class="number">1015</span>   <span class="number">0</span>        <span class="number">0</span> br-int</span><br><span class="line"><span class="number">172.31</span>.<span class="number">192.0</span>    <span class="number">0.0</span>.<span class="number">0.0</span>         <span class="number">255.255</span>.<span class="number">255.0</span>   U     <span class="number">0</span>      <span class="number">0</span>        <span class="number">0</span> ens4f0</span><br><span class="line"><span class="number">172.31</span>.<span class="number">196.0</span>    <span class="number">0.0</span>.<span class="number">0.0</span>         <span class="number">255.255</span>.<span class="number">255.0</span>   U     <span class="number">0</span>      <span class="number">0</span>        <span class="number">0</span> ens9f0</span><br><span class="line"></span><br><span class="line"><span class="comment">#在接入测试服务器上验证连通性</span></span><br><span class="line">ping <span class="number">172.31</span>.<span class="number">192.201</span></span><br><span class="line">ping <span class="number">172.31</span>.<span class="number">196.1</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#编辑rt_tables</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"192 net_192 "</span> &gt;&gt; /etc/iproute2/rt_tables</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"196 net_196 "</span> &gt;&gt; /etc/iproute2/rt_tables</span><br><span class="line"></span><br><span class="line"><span class="comment">#清空net_192路由表</span></span><br><span class="line">ip route flush table net_192</span><br><span class="line"><span class="comment"># 添加一个路由规则到 net_192 表，这条规则是 net_192 这个路由表中数据包默认使用源 IP 172.31.192.201 通过 ens4f0 走网关 172.31.192.254</span></span><br><span class="line">ip route add default via <span class="number">172.31</span>.<span class="number">192.254</span> dev ens4f0 src <span class="number">172.31</span>.<span class="number">192.201</span> table net_192</span><br><span class="line"><span class="comment">#来自 172.31.192.201 的数据包，使用 net_192 路由表的路由规则</span></span><br><span class="line">ip rule add from <span class="number">172.31</span>.<span class="number">192.201</span> table net_192</span><br><span class="line"></span><br><span class="line"><span class="comment">#清空net_196路由表</span></span><br><span class="line">ip route flush table net_196</span><br><span class="line"><span class="comment">#添加一个路由规则到 net_196 表，这条规则是 net_196 这个路由表中数据包默认使用源 IP 172.31.196.1 通过 ens9f0 走网关 172.31.196.254</span></span><br><span class="line">ip route add default via <span class="number">172.31</span>.<span class="number">196.254</span> dev ens9f0 src <span class="number">172.31</span>.<span class="number">196.1</span> table net_196</span><br><span class="line"><span class="comment">#来自 172.31.196.1 的数据包，使用 net_196 路由表的路由规则</span></span><br><span class="line">ip rule add from <span class="number">172.31</span>.<span class="number">196.1</span> table net_196</span><br><span class="line"></span><br><span class="line"><span class="comment">#添加默认网关</span></span><br><span class="line">route add default gw <span class="number">172.31</span>.<span class="number">192.254</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#如果需要自启动生效可以写进配置文件也可以加入rc.local</span></span><br><span class="line">vi /etc/rc.local</span><br><span class="line"></span><br><span class="line">ip route flush table net_192</span><br><span class="line">ip route add default via <span class="number">172.31</span>.<span class="number">192.254</span> dev ens4f0 src <span class="number">172.31</span>.<span class="number">192.201</span> table net_192</span><br><span class="line">ip rule add from <span class="number">172.31</span>.<span class="number">192.201</span> table net_192</span><br><span class="line">ip route flush table net_196</span><br><span class="line">ip route add default via <span class="number">172.31</span>.<span class="number">196.254</span> dev ens9f0 src <span class="number">172.31</span>.<span class="number">196.1</span> table net_196</span><br><span class="line">ip rule add from <span class="number">172.31</span>.<span class="number">196.1</span> table net_196</span><br><span class="line">route add default gw <span class="number">172.31</span>.<span class="number">192.254</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#查看路由表</span></span><br><span class="line">route -n</span><br><span class="line"></span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line"><span class="number">169.254</span>.<span class="number">0.0</span>     <span class="number">0.0</span>.<span class="number">0.0</span>         <span class="number">255.255</span>.<span class="number">0.0</span>     U     <span class="number">1006</span>   <span class="number">0</span>        <span class="number">0</span> ens9f0</span><br><span class="line"><span class="number">169.254</span>.<span class="number">0.0</span>     <span class="number">0.0</span>.<span class="number">0.0</span>         <span class="number">255.255</span>.<span class="number">0.0</span>     U     <span class="number">1008</span>   <span class="number">0</span>        <span class="number">0</span> ens4f0</span><br><span class="line"><span class="number">169.254</span>.<span class="number">0.0</span>     <span class="number">0.0</span>.<span class="number">0.0</span>         <span class="number">255.255</span>.<span class="number">0.0</span>     U     <span class="number">1014</span>   <span class="number">0</span>        <span class="number">0</span> br-ex</span><br><span class="line"><span class="number">169.254</span>.<span class="number">0.0</span>     <span class="number">0.0</span>.<span class="number">0.0</span>         <span class="number">255.255</span>.<span class="number">0.0</span>     U     <span class="number">1015</span>   <span class="number">0</span>        <span class="number">0</span> br-int</span><br><span class="line"><span class="number">172.31</span>.<span class="number">192.0</span>    <span class="number">0.0</span>.<span class="number">0.0</span>         <span class="number">255.255</span>.<span class="number">255.0</span>   U     <span class="number">0</span>      <span class="number">0</span>        <span class="number">0</span> ens4f0</span><br><span class="line"><span class="number">172.31</span>.<span class="number">196.0</span>    <span class="number">0.0</span>.<span class="number">0.0</span>         <span class="number">255.255</span>.<span class="number">255.0</span>   U     <span class="number">0</span>      <span class="number">0</span>        <span class="number">0</span> ens9f0</span><br><span class="line"></span><br><span class="line"><span class="comment">#在接入测试服务器上验证连通性</span></span><br><span class="line">ping <span class="number">172.31</span>.<span class="number">192.201</span></span><br><span class="line">ping <span class="number">172.31</span>.<span class="number">196.1</span></span><br></pre></td></tr></table></figure>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -224,7 +224,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://wsgzao.github.io/post/iproute2/" data-title="使用rt_tables巧妙配置Linux多网卡多路由实现策略路由 | HelloDog" data-tsina="null" class="share clearfix">
+	  <div data-url="http://wsgzao.github.io/post/static-routes/" data-title="静态路由和策略路由的配置实践 | HelloDog" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -238,18 +238,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/post/hexo-jacman/" title="Jacman基于Pacman修改的Hexo主题">
+ <a href="/post/lvm/" title="LVM逻辑卷管理器配置小结">
   <strong>上一篇：</strong><br/>
   <span>
-  Jacman基于Pacman修改的Hexo主题</span>
+  LVM逻辑卷管理器配置小结</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/post/duoshuo/"  title="多说自定义CSS头像和多说评论显示UA">
+<a href="/post/ntp/"  title="NTP配置实践">
  <strong>下一篇：</strong><br/> 
- <span>多说自定义CSS头像和多说评论显示UA
+ <span>NTP配置实践
 </span>
 </a>
 </div>
@@ -258,7 +258,7 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="post/iproute2/" data-title="使用rt_tables巧妙配置Linux多网卡多路由实现策略路由" data-url="http://wsgzao.github.io/post/iproute2/"></div>
+	<div class="ds-thread" data-thread-key="post/static-routes/" data-title="静态路由和策略路由的配置实践" data-url="http://wsgzao.github.io/post/static-routes/"></div>
 </section>
 
 
@@ -296,7 +296,7 @@
 		  
 		
 		  
-			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>33</sup></a></li>
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>34</sup></a></li>
 		  
 		
 		  
