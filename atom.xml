@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Keep Calm and Carry On]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://wsgzao.github.io/"/>
-  <updated>2016-03-30T11:44:59.183Z</updated>
+  <updated>2016-03-31T09:22:31.118Z</updated>
   <id>http://wsgzao.github.io/</id>
   
   <author>
@@ -13,6 +13,56 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[使用Gogs轻松搭建可能比GitLab更好用的Git服务平台]]></title>
+    <link href="http://wsgzao.github.io/post/gogs/"/>
+    <id>http://wsgzao.github.io/post/gogs/</id>
+    <published>2016-03-31T08:22:32.000Z</published>
+    <updated>2016-03-31T09:22:31.118Z</updated>
+    <content type="html"><![CDATA[<p><img src="https://gogs.io/img/screenshots/4.png" alt=""></p>
+<h2 id="前言">前言</h2><p>GitHub已经成为首选的代码托管平台，因为它又很多很棒的功能，操作简单，几乎所有的开发者都喜欢它。但是搭建GitLab过程并没有想象中的简单，利用Bitnami当然也是一种偷懒的好选择。Gogs (Go Git Service) 是一款极易搭建的自助 Git 服务，Gogs 的目标是打造一个最简单、最快速和最轻松的方式搭建自助 Git 服务。使用 Go 语言开发使得 Gogs 能够通过独立的二进制分发，并且支持 Go 语言支持的 所有平台，包括 Linux、Mac OS X、Windows 以及 ARM 平台。</p>
+<blockquote>
+<p>Gogs可能是比GitLab更好的选择</p>
+</blockquote>
+<h2 id="更新记录">更新记录</h2><p>2016年03月31日 - 初稿</p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/gogs/" target="_blank" rel="external">http://wsgzao.github.io/post/gogs/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>Gogs - <a href="https://gogs.io/" target="_blank" rel="external">https://gogs.io/</a><br>GitLab - <a href="https://about.gitlab.com/" target="_blank" rel="external">https://about.gitlab.com/</a><br>Bitnami GitLab Stack - <a href="https://bitnami.com/stack/gitlab" target="_blank" rel="external">https://bitnami.com/stack/gitlab</a></p>
+<h2 id="Bitnami_GitLab_Stack">Bitnami GitLab Stack</h2><blockquote>
+<p>Bitnami GitLab Stack ships with the following software versions</p>
+</blockquote>
+<ul>
+<li>GitLab 8.5.7</li>
+<li>Apache 2.4.18</li>
+<li>ImageMagick 6.7.5</li>
+<li>PostgreSQL 9.4.6</li>
+<li>Git 2.7.4</li>
+<li>Ruby 2.1.8</li>
+<li>Rails 4.2.5.1</li>
+<li>RubyGems 1.8.12</li>
+</ul>
+<blockquote>
+<p>Btinami GitLab Stack 安装真心简单，爽</p>
+</blockquote>
+<p>chmod 755 bitnami-gitlab-8.5.7-0-linux.run</p>
+<p><a href="https://bitnami.com/stack/gitlab/README.txt" target="_blank" rel="external">https://bitnami.com/stack/gitlab/README.txt</a></p>
+<h2 id="Gogs环境要求">Gogs环境要求</h2><blockquote>
+<p>我以rhel6.3为例，已经属于生命周期边缘了</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#安装git</span></span><br><span class="line">yum install -y git </span><br><span class="line">git --version</span><br><span class="line">git version <span class="number">1.7</span>.<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#安装mysql-server</span></span><br><span class="line">yum install -y mysql-server</span><br><span class="line">mysql --version</span><br><span class="line">mysql  Ver <span class="number">14.14</span> Distrib <span class="number">5.1</span>.<span class="number">73</span>, <span class="keyword">for</span> redhat-linux-gnu (x86_64) using readline <span class="number">5.1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#启动数据库</span></span><br><span class="line">service mysqld start</span><br><span class="line">chkconfig mysqld on</span><br><span class="line"></span><br><span class="line"><span class="comment">#创建gogs数据库</span></span><br><span class="line"><span class="built_in">cd</span> /home/git/gogs/scripts</span><br><span class="line"><span class="comment">#mysql -u root -p &lt; mysql.sql</span></span><br><span class="line">mysql -u root -p</span><br><span class="line"><span class="comment"># （输入密码，无密码直接跳过）</span></span><br><span class="line"><span class="built_in">set</span> global storage_engine = <span class="string">'InnoDB'</span>;</span><br><span class="line">create database gogs character <span class="built_in">set</span> utf8 collate utf8_bin;</span><br><span class="line">create user <span class="string">'gogs'</span>@<span class="string">'localhost'</span> identified by <span class="string">'gogs'</span>;</span><br><span class="line">grant all privileges on gogs.* to <span class="string">'gogs'</span>@<span class="string">'localhost'</span>;</span><br><span class="line">flush privileges;</span><br><span class="line"><span class="built_in">exit</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="部署Gogs">部署Gogs</h2><blockquote>
+<p>Gogs是一款极易搭建的自助Git服务</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#创建git用户</span></span><br><span class="line">sudo adduser git</span><br><span class="line">su - git</span><br><span class="line"></span><br><span class="line"><span class="comment">#解压gogs</span></span><br><span class="line"><span class="built_in">cd</span> /home/git</span><br><span class="line">unzip gogs_v0.<span class="number">9.13</span>_linux_amd64.zip</span><br><span class="line">ls /home/git/gogs/</span><br><span class="line">gogs  LICENSE  public  README.md  README_ZH.md  scripts  templates</span><br><span class="line"></span><br><span class="line"><span class="comment">#启动gogs</span></span><br><span class="line"><span class="built_in">cd</span> /home/git/gogs</span><br><span class="line">./gogs web</span><br><span class="line"></span><br><span class="line"><span class="number">2016</span>/<span class="number">03</span>/<span class="number">31</span> <span class="number">16</span>:<span class="number">23</span>:<span class="number">53</span> [W] Custom config <span class="string">'/home/git/gogs/custom/conf/app.ini'</span> not found, ignore this <span class="keyword">if</span> you<span class="string">'re running first time</span><br><span class="line">2016/03/31 16:23:53 [T] Custom path: /home/git/gogs/custom</span><br><span class="line">2016/03/31 16:23:53 [T] Log path: /home/git/gogs/log</span><br><span class="line">2016/03/31 16:23:53 [I] Gogs: Go Git Service 0.9.13.0318</span><br><span class="line">2016/03/31 16:23:53 [I] Log Mode: Console(Trace)</span><br><span class="line">2016/03/31 16:23:53 [I] Cache Service Enabled</span><br><span class="line">2016/03/31 16:23:53 [I] Session Service Enabled</span><br><span class="line">2016/03/31 16:23:53 [I] SQLite3 Supported</span><br><span class="line">2016/03/31 16:23:53 [I] Run Mode: Development</span><br><span class="line">2016/03/31 16:23:54 [I] Listen: http://0.0.0.0:3000</span><br><span class="line"></span><br><span class="line">#后台运行</span><br><span class="line">nohup ./gogs web &amp;</span><br><span class="line">tail -f nohup.out</span></span><br></pre></td></tr></table></figure>]]></content>
+    <summary type="html">
+    <![CDATA[Gogs可能是比GitLab更好的选择]]>
+    
+    </summary>
+    
+      <category term="学习 | Study" scheme="http://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[TCP/UDP常用端口列表]]></title>
@@ -4678,52 +4728,6 @@
     </summary>
     
       <category term="Hexo" scheme="http://wsgzao.github.io/categories/Hexo/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[Linbell G2无线自发电门铃半年使用体验小结]]></title>
-    <link href="http://wsgzao.github.io/post/linbell/"/>
-    <id>http://wsgzao.github.io/post/linbell/</id>
-    <published>2015-12-19T08:22:32.000Z</published>
-    <updated>2015-12-30T00:46:09.889Z</updated>
-    <content type="html"><![CDATA[<p><img src="http://ww1.sinaimg.cn/large/7207510dgw1ez5dxabt6gj20nq0hsgn4.jpg" alt=""></p>
-<h2 id="前言">前言</h2><p>Linbell G2是在淘宝众筹中购买的产品之一，买的原因很简单就是希望告别坏了7年的门铃，作为第二代无线自发电门铃产品我相信他们团队的口碑和质量。回头来看坚持半年每周观察<code>淘宝众筹/京东众筹</code>的产品可以清晰的感知市场的变化和需求，你能发现成群结队的<code>移动电源/空气净化器/智能手环/代步工具</code>等形形色色的智能硬件产品。好奇心驱使着我去探索自己喜欢的事情，有符合心意的收获自然也有失败的体验，Bong2送同事了，云麦好轻积灰，大可乐3提前预见性破产，在小米/华为/360等互联网巨头强势切入智能硬件市场的过程中应该会继续洗牌这个混乱的市场，然而在众多打着智能硬件口号并真正融入生活的产品我认可了Linbell G2。</p>
-<blockquote>
-<p>Linbell是一款用心实用的智能硬件</p>
-</blockquote>
-<h2 id="更新记录">更新记录</h2><p>2015年12月19日 - 初稿</p>
-<p>阅读原文 - <a href="http://wsgzao.github.io/post/linbell/" target="_blank" rel="external">http://wsgzao.github.io/post/linbell/</a></p>
-<hr>
-<h2 id="购买过程">购买过程</h2><p><img src="http://ww2.sinaimg.cn/large/7207510dgw1ez5dxaxrznj20ro0a0t9v.jpg" alt=""></p>
-<p>购买时间：2015-07-15<br>购买渠道：淘宝众筹<br>购买价格：58CNY</p>
-<h2 id="使用体验">使用体验</h2><blockquote>
-<p>作为门铃Linbell已经成功俘获了我的心</p>
-</blockquote>
-<h3 id="优点">优点</h3><ol>
-<li>这是一个称职的门铃</li>
-<li>铃声清晰，按钮反馈干脆</li>
-<li>牢靠，3M背贴值得信赖</li>
-<li>信号传输实测50m依旧给力</li>
-<li>终身自发电技术点赞</li>
-<li>其它优点和原理参考官方介绍吧</li>
-</ol>
-<p><a href="https://detail.tmall.com/item.htm?spm=a1z10.5-b.w4011-13022041176.23.uvGtHH&amp;id=525103505113&amp;rn=1ab0d50bef8c7f13c088f6522735b62a&amp;abbucket=4" target="_blank" rel="external">https://detail.tmall.com/item.htm?spm=a1z10.5-b.w4011-13022041176.23.uvGtHH&amp;id=525103505113&amp;rn=1ab0d50bef8c7f13c088f6522735b62a&amp;abbucket=4</a></p>
-<h3 id="缺点">缺点</h3><ol>
-<li><p>如果你喜欢小巧玲珑也许她不是你的选择</p>
-</li>
-<li><p>设计上估计至少占据两个插孔位置吧(看图说话怪Linbell还是公牛呢？)</p>
-</li>
-</ol>
-<p><a href="http://www.iznb.cn/article/18292" target="_blank" rel="external">http://www.iznb.cn/article/18292</a></p>
-<h2 id="小结">小结</h2><p>如果你和我一样曾经坏了一个门铃或者计划安装一个新的，我希望Linbell可以满足你的真实需求，一个用心实在的无线自发电门铃。</p>
-]]></content>
-    <summary type="html">
-    <![CDATA[Linbell是一款用心实用的智能硬件]]>
-    
-    </summary>
-    
-      <category term="生活 | Life" scheme="http://wsgzao.github.io/categories/%E7%94%9F%E6%B4%BB-Life/"/>
     
   </entry>
   
