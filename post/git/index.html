@@ -1,0 +1,549 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Git常用命令和Git团队使用规范指南 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="Git是目前世界上最先进的分布式版本控制系统">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git常用命令和Git团队使用规范指南">
+<meta property="og:url" content="http://wsgzao.github.io/post/git/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="Git是目前世界上最先进的分布式版本控制系统">
+<meta property="og:image" content="//i.v2ex.co/fAhm82RJ.png">
+<meta property="og:image" content="http://gityuan.com/images/git/1.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Git常用命令和Git团队使用规范指南">
+<meta name="twitter:description" content="Git是目前世界上最先进的分布式版本控制系统">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index">索引 | Index</a></li>
+					
+						<li><a href="/archives">归档 | Archives</a></li>
+					
+						<li><a href="/about">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/git/" title="Git常用命令和Git团队使用规范指南" itemprop="url">Git常用命令和Git团队使用规范指南</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2016-04-22T08:22:32.000Z" itemprop="datePublished"> 发表于 2016-04-22</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SVN与Git的最主要的区别"><span class="toc-number">3.</span> <span class="toc-text">SVN与Git的最主要的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git搭建和使用"><span class="toc-number">4.</span> <span class="toc-text">Git搭建和使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Git服务端"><span class="toc-number">4.1.</span> <span class="toc-text">Git服务端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Git客户端"><span class="toc-number">4.2.</span> <span class="toc-text">Git客户端</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git常用命令"><span class="toc-number">5.</span> <span class="toc-text">Git常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git使用规范"><span class="toc-number">6.</span> <span class="toc-text">Git使用规范</span></a></li></ol>
+		
+		</div>
+		
+		<p><img src="//i.v2ex.co/fAhm82RJ.png" alt=""></p>
+<h2 id="前言">前言</h2><p>在2005年的某一天，Linux之父Linus Torvalds 发布了他的又一个里程碑作品——Git。它的出现改变了软件开发流程，大大地提高了开发流畅度，直到现在仍十分流行，完全没有衰退的迹象。其实一般情况下，只需要掌握git的几个常用命令即可，但是在使用的过程中难免会遇到各种复杂的需求，这时候经常需要搜索，非常麻烦，故总结了一下自己平常会用到的git操作。本文根据团队实践记录Git入门指南和Git常用命令，文章中不仅记录了Git的搭建和使用教程，还参考了大量Git团队使用规范上的经验，希望大家可以结合自己团队的实际应用场景让Git协作优雅的落地。</p>
+<blockquote>
+<p>Git是目前世界上最先进的分布式版本控制系统</p>
+</blockquote>
+<h2 id="更新记录">更新记录</h2><p>2016年04月22日 - 初稿</p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/git/" target="_blank" rel="external">http://wsgzao.github.io/post/git/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>Git Book - <a href="https://git-scm.com/book/zh/" target="_blank" rel="external">https://git-scm.com/book/zh/</a><br>git简明指南 - <a href="http://rogerdudler.github.io/git-guide/index.zh.html" target="_blank" rel="external">http://rogerdudler.github.io/git-guide/index.zh.html</a><br>常用 Git 命令清单 - <a href="http://www.ruanyifeng.com/blog/2015/12/git-cheat-sheet.html" target="_blank" rel="external">http://www.ruanyifeng.com/blog/2015/12/git-cheat-sheet.html</a><br>猴子都能懂的GIT入门 - <a href="http://backlogtool.com/git-guide/cn/" target="_blank" rel="external">http://backlogtool.com/git-guide/cn/</a><br>Git教程 - <a href="http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000" target="_blank" rel="external">http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000</a></p>
+<h2 id="SVN与Git的最主要的区别">SVN与Git的最主要的区别</h2><p>SVN是集中式版本控制系统，版本库是集中放在中央服务器的，而干活的时候，用的都是自己的电脑，所以首先要从中央服务器哪里得到最新的版本，然后干活，干完后，需要把自己做完的活推送到中央服务器。集中式版本控制系统是必须联网才能工作，如果在局域网还可以，带宽够大，速度够快，如果在互联网下，如果网速慢的话，就纳闷了。</p>
+<p>Git是分布式版本控制系统，那么它就没有中央服务器的，每个人的电脑就是一个完整的版本库，这样，工作的时候就不需要联网了，因为版本都是在自己的电脑上。既然每个人的电脑都有一个完整的版本库，那多个人如何协作呢？比如说自己在电脑上改了文件A，其他人也在电脑上改了文件A，这时，你们两之间只需把各自的修改推送给对方，就可以互相看到对方的修改了。</p>
+<h2 id="Git搭建和使用">Git搭建和使用</h2><blockquote>
+<p>Git上手并不难，深入学习还是建议多实践，可以参考扩展阅读中廖雪峰的Git教程</p>
+</blockquote>
+<h3 id="Git服务端">Git服务端</h3><blockquote>
+<p>服务端搭建Git很简单，有更多需求不妨试试Gogs和Gitlab</p>
+</blockquote>
+<p>使用Gogs轻松搭建可能比GitLab更好用的Git服务平台 - <a href="http://wsgzao.github.io/post/gogs/" target="_blank" rel="external">http://wsgzao.github.io/post/gogs/</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#安装git</span></span><br><span class="line">sudo apt-get install git</span><br><span class="line">yum install git</span><br><span class="line"></span><br><span class="line"><span class="comment">#创建一个git用户，用来运行git服务</span></span><br><span class="line">sudo adduser git</span><br><span class="line"></span><br><span class="line"><span class="comment">#创建证书使用公钥免密码登录(可选)</span></span><br><span class="line">ssh-keygen -t rsa</span><br><span class="line">vi ~/.ssh/authorized_keys</span><br><span class="line"></span><br><span class="line"><span class="comment">#初始化Git仓库</span></span><br><span class="line">sudo git init --bare sample.git</span><br><span class="line">sudo chown -R git:git sample.git</span><br><span class="line"></span><br><span class="line"><span class="comment">#禁用shell登录</span></span><br><span class="line">vi /etc/passwd</span><br><span class="line">git:x:<span class="number">1001</span>:<span class="number">1001</span>:,,,:/home/git:/usr/bin/git-shell</span><br><span class="line"></span><br><span class="line"><span class="comment">#在客户端上克隆远程仓库</span></span><br><span class="line">git <span class="built_in">clone</span> git@server:/srv/sample.git</span><br></pre></td></tr></table></figure>
+<p>管理公钥推荐使用Gitosis<br>Gitosis - <a href="https://github.com/res0nat0r/gitosis" target="_blank" rel="external">https://github.com/res0nat0r/gitosis</a><br>Gitosis配置手记 - <a href="http://debugo.com/gitosis/" target="_blank" rel="external">http://debugo.com/gitosis/</a></p>
+<p>管理权限推荐使用Gitolite<br>Gitolite - <a href="https://github.com/sitaramc/gitolite" target="_blank" rel="external">https://github.com/sitaramc/gitolite</a></p>
+<h3 id="Git客户端">Git客户端</h3><blockquote>
+<p>Git客户端可以按个人习惯来选择，遵守团队协作中的Git规范标准才是更重要的</p>
+</blockquote>
+<p>Git - <a href="https://git-scm.com/" target="_blank" rel="external">https://git-scm.com/</a><br>TortoiseGit - <a href="https://tortoisegit.org/" target="_blank" rel="external">https://tortoisegit.org/</a><br>SourceTree - <a href="https://www.sourcetreeapp.com/" target="_blank" rel="external">https://www.sourcetreeapp.com/</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#以最基本的Git命令行为例，先下载Git</span></span><br><span class="line">https://git-scm.com/download/</span><br><span class="line"></span><br><span class="line"><span class="comment">#配置git提交用户名和邮箱，定义别名方便区分</span></span><br><span class="line">git config --global user.name <span class="string">"你的姓名"</span></span><br><span class="line">git config --global user.email <span class="string">"you@example.com"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#克隆仓库</span></span><br><span class="line">git <span class="built_in">clone</span> <span class="built_in">cap</span>@<span class="number">172.28</span>.<span class="number">70.243</span>:/<span class="built_in">cap</span>/cap.git</span><br><span class="line"></span><br><span class="line">$ git <span class="built_in">clone</span> <span class="built_in">cap</span>@<span class="number">172.28</span>.<span class="number">70.243</span>:/<span class="built_in">cap</span>/cap.git</span><br><span class="line">Cloning into <span class="string">'cap'</span>...</span><br><span class="line">warning: You appear to have cloned an empty repository.</span><br><span class="line">Checking connectivity... done.</span><br><span class="line"></span><br><span class="line"><span class="comment">#测试推送</span></span><br><span class="line">touch README</span><br><span class="line">git add README</span><br><span class="line">git commit -m <span class="string">"add readme"</span></span><br><span class="line">git push origin master</span><br><span class="line"></span><br><span class="line">Counting objects: <span class="number">3</span>, done.</span><br><span class="line">Writing objects: <span class="number">100</span>% (<span class="number">3</span>/<span class="number">3</span>), <span class="number">199</span> bytes | <span class="number">0</span> bytes/s, done.</span><br><span class="line">Total <span class="number">3</span> (delta <span class="number">0</span>), reused <span class="number">0</span> (delta <span class="number">0</span>)</span><br><span class="line">To <span class="built_in">cap</span>@<span class="number">172.28</span>.<span class="number">70.243</span>:/<span class="built_in">cap</span>/cap.git</span><br><span class="line"> * [new branch]      master -&gt; master</span><br></pre></td></tr></table></figure>
+<h2 id="Git常用命令">Git常用命令</h2><p><strong>符号约定</strong></p>
+<ul>
+<li><code>&lt;xxx&gt;</code> 自定义内容</li>
+<li><code>[xxx]</code> 可选内容</li>
+<li><code>[&lt;xxx&gt;]</code>自定义可选内容</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#初始设置</span></span><br><span class="line">git config --global user.name <span class="string">"&lt;用户名&gt;"</span> <span class="comment">#设置用户名</span></span><br><span class="line">git config --global user.email <span class="string">"&lt;电子邮件&gt;"</span> <span class="comment">#设置电子邮件</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#本地操作</span></span><br><span class="line">git add [-i] <span class="comment">#保存更新，-i为逐个确认。</span></span><br><span class="line">git status <span class="comment">#检查更新。</span></span><br><span class="line">git commit [<span class="operator">-a</span>] -m <span class="string">"&lt;更新说明&gt;"</span> <span class="comment">#提交更新，-a为包含内容修改和增删，-m为说明信息，也可以使用 -am。</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#远端操作</span></span><br><span class="line">git <span class="built_in">clone</span> &lt;git地址&gt; <span class="comment">#克隆到本地。</span></span><br><span class="line">git fetch <span class="comment">#远端抓取。</span></span><br><span class="line">git merge <span class="comment">#与本地当前分支合并。</span></span><br><span class="line">git pull [&lt;远端别名&gt;] [&lt;远端branch&gt;] <span class="comment">#抓取并合并,相当于第2、3步</span></span><br><span class="line">git push [<span class="operator">-f</span>] [&lt;远端别名&gt;] [&lt;远端branch&gt;] <span class="comment">#推送到远端，-f为强制覆盖</span></span><br><span class="line">git remote add &lt;别名&gt; &lt;git地址&gt; <span class="comment">#设置远端别名</span></span><br><span class="line">git remote [-v] <span class="comment">#列出远端，-v为详细信息</span></span><br><span class="line">git remote show &lt;远端别名&gt; <span class="comment">#查看远端信息</span></span><br><span class="line">git remote rename &lt;远端别名&gt; &lt;新远端别名&gt; <span class="comment">#重命名远端</span></span><br><span class="line">git remote rm &lt;远端别名&gt; <span class="comment">#删除远端</span></span><br><span class="line">git remote update [&lt;远端别名&gt;] <span class="comment">#更新分支列表</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#分支相关</span></span><br><span class="line">git branch [-r] [<span class="operator">-a</span>] <span class="comment">#列出分支，-r远端 ,-a全部</span></span><br><span class="line">git branch &lt;分支名&gt; <span class="comment">#新建分支</span></span><br><span class="line">git branch -b &lt;分支名&gt; <span class="comment">#新建并切换分支</span></span><br><span class="line">git branch <span class="operator">-d</span> &lt;分支名&gt; <span class="comment">#删除分支</span></span><br><span class="line">git checkout &lt;分支名&gt; <span class="comment">#切换到分支</span></span><br><span class="line">git checkout -b &lt;本地branch&gt; [-t &lt;远端别名&gt;/&lt;远端分支&gt;] <span class="comment">#-b新建本地分支并切换到分支, -t绑定远端分支</span></span><br><span class="line">git merge &lt;分支名&gt; <span class="comment">#合并某分支到当前分支</span></span><br></pre></td></tr></table></figure>
+<p>Git常用命令 - <a href="http://gityuan.com/2015/06/27/git-notes/" target="_blank" rel="external">http://gityuan.com/2015/06/27/git-notes/</a></p>
+<p><img src="http://gityuan.com/images/git/1.png" alt=""></p>
+<ul>
+<li>workspace: 本地的工作目录。（记作A）</li>
+<li>index：缓存区域，临时保存本地改动。（记作B）</li>
+<li>local repository: 本地仓库，只想最后一次提交HEAD。（记作C）</li>
+<li>remote repository：远程仓库。（记作D）</li>
+</ul>
+<blockquote>
+<p>以下所有的命令的功能说明，都采用上述的标记的A、B、C、D的方式来阐述。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#初始化</span></span><br><span class="line">git init //创建</span><br><span class="line">git <span class="built_in">clone</span> /path/to/repository //检出</span><br><span class="line">git config --global user.email <span class="string">"you@example.com"</span> //配置email</span><br><span class="line">git config --global user.name <span class="string">"Name"</span> //配置用户名</span><br><span class="line"></span><br><span class="line"><span class="comment">#操作</span></span><br><span class="line">git add &lt;file&gt; // 文件添加，A → B</span><br><span class="line">git add . // 所有文件添加，A → B</span><br><span class="line"></span><br><span class="line">git commit -m <span class="string">"代码提交信息"</span> //文件提交，B → C</span><br><span class="line">git commit --amend //与上次commit合并, *B → C</span><br><span class="line"></span><br><span class="line">git push origin master //推送至master分支, C → D</span><br><span class="line">git pull //更新本地仓库至最新改动， D → A</span><br><span class="line">git fetch //抓取远程仓库更新， D → C</span><br><span class="line"></span><br><span class="line">git <span class="built_in">log</span> //查看提交记录</span><br><span class="line">git status //查看修改状态</span><br><span class="line">git diff//查看详细修改内容</span><br><span class="line">git show//显示某次提交的内容</span><br><span class="line"></span><br><span class="line"><span class="comment">#撤销操作</span></span><br><span class="line">git reset &lt;file&gt;//某个文件索引会回滚到最后一次提交， C → B</span><br><span class="line">git reset//索引会回滚到最后一次提交， C → B</span><br><span class="line">git reset --hard // 索引会回滚到最后一次提交， C → B → A</span><br><span class="line"></span><br><span class="line">git checkout // 从index复制到workspace， B → A</span><br><span class="line">git checkout -- files // 文件从index复制到workspace， B → A</span><br><span class="line">git checkout HEAD -- files // 文件从<span class="built_in">local</span> repository复制到workspace， C → A</span><br><span class="line"></span><br><span class="line"><span class="comment">#分支相关</span></span><br><span class="line">git checkout -b branch_name //创建名叫“branch_name”的分支，并切换过去</span><br><span class="line">git checkout master //切换回主分支</span><br><span class="line">git branch <span class="operator">-d</span> branch_name // 删除名叫“branch_name”的分支</span><br><span class="line">git push origin branch_name //推送分支到远端仓库</span><br><span class="line">git merge branch_name // 合并分支branch_name到当前分支(如master)</span><br><span class="line">git rebase //衍合，线性化的自动， D → A</span><br><span class="line"></span><br><span class="line"><span class="comment">#冲突处理</span></span><br><span class="line">git diff //对比workspace与index</span><br><span class="line">git diff HEAD //对于workspace与最后一次commit</span><br><span class="line">git diff &lt;<span class="built_in">source</span>_branch&gt; &lt;target_branch&gt; //对比差异</span><br><span class="line">git add &lt;filename&gt; //修改完冲突，需要add以标记合并成功</span><br><span class="line"></span><br><span class="line"><span class="comment">#其他</span></span><br><span class="line">gitk //开灯图形化git</span><br><span class="line">git config color.ui <span class="literal">true</span> //彩色的 git 输出</span><br><span class="line">git config format.pretty oneline //显示历史记录时，每个提交的信息只显示一行</span><br><span class="line">git add -i //交互式添加文件到暂存区</span><br></pre></td></tr></table></figure>
+<h2 id="Git使用规范">Git使用规范</h2><p>Git 使用规范流程 - <a href="http://www.ruanyifeng.com/blog/2015/08/git-use-process.html" target="_blank" rel="external">http://www.ruanyifeng.com/blog/2015/08/git-use-process.html</a><br>团队中的 Git 实践 - <a href="https://ourai.ws/posts/working-with-git-in-team/" target="_blank" rel="external">https://ourai.ws/posts/working-with-git-in-team/</a><br>构家网 git 团队协作使用规范 v2 - <a href="http://wenku.baidu.com/view/e1430d1b7f1922791788e81e" target="_blank" rel="external">http://wenku.baidu.com/view/e1430d1b7f1922791788e81e</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://wsgzao.github.io/post/git/" data-title="Git常用命令和Git团队使用规范指南 | HelloDog" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/post/windows/"  title="Windows常用软件推荐">
+ <strong>下一篇：</strong><br/> 
+ <span>Windows常用软件推荐
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="post/git/" data-title="Git常用命令和Git团队使用规范指南" data-url="http://wsgzao.github.io/post/git/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SVN与Git的最主要的区别"><span class="toc-number">3.</span> <span class="toc-text">SVN与Git的最主要的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git搭建和使用"><span class="toc-number">4.</span> <span class="toc-text">Git搭建和使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Git服务端"><span class="toc-number">4.1.</span> <span class="toc-text">Git服务端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Git客户端"><span class="toc-number">4.2.</span> <span class="toc-text">Git客户端</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git常用命令"><span class="toc-number">5.</span> <span class="toc-text">Git常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git使用规范"><span class="toc-number">6.</span> <span class="toc-text">Git使用规范</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>42</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>6</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Doing is better than perfect.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="//faisalman.github.io/ua-parser-js/src/ua-parser.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"wsgzao"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//wsgzao.github.io/embed_ua.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+<!-- baidu_push Begin -->
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+            
+<!-- baidu_push End -->
+  </body>
+</html>
