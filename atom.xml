@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Keep Calm and Carry On]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://wsgzao.github.io/"/>
-  <updated>2016-04-22T08:04:13.854Z</updated>
+  <updated>2016-04-23T01:38:40.310Z</updated>
   <id>http://wsgzao.github.io/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://wsgzao.github.io/post/git/"/>
     <id>http://wsgzao.github.io/post/git/</id>
     <published>2016-04-22T08:22:32.000Z</published>
-    <updated>2016-04-22T08:04:13.854Z</updated>
+    <updated>2016-04-23T01:38:40.310Z</updated>
     <content type="html"><![CDATA[<p><img src="//i.v2ex.co/fAhm82RJ.png" alt=""></p>
 <h2 id="前言">前言</h2><p>在2005年的某一天，Linux之父Linus Torvalds 发布了他的又一个里程碑作品——Git。它的出现改变了软件开发流程，大大地提高了开发流畅度，直到现在仍十分流行，完全没有衰退的迹象。其实一般情况下，只需要掌握git的几个常用命令即可，但是在使用的过程中难免会遇到各种复杂的需求，这时候经常需要搜索，非常麻烦，故总结了一下自己平常会用到的git操作。本文根据团队实践记录Git入门指南和Git常用命令，文章中不仅记录了Git的搭建和使用教程，还参考了大量Git团队使用规范上的经验，希望大家可以结合自己团队的实际应用场景让Git协作优雅的落地。</p>
 <blockquote>
@@ -66,6 +66,17 @@
 </blockquote>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#初始化</span></span><br><span class="line">git init //创建</span><br><span class="line">git <span class="built_in">clone</span> /path/to/repository //检出</span><br><span class="line">git config --global user.email <span class="string">"you@example.com"</span> //配置email</span><br><span class="line">git config --global user.name <span class="string">"Name"</span> //配置用户名</span><br><span class="line"></span><br><span class="line"><span class="comment">#操作</span></span><br><span class="line">git add &lt;file&gt; // 文件添加，A → B</span><br><span class="line">git add . // 所有文件添加，A → B</span><br><span class="line"></span><br><span class="line">git commit -m <span class="string">"代码提交信息"</span> //文件提交，B → C</span><br><span class="line">git commit --amend //与上次commit合并, *B → C</span><br><span class="line"></span><br><span class="line">git push origin master //推送至master分支, C → D</span><br><span class="line">git pull //更新本地仓库至最新改动， D → A</span><br><span class="line">git fetch //抓取远程仓库更新， D → C</span><br><span class="line"></span><br><span class="line">git <span class="built_in">log</span> //查看提交记录</span><br><span class="line">git status //查看修改状态</span><br><span class="line">git diff//查看详细修改内容</span><br><span class="line">git show//显示某次提交的内容</span><br><span class="line"></span><br><span class="line"><span class="comment">#撤销操作</span></span><br><span class="line">git reset &lt;file&gt;//某个文件索引会回滚到最后一次提交， C → B</span><br><span class="line">git reset//索引会回滚到最后一次提交， C → B</span><br><span class="line">git reset --hard // 索引会回滚到最后一次提交， C → B → A</span><br><span class="line"></span><br><span class="line">git checkout // 从index复制到workspace， B → A</span><br><span class="line">git checkout -- files // 文件从index复制到workspace， B → A</span><br><span class="line">git checkout HEAD -- files // 文件从<span class="built_in">local</span> repository复制到workspace， C → A</span><br><span class="line"></span><br><span class="line"><span class="comment">#分支相关</span></span><br><span class="line">git checkout -b branch_name //创建名叫“branch_name”的分支，并切换过去</span><br><span class="line">git checkout master //切换回主分支</span><br><span class="line">git branch <span class="operator">-d</span> branch_name // 删除名叫“branch_name”的分支</span><br><span class="line">git push origin branch_name //推送分支到远端仓库</span><br><span class="line">git merge branch_name // 合并分支branch_name到当前分支(如master)</span><br><span class="line">git rebase //衍合，线性化的自动， D → A</span><br><span class="line"></span><br><span class="line"><span class="comment">#冲突处理</span></span><br><span class="line">git diff //对比workspace与index</span><br><span class="line">git diff HEAD //对于workspace与最后一次commit</span><br><span class="line">git diff &lt;<span class="built_in">source</span>_branch&gt; &lt;target_branch&gt; //对比差异</span><br><span class="line">git add &lt;filename&gt; //修改完冲突，需要add以标记合并成功</span><br><span class="line"></span><br><span class="line"><span class="comment">#其他</span></span><br><span class="line">gitk //开灯图形化git</span><br><span class="line">git config color.ui <span class="literal">true</span> //彩色的 git 输出</span><br><span class="line">git config format.pretty oneline //显示历史记录时，每个提交的信息只显示一行</span><br><span class="line">git add -i //交互式添加文件到暂存区</span><br></pre></td></tr></table></figure>
 <h2 id="Git使用规范">Git使用规范</h2><p>Git 使用规范流程 - <a href="http://www.ruanyifeng.com/blog/2015/08/git-use-process.html" target="_blank" rel="external">http://www.ruanyifeng.com/blog/2015/08/git-use-process.html</a><br>团队中的 Git 实践 - <a href="https://ourai.ws/posts/working-with-git-in-team/" target="_blank" rel="external">https://ourai.ws/posts/working-with-git-in-team/</a><br>构家网 git 团队协作使用规范 v2 - <a href="http://wenku.baidu.com/view/e1430d1b7f1922791788e81e" target="_blank" rel="external">http://wenku.baidu.com/view/e1430d1b7f1922791788e81e</a></p>
+<blockquote>
+<p>Git使用规范提醒</p>
+</blockquote>
+<ul>
+<li>使用Git过程中，必须通过创建分支进行开发，坚决禁止在主干分支上直接开发。review的同事有责任检查其他同事是否遵循分支规范。</li>
+<li>在Git中，默认是不会提交空目录的，如果想提交某个空目录到版本库中，需要在该目录下新建一个 .gitignore 的空白文件，就可以提交了</li>
+<li>把外部文件纳入到自己的 Git 分支来的时候一定要记得是先比对，确认所有修改都是自己修改的，然后再纳入。不然，容易出现代码回溯</li>
+<li>多人协作时，不要各自在自己的 Git 分支开发，然后发文件合并。正确的方法应该是开一个远程分支，然后一起在远程分支里协作。不然，容易出现代码回溯（即别人的代码被覆盖的情况）</li>
+<li>每个人提交代码是一定要 git diff 看提交的东西是不是都是自己修改的。如果有不是自己修改的内容，很可能就是代码回溯</li>
+<li>review 代码的时候如果看到有被删除掉的代码，一定要确实是否是写代码的同事自己删除的。如果不是，很可能就是代码回溯</li>
+</ul>
 ]]></content>
     <summary type="html">
     <![CDATA[Git是目前世界上最先进的分布式版本控制系统]]>
