@@ -1,0 +1,681 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>使用Gogs轻松搭建可能比GitLab更好用的Git服务平台 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="Gogs可能是比GitLab更好的选择">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Gogs轻松搭建可能比GitLab更好用的Git服务平台">
+<meta property="og:url" content="https://wsgzao.github.io/post/gogs/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="Gogs可能是比GitLab更好的选择">
+<meta property="og:image" content="http://static.oschina.net/uploads/space/2016/0306/021849_Gf8X_852826.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用Gogs轻松搭建可能比GitLab更好用的Git服务平台">
+<meta name="twitter:description" content="Gogs可能是比GitLab更好的选择">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index">索引 | Index</a></li>
+					
+						<li><a href="/archives">归档 | Archives</a></li>
+					
+						<li><a href="/about">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/gogs/" title="使用Gogs轻松搭建可能比GitLab更好用的Git服务平台" itemprop="url">使用Gogs轻松搭建可能比GitLab更好用的Git服务平台</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2016-03-31T08:22:32.000Z" itemprop="datePublished"> 发表于 2016-03-31</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bitnami_GitLab_Stack"><span class="toc-number">3.</span> <span class="toc-text">Bitnami GitLab Stack</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Gogs功能特性"><span class="toc-number">4.</span> <span class="toc-text">Gogs功能特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Gogs环境要求"><span class="toc-number">5.</span> <span class="toc-text">Gogs环境要求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#部署Gogs"><span class="toc-number">6.</span> <span class="toc-text">部署Gogs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#app-ini配置文件"><span class="toc-number">7.</span> <span class="toc-text">app.ini配置文件</span></a></li></ol>
+		
+		</div>
+		
+		<p><img src="http://static.oschina.net/uploads/space/2016/0306/021849_Gf8X_852826.png" alt=""></p>
+<h2 id="前言">前言</h2><p>GitHub已经成为首选的代码托管平台，因为它又很多很棒的功能，操作简单，几乎所有的开发者都喜欢它。但是搭建GitLab过程并没有想象中的简单，利用Bitnami当然也是一种偷懒的好选择。Gogs (Go Git Service) 是一款极易搭建的自助 Git 服务，Gogs 的目标是打造一个最简单、最快速和最轻松的方式搭建自助 Git 服务。使用 Go 语言开发使得 Gogs 能够通过独立的二进制分发，并且支持 Go 语言支持的 所有平台，包括 Linux、Mac OS X、Windows 以及 ARM 平台。</p>
+<blockquote>
+<p>Gogs可能是比GitLab更好的选择</p>
+</blockquote>
+<h2 id="更新记录">更新记录</h2><p>2016年03月31日 - 初稿</p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/gogs/" target="_blank" rel="external">http://wsgzao.github.io/post/gogs/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>Gogs - <a href="https://gogs.io/" target="_blank" rel="external">https://gogs.io/</a><br>GitLab - <a href="https://about.gitlab.com/" target="_blank" rel="external">https://about.gitlab.com/</a><br>Bitnami GitLab Stack - <a href="https://bitnami.com/stack/gitlab" target="_blank" rel="external">https://bitnami.com/stack/gitlab</a></p>
+<h2 id="Bitnami_GitLab_Stack">Bitnami GitLab Stack</h2><blockquote>
+<p>Bitnami GitLab Stack ships with the following software versions</p>
+</blockquote>
+<ul>
+<li>GitLab 8.5.7</li>
+<li>Apache 2.4.18</li>
+<li>ImageMagick 6.7.5</li>
+<li>PostgreSQL 9.4.6</li>
+<li>Git 2.7.4</li>
+<li>Ruby 2.1.8</li>
+<li>Rails 4.2.5.1</li>
+<li>RubyGems 1.8.12</li>
+</ul>
+<blockquote>
+<p>Btinami GitLab Stack 安装真心简单，爽</p>
+</blockquote>
+<p>chmod 755 bitnami-gitlab-8.5.7-0-linux.run</p>
+<p><a href="https://bitnami.com/stack/gitlab/README.txt" target="_blank" rel="external">https://bitnami.com/stack/gitlab/README.txt</a></p>
+<h2 id="Gogs功能特性">Gogs功能特性</h2><ul>
+<li>支持活动时间线</li>
+<li>支持 SSH 以及 HTTP/HTTPS 协议</li>
+<li>支持 SMTP、LDAP 和反向代理的用户认证</li>
+<li>支持反向代理子路径</li>
+<li>支持用户、组织和仓库管理系统</li>
+<li>支持仓库和组织级别 Web 钩子（包括 Slack 集成）</li>
+<li>支持仓库 Git 钩子和部署密钥</li>
+<li>支持仓库工单（Issue）、合并请求（Pull Request）和 Wiki</li>
+<li>支持添加和删除仓库协作者</li>
+<li>支持 Gravatar 以及自定义源</li>
+<li>支持邮件服务</li>
+<li>支持后台管理面板</li>
+<li>支持 MySQL、PostgreSQL、SQLite3 和 TiDB（实验性支持） 数据库</li>
+<li>支持多语言本地化（15 种语言）</li>
+</ul>
+<blockquote>
+<p>以GitHub作为参考比较对象</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Gogs</th>
+<th>Gitlab</th>
+<th>Github</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dashboard &amp; File Browser</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>Issue Tracking, Milestones &amp; Commit keywords</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>Organizations support</td>
+<td>N</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>Wiki</td>
+<td>N</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>Code Review</td>
+<td>N</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>Code Snippets</td>
+<td>N</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>Web Hooks</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>Git Hooks</td>
+<td>Y</td>
+<td>* Enterprise</td>
+<td>* Enterprise</td>
+</tr>
+<tr>
+<td>LDAP Login</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>LDAP Group Sync</td>
+<td>N</td>
+<td>* Enterprise</td>
+<td>* Enterprise</td>
+</tr>
+<tr>
+<td>Branded Login Page</td>
+<td>N</td>
+<td>* Enterprise</td>
+<td>* Enterprise</td>
+</tr>
+<tr>
+<td>Language</td>
+<td>Go</td>
+<td>Ruby</td>
+<td>Ruby</td>
+</tr>
+<tr>
+<td>Platform</td>
+<td>Cross-Platform</td>
+<td>Linux</td>
+<td>* Virtual Machine</td>
+</tr>
+<tr>
+<td>License</td>
+<td>MIT</td>
+<td>MIT</td>
+<td>Proprietary</td>
+</tr>
+<tr>
+<td>Resource Usage</td>
+<td>Low</td>
+<td>Medium/High</td>
+<td>Medium/High</td>
+</tr>
+</tbody>
+</table>
+<h2 id="Gogs环境要求">Gogs环境要求</h2><blockquote>
+<p>我以rhel6.3为例，已经属于生命周期边缘了</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#安装git</span></span><br><span class="line">yum install -y git </span><br><span class="line">git --version</span><br><span class="line">git version <span class="number">1.7</span>.<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#安装mysql-server</span></span><br><span class="line">yum install -y mysql-server</span><br><span class="line">mysql --version</span><br><span class="line">mysql  Ver <span class="number">14.14</span> Distrib <span class="number">5.1</span>.<span class="number">73</span>, <span class="keyword">for</span> redhat-linux-gnu (x86_64) using readline <span class="number">5.1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#启动数据库</span></span><br><span class="line">service mysqld start</span><br><span class="line">chkconfig mysqld on</span><br><span class="line"></span><br><span class="line"><span class="comment">#创建gogs数据库</span></span><br><span class="line"><span class="built_in">cd</span> /home/git/gogs/scripts</span><br><span class="line"><span class="comment">#mysql -u root -p &lt; mysql.sql</span></span><br><span class="line">mysql -u root -p</span><br><span class="line"><span class="comment"># （输入密码，无密码直接跳过）</span></span><br><span class="line"><span class="built_in">set</span> global storage_engine = <span class="string">'InnoDB'</span>;</span><br><span class="line">create database gogs character <span class="built_in">set</span> utf8 collate utf8_bin;</span><br><span class="line">create user <span class="string">'gogs'</span>@<span class="string">'localhost'</span> identified by <span class="string">'gogs'</span>;</span><br><span class="line">grant all privileges on gogs.* to <span class="string">'gogs'</span>@<span class="string">'localhost'</span>;</span><br><span class="line">flush privileges;</span><br><span class="line"><span class="built_in">exit</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="部署Gogs">部署Gogs</h2><blockquote>
+<p>Gogs是一款极易搭建的自助Git服务</p>
+</blockquote>
+<p><a href="https://gogs.io/docs" target="_blank" rel="external">https://gogs.io/docs</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#创建git用户</span></span><br><span class="line">sudo adduser git</span><br><span class="line">su - git</span><br><span class="line"></span><br><span class="line"><span class="comment">#解压gogs</span></span><br><span class="line"><span class="built_in">cd</span> /home/git</span><br><span class="line">unzip gogs_v0.<span class="number">9.13</span>_linux_amd64.zip</span><br><span class="line">ls /home/git/gogs/</span><br><span class="line">gogs  LICENSE  public  README.md  README_ZH.md  scripts  templates</span><br><span class="line"></span><br><span class="line"><span class="comment">#启动gogs</span></span><br><span class="line"><span class="built_in">cd</span> /home/git/gogs</span><br><span class="line">./gogs web</span><br><span class="line"></span><br><span class="line"><span class="number">2016</span>/<span class="number">03</span>/<span class="number">31</span> <span class="number">16</span>:<span class="number">23</span>:<span class="number">53</span> [W] Custom config <span class="string">'/home/git/gogs/custom/conf/app.ini'</span> not found, ignore this <span class="keyword">if</span> you<span class="string">'re running first time</span><br><span class="line">2016/03/31 16:23:53 [T] Custom path: /home/git/gogs/custom</span><br><span class="line">2016/03/31 16:23:53 [T] Log path: /home/git/gogs/log</span><br><span class="line">2016/03/31 16:23:53 [I] Gogs: Go Git Service 0.9.13.0318</span><br><span class="line">2016/03/31 16:23:53 [I] Log Mode: Console(Trace)</span><br><span class="line">2016/03/31 16:23:53 [I] Cache Service Enabled</span><br><span class="line">2016/03/31 16:23:53 [I] Session Service Enabled</span><br><span class="line">2016/03/31 16:23:53 [I] SQLite3 Supported</span><br><span class="line">2016/03/31 16:23:53 [I] Run Mode: Development</span><br><span class="line">2016/03/31 16:23:54 [I] Listen: http://0.0.0.0:3000</span><br><span class="line"></span><br><span class="line">#后台运行</span><br><span class="line">nohup ./gogs web &amp;</span><br><span class="line">tail -f nohup.out</span></span><br></pre></td></tr></table></figure>
+<h2 id="app-ini配置文件">app.ini配置文件</h2><blockquote>
+<p>注意DOMAIN和ROOT_URL这两个参数</p>
+</blockquote>
+<p><a href="https://gogs.io/docs/advanced/configuration_cheat_sheet" target="_blank" rel="external">https://gogs.io/docs/advanced/configuration_cheat_sheet</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#首次安装可以打开浏览器完成剩余配置</span></span><br><span class="line">http://ip:<span class="number">3000</span>/install</span><br><span class="line"></span><br><span class="line"><span class="comment">#通过修改app.ini也可以</span></span><br><span class="line">vi /home/git/gogs/custom/conf/app.ini</span><br><span class="line"></span><br><span class="line">APP_NAME = Gogs: Go Git Service</span><br><span class="line">RUN_USER = git</span><br><span class="line">RUN_MODE = prod</span><br><span class="line"></span><br><span class="line">[database]</span><br><span class="line">DB_TYPE  = mysql</span><br><span class="line">HOST     = <span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">3306</span></span><br><span class="line">NAME     = gogs</span><br><span class="line">USER     = gogs</span><br><span class="line">PASSWD   = gogs</span><br><span class="line">SSL_MODE = <span class="built_in">disable</span></span><br><span class="line">PATH     = data/gogs.db</span><br><span class="line"></span><br><span class="line">[repository]</span><br><span class="line">ROOT = /home/git/gogs-repositories</span><br><span class="line"></span><br><span class="line">[server]</span><br><span class="line">DOMAIN       = <span class="number">172.28</span>.<span class="number">70.134</span> </span><br><span class="line">HTTP_PORT    = <span class="number">3000</span></span><br><span class="line">ROOT_URL     = http://<span class="number">172.28</span>.<span class="number">70.134</span>:<span class="number">3000</span>/</span><br><span class="line">DISABLE_SSH  = <span class="literal">false</span></span><br><span class="line">SSH_PORT     = <span class="number">22</span></span><br><span class="line">OFFLINE_MODE = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">[mailer]</span><br><span class="line">ENABLED = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">[service]</span><br><span class="line">REGISTER_EMAIL_CONFIRM = <span class="literal">false</span></span><br><span class="line">ENABLE_NOTIFY_MAIL     = <span class="literal">false</span></span><br><span class="line">DISABLE_REGISTRATION   = <span class="literal">false</span></span><br><span class="line">ENABLE_CAPTCHA         = <span class="literal">true</span></span><br><span class="line">REQUIRE_SIGNIN_VIEW    = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">[picture]</span><br><span class="line">DISABLE_GRAVATAR = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">[session]</span><br><span class="line">PROVIDER = file</span><br><span class="line"></span><br><span class="line">[<span class="built_in">log</span>]</span><br><span class="line">MODE      = file</span><br><span class="line">LEVEL     = Info</span><br><span class="line">ROOT_PATH = /home/git/gogs/<span class="built_in">log</span></span><br><span class="line"></span><br><span class="line">[security]</span><br><span class="line">INSTALL_LOCK = <span class="literal">true</span></span><br><span class="line">SECRET_KEY   = i4B7R55aRaFdw8j</span><br></pre></td></tr></table></figure>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/gogs/" data-title="使用Gogs轻松搭建可能比GitLab更好用的Git服务平台 | HelloDog" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/yum/" title="RHEL(Red Hat Enterprise Linux)配置YUM源">
+  <strong>上一篇：</strong><br/>
+  <span>
+  RHEL(Red Hat Enterprise Linux)配置YUM源</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/service-names-port-numbers/"  title="TCP/UDP常用端口列表">
+ <strong>下一篇：</strong><br/> 
+ <span>TCP/UDP常用端口列表
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="post/gogs/" data-title="使用Gogs轻松搭建可能比GitLab更好用的Git服务平台" data-url="https://wsgzao.github.io/post/gogs/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bitnami_GitLab_Stack"><span class="toc-number">3.</span> <span class="toc-text">Bitnami GitLab Stack</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Gogs功能特性"><span class="toc-number">4.</span> <span class="toc-text">Gogs功能特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Gogs环境要求"><span class="toc-number">5.</span> <span class="toc-text">Gogs环境要求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#部署Gogs"><span class="toc-number">6.</span> <span class="toc-text">部署Gogs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#app-ini配置文件"><span class="toc-number">7.</span> <span class="toc-text">app.ini配置文件</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>42</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>6</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Doing is better than perfect.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="//faisalman.github.io/ua-parser-js/src/ua-parser.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"wsgzao"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//wsgzao.github.io/embed_ua.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+<!-- baidu_push Begin -->
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+            
+<!-- baidu_push End -->
+  </body>
+</html>

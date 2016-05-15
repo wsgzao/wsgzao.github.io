@@ -1,0 +1,551 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>vsftpd安装以及配置FTP虚拟用户实践 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="首选的FTP服务器搭建方式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vsftpd安装以及配置FTP虚拟用户实践">
+<meta property="og:url" content="https://wsgzao.github.io/post/vsftpd/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="首选的FTP服务器搭建方式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="vsftpd安装以及配置FTP虚拟用户实践">
+<meta name="twitter:description" content="首选的FTP服务器搭建方式">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index">索引 | Index</a></li>
+					
+						<li><a href="/archives">归档 | Archives</a></li>
+					
+						<li><a href="/about">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/vsftpd/" title="vsftpd安装以及配置FTP虚拟用户实践" itemprop="url">vsftpd安装以及配置FTP虚拟用户实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2016-04-15T07:42:19.000Z" itemprop="datePublished"> 发表于 2016-04-15</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设置匿名用户上传下载"><span class="toc-number">3.</span> <span class="toc-text">设置匿名用户上传下载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装vsftpd"><span class="toc-number">4.</span> <span class="toc-text">安装vsftpd</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于虚拟用户的配置"><span class="toc-number">5.</span> <span class="toc-text">基于虚拟用户的配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#修改配置文件"><span class="toc-number">5.1.</span> <span class="toc-text">修改配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#进行认证"><span class="toc-number">5.2.</span> <span class="toc-text">进行认证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#设置FTP根目录权限"><span class="toc-number">5.3.</span> <span class="toc-text">设置FTP根目录权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置PASV模式（可选）"><span class="toc-number">5.4.</span> <span class="toc-text">配置PASV模式（可选）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Selinux和防火墙"><span class="toc-number">5.5.</span> <span class="toc-text">Selinux和防火墙</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见问题"><span class="toc-number">6.</span> <span class="toc-text">常见问题</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言">前言</h2><p>正如vsftpd官方宣传中所说<code>Probably the most secure and fastest FTP server for UNIX-like systems.</code>我相信这是大多数人选择vsftpd来搭建Linux的FTP服务器的原因，当然ProFTPD用的人应该也不在少数。文章将以清晰直观的方式介绍安装vsftpd以及配置FTP虚拟用户的过程，希望对大家有帮助。</p>
+<blockquote>
+<p>首选的FTP服务器搭建方式</p>
+</blockquote>
+<hr>
+<h2 id="更新历史">更新历史</h2><p>2016年04月15日 - 增加vsftp匿名用户上传和下载<br>2015年08月24日 - 初稿</p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/vsftpd/" target="_blank" rel="external">http://wsgzao.github.io/post/vsftpd/</a></p>
+<p>扩展阅读</p>
+<p>CentOS 6.4 下安装vsftpd - <a href="http://www.cnblogs.com/xiongpq/p/3384759.html" target="_blank" rel="external">http://www.cnblogs.com/xiongpq/p/3384759.html</a><br>ProFTPD - <a href="http://www.proftpd.org/" target="_blank" rel="external">http://www.proftpd.org/</a><br>vsftpd - <a href="http://vsftpd.beasts.org" target="_blank" rel="external">http://vsftpd.beasts.org</a></p>
+<hr>
+<h2 id="设置匿名用户上传下载">设置匿名用户上传下载</h2><blockquote>
+<p>使用最简单的方法设置vsftp匿名用户上传和下载</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#安装vsftpd</span></span><br><span class="line">yum -y install vsftpd</span><br><span class="line">chkconfig vsftpd on</span><br><span class="line"></span><br><span class="line"><span class="comment">#修改vsftpd.conf</span></span><br><span class="line">cp /etc/vsftpd/vsftpd.conf /etc/vsftpd/vsftpd.conf.bak</span><br><span class="line">vi /etc/vsftpd/vsftpd.conf</span><br><span class="line"></span><br><span class="line"><span class="comment">#默认部分可保持不动</span></span><br><span class="line">anonymous_<span class="built_in">enable</span>=YES</span><br><span class="line"><span class="built_in">local</span>_<span class="built_in">enable</span>=YES</span><br><span class="line">write_<span class="built_in">enable</span>=YES</span><br><span class="line"><span class="built_in">local</span>_<span class="built_in">umask</span>=<span class="number">022</span></span><br><span class="line">dirmessage_<span class="built_in">enable</span>=YES</span><br><span class="line">xferlog_<span class="built_in">enable</span>=YES</span><br><span class="line">connect_from_port_20=YES</span><br><span class="line">xferlog_std_format=YES</span><br><span class="line">listen=YES</span><br><span class="line"></span><br><span class="line">pam_service_name=vsftpd</span><br><span class="line">userlist_<span class="built_in">enable</span>=YES</span><br><span class="line">tcp_wrappers=YES</span><br><span class="line"></span><br><span class="line"><span class="comment">#增加匿名访问目录</span></span><br><span class="line">anon_root=/var/ftp</span><br><span class="line"></span><br><span class="line"><span class="comment">#打开匿名用户上传/删除/重命名权限</span></span><br><span class="line">anon_upload_<span class="built_in">enable</span>=YES</span><br><span class="line">anon_mkdir_write_<span class="built_in">enable</span>=YES</span><br><span class="line">anon_other_write_<span class="built_in">enable</span>=YES</span><br><span class="line"></span><br><span class="line"><span class="comment">#匿名用户的掩码（如需要，需自己添加，含义：如umask是022,这时创建一个权限为666的文件，文件的实际权限为666-022=644）</span></span><br><span class="line">anon_<span class="built_in">umask</span>=<span class="number">022</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#设定支持ASCII模式的上传和下载功能</span></span><br><span class="line">ascii_upload_<span class="built_in">enable</span>=YES</span><br><span class="line">ascii_download_<span class="built_in">enable</span>=YES</span><br><span class="line"></span><br><span class="line"><span class="comment">#增加日志记录</span></span><br><span class="line">xferlog_file=/var/<span class="built_in">log</span>/xferlog</span><br><span class="line">dual_<span class="built_in">log</span>_<span class="built_in">enable</span>=YES</span><br><span class="line">vsftpd_<span class="built_in">log</span>_file=/var/<span class="built_in">log</span>/vsftpd.log</span><br><span class="line"></span><br><span class="line"><span class="comment">#重启vsftpd服务并配置目录权限</span></span><br><span class="line">service vsftpd restart</span><br><span class="line"><span class="built_in">cd</span> /var/ftp</span><br><span class="line">mkdir pub</span><br><span class="line">chmod <span class="number">777</span> pub/</span><br><span class="line"></span><br><span class="line"><span class="comment">#常见问题</span></span><br><span class="line">默认情况下，ftp的根目录为/var/ftp，为了安全，这个目录默认不允许设置为<span class="number">777</span>权限，否则ftp将无法访问。但是我们要匿名上传文件，需要“other”用户的写权限，正确的做法：</span><br><span class="line">在/var/ftp中建立一个pub（名子自己起吧）文件夹，将个文件夹权限设置为<span class="number">777</span>（视具体需要自己设），在upload这个文件夹中，匿名用户可以上传文件、创建文件夹、删除文件等。一般至此，便实现vsftpd匿名用户的上传下载了。如果还不行可能selinux的问题，关闭即可。</span><br></pre></td></tr></table></figure>
+<h2 id="安装vsftpd">安装vsftpd</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#查看当前系统版本</span></span><br><span class="line">cat /etc/redhat-release </span><br><span class="line">CentOS release <span class="number">6.6</span> (Final)</span><br><span class="line"></span><br><span class="line"><span class="comment">#查看是否已经安装vsftpd</span></span><br><span class="line">rpm -qa | grep vsftpd</span><br><span class="line"><span class="comment">#如果没有，就安装，并设置开机启动</span></span><br><span class="line">yum -y install vsftpd</span><br><span class="line">chkconfig vsftpd on</span><br></pre></td></tr></table></figure>
+<h2 id="基于虚拟用户的配置">基于虚拟用户的配置</h2><blockquote>
+<p>所谓虚拟用户就是没有使用真实的帐户，只是通过映射到真实帐户和设置权限的目的。虚拟用户不能登录CentOS系统。</p>
+</blockquote>
+<h3 id="修改配置文件">修改配置文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/vsftpd/vsftpd.conf</span><br><span class="line"></span><br><span class="line"><span class="comment">#服务器独立运行</span></span><br><span class="line">listen=YES</span><br><span class="line"><span class="comment">#设定不允许匿名访问</span></span><br><span class="line">anonymous_<span class="built_in">enable</span>=NO</span><br><span class="line"><span class="comment">#设定本地用户可以访问。注：如使用虚拟宿主用户，在该项目设定为NO的情况下所有虚拟用户将无法访问</span></span><br><span class="line"><span class="built_in">local</span>_<span class="built_in">enable</span>=YES</span><br><span class="line"><span class="comment">#使用户不能离开主目录</span></span><br><span class="line">chroot_list_<span class="built_in">enable</span>=YES</span><br><span class="line"><span class="comment">#设定支持ASCII模式的上传和下载功能</span></span><br><span class="line">ascii_upload_<span class="built_in">enable</span>=YES</span><br><span class="line">ascii_download_<span class="built_in">enable</span>=YES</span><br><span class="line"><span class="comment">#PAM认证文件名。PAM将根据/etc/pam.d/vsftpd进行认证</span></span><br><span class="line">pam_service_name=vsftpd</span><br><span class="line"><span class="comment">#设定启用虚拟用户功能</span></span><br><span class="line">guest_<span class="built_in">enable</span>=YES</span><br><span class="line"><span class="comment">#指定虚拟用户的宿主用户，CentOS中已经有内置的ftp用户了</span></span><br><span class="line">guest_username=ftp</span><br><span class="line"><span class="comment">#设定虚拟用户个人vsftp的CentOS FTP服务文件存放路径。存放虚拟用户个性的CentOS FTP服务文件(配置文件名=虚拟用户名)</span></span><br><span class="line">user_config_dir=/etc/vsftpd/vuser_conf</span><br><span class="line"><span class="comment">#配置vsftpd日志（可选）</span></span><br><span class="line">xferlog_<span class="built_in">enable</span>=YES</span><br><span class="line">xferlog_std_format=YES</span><br><span class="line">xferlog_file=/var/<span class="built_in">log</span>/xferlog</span><br><span class="line">dual_<span class="built_in">log</span>_<span class="built_in">enable</span>=YES</span><br><span class="line">vsftpd_<span class="built_in">log</span>_file=/var/<span class="built_in">log</span>/vsftpd.log</span><br></pre></td></tr></table></figure>
+<h3 id="进行认证">进行认证</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#安装Berkeley DB工具，很多人找不到db_load的问题就是没有安装这个包</span></span><br><span class="line">yum install db4 db4-utils</span><br><span class="line"></span><br><span class="line"><span class="comment">#创建用户密码文本，注意奇行是用户名，偶行是密码</span></span><br><span class="line">vi /etc/vsftpd/vuser_passwd.txt</span><br><span class="line"></span><br><span class="line"><span class="built_in">test</span></span><br><span class="line"><span class="number">123456</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#生成虚拟用户认证的db文件</span></span><br><span class="line">db_load -T -t <span class="built_in">hash</span> <span class="operator">-f</span> /etc/vsftpd/vuser_passwd.txt /etc/vsftpd/vuser_passwd.db</span><br><span class="line"></span><br><span class="line"><span class="comment">#编辑认证文件，全部注释掉原来语句，再增加以下两句</span></span><br><span class="line">vi /etc/pam.d/vsftpd</span><br><span class="line"></span><br><span class="line">auth required pam_userdb.so db=/etc/vsftpd/vuser_passwd</span><br><span class="line">account required pam_userdb.so db=/etc/vsftpd/vuser_passwd</span><br><span class="line"></span><br><span class="line"><span class="comment">#创建虚拟用户配置文件</span></span><br><span class="line">mkdir /etc/vsftpd/vuser_conf/</span><br><span class="line"><span class="comment">#文件名等于vuser_passwd.txt里面的账户名，否则下面设置无效</span></span><br><span class="line">vi /etc/vsftpd/vuser_conf/<span class="built_in">test</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#虚拟用户根目录,根据实际情况修改</span></span><br><span class="line"><span class="built_in">local</span>_root=/data/ftp</span><br><span class="line">write_<span class="built_in">enable</span>=YES</span><br><span class="line">anon_<span class="built_in">umask</span>=<span class="number">022</span></span><br><span class="line">anon_world_readable_only=NO</span><br><span class="line">anon_upload_<span class="built_in">enable</span>=YES</span><br><span class="line">anon_mkdir_write_<span class="built_in">enable</span>=YES</span><br><span class="line">anon_other_write_<span class="built_in">enable</span>=YES</span><br></pre></td></tr></table></figure>
+<h3 id="设置FTP根目录权限">设置FTP根目录权限</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#最新的vsftpd要求对主目录不能有写的权限所以ftp为755，主目录下面的子目录再设置777权限</span></span><br><span class="line">mkdir /data/ftp</span><br><span class="line">chmod -R <span class="number">755</span> /data</span><br><span class="line">chmod -R <span class="number">777</span> /data/ftp</span><br><span class="line"></span><br><span class="line"><span class="comment">#建立限制用户访问目录的空文件</span></span><br><span class="line">touch /etc/vsftpd/chroot_list</span><br><span class="line"></span><br><span class="line"><span class="comment">#如果启用vsftpd日志需手动建立日志文件</span></span><br><span class="line">touch /var/<span class="built_in">log</span>/xferlog </span><br><span class="line">touch /var/<span class="built_in">log</span>/vsftpd.log</span><br></pre></td></tr></table></figure>
+<h3 id="配置PASV模式（可选）">配置PASV模式（可选）</h3><blockquote>
+<p>vsftpd默认没有开启PASV模式，现在FTP只能通过PORT模式连接，要开启PASV默认需要通过下面的配置</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">打开/etc/vsftpd/vsftpd.conf，在末尾添加</span><br><span class="line"></span><br><span class="line"><span class="comment">#开启PASV模式</span></span><br><span class="line">pasv_<span class="built_in">enable</span>=YES</span><br><span class="line"><span class="comment">#最小端口号</span></span><br><span class="line">pasv_min_port=<span class="number">40000</span></span><br><span class="line"><span class="comment">#最大端口号</span></span><br><span class="line">pasv_max_port=<span class="number">40080</span></span><br><span class="line">pasv_promiscuous=YES</span><br><span class="line"></span><br><span class="line"><span class="comment">#在防火墙配置内开启40000到40080端口</span></span><br><span class="line">-A INPUT -m state --state NEW -m tcp -p -dport <span class="number">40000</span>:<span class="number">40080</span> -j ACCEPT</span><br><span class="line"></span><br><span class="line"><span class="comment">#重启iptabls和vsftpd</span></span><br><span class="line">service iptables restart</span><br><span class="line">service vsftpd restart</span><br><span class="line"></span><br><span class="line">现在可以使用PASV模式连接你的FTP服务器了~</span><br></pre></td></tr></table></figure>
+<h3 id="Selinux和防火墙">Selinux和防火墙</h3><blockquote>
+<p>该关闭的关闭，该放行的放行</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#关闭selinux/iptables</span></span><br><span class="line">sed -i <span class="string">'/SELINUX/s/enforcing/disabled/'</span> /etc/selinux/config</span><br><span class="line">setenforce <span class="number">0</span></span><br><span class="line">chkconfig iptables off</span><br><span class="line">service iptables stop</span><br></pre></td></tr></table></figure>
+<h2 id="常见问题">常见问题</h2><p>如果登录时出现</p>
+<pre><code><span class="number">500</span> OOPS: priv_sock_get_result. Connection closed <span class="keyword">by</span> remote host.
+</code></pre><p>这样的错误，需要升级pam</p>
+<pre><code><span class="title">yum</span> update pam
+</code></pre>  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/vsftpd/" data-title="vsftpd安装以及配置FTP虚拟用户实践 | HelloDog" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/windows/" title="Windows常用软件推荐">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Windows常用软件推荐</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/cobbler/"  title="Cobbler自动化安装配置实践">
+ <strong>下一篇：</strong><br/> 
+ <span>Cobbler自动化安装配置实践
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="post/vsftpd/" data-title="vsftpd安装以及配置FTP虚拟用户实践" data-url="https://wsgzao.github.io/post/vsftpd/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设置匿名用户上传下载"><span class="toc-number">3.</span> <span class="toc-text">设置匿名用户上传下载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装vsftpd"><span class="toc-number">4.</span> <span class="toc-text">安装vsftpd</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于虚拟用户的配置"><span class="toc-number">5.</span> <span class="toc-text">基于虚拟用户的配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#修改配置文件"><span class="toc-number">5.1.</span> <span class="toc-text">修改配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#进行认证"><span class="toc-number">5.2.</span> <span class="toc-text">进行认证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#设置FTP根目录权限"><span class="toc-number">5.3.</span> <span class="toc-text">设置FTP根目录权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置PASV模式（可选）"><span class="toc-number">5.4.</span> <span class="toc-text">配置PASV模式（可选）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Selinux和防火墙"><span class="toc-number">5.5.</span> <span class="toc-text">Selinux和防火墙</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见问题"><span class="toc-number">6.</span> <span class="toc-text">常见问题</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>42</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>6</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Doing is better than perfect.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="//faisalman.github.io/ua-parser-js/src/ua-parser.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"wsgzao"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//wsgzao.github.io/embed_ua.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+<!-- baidu_push Begin -->
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+            
+<!-- baidu_push End -->
+  </body>
+</html>

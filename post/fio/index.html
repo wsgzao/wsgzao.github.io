@@ -1,0 +1,573 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>使用fio测试磁盘I/O性能 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="简单好用的磁盘性能测试工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用fio测试磁盘I/O性能">
+<meta property="og:url" content="https://wsgzao.github.io/post/fio/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="简单好用的磁盘性能测试工具">
+<meta property="og:image" content="https://docs.ucloud.cn/_images/seq512k.jpg">
+<meta property="og:image" content="https://docs.ucloud.cn/_images/rand4k.jpg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用fio测试磁盘I/O性能">
+<meta name="twitter:description" content="简单好用的磁盘性能测试工具">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index">索引 | Index</a></li>
+					
+						<li><a href="/archives">归档 | Archives</a></li>
+					
+						<li><a href="/about">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/fio/" title="使用fio测试磁盘I/O性能" itemprop="url">使用fio测试磁盘I/O性能</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2015-10-20T08:17:05.000Z" itemprop="datePublished"> 发表于 2015-10-20</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#测试准备"><span class="toc-number">3.</span> <span class="toc-text">测试准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fio用法"><span class="toc-number">4.</span> <span class="toc-text">fio用法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#fio参数说明"><span class="toc-number">4.1.</span> <span class="toc-text">fio参数说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实际测试范例"><span class="toc-number">4.2.</span> <span class="toc-text">实际测试范例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#硬盘性能指标"><span class="toc-number">5.</span> <span class="toc-text">硬盘性能指标</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#测试数据"><span class="toc-number">5.1.</span> <span class="toc-text">测试数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置文件"><span class="toc-number">5.2.</span> <span class="toc-text">配置文件</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h2 id="前言">前言</h2><p>fio是测试IOPS的非常好的工具，用来对硬件进行压力测试和验证，支持13种不同的I/O引擎，包括:sync,mmap, libaio, posixaio, SG v3, splice, null, network, syslet, guasi, solarisaio 等等。</p>
+<blockquote>
+<p>简单好用的磁盘性能测试工具</p>
+</blockquote>
+<hr>
+<h2 id="更新记录">更新记录</h2><p>2015年10月20日 - 初稿</p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/fio/" target="_blank" rel="external">http://wsgzao.github.io/post/fio/</a></p>
+<p>扩展阅读</p>
+<p>fio - <a href="http://freecode.com/projects/fio" target="_blank" rel="external">http://freecode.com/projects/fio</a><br>云主机磁盘I/O基准性能测试 - <a href="https://docs.ucloud.cn/testdata/io_uhost.html" target="_blank" rel="external">https://docs.ucloud.cn/testdata/io_uhost.html</a><br>fio man - <a href="http://linux.die.net/man/1/fio" target="_blank" rel="external">http://linux.die.net/man/1/fio</a></p>
+<hr>
+<h2 id="测试准备">测试准备</h2><p>工具：fio - Flexible IO Tester</p>
+<p>官方网站：</p>
+<p><a href="http://freecode.com/projects/fio" target="_blank" rel="external">http://freecode.com/projects/fio</a></p>
+<p><a href="http://brick.kernel.dk/snaps/" target="_blank" rel="external">http://brick.kernel.dk/snaps/</a></p>
+<p><strong>注意</strong>: 性能测试建议直接通过写裸盘的方式进行测试，会得到较为真实的数据。但直接测试裸盘会破坏文件系统结构，导致数据丢失，请在测试前确认磁盘中数据已备份。</p>
+<p>CentOS可以直接使用yum安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#yum安装</span></span><br><span class="line">yum install libaio-devel fio</span><br><span class="line"><span class="comment">#手动安装</span></span><br><span class="line">yum install libaio-devel</span><br><span class="line">wget http://brick.kernel.dk/snaps/fio-<span class="number">2.2</span>.<span class="number">10</span>.tar.gz</span><br><span class="line">tar -zxvf fio-<span class="number">2.2</span>.<span class="number">10</span>.tar.gz</span><br><span class="line"><span class="built_in">cd</span> fio-<span class="number">2.2</span>.<span class="number">10</span></span><br><span class="line">make $ make install</span><br></pre></td></tr></table></figure>
+<h2 id="fio用法">fio用法</h2><blockquote>
+<p>fio分顺序读，随机读，顺序写，随机写，混合随机读写模式。</p>
+</blockquote>
+<p>filename: 指定文件(设备)的名称。可以通过冒号分割同时指定多个文件，如filename=/dev/sda:/dev/sdb。</p>
+<p>directory: 设置filename的路径前缀。在后面的基准测试中，采用这种方式来指定设备。</p>
+<p>name: 指定job的名字，在命令行中表示新启动一个job。</p>
+<p>direct: bool类型，如果设置成true (1)，表示不使用io buffer。</p>
+<p>ioengine: I/O引擎，现在fio支持19种ioengine。默认值是sync同步阻塞I/O，libaio是Linux的native异步I/O。关于同步异步，阻塞和非阻塞模型可以参考文章“使用异步 I/O 大大提高应用程序的性能”。<br><a href="http://www.ibm.com/developerworks/cn/linux/l-async/" target="_blank" rel="external">http://www.ibm.com/developerworks/cn/linux/l-async/</a></p>
+<p>iodepth: 如果ioengine采用异步方式，该参数表示一批提交保持的io单元数。该参数可参考文章“Fio压测工具和io队列深度理解和误区”。<br><a href="http://blog.yufeng.info/archives/2104" target="_blank" rel="external">http://blog.yufeng.info/archives/2104</a></p>
+<p>rw: I/O模式，随机读写，顺序读写等等。</p>
+<p>bs: I/O block大小，默认是4k。</p>
+<p>size: 指定job处理的文件的大小。</p>
+<p>numjobs: 指定job的克隆数(线程)。</p>
+<p>time_based: 如果在runtime指定的时间还没到时文件就被读写完成，将继续重复知道runtime时间结束。</p>
+<p>runtime: 指定在多少秒后停止进程。如果未指定该参数，fio将执行至指定的文件读写完全完成。</p>
+<p>group_reporting: 当同时指定了numjobs了时，输出结果按组显示。</p>
+<h3 id="fio参数说明">fio参数说明</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line">filename=/dev/sdb1   <span class="comment">#测试文件名称，通常选择需要测试的盘的data目录</span></span><br><span class="line">direct=<span class="number">1</span>             <span class="comment">#测试过程绕过机器自带的buffer。使测试结果更真实</span></span><br><span class="line">rw=randwrite         <span class="comment">#测试随机写的I/O</span></span><br><span class="line">rw=randrw            <span class="comment">#测试随机写和读的I/O</span></span><br><span class="line">bs=<span class="number">16</span>k               <span class="comment">#单次io的块文件大小为16k</span></span><br><span class="line">bsrange=<span class="number">512</span>-<span class="number">2048</span>     <span class="comment">#同上，提定数据块的大小范围</span></span><br><span class="line">size=<span class="number">5</span>G              <span class="comment">#本次的测试文件大小为5g，以每次4k的io进行测试</span></span><br><span class="line">numjobs=<span class="number">30</span>           <span class="comment">#本次的测试线程为30个</span></span><br><span class="line">runtime=<span class="number">1000</span>         <span class="comment">#测试时间1000秒，如果不写则一直将5g文件分4k每次写完为止</span></span><br><span class="line">ioengine=psync       <span class="comment">#io引擎使用psync方式</span></span><br><span class="line">rwmixwrite=<span class="number">30</span>        <span class="comment">#在混合读写的模式下，写占30%</span></span><br><span class="line">group_reporting      <span class="comment">#关于显示结果的，汇总每个进程的信息</span></span><br><span class="line"></span><br><span class="line">lockmem=<span class="number">1</span>G           <span class="comment">#只使用1g内存进行测试</span></span><br><span class="line">zero_buffers         <span class="comment">#用0初始化系统buffer</span></span><br><span class="line">nrfiles=<span class="number">8</span>            <span class="comment">#每个进程生成文件的数量</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#顺序读</span></span><br><span class="line">fio -filename=/dev/sda -direct=<span class="number">1</span> -iodepth <span class="number">1</span> -thread -rw=<span class="built_in">read</span> -ioengine=psync -bs=<span class="number">16</span>k -size=<span class="number">200</span>G -numjobs=<span class="number">30</span> -runtime=<span class="number">1000</span> -group_reporting -name=mytest</span><br><span class="line"></span><br><span class="line"><span class="comment">#顺序写</span></span><br><span class="line">fio -filename=/dev/sda -direct=<span class="number">1</span> -iodepth <span class="number">1</span> -thread -rw=write -ioengine=psync -bs=<span class="number">16</span>k -size=<span class="number">200</span>G -numjobs=<span class="number">30</span> -runtime=<span class="number">1000</span> -group_reporting -name=mytest</span><br><span class="line"></span><br><span class="line"><span class="comment">#随机读</span></span><br><span class="line">fio -filename=/dev/sda -direct=<span class="number">1</span> -iodepth <span class="number">1</span> -thread -rw=randread -ioengine=psync -bs=<span class="number">16</span>k -size=<span class="number">200</span>G -numjobs=<span class="number">30</span> -runtime=<span class="number">1000</span> -group_reporting -name=mytest</span><br><span class="line"></span><br><span class="line"><span class="comment">#随机写</span></span><br><span class="line">fio -filename=/dev/sda -direct=<span class="number">1</span> -iodepth <span class="number">1</span> -thread -rw=randwrite -ioengine=psync -bs=<span class="number">16</span>k -size=<span class="number">200</span>G -numjobs=<span class="number">30</span> -runtime=<span class="number">1000</span> -group_reporting -name=mytest</span><br><span class="line"></span><br><span class="line"><span class="comment">#混合随机读写</span></span><br><span class="line">fio -filename=/dev/sda -direct=<span class="number">1</span> -iodepth <span class="number">1</span> -thread -rw=randrw -rwmixread=<span class="number">70</span> -ioengine=psync -bs=<span class="number">16</span>k -size=<span class="number">200</span>G -numjobs=<span class="number">30</span> -runtime=<span class="number">100</span> -group_reporting -name=mytest -ioscheduler=noop</span><br><span class="line"></span><br><span class="line"><span class="comment">#复制下面的配置内容，将directory=/path/to/test修改为你测试硬盘挂载目录的地址，并另存为fio.conf</span></span><br><span class="line"></span><br><span class="line">[global]</span><br><span class="line">ioengine=libaio</span><br><span class="line">direct=<span class="number">1</span></span><br><span class="line">thread=<span class="number">1</span></span><br><span class="line">norandommap=<span class="number">1</span></span><br><span class="line">randrepeat=<span class="number">0</span></span><br><span class="line">runtime=<span class="number">60</span></span><br><span class="line">ramp_time=<span class="number">6</span></span><br><span class="line">size=<span class="number">1</span>g</span><br><span class="line">directory=/path/to/<span class="built_in">test</span></span><br><span class="line"></span><br><span class="line">[<span class="built_in">read</span>4k-rand]</span><br><span class="line">stonewall</span><br><span class="line">group_reporting</span><br><span class="line">bs=<span class="number">4</span>k</span><br><span class="line">rw=randread</span><br><span class="line">numjobs=<span class="number">8</span></span><br><span class="line">iodepth=<span class="number">32</span></span><br><span class="line"></span><br><span class="line">[<span class="built_in">read</span>64k-seq]</span><br><span class="line">stonewall</span><br><span class="line">group_reporting</span><br><span class="line">bs=<span class="number">64</span>k</span><br><span class="line">rw=<span class="built_in">read</span></span><br><span class="line">numjobs=<span class="number">4</span></span><br><span class="line">iodepth=<span class="number">8</span></span><br><span class="line"></span><br><span class="line">[write4k-rand]</span><br><span class="line">stonewall</span><br><span class="line">group_reporting</span><br><span class="line">bs=<span class="number">4</span>k</span><br><span class="line">rw=randwrite</span><br><span class="line">numjobs=<span class="number">2</span></span><br><span class="line">iodepth=<span class="number">4</span></span><br><span class="line"></span><br><span class="line">[write64k-seq]</span><br><span class="line">stonewall</span><br><span class="line">group_reporting</span><br><span class="line">bs=<span class="number">64</span>k</span><br><span class="line">rw=write</span><br><span class="line">numjobs=<span class="number">2</span></span><br><span class="line">iodepth=<span class="number">4</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#测试</span></span><br><span class="line">fio fio.conf</span><br></pre></td></tr></table></figure>
+<h3 id="实际测试范例">实际测试范例</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#测试混合随机读写</span></span><br><span class="line">fio -filename=/dev/sda -direct=<span class="number">1</span> -iodepth <span class="number">1</span> -thread -rw=randrw -rwmixread=<span class="number">70</span> -ioengine=psync -bs=<span class="number">16</span>k -size=<span class="number">200</span>G -numjobs=<span class="number">30</span> -runtime=<span class="number">100</span> -group_reporting -name=mytest1</span><br><span class="line"></span><br><span class="line">mytest1: (g=<span class="number">0</span>): rw=randrw, bs=<span class="number">16</span>K-<span class="number">16</span>K/<span class="number">16</span>K-<span class="number">16</span>K/<span class="number">16</span>K-<span class="number">16</span>K, ioengine=psync, iodepth=<span class="number">1</span></span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">mytest1: (g=<span class="number">0</span>): rw=randrw, bs=<span class="number">16</span>K-<span class="number">16</span>K/<span class="number">16</span>K-<span class="number">16</span>K/<span class="number">16</span>K-<span class="number">16</span>K, ioengine=psync, iodepth=<span class="number">1</span></span><br><span class="line"></span><br><span class="line">fio-<span class="number">2.1</span>.<span class="number">2</span></span><br><span class="line"></span><br><span class="line">Starting <span class="number">30</span> threads</span><br><span class="line"></span><br><span class="line">Jobs: <span class="number">30</span> (f=<span class="number">30</span>):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [<span class="number">18.8</span>% <span class="keyword">done</span>] [<span class="number">10192</span>KB/<span class="number">3376</span>KB/<span class="number">0</span>KB /s] [<span class="number">637</span>/<span class="number">211</span>/<span class="number">0</span> iops] [eta <span class="number">01</span>m:<span class="number">22</span>sJobs: <span class="number">30</span> (f=<span class="number">30</span>):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [<span class="number">19.8</span>% <span class="keyword">done</span>] [<span class="number">9808</span>KB/<span class="number">3200</span>KB/<span class="number">0</span>KB /s] [<span class="number">613</span>/<span class="number">200</span>/<span class="number">0</span> iops] [eta <span class="number">01</span>m:<span class="number">21</span>s]Jobs: <span class="number">30</span> (f=<span class="number">30</span>):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [<span class="number">34.7</span>% <span class="keyword">done</span>] [<span class="number">10496</span>KB/<span class="number">3232</span>KB/<span class="number">0</span>KB /s] [<span class="number">656</span>/<span class="number">202</span>/<span class="number">0</span> iops] [eta <span class="number">01</span>m:<span class="number">06</span>sJobs: <span class="number">30</span> (f=<span class="number">30</span>):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [<span class="number">35.6</span>% <span class="keyword">done</span>] [<span class="number">9680</span>KB/<span class="number">3232</span>KB/<span class="number">0</span>KB /s] [<span class="number">605</span>/<span class="number">202</span>/<span class="number">0</span> iops] [eta <span class="number">01</span>m:<span class="number">05</span>s]Jobs: <span class="number">30</span> (f=<span class="number">30</span>):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [<span class="number">37.6</span>% <span class="keyword">done</span>] [<span class="number">10016</span>KB/<span class="number">2864</span>KB/<span class="number">0</span>KB /s] [<span class="number">626</span>/<span class="number">179</span>/<span class="number">0</span> iops] [eta <span class="number">01</span>m:<span class="number">03</span>sJobs: <span class="number">30</span> (f=<span class="number">30</span>):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [<span class="number">38.6</span>% <span class="keyword">done</span>] [<span class="number">10320</span>KB/<span class="number">3632</span>KB/<span class="number">0</span>KB /s] [<span class="number">645</span>/<span class="number">227</span>/<span class="number">0</span> iops] [eta <span class="number">01</span>m:<span class="number">02</span>sJobs: <span class="number">30</span> (f=<span class="number">30</span>):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [<span class="number">39.6</span>% <span class="keyword">done</span>] [<span class="number">9744</span>KB/<span class="number">3264</span>KB/<span class="number">0</span>KB /s] [<span class="number">609</span>/<span class="number">204</span>/<span class="number">0</span> iops] [eta <span class="number">01</span>m:<span class="number">01</span>s]Jobs: <span class="number">30</span> (f=<span class="number">30</span>):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [<span class="number">63.4</span>% <span class="keyword">done</span>] [<span class="number">10224</span>KB/<span class="number">3792</span>KB/<span class="number">0</span>KB /s] [<span class="number">639</span>/<span class="number">237</span>/<span class="number">0</span> iops] [eta <span class="number">00</span>m:<span class="number">37</span>sJobs: <span class="number">30</span> (f=<span class="number">30</span>):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [<span class="number">64.4</span>% <span class="keyword">done</span>] [<span class="number">9184</span>KB/<span class="number">3808</span>KB/<span class="number">0</span>KB /s] [<span class="number">574</span>/<span class="number">238</span>/<span class="number">0</span> iops] [eta <span class="number">00</span>m:<span class="number">36</span>s]Jobs: <span class="number">30</span> (f=<span class="number">30</span>):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [<span class="number">68.3</span>% <span class="keyword">done</span>] [<span class="number">10128</span>KB/<span class="number">3200</span>KB/<span class="number">0</span>KB /s] [<span class="number">633</span>/<span class="number">200</span>/<span class="number">0</span> iops] [eta <span class="number">00</span>m:<span class="number">32</span>sJobs: <span class="number">30</span> (f=<span class="number">30</span>):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [<span class="number">69.3</span>% <span class="keyword">done</span>] [<span class="number">9872</span>KB/<span class="number">3184</span>KB/<span class="number">0</span>KB /s] [<span class="number">617</span>/<span class="number">199</span>/<span class="number">0</span> iops] [eta <span class="number">00</span>m:<span class="number">31</span>s]Jobs: <span class="number">30</span> (f=<span class="number">30</span>):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [<span class="number">71.3</span>% <span class="keyword">done</span>] [<span class="number">10528</span>KB/<span class="number">2624</span>KB/<span class="number">0</span>KB /s] [<span class="number">658</span>/<span class="number">164</span>/<span class="number">0</span> iops] [eta <span class="number">00</span>m:<span class="number">29</span>sJobs: <span class="number">30</span> (f=<span class="number">30</span>):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [<span class="number">72.3</span>% <span class="keyword">done</span>] [<span class="number">9696</span>KB/<span class="number">2752</span>KB/<span class="number">0</span>KB /s] [<span class="number">606</span>/<span class="number">172</span>/<span class="number">0</span> iops] [eta <span class="number">00</span>m:<span class="number">28</span>s]Jobs: <span class="number">30</span> (f=<span class="number">30</span>):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [<span class="number">73.3</span>% <span class="keyword">done</span>] [<span class="number">10624</span>KB/<span class="number">2912</span>KB/<span class="number">0</span>KB /s] [<span class="number">664</span>/<span class="number">182</span>/<span class="number">0</span> iops] [eta <span class="number">00</span>m:<span class="number">27</span>sJobs: <span class="number">30</span> (f=<span class="number">30</span>):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [<span class="number">74.3</span>% <span class="keyword">done</span>] [<span class="number">9312</span>KB/<span class="number">2832</span>KB/<span class="number">0</span>KB /s] [<span class="number">582</span>/<span class="number">177</span>/<span class="number">0</span> iops] [eta <span class="number">00</span>m:<span class="number">26</span>s]Jobs: <span class="number">30</span> (f=<span class="number">30</span>):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [<span class="number">95.0</span>% <span class="keyword">done</span>] [<span class="number">10128</span>KB/<span class="number">3792</span>KB/<span class="number">0</span>KB /s] [<span class="number">633</span>/<span class="number">237</span>/<span class="number">0</span> iops] [eta <span class="number">00</span>m:<span class="number">05</span>sJobs: <span class="number">30</span> (f=<span class="number">30</span>):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [<span class="number">96.0</span>% <span class="keyword">done</span>] [<span class="number">8320</span>KB/<span class="number">3904</span>KB/<span class="number">0</span>KB /s] [<span class="number">520</span>/<span class="number">244</span>/<span class="number">0</span> iops] [eta <span class="number">00</span>m:<span class="number">04</span>s]Jobs: <span class="number">30</span> (f=<span class="number">30</span>):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [<span class="number">100.0</span>% <span class="keyword">done</span>] [<span class="number">9264</span>KB/<span class="number">3536</span>KB/<span class="number">0</span>KB /s] [<span class="number">579</span>/<span class="number">221</span>/<span class="number">0</span> iops] [eta <span class="number">00</span>m:<span class="number">00</span>s]</span><br><span class="line"></span><br><span class="line">mytest1: (groupid=<span class="number">0</span>, <span class="built_in">jobs</span>=<span class="number">30</span>): err= <span class="number">0</span>: pid=<span class="number">17792</span>: Tue Nov <span class="number">12</span> <span class="number">10</span>:<span class="number">55</span>:<span class="number">58</span> <span class="number">2013</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">read</span> : io=<span class="number">948896</span>KB, bw=<span class="number">9475.1</span>KB/s, iops=<span class="number">592</span>, runt=<span class="number">100138</span>msec</span><br><span class="line"></span><br><span class="line">    clat (usec): min=<span class="number">67</span>, max=<span class="number">796794</span>, avg=<span class="number">49878.72</span>, stdev=<span class="number">59636.00</span></span><br><span class="line"></span><br><span class="line">     lat (usec): min=<span class="number">68</span>, max=<span class="number">796794</span>, avg=<span class="number">49879.01</span>, stdev=<span class="number">59636.00</span></span><br><span class="line"></span><br><span class="line">    clat percentiles (msec):</span><br><span class="line"></span><br><span class="line">     | <span class="number">1.00</span>th=[ <span class="number">4</span>], <span class="number">5.00</span>th=[ <span class="number">7</span>], <span class="number">10.00</span>th=[ <span class="number">9</span>], <span class="number">20.00</span>th=[ <span class="number">12</span>],</span><br><span class="line"></span><br><span class="line">     | <span class="number">30.00</span>th=[ <span class="number">16</span>], <span class="number">40.00</span>th=[ <span class="number">22</span>], <span class="number">50.00</span>th=[ <span class="number">29</span>], <span class="number">60.00</span>th=[ <span class="number">39</span>],</span><br><span class="line"></span><br><span class="line">     | <span class="number">70.00</span>th=[ <span class="number">53</span>], <span class="number">80.00</span>th=[ <span class="number">76</span>], <span class="number">90.00</span>th=[ <span class="number">120</span>], <span class="number">95.00</span>th=[ <span class="number">165</span>],</span><br><span class="line"></span><br><span class="line">     | <span class="number">99.00</span>th=[ <span class="number">293</span>], <span class="number">99.50</span>th=[ <span class="number">351</span>], <span class="number">99.90</span>th=[ <span class="number">494</span>], <span class="number">99.95</span>th=[ <span class="number">553</span>],</span><br><span class="line"></span><br><span class="line">     | <span class="number">99.99</span>th=[ <span class="number">701</span>]</span><br><span class="line"></span><br><span class="line">    bw (KB /s): min= <span class="number">20</span>, max= <span class="number">967</span>, per=<span class="number">3.38</span>%, avg=<span class="number">320.53</span>, stdev=<span class="number">116.83</span></span><br><span class="line"></span><br><span class="line">  write: io=<span class="number">380816</span>KB, bw=<span class="number">3802.1</span>KB/s, iops=<span class="number">237</span>, runt=<span class="number">100138</span>msec</span><br><span class="line"></span><br><span class="line">    clat (usec): min=<span class="number">64</span>, max=<span class="number">120607</span>, avg=<span class="number">1801.07</span>, stdev=<span class="number">5409.97</span></span><br><span class="line"></span><br><span class="line">     lat (usec): min=<span class="number">65</span>, max=<span class="number">120610</span>, avg=<span class="number">1803.86</span>, stdev=<span class="number">5409.96</span></span><br><span class="line"></span><br><span class="line">    clat percentiles (usec):</span><br><span class="line"></span><br><span class="line">     | <span class="number">1.00</span>th=[ <span class="number">69</span>], <span class="number">5.00</span>th=[ <span class="number">73</span>], <span class="number">10.00</span>th=[ <span class="number">77</span>], <span class="number">20.00</span>th=[ <span class="number">81</span>],</span><br><span class="line"></span><br><span class="line">     | <span class="number">30.00</span>th=[ <span class="number">84</span>], <span class="number">40.00</span>th=[ <span class="number">87</span>], <span class="number">50.00</span>th=[ <span class="number">90</span>], <span class="number">60.00</span>th=[ <span class="number">113</span>],</span><br><span class="line"></span><br><span class="line">     | <span class="number">70.00</span>th=[ <span class="number">724</span>], <span class="number">80.00</span>th=[ <span class="number">3248</span>], <span class="number">90.00</span>th=[ <span class="number">4384</span>], <span class="number">95.00</span>th=[ <span class="number">5344</span>],</span><br><span class="line"></span><br><span class="line">     | <span class="number">99.00</span>th=[<span class="number">33536</span>], <span class="number">99.50</span>th=[<span class="number">41728</span>], <span class="number">99.90</span>th=[<span class="number">59136</span>], <span class="number">99.95</span>th=[<span class="number">68096</span>],</span><br><span class="line"></span><br><span class="line">     | <span class="number">99.99</span>th=[<span class="number">112128</span>]</span><br><span class="line"></span><br><span class="line">    bw (KB /s): min= <span class="number">17</span>, max= <span class="number">563</span>, per=<span class="number">3.52</span>%, avg=<span class="number">133.68</span>, stdev=<span class="number">75.04</span></span><br><span class="line"></span><br><span class="line">    lat (usec) : <span class="number">100</span>=<span class="number">16.41</span>%, <span class="number">250</span>=<span class="number">3.47</span>%, <span class="number">500</span>=<span class="number">0.10</span>%, <span class="number">750</span>=<span class="number">0.12</span>%, <span class="number">1000</span>=<span class="number">0.23</span>%</span><br><span class="line"></span><br><span class="line">    lat (msec) : <span class="number">2</span>=<span class="number">0.86</span>%, <span class="number">4</span>=<span class="number">4.57</span>%, <span class="number">10</span>=<span class="number">13.39</span>%, <span class="number">20</span>=<span class="number">16.08</span>%, <span class="number">50</span>=<span class="number">22.27</span>%</span><br><span class="line"></span><br><span class="line">    lat (msec) : <span class="number">100</span>=<span class="number">12.87</span>%, <span class="number">250</span>=<span class="number">8.49</span>%, <span class="number">500</span>=<span class="number">1.08</span>%, <span class="number">750</span>=<span class="number">0.06</span>%, <span class="number">1000</span>=<span class="number">0.01</span>%</span><br><span class="line"></span><br><span class="line">  cpu : usr=<span class="number">0.02</span>%, sys=<span class="number">0.07</span>%, ctx=<span class="number">83130</span>, majf=<span class="number">0</span>, minf=<span class="number">7</span></span><br><span class="line"></span><br><span class="line">  IO depths : <span class="number">1</span>=<span class="number">100.0</span>%, <span class="number">2</span>=<span class="number">0.0</span>%, <span class="number">4</span>=<span class="number">0.0</span>%, <span class="number">8</span>=<span class="number">0.0</span>%, <span class="number">16</span>=<span class="number">0.0</span>%, <span class="number">32</span>=<span class="number">0.0</span>%, &gt;=<span class="number">64</span>=<span class="number">0.0</span>%</span><br><span class="line"></span><br><span class="line">     submit : <span class="number">0</span>=<span class="number">0.0</span>%, <span class="number">4</span>=<span class="number">100.0</span>%, <span class="number">8</span>=<span class="number">0.0</span>%, <span class="number">16</span>=<span class="number">0.0</span>%, <span class="number">32</span>=<span class="number">0.0</span>%, <span class="number">64</span>=<span class="number">0.0</span>%, &gt;=<span class="number">64</span>=<span class="number">0.0</span>%</span><br><span class="line"></span><br><span class="line">     complete : <span class="number">0</span>=<span class="number">0.0</span>%, <span class="number">4</span>=<span class="number">100.0</span>%, <span class="number">8</span>=<span class="number">0.0</span>%, <span class="number">16</span>=<span class="number">0.0</span>%, <span class="number">32</span>=<span class="number">0.0</span>%, <span class="number">64</span>=<span class="number">0.0</span>%, &gt;=<span class="number">64</span>=<span class="number">0.0</span>%</span><br><span class="line"></span><br><span class="line">     issued : total=r=<span class="number">59306</span>/w=<span class="number">23801</span>/d=<span class="number">0</span>, short=r=<span class="number">0</span>/w=<span class="number">0</span>/d=<span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Run status group <span class="number">0</span> (all <span class="built_in">jobs</span>):</span><br><span class="line"></span><br><span class="line">   READ: io=<span class="number">948896</span>KB, aggrb=<span class="number">9475</span>KB/s, minb=<span class="number">9475</span>KB/s, maxb=<span class="number">9475</span>KB/s, mint=<span class="number">100138</span>msec, maxt=<span class="number">100138</span>msec</span><br><span class="line"></span><br><span class="line">  WRITE: io=<span class="number">380816</span>KB, aggrb=<span class="number">3802</span>KB/s, minb=<span class="number">3802</span>KB/s, maxb=<span class="number">3802</span>KB/s, mint=<span class="number">100138</span>msec, maxt=<span class="number">100138</span>msec</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Disk stats (<span class="built_in">read</span>/write):</span><br><span class="line"></span><br><span class="line">  sda: ios=<span class="number">59211</span>/<span class="number">24192</span>, merge=<span class="number">0</span>/<span class="number">289</span>, ticks=<span class="number">2951434</span>/<span class="number">63353</span>, <span class="keyword">in</span>_queue=<span class="number">3092383</span>, util=<span class="number">99.97</span>%</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>测试结果如上，主要关注bw和iops结果</p>
+</blockquote>
+<p>bw：磁盘的吞吐量，这个是顺序读写考察的重点<br>iops：磁盘的每秒读写次数，这个是随机读写考察的重点</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">read</span> : io=<span class="number">948896</span>KB, bw=<span class="number">9475.1</span>KB/s, iops=<span class="number">592</span>, runt=<span class="number">100138</span>msec</span><br><span class="line">write: io=<span class="number">380816</span>KB, bw=<span class="number">3802.1</span>KB/s, iops=<span class="number">237</span>, runt=<span class="number">100138</span>msec</span><br></pre></td></tr></table></figure>
+<h2 id="硬盘性能指标">硬盘性能指标</h2><p><strong>顺序读写</strong> （吞吐量，常用单位为MB/s）：文件在硬盘上存储位置是连续的。</p>
+<p>适用场景：大文件拷贝（比如视频音乐）。速度即使很高，对数据库性能也没有参考价值。</p>
+<p><strong>4K随机读写</strong> （IOPS，常用单位为次）：在硬盘上随机位置读写数据，每次4KB。</p>
+<p>适用场景：操作系统运行、软件运行、数据库。</p>
+<p>以下是使用通用I/O测试工具“fio”，并在指定数据块大小“4K、512K”、队列深度为“128”的条件下，对“SAS”以及“SSD”这两种机型磁盘进行的I/O基准性能测试所得出的测试数据。</p>
+<h3 id="测试数据">测试数据</h3><p>测试1. 顺序读/写512K</p>
+<p><img src="https://docs.ucloud.cn/_images/seq512k.jpg" alt=""></p>
+<p>测试2. 随机读/写 4K</p>
+<p><img src="https://docs.ucloud.cn/_images/rand4k.jpg" alt=""></p>
+<h3 id="配置文件">配置文件</h3><blockquote>
+<p>块大小：4kb / 512kb<br>队列深度：128</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#fio.conf配置</span></span><br><span class="line"></span><br><span class="line">[global]</span><br><span class="line">ioengine=libaio</span><br><span class="line">iodepth=<span class="number">128</span></span><br><span class="line">time_based</span><br><span class="line">direct=<span class="number">1</span></span><br><span class="line">thread=<span class="number">1</span></span><br><span class="line">group_reporting</span><br><span class="line">randrepeat=<span class="number">0</span></span><br><span class="line">norandommap</span><br><span class="line">numjobs=<span class="number">32</span></span><br><span class="line">timeout=<span class="number">6000</span></span><br><span class="line">runtime=<span class="number">120</span></span><br><span class="line"></span><br><span class="line">[randread-<span class="number">4</span>k]</span><br><span class="line">rw=randread</span><br><span class="line">bs=<span class="number">4</span>k</span><br><span class="line">filename=/dev/sdb   <span class="comment">#注：/dev/sdb是目标测试磁盘的设备名称</span></span><br><span class="line">rwmixread=<span class="number">100</span></span><br><span class="line">stonewall</span><br><span class="line"></span><br><span class="line">[randwrite-<span class="number">4</span>k]</span><br><span class="line">rw=randwrite</span><br><span class="line">bs=<span class="number">4</span>k</span><br><span class="line">filename=/dev/sdb</span><br><span class="line">stonewall</span><br><span class="line"></span><br><span class="line">[<span class="built_in">read</span>-<span class="number">512</span>k]</span><br><span class="line">rw=<span class="built_in">read</span></span><br><span class="line">bs=<span class="number">512</span>k</span><br><span class="line">filename=/dev/sdb</span><br><span class="line">stonewall</span><br><span class="line"></span><br><span class="line">[write-<span class="number">512</span>k]</span><br><span class="line">rw=write</span><br><span class="line">bs=<span class="number">512</span>k</span><br><span class="line">filename=/dev/sdb</span><br><span class="line">stonewall</span><br><span class="line"></span><br><span class="line"><span class="comment">#使用方法</span></span><br><span class="line">shell$&gt; fio fio.conf</span><br></pre></td></tr></table></figure>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/fio/" data-title="使用fio测试磁盘I/O性能 | HelloDog" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/esxi/" title="VMware ESXi自动化部署实践">
+  <strong>上一篇：</strong><br/>
+  <span>
+  VMware ESXi自动化部署实践</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/autoyast/"  title="基于AutoYaST自动化安装SuSE实践">
+ <strong>下一篇：</strong><br/> 
+ <span>基于AutoYaST自动化安装SuSE实践
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="post/fio/" data-title="使用fio测试磁盘I/O性能" data-url="https://wsgzao.github.io/post/fio/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#测试准备"><span class="toc-number">3.</span> <span class="toc-text">测试准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fio用法"><span class="toc-number">4.</span> <span class="toc-text">fio用法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#fio参数说明"><span class="toc-number">4.1.</span> <span class="toc-text">fio参数说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实际测试范例"><span class="toc-number">4.2.</span> <span class="toc-text">实际测试范例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#硬盘性能指标"><span class="toc-number">5.</span> <span class="toc-text">硬盘性能指标</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#测试数据"><span class="toc-number">5.1.</span> <span class="toc-text">测试数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置文件"><span class="toc-number">5.2.</span> <span class="toc-text">配置文件</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>42</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>6</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Doing is better than perfect.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="//faisalman.github.io/ua-parser-js/src/ua-parser.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"wsgzao"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//wsgzao.github.io/embed_ua.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+<!-- baidu_push Begin -->
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+            
+<!-- baidu_push End -->
+  </body>
+</html>

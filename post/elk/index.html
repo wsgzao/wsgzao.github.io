@@ -1,0 +1,556 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>使用ELK(Elasticsearch + Logstash + Kibana) 搭建日志集中分析平台实践 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="ELK(Elasticsearch + Logstash + Kibana)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用ELK(Elasticsearch + Logstash + Kibana) 搭建日志集中分析平台实践">
+<meta property="og:url" content="https://wsgzao.github.io/post/elk/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="ELK(Elasticsearch + Logstash + Kibana)">
+<meta property="og:image" content="//i.v2ex.co/2Zo3bPa3.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用ELK(Elasticsearch + Logstash + Kibana) 搭建日志集中分析平台实践">
+<meta name="twitter:description" content="ELK(Elasticsearch + Logstash + Kibana)">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index">索引 | Index</a></li>
+					
+						<li><a href="/archives">归档 | Archives</a></li>
+					
+						<li><a href="/about">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/elk/" title="使用ELK(Elasticsearch + Logstash + Kibana) 搭建日志集中分析平台实践" itemprop="url">使用ELK(Elasticsearch + Logstash + Kibana) 搭建日志集中分析平台实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2015-08-31T04:43:14.000Z" itemprop="datePublished"> 发表于 2015-08-31</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#组件预览"><span class="toc-number">3.</span> <span class="toc-text">组件预览</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设置FQDN"><span class="toc-number">4.</span> <span class="toc-text">设置FQDN</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务端"><span class="toc-number">5.</span> <span class="toc-text">服务端</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Java"><span class="toc-number">5.1.</span> <span class="toc-text">Java</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Elasticsearch"><span class="toc-number">5.2.</span> <span class="toc-text">Elasticsearch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Kibana"><span class="toc-number">5.3.</span> <span class="toc-text">Kibana</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Logstash"><span class="toc-number">5.4.</span> <span class="toc-text">Logstash</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#客户端"><span class="toc-number">6.</span> <span class="toc-text">客户端</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Logstash_Forwarder"><span class="toc-number">6.1.</span> <span class="toc-text">Logstash Forwarder</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置Nginx日志策略"><span class="toc-number">6.2.</span> <span class="toc-text">配置Nginx日志策略</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其它注意事项"><span class="toc-number">7.</span> <span class="toc-text">其它注意事项</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#修改kibana端口"><span class="toc-number">7.1.</span> <span class="toc-text">修改kibana端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JVM调优"><span class="toc-number">7.2.</span> <span class="toc-text">JVM调优</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<p><img src="//i.v2ex.co/2Zo3bPa3.png" alt=""></p>
+<h2 id="前言">前言</h2><p>Elasticsearch + Logstash + Kibana（ELK）是一套开源的日志管理方案，分析网站的访问情况时我们一般会借助Google/百度/CNZZ等方式嵌入JS做数据统计，但是当网站访问异常或者被攻击时我们需要在后台分析如Nginx的具体日志，而Nginx日志分割/GoAccess/Awstats都是相对简单的单节点解决方案，针对分布式集群或者数据量级较大时会显得心有余而力不足，而ELK的出现可以使我们从容面对新的挑战。</p>
+<ul>
+<li>Logstash：负责日志的收集，处理和储存</li>
+<li>Elasticsearch：负责日志检索和分析</li>
+<li>Kibana：负责日志的可视化</li>
+</ul>
+<blockquote>
+<p>ELK(Elasticsearch + Logstash + Kibana) </p>
+</blockquote>
+<hr>
+<h2 id="更新记录">更新记录</h2><p>2015年08月31日 - 初稿</p>
+<p>阅读原文 - <a href="http://wsgzao.github.io/post/elk/" target="_blank" rel="external">http://wsgzao.github.io/post/elk/</a></p>
+<p>扩展阅读</p>
+<p>CentOS 7.x安装ELK(Elasticsearch+Logstash+Kibana) - <a href="http://www.chenshake.com/centos-install-7-x-elk-elasticsearchlogstashkibana/" target="_blank" rel="external">http://www.chenshake.com/centos-install-7-x-elk-elasticsearchlogstashkibana/</a><br>Centos 6.5 安装nginx日志分析系统 elasticsearch + logstash + redis + kibana  - <a href="http://blog.chinaunix.net/xmlrpc.php?r=blog/article&amp;uid=17291169&amp;id=4898582" target="_blank" rel="external">http://blog.chinaunix.net/xmlrpc.php?r=blog/article&amp;uid=17291169&amp;id=4898582</a><br>logstash-forwarder and grok examples - <a href="https://www.ulyaoth.net/threads/logstash-forwarder-and-grok-examples.32413/" target="_blank" rel="external">https://www.ulyaoth.net/threads/logstash-forwarder-and-grok-examples.32413/</a><br>三斗室 - <a href="http://chenlinux.com/" target="_blank" rel="external">http://chenlinux.com/</a><br>elastic - <a href="https://www.elastic.co/guide" target="_blank" rel="external">https://www.elastic.co/guide</a><br>LTMP索引 - <a href="http://wsgzao.github.io/index/#LTMP" target="_blank" rel="external">http://wsgzao.github.io/index/#LTMP</a></p>
+<hr>
+<h2 id="组件预览">组件预览</h2><p>JDK - <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html" target="_blank" rel="external">http://www.oracle.com/technetwork/java/javase/downloads/index.html</a><br>Elasticsearch - <a href="https://www.elastic.co/downloads/elasticsearch" target="_blank" rel="external">https://www.elastic.co/downloads/elasticsearch</a><br>Logstash - <a href="https://www.elastic.co/downloads/logstash" target="_blank" rel="external">https://www.elastic.co/downloads/logstash</a><br>Kibana - <a href="https://www.elastic.co/downloads/kibana" target="_blank" rel="external">https://www.elastic.co/downloads/kibana</a><br>redis - <a href="http://redis.io/download" target="_blank" rel="external">http://redis.io/download</a></p>
+<h2 id="设置FQDN">设置FQDN</h2><blockquote>
+<p>创建SSL证书的时候需要配置FQDN</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#修改hostname</span></span><br><span class="line">cat /etc/hostname</span><br><span class="line">elk</span><br><span class="line"></span><br><span class="line"><span class="comment">#修改hosts</span></span><br><span class="line">cat /etc/hosts</span><br><span class="line"></span><br><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>   localhost localhost.localdomain localhost4 localhost4.localdomain4</span><br><span class="line">::<span class="number">1</span>         localhost localhost.localdomain localhost6 localhost6.localdomain6</span><br><span class="line"></span><br><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span> <span class="number">10</span>-<span class="number">10</span>-<span class="number">87</span>-<span class="number">19</span></span><br><span class="line"><span class="number">10.10</span>.<span class="number">87.19</span> elk.ooxx.com elk</span><br><span class="line"></span><br><span class="line"><span class="comment">#刷新环境</span></span><br><span class="line">hostname -F /etc/hostname</span><br><span class="line"></span><br><span class="line"><span class="comment">#复查结果</span></span><br><span class="line">hostname <span class="operator">-f</span></span><br><span class="line">elk.ooxx.com</span><br><span class="line"></span><br><span class="line">hostname</span><br><span class="line">elk</span><br></pre></td></tr></table></figure>
+<h2 id="服务端">服务端</h2><h3 id="Java">Java</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/redhat-release</span><br><span class="line">CentOS release <span class="number">6.5</span> (Final)</span><br><span class="line"></span><br><span class="line">yum install java-<span class="number">1.7</span>.<span class="number">0</span>-openjdk</span><br><span class="line">java -version</span><br><span class="line"></span><br><span class="line">java version <span class="string">"1.7.0_85"</span></span><br><span class="line">OpenJDK Runtime Environment (rhel-<span class="number">2.6</span>.<span class="number">1.3</span>.el6_6-x86_64 u85-b01)</span><br><span class="line">OpenJDK <span class="number">64</span>-Bit Server VM (build <span class="number">24.85</span>-b03, mixed mode)</span><br></pre></td></tr></table></figure>
+<h3 id="Elasticsearch">Elasticsearch</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#下载安装</span></span><br><span class="line">wget https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-<span class="number">1.7</span>.<span class="number">1</span>.noarch.rpm</span><br><span class="line">yum localinstall elasticsearch-<span class="number">1.7</span>.<span class="number">1</span>.noarch.rpm </span><br><span class="line"></span><br><span class="line"><span class="comment">#启动相关服务</span></span><br><span class="line">service elasticsearch start</span><br><span class="line">service elasticsearch status</span><br><span class="line"></span><br><span class="line"><span class="comment">#查看Elasticsearch的配置文件</span></span><br><span class="line">rpm -qc elasticsearch</span><br><span class="line"></span><br><span class="line">/etc/elasticsearch/elasticsearch.yml</span><br><span class="line">/etc/elasticsearch/logging.yml</span><br><span class="line">/etc/init.d/elasticsearch</span><br><span class="line">/etc/sysconfig/elasticsearch</span><br><span class="line">/usr/lib/sysctl.d/elasticsearch.conf</span><br><span class="line">/usr/lib/systemd/system/elasticsearch.service</span><br><span class="line">/usr/lib/tmpfiles.d/elasticsearch.conf</span><br><span class="line"></span><br><span class="line"><span class="comment">#查看端口使用情况</span></span><br><span class="line">netstat -nltp</span><br><span class="line"></span><br><span class="line">Active Internet connections (only servers)</span><br><span class="line">Proto Recv-Q Send-Q Local Address               Foreign Address             State       PID/Program name   </span><br><span class="line">tcp        <span class="number">0</span>      <span class="number">0</span> <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">9200</span>                <span class="number">0.0</span>.<span class="number">0.0</span>:*                   LISTEN      <span class="number">1765</span>/java           </span><br><span class="line">tcp        <span class="number">0</span>      <span class="number">0</span> <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">9300</span>                <span class="number">0.0</span>.<span class="number">0.0</span>:*                   LISTEN      <span class="number">1765</span>/java           </span><br><span class="line">tcp        <span class="number">0</span>      <span class="number">0</span> <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">22</span>                  <span class="number">0.0</span>.<span class="number">0.0</span>:*                   LISTEN      <span class="number">1509</span>/sshd           </span><br><span class="line">tcp        <span class="number">0</span>      <span class="number">0</span> :::<span class="number">22</span>                       :::*                        LISTEN      <span class="number">1509</span>/sshd  </span><br><span class="line"></span><br><span class="line"><span class="comment">#测试访问</span></span><br><span class="line">curl -X GET http://localhost:<span class="number">9200</span>/</span><br></pre></td></tr></table></figure>
+<h3 id="Kibana">Kibana</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#下载tar包</span></span><br><span class="line">wget https://download.elastic.co/kibana/kibana/kibana-<span class="number">4.1</span>.<span class="number">1</span>-linux-x64.tar.gz</span><br><span class="line"><span class="comment">#解压</span></span><br><span class="line">tar zxf kibana-<span class="number">4.1</span>.<span class="number">1</span>-linux-x64.tar.gz -C /usr/<span class="built_in">local</span>/</span><br><span class="line"><span class="built_in">cd</span> /usr/<span class="built_in">local</span>/</span><br><span class="line">mv kibana-<span class="number">4.1</span>.<span class="number">1</span>-linux-x64 kibana</span><br><span class="line"></span><br><span class="line"><span class="comment">#创建kibana服务</span></span><br><span class="line">vi /etc/rc.d/init.d/kibana</span><br><span class="line"></span><br><span class="line"><span class="shebang">#!/bin/bash</span></span><br><span class="line"><span class="comment">### BEGIN INIT INFO</span></span><br><span class="line"><span class="comment"># Provides:          kibana</span></span><br><span class="line"><span class="comment"># Default-Start:     2 3 4 5</span></span><br><span class="line"><span class="comment"># Default-Stop:      0 1 6</span></span><br><span class="line"><span class="comment"># Short-Description: Runs kibana daemon</span></span><br><span class="line"><span class="comment"># Description: Runs the kibana daemon as a non-root user</span></span><br><span class="line"><span class="comment">### END INIT INFO</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Process name</span></span><br><span class="line">NAME=kibana</span><br><span class="line">DESC=<span class="string">"Kibana4"</span></span><br><span class="line">PROG=<span class="string">"/etc/init.d/kibana"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Configure location of Kibana bin</span></span><br><span class="line">KIBANA_BIN=/usr/<span class="built_in">local</span>/kibana/bin</span><br><span class="line"></span><br><span class="line"><span class="comment"># PID Info</span></span><br><span class="line">PID_FOLDER=/var/run/kibana/</span><br><span class="line">PID_FILE=/var/run/kibana/<span class="variable">$NAME</span>.pid</span><br><span class="line">LOCK_FILE=/var/lock/subsys/<span class="variable">$NAME</span></span><br><span class="line">PATH=/bin:/usr/bin:/sbin:/usr/sbin:<span class="variable">$KIBANA_BIN</span></span><br><span class="line">DAEMON=<span class="variable">$KIBANA_BIN</span>/<span class="variable">$NAME</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Configure User to run daemon process</span></span><br><span class="line">DAEMON_USER=root</span><br><span class="line"><span class="comment"># Configure logging location</span></span><br><span class="line">KIBANA_LOG=/var/<span class="built_in">log</span>/kibana.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># Begin Script</span></span><br><span class="line">RETVAL=<span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ `id -u` <span class="operator">-ne</span> <span class="number">0</span> ]; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">"You need root privileges to run this script"</span></span><br><span class="line">        <span class="built_in">exit</span> <span class="number">1</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Function library</span></span><br><span class="line">. /etc/init.d/<span class="built_in">functions</span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="title">start</span></span>() &#123;</span><br><span class="line">        <span class="built_in">echo</span> -n <span class="string">"Starting <span class="variable">$DESC</span> : "</span></span><br><span class="line"></span><br><span class="line">pid=`pidofproc -p <span class="variable">$PID_FILE</span> kibana`</span><br><span class="line">        <span class="keyword">if</span> [ -n <span class="string">"<span class="variable">$pid</span>"</span> ] ; <span class="keyword">then</span></span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"Already running."</span></span><br><span class="line">                <span class="built_in">exit</span> <span class="number">0</span></span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        <span class="comment"># Start Daemon</span></span><br><span class="line"><span class="keyword">if</span> [ ! <span class="operator">-d</span> <span class="string">"<span class="variable">$PID_FOLDER</span>"</span> ] ; <span class="keyword">then</span></span><br><span class="line">                        mkdir <span class="variable">$PID_FOLDER</span></span><br><span class="line">                <span class="keyword">fi</span></span><br><span class="line">daemon --user=<span class="variable">$DAEMON_USER</span> --pidfile=<span class="variable">$PID_FILE</span> <span class="variable">$DAEMON</span> <span class="number">1</span>&gt;<span class="string">"<span class="variable">$KIBANA_LOG</span>"</span> <span class="number">2</span>&gt;&amp;<span class="number">1</span> &amp;</span><br><span class="line">                sleep <span class="number">2</span></span><br><span class="line">                pidofproc node &gt; <span class="variable">$PID_FILE</span></span><br><span class="line">                RETVAL=$?</span><br><span class="line">                [[ $? <span class="operator">-eq</span> <span class="number">0</span> ]] &amp;&amp; success || failure</span><br><span class="line"><span class="built_in">echo</span></span><br><span class="line">                [ <span class="variable">$RETVAL</span> = <span class="number">0</span> ] &amp;&amp; touch <span class="variable">$LOCK_FILE</span></span><br><span class="line">                <span class="built_in">return</span> <span class="variable">$RETVAL</span></span><br><span class="line">        <span class="keyword">fi</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">reload</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"Reload command is not implemented for this service."</span></span><br><span class="line">    <span class="built_in">return</span> <span class="variable">$RETVAL</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">stop</span></span>() &#123;</span><br><span class="line">        <span class="built_in">echo</span> -n <span class="string">"Stopping <span class="variable">$DESC</span> : "</span></span><br><span class="line">        killproc -p <span class="variable">$PID_FILE</span> <span class="variable">$DAEMON</span></span><br><span class="line">        RETVAL=$?</span><br><span class="line"><span class="built_in">echo</span></span><br><span class="line">        [ <span class="variable">$RETVAL</span> = <span class="number">0</span> ] &amp;&amp; rm <span class="operator">-f</span> <span class="variable">$PID_FILE</span> <span class="variable">$LOCK_FILE</span></span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">case</span> <span class="string">"<span class="variable">$1</span>"</span> <span class="keyword">in</span></span><br><span class="line">  start)</span><br><span class="line">        start</span><br><span class="line">;;</span><br><span class="line">  stop)</span><br><span class="line">        stop</span><br><span class="line">        ;;</span><br><span class="line">  status)</span><br><span class="line">        status -p <span class="variable">$PID_FILE</span> <span class="variable">$DAEMON</span></span><br><span class="line">        RETVAL=$?</span><br><span class="line">        ;;</span><br><span class="line">  restart)</span><br><span class="line">        stop</span><br><span class="line">        start</span><br><span class="line">        ;;</span><br><span class="line">  reload)</span><br><span class="line">reload</span><br><span class="line">;;</span><br><span class="line">  *)</span><br><span class="line"><span class="comment"># Invalid Arguments, print the following message.</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">"Usage: <span class="variable">$0</span> &#123;start|stop|status|restart&#125;"</span> &gt;&amp;<span class="number">2</span></span><br><span class="line"><span class="built_in">exit</span> <span class="number">2</span></span><br><span class="line">        ;;</span><br><span class="line"><span class="keyword">esac</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#修改启动权限</span></span><br><span class="line">chmod +x /etc/rc.d/init.d/kibana</span><br><span class="line"></span><br><span class="line"><span class="comment">#启动kibana服务</span></span><br><span class="line">service kibana start</span><br><span class="line">service kibana status</span><br><span class="line"></span><br><span class="line"><span class="comment">#查看端口</span></span><br><span class="line">netstat -nltp</span><br><span class="line"></span><br><span class="line">Active Internet connections (only servers)</span><br><span class="line">Proto Recv-Q Send-Q Local Address               Foreign Address             State       PID/Program name   </span><br><span class="line">tcp        <span class="number">0</span>      <span class="number">0</span> <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">9200</span>                <span class="number">0.0</span>.<span class="number">0.0</span>:*                   LISTEN      <span class="number">1765</span>/java           </span><br><span class="line">tcp        <span class="number">0</span>      <span class="number">0</span> <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">9300</span>                <span class="number">0.0</span>.<span class="number">0.0</span>:*                   LISTEN      <span class="number">1765</span>/java           </span><br><span class="line">tcp        <span class="number">0</span>      <span class="number">0</span> <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">22</span>                  <span class="number">0.0</span>.<span class="number">0.0</span>:*                   LISTEN      <span class="number">1509</span>/sshd           </span><br><span class="line">tcp        <span class="number">0</span>      <span class="number">0</span> <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">5601</span>                <span class="number">0.0</span>.<span class="number">0.0</span>:*                   LISTEN      <span class="number">1876</span>/node           </span><br><span class="line">tcp        <span class="number">0</span>      <span class="number">0</span> :::<span class="number">22</span>                       :::*                        LISTEN      <span class="number">1509</span>/sshd</span><br></pre></td></tr></table></figure>
+<h3 id="Logstash">Logstash</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#下载rpm包</span></span><br><span class="line">wget https://download.elastic.co/logstash/logstash/packages/centos/logstash-<span class="number">1.5</span>.<span class="number">4</span>-<span class="number">1</span>.noarch.rpm</span><br><span class="line"><span class="comment">#安装</span></span><br><span class="line">yum localinstall logstash-<span class="number">1.5</span>.<span class="number">4</span>-<span class="number">1</span>.noarch.rpm </span><br><span class="line"></span><br><span class="line"><span class="comment">#设置ssl，之前设置的FQDN是elk.ooxx.com</span></span><br><span class="line"><span class="built_in">cd</span> /etc/pki/tls</span><br><span class="line"><span class="comment">#openssl req -x509  -batch -nodes -newkey rsa:2048 -keyout lumberjack.key -out lumberjack.crt -subj /CN=logstash.example.com</span></span><br><span class="line">openssl req -subj <span class="string">'/CN=elk.ooxx.com/'</span> -x509 -days <span class="number">3650</span> -batch -nodes -newkey rsa:<span class="number">2048</span> -keyout private/logstash-forwarder.key -out certs/logstash-forwarder.crt</span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"><span class="comment">#创建一个01-logstash-initial.conf文件</span></span><br><span class="line">cat &gt; /etc/logstash/conf.d/<span class="number">01</span>-logstash-initial.conf &lt;&lt; EOF</span><br><span class="line">input &#123;</span><br><span class="line">  lumberjack &#123;</span><br><span class="line">    port =&gt; <span class="number">5000</span></span><br><span class="line">    <span class="built_in">type</span> =&gt; <span class="string">"logs"</span></span><br><span class="line">    ssl_certificate =&gt; <span class="string">"/etc/pki/tls/certs/logstash-forwarder.crt"</span></span><br><span class="line">    ssl_key =&gt; <span class="string">"/etc/pki/tls/private/logstash-forwarder.key"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">filter &#123;</span><br><span class="line">  <span class="keyword">if</span> [<span class="built_in">type</span>] == <span class="string">"syslog"</span> &#123;</span><br><span class="line">    grok &#123;</span><br><span class="line">      match =&gt; &#123; <span class="string">"message"</span> =&gt; <span class="string">"%&#123;SYSLOGTIMESTAMP:syslog_timestamp&#125; %&#123;SYSLOGHOST:syslog_hostname&#125; %&#123;DATA:syslog_program&#125;(?:\[%&#123;POSINT:syslog_pid&#125;\])?: %&#123;GREEDYDATA:syslog_message&#125;"</span> &#125;</span><br><span class="line">      add_field =&gt; [ <span class="string">"received_at"</span>, <span class="string">"%&#123;@timestamp&#125;"</span> ]</span><br><span class="line">      add_field =&gt; [ <span class="string">"received_from"</span>, <span class="string">"%&#123;host&#125;"</span> ]</span><br><span class="line">    &#125;</span><br><span class="line">    syslog_pri &#123; &#125;</span><br><span class="line">    date &#123;</span><br><span class="line">      match =&gt; [ <span class="string">"syslog_timestamp"</span>, <span class="string">"MMM  d HH:mm:ss"</span>, <span class="string">"MMM dd HH:mm:ss"</span> ]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">output &#123;</span><br><span class="line">  elasticsearch &#123; host =&gt; localhost &#125;</span><br><span class="line">  stdout &#123; codec =&gt; rubydebug &#125;</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment">#启动logstash服务</span></span><br><span class="line">service logstash start</span><br><span class="line">service logstash status</span><br><span class="line"></span><br><span class="line"><span class="comment">#查看5000端口</span></span><br><span class="line">netstat -nltp</span><br><span class="line"></span><br><span class="line">Active Internet connections (only servers)</span><br><span class="line">Proto Recv-Q Send-Q Local Address               Foreign Address             State       PID/Program name   </span><br><span class="line">tcp        <span class="number">0</span>      <span class="number">0</span> <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">9200</span>                <span class="number">0.0</span>.<span class="number">0.0</span>:*                   LISTEN      <span class="number">1765</span>/java           </span><br><span class="line">tcp        <span class="number">0</span>      <span class="number">0</span> <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">9300</span>                <span class="number">0.0</span>.<span class="number">0.0</span>:*                   LISTEN      <span class="number">1765</span>/java           </span><br><span class="line">tcp        <span class="number">0</span>      <span class="number">0</span> <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">9301</span>                <span class="number">0.0</span>.<span class="number">0.0</span>:*                   LISTEN      <span class="number">2309</span>/java           </span><br><span class="line">tcp        <span class="number">0</span>      <span class="number">0</span> <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">22</span>                  <span class="number">0.0</span>.<span class="number">0.0</span>:*                   LISTEN      <span class="number">1509</span>/sshd           </span><br><span class="line">tcp        <span class="number">0</span>      <span class="number">0</span> <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">5601</span>                <span class="number">0.0</span>.<span class="number">0.0</span>:*                   LISTEN      <span class="number">1876</span>/node           </span><br><span class="line">tcp        <span class="number">0</span>      <span class="number">0</span> <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">5000</span>                <span class="number">0.0</span>.<span class="number">0.0</span>:*                   LISTEN      <span class="number">2309</span>/java           </span><br><span class="line">tcp        <span class="number">0</span>      <span class="number">0</span> :::<span class="number">22</span>                       :::*                        LISTEN      <span class="number">1509</span>/sshd  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#启动服务</span></span><br><span class="line">service logstash-forwarder start</span><br><span class="line">service logstash-forwarder status</span><br><span class="line"></span><br><span class="line"><span class="comment">#访问Kibana，Time-field name 选择 @timestamp</span></span><br><span class="line">http://localhost:<span class="number">5601</span>/</span><br><span class="line"></span><br><span class="line"><span class="comment">#增加节点和客户端配置一样，注意同步证书</span></span><br><span class="line">/etc/pki/tls/certs/logstash-forwarder.crt</span><br></pre></td></tr></table></figure>
+<h2 id="客户端">客户端</h2><h3 id="Logstash_Forwarder">Logstash Forwarder</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#登陆到客户端，安装Logstash Forwarder</span></span><br><span class="line">wget https://download.elastic.co/logstash-forwarder/binaries/logstash-forwarder-<span class="number">0.4</span>.<span class="number">0</span>-<span class="number">1</span>.x86_64.rpm</span><br><span class="line">yum localinstall logstash-forwarder-<span class="number">0.4</span>.<span class="number">0</span>-<span class="number">1</span>.x86_64.rpm</span><br><span class="line"></span><br><span class="line"><span class="comment">#查看logstash-forwarder的配置文件位置</span></span><br><span class="line">rpm -qc logstash-forwarder</span><br><span class="line">/etc/logstash-forwarder.conf</span><br><span class="line"></span><br><span class="line"><span class="comment">#备份配置文件</span></span><br><span class="line">cp /etc/logstash-forwarder.conf /etc/logstash-forwarder.conf.save</span><br><span class="line"></span><br><span class="line"><span class="comment">#编辑 /etc/logstash-forwarder.conf，需要根据实际情况进行修改</span></span><br><span class="line"></span><br><span class="line">cat &gt; /etc/logstash-forwarder.conf &lt;&lt; EOF</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"network"</span>: &#123;</span><br><span class="line">    <span class="string">"servers"</span>: [ <span class="string">"elk.ooxx.com:5000"</span> ],</span><br><span class="line"></span><br><span class="line">    <span class="string">"ssl ca"</span>: <span class="string">"/etc/pki/tls/certs/logstash-forwarder.crt"</span>,</span><br><span class="line"></span><br><span class="line">    <span class="string">"timeout"</span>: <span class="number">15</span></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="string">"files"</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="string">"paths"</span>: [</span><br><span class="line">        <span class="string">"/var/log/messages"</span>,</span><br><span class="line">        <span class="string">"/var/log/secure"</span></span><br><span class="line">      ],</span><br><span class="line"></span><br><span class="line">      <span class="string">"fields"</span>: &#123; <span class="string">"type"</span>: <span class="string">"syslog"</span> &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<h3 id="配置Nginx日志策略">配置Nginx日志策略</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#修改客户端配置</span></span><br><span class="line">vi /etc/logstash-forwarder.conf</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"network"</span>: &#123;</span><br><span class="line">    <span class="string">"servers"</span>: [ <span class="string">"elk.ooxx.com:5000"</span> ],</span><br><span class="line"></span><br><span class="line">    <span class="string">"ssl ca"</span>: <span class="string">"/etc/pki/tls/certs/logstash-forwarder.crt"</span>,</span><br><span class="line"></span><br><span class="line">    <span class="string">"timeout"</span>: <span class="number">15</span></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="string">"files"</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="string">"paths"</span>: [</span><br><span class="line">        <span class="string">"/var/log/messages"</span>,</span><br><span class="line">        <span class="string">"/var/log/secure"</span></span><br><span class="line">      ],</span><br><span class="line">      <span class="string">"fields"</span>: &#123; <span class="string">"type"</span>: <span class="string">"syslog"</span> &#125;</span><br><span class="line">    &#125;, &#123;</span><br><span class="line">      <span class="string">"paths"</span>: [</span><br><span class="line">        <span class="string">"/app/local/nginx/logs/access.log"</span></span><br><span class="line">      ],</span><br><span class="line">      <span class="string">"fields"</span>: &#123; <span class="string">"type"</span>: <span class="string">"nginx"</span> &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#服务端增加patterns</span></span><br><span class="line">mkdir /opt/logstash/patterns</span><br><span class="line">vi /opt/logstash/patterns/nginx</span><br><span class="line"></span><br><span class="line">NGUSERNAME [a-zA-Z\.\@\-\+_%]+</span><br><span class="line">NGUSER %&#123;NGUSERNAME&#125;</span><br><span class="line">NGINXACCESS %&#123;IPORHOST:remote_addr&#125; - - \[%&#123;HTTPDATE:time_<span class="built_in">local</span>&#125;\] <span class="string">"%&#123;WORD:method&#125; %&#123;URIPATH:path&#125;(?:%&#123;URIPARAM:param&#125;)? HTTP/%&#123;NUMBER:httpversion&#125;"</span> %&#123;INT:status&#125; %&#123;INT:body_bytes_sent&#125; %&#123;QS:http_referer&#125; %&#123;QS:http_user_agent&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#官网pattern的debug在线工具</span></span><br><span class="line">https://grokdebug.herokuapp.com/</span><br><span class="line"></span><br><span class="line"><span class="comment">#修改logstash权限</span></span><br><span class="line">chown -R logstash:logstash /opt/logstash/patterns</span><br><span class="line"></span><br><span class="line"><span class="comment">#修改服务端配置</span></span><br><span class="line">vi /etc/logstash/conf.d/<span class="number">01</span>-logstash-initial.conf </span><br><span class="line"></span><br><span class="line">input &#123;</span><br><span class="line">  lumberjack &#123;</span><br><span class="line">    port =&gt; <span class="number">5000</span></span><br><span class="line">    <span class="built_in">type</span> =&gt; <span class="string">"logs"</span></span><br><span class="line">    ssl_certificate =&gt; <span class="string">"/etc/pki/tls/certs/logstash-forwarder.crt"</span></span><br><span class="line">    ssl_key =&gt; <span class="string">"/etc/pki/tls/private/logstash-forwarder.key"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">filter &#123;</span><br><span class="line">  <span class="keyword">if</span> [<span class="built_in">type</span>] == <span class="string">"syslog"</span> &#123;</span><br><span class="line">    grok &#123;</span><br><span class="line">      match =&gt; &#123; <span class="string">"message"</span> =&gt; <span class="string">"%&#123;SYSLOGTIMESTAMP:syslog_timestamp&#125; %&#123;SYSLOGHOST:syslog_hostname&#125; %&#123;DATA:syslog_program&#125;(?:\[%&#123;POSINT:syslog_pid&#125;\])?: %&#123;GREEDYDATA:syslog_message&#125;"</span> &#125;</span><br><span class="line">      add_field =&gt; [ <span class="string">"received_at"</span>, <span class="string">"%&#123;@timestamp&#125;"</span> ]</span><br><span class="line">      add_field =&gt; [ <span class="string">"received_from"</span>, <span class="string">"%&#123;host&#125;"</span> ]</span><br><span class="line">    &#125;</span><br><span class="line">    syslog_pri &#123; &#125;</span><br><span class="line">    date &#123;</span><br><span class="line">      match =&gt; [ <span class="string">"syslog_timestamp"</span>, <span class="string">"MMM  d HH:mm:ss"</span>, <span class="string">"MMM dd HH:mm:ss"</span> ]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> [<span class="built_in">type</span>] == <span class="string">"nginx"</span> &#123;</span><br><span class="line">    grok &#123;</span><br><span class="line">       match =&gt; &#123; <span class="string">"message"</span> =&gt; <span class="string">"%&#123;NGINXACCESS&#125;"</span> &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">output &#123;</span><br><span class="line">  elasticsearch &#123; host =&gt; localhost &#125;</span><br><span class="line">  stdout &#123; codec =&gt; rubydebug &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="其它注意事项">其它注意事项</h2><h3 id="修改kibana端口">修改kibana端口</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#编辑kibana.yaml</span></span><br><span class="line">vi /usr/<span class="built_in">local</span>/kibana/config/kibana.yml</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Kibana is served by a back end server. This controls which port to use.</span></span><br><span class="line"><span class="comment">#port: 5601</span></span><br><span class="line">port: <span class="number">80</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The host to bind the server to.</span></span><br><span class="line">host: <span class="string">"0.0.0.0"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The Elasticsearch instance to use for all your queries.</span></span><br><span class="line">elasticsearch_url: <span class="string">"http://localhost:9200"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># preserve_elasticsearch_host true will send the hostname specified in `elasticsearch`. If you set it to false,</span></span><br><span class="line"><span class="comment"># then the host you use to connect to *this* Kibana instance will be sent.</span></span><br><span class="line">elasticsearch_preserve_host: <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Kibana uses an index in Elasticsearch to store saved searches, visualizations</span></span><br><span class="line"><span class="comment"># and dashboards. It will create a new index if it doesn't already exist.</span></span><br><span class="line">kibana_index: <span class="string">".kibana"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># If your Elasticsearch is protected with basic auth, this is the user credentials</span></span><br><span class="line"><span class="comment"># used by the Kibana server to perform maintence on the kibana_index at statup. Your Kibana</span></span><br><span class="line"><span class="comment"># users will still need to authenticate with Elasticsearch (which is proxied thorugh</span></span><br><span class="line"><span class="comment"># the Kibana server)</span></span><br><span class="line"><span class="comment"># kibana_elasticsearch_username: user</span></span><br><span class="line"><span class="comment"># kibana_elasticsearch_password: pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># If your Elasticsearch requires client certificate and key</span></span><br><span class="line"><span class="comment"># kibana_elasticsearch_client_crt: /path/to/your/client.crt</span></span><br><span class="line"><span class="comment"># kibana_elasticsearch_client_key: /path/to/your/client.key</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># If you need to provide a CA certificate for your Elasticsarech instance, put</span></span><br><span class="line"><span class="comment"># the path of the pem file here.</span></span><br><span class="line"><span class="comment"># ca: /path/to/your/CA.pem</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The default application to load.</span></span><br><span class="line">default_app_id: <span class="string">"discover"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Time in milliseconds to wait for elasticsearch to respond to pings, defaults to</span></span><br><span class="line"><span class="comment"># request_timeout setting</span></span><br><span class="line"><span class="comment"># ping_timeout: 1500</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Time in milliseconds to wait for responses from the back end or elasticsearch.</span></span><br><span class="line"><span class="comment"># This must be &gt; 0</span></span><br><span class="line">request_timeout: <span class="number">300000</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Time in milliseconds for Elasticsearch to wait for responses from shards.</span></span><br><span class="line"><span class="comment"># Set to 0 to disable.</span></span><br><span class="line">shard_timeout: <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Time in milliseconds to wait for Elasticsearch at Kibana startup before retrying</span></span><br><span class="line"><span class="comment"># startup_timeout: 5000</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Set to false to have a complete disregard for the validity of the SSL</span></span><br><span class="line"><span class="comment"># certificate.</span></span><br><span class="line">verify_ssl: <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># SSL for outgoing requests from the Kibana Server (PEM formatted)</span></span><br><span class="line"><span class="comment"># ssl_key_file: /path/to/your/server.key</span></span><br><span class="line"><span class="comment"># ssl_cert_file: /path/to/your/server.crt</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Set the path to where you would like the process id file to be created.</span></span><br><span class="line"><span class="comment"># pid_file: /var/run/kibana.pid</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># If you would like to send the log output to a file you can set the path below.</span></span><br><span class="line"><span class="comment"># This will also turn off the STDOUT log output.</span></span><br><span class="line"><span class="comment"># log_file: ./kibana.log</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Plugins that are included in the build, and no longer found in the plugins/ folder</span></span><br><span class="line">bundled_plugin_ids:</span><br><span class="line"> - plugins/dashboard/index</span><br><span class="line"> - plugins/discover/index</span><br><span class="line"> - plugins/doc/index</span><br><span class="line"> - plugins/kibana/index</span><br><span class="line"> - plugins/markdown_vis/index</span><br><span class="line"> - plugins/metric_vis/index</span><br><span class="line"> - plugins/settings/index</span><br><span class="line"> - plugins/table_vis/index</span><br><span class="line"> - plugins/vis_types/index</span><br><span class="line"> - plugins/visualize/index</span><br></pre></td></tr></table></figure>
+<h3 id="JVM调优">JVM调优</h3><pre><code class="bash"><span class="comment">#修改elasticsearch.in.sh</span>
+vi /usr/share/elasticsearch/bin/elasticsearch.in.sh
+
+<span class="keyword">if</span> [ <span class="string">"x<span class="variable">$ES_MIN_MEM</span>"</span> = <span class="string">"x"</span> ]; <span class="keyword">then</span>
+    ES_MIN_MEM=<span class="number">1</span>g
+<span class="keyword">fi</span>
+<span class="keyword">if</span> [ <span class="string">"x<span class="variable">$ES_MAX_MEM</span>"</span> = <span class="string">"x"</span> ]; <span class="keyword">then</span>
+    ES_MAX_MEM=<span class="number">1</span>g
+</code></pre>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/elk/" data-title="使用ELK(Elasticsearch + Logstash + Kibana) 搭建日志集中分析平台实践 | HelloDog" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/os/" title="常用操作系统分享">
+  <strong>上一篇：</strong><br/>
+  <span>
+  常用操作系统分享</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/goaccess/"  title="使用GoAccess分析Nginx日志以及sed/awk手动分析实践">
+ <strong>下一篇：</strong><br/> 
+ <span>使用GoAccess分析Nginx日志以及sed/awk手动分析实践
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="post/elk/" data-title="使用ELK(Elasticsearch + Logstash + Kibana) 搭建日志集中分析平台实践" data-url="https://wsgzao.github.io/post/elk/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#组件预览"><span class="toc-number">3.</span> <span class="toc-text">组件预览</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设置FQDN"><span class="toc-number">4.</span> <span class="toc-text">设置FQDN</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务端"><span class="toc-number">5.</span> <span class="toc-text">服务端</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Java"><span class="toc-number">5.1.</span> <span class="toc-text">Java</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Elasticsearch"><span class="toc-number">5.2.</span> <span class="toc-text">Elasticsearch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Kibana"><span class="toc-number">5.3.</span> <span class="toc-text">Kibana</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Logstash"><span class="toc-number">5.4.</span> <span class="toc-text">Logstash</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#客户端"><span class="toc-number">6.</span> <span class="toc-text">客户端</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Logstash_Forwarder"><span class="toc-number">6.1.</span> <span class="toc-text">Logstash Forwarder</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置Nginx日志策略"><span class="toc-number">6.2.</span> <span class="toc-text">配置Nginx日志策略</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其它注意事项"><span class="toc-number">7.</span> <span class="toc-text">其它注意事项</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#修改kibana端口"><span class="toc-number">7.1.</span> <span class="toc-text">修改kibana端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JVM调优"><span class="toc-number">7.2.</span> <span class="toc-text">JVM调优</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>42</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>6</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Doing is better than perfect.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="//faisalman.github.io/ua-parser-js/src/ua-parser.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"wsgzao"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//wsgzao.github.io/embed_ua.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+<!-- baidu_push Begin -->
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+            
+<!-- baidu_push End -->
+  </body>
+</html>
