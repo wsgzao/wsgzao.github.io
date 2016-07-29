@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Keep Calm and Carry On]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="https://wsgzao.github.io/"/>
-  <updated>2016-06-12T08:33:25.102Z</updated>
+  <updated>2016-07-29T08:46:14.067Z</updated>
   <id>https://wsgzao.github.io/</id>
   
   <author>
@@ -15,11 +15,43 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title><![CDATA[Linux使用ntfs-3g挂载NTFS最佳实践]]></title>
+    <link href="https://wsgzao.github.io/post/ntfs-3g/"/>
+    <id>https://wsgzao.github.io/post/ntfs-3g/</id>
+    <published>2016-07-29T08:17:46.000Z</published>
+    <updated>2016-07-29T08:46:14.067Z</updated>
+    <content type="html"><![CDATA[<h2 id="前言">前言</h2><p>Linux和Mac OS X因为某些原因本身不支持读写NTFS文件系统，大多数人平时也不需要与NTFS做数据文件的交互，只是有时候Windows用户应急状态下需要使用大容量移动硬盘拷贝数据，必须实现Linux下挂载NTFS，而Tuxera恰好为Linux和Mac用户提供了灰常简单的实现方法。</p>
+<blockquote>
+<p>Open Source: NTFS-3G，Read-Write NTFS Driver</p>
+</blockquote>
+<h2 id="更新记录">更新记录</h2><p>2016年07月29日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/ntfs-3g/" target="_blank" rel="external">https://wsgzao.github.io/post/ntfs-3g/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>Tuxera - <a href="https://www.tuxera.com/" target="_blank" rel="external">https://www.tuxera.com/</a></p>
+<h2 id="介绍">介绍</h2><blockquote>
+<p>我偷个大懒直接引用官方的原话</p>
+</blockquote>
+<p>NTFS-3G is a stable, full-featured, read-write NTFS driver for Linux, Android, Mac OS X, FreeBSD, NetBSD, OpenSolaris, QNX, Haiku, and other operating systems. It provides safe handling of the Windows XP, Windows Server 2003, Windows 2000, Windows Vista, Windows Server 2008, Windows 7, Windows 8 and Windows 10 NTFS file systems. A <span class="Apple-converted-space"></span> <a href="http://www.tuxera.com/products/tuxera-ntfs-embedded/performance/" target="_blank" rel="external">high-performance</a> <span class="Apple-converted-space"></span> alternative, called Tuxera NTFS is available for <span class="Apple-converted-space"></span> <a href="http://www.tuxera.com/products/tuxera-ntfs-embedded/" target="_blank" rel="external">embedded devices</a> <span class="Apple-converted-space"></span> and <span class="Apple-converted-space"></span> <a href="http://www.tuxera.com/products/tuxera-ntfs-for-mac/" target="_blank" rel="external">Mac OS X</a>.</p>
+<p>The release notes and the software changes can be found on the <span class="Apple-converted-space"></span> <a href="http://www.tuxera.com/community/release-history/" target="_blank" rel="external">Release History</a> <span class="Apple-converted-space"></span> page. Subscribe <span class="Apple-converted-space"></span> <a href="http://lists.sourceforge.net/mailman/listinfo/ntfs-3g-news" target="_blank" rel="external">here</a> <span class="Apple-converted-space"></span> for new release notifications.</p>
+<h2 id="Open_Source:_NTFS-3G">Open Source: NTFS-3G</h2><p>Latest Download - <a href="http://www.tuxera.com/community/open-source-ntfs-3g/" target="_blank" rel="external">http://www.tuxera.com/community/open-source-ntfs-3g/</a><br>NTFS-3G Manual -  <a href="http://www.tuxera.com/community/ntfs-3g-manual/" target="_blank" rel="external">http://www.tuxera.com/community/ntfs-3g-manual/</a><br>stable version - <a href="https://tuxera.com/opensource/ntfs-3g_ntfsprogs-2016.2.22.tgz" target="_blank" rel="external">https://tuxera.com/opensource/ntfs-3g_ntfsprogs-2016.2.22.tgz</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#Installation</span></span><br><span class="line">tar zxvf /tmp/ntfs-<span class="number">3</span>g_ntfsprogs-<span class="number">2016.2</span>.<span class="number">22</span>.tgz</span><br><span class="line"><span class="built_in">cd</span> ntfs*</span><br><span class="line"><span class="comment">#yum install gcc</span></span><br><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">make install <span class="comment"># or 'sudo make install' if you aren't root</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#Usage</span></span><br><span class="line">fdisk <span class="operator">-l</span></span><br><span class="line">mkdir -p /mnt/windows</span><br><span class="line">mount -t ntfs-<span class="number">3</span>g /dev/sda1 /mnt/windows</span><br><span class="line"><span class="comment">#You can also make NTFS to be mounted during boot by adding the following line to the end of the /etc/fstab file:</span></span><br><span class="line">vi /etc/fstab</span><br><span class="line">/dev/sda1 /mnt/windows ntfs-<span class="number">3</span>g defaults <span class="number">0</span> <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<h2 id="Tuxera_NTFS_for_Mac">Tuxera NTFS for Mac</h2><p>Mac新手入门以及常用软件推荐 - <a href="https://wsgzao.github.io/post/mac/" target="_blank" rel="external">https://wsgzao.github.io/post/mac/</a></p>
+]]></content>
+    <summary type="html">
+    <![CDATA[Open Source NTFS-3G，Read-Write NTFS Driver]]>
+    
+    </summary>
+    
+      <category term="学习 | Study" scheme="https://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
+    
+  </entry>
+  
+  <entry>
     <title><![CDATA[从大苏菲TL-WDR8600退货降级至腾达AC9的决断]]></title>
     <link href="https://wsgzao.github.io/post/wdr8600/"/>
     <id>https://wsgzao.github.io/post/wdr8600/</id>
     <published>2016-06-12T08:17:46.000Z</published>
-    <updated>2016-06-12T08:33:25.102Z</updated>
+    <updated>2016-06-12T08:31:20.000Z</updated>
     <content type="html"><![CDATA[<p><img src="http://ww3.sinaimg.cn/large/7207510dgw1f4sim1qwuhj20zk0p07ds.jpg" alt=""></p>
 <h2 id="前言">前言</h2><p>无线路由器从高中老师赠送的NetGear开始，TP-LINK*2，极路由1，小米路由mini，到回归大苏菲感受5G千兆网络技术革新，然而7天的使用体验又促使我降级选择了腾达AC9，技术超前和实用场景的不契合也让我吃了螃蟹坑了爹。虽然不是发烧友但也从KoolShare这样的专业论坛学到不少知识，体验第一代iPhone的人因为热爱和好奇心驱动，折腾自己有时很傻很天真，但也正因为如此他们才会成为第一批看见蓝海的开拓者。</p>
 <blockquote>
@@ -87,7 +119,7 @@
     <link href="https://wsgzao.github.io/post/devops/"/>
     <id>https://wsgzao.github.io/post/devops/</id>
     <published>2016-05-12T08:31:24.000Z</published>
-    <updated>2016-05-12T01:26:24.000Z</updated>
+    <updated>2016-05-12T01:26:24.063Z</updated>
     <content type="html"><![CDATA[<p><img src="//i.v2ex.co/o2t5S8at.png" alt=""></p>
 <h2 id="前言">前言</h2><p>其实一直很想整理一篇DevOps学习资源导航类文章，主要原因除了自己的懒惰外，技术的不断创新也让未来更加值得期待。虽然在大多数情况下我们既无法面面俱到也突破不了点的极限，但是这也不会阻碍我们对于学习的热爱。梳理这篇文章也是希望自己能够始终保持学习的态度，完善自己的知识体系，坚持技术沉淀的过程，享受点滴进步的快乐。</p>
 <blockquote>
@@ -287,7 +319,7 @@
     <link href="https://wsgzao.github.io/post/chinese-copywriting-guidelines/"/>
     <id>https://wsgzao.github.io/post/chinese-copywriting-guidelines/</id>
     <published>2016-05-09T07:31:24.000Z</published>
-    <updated>2016-05-14T06:33:04.000Z</updated>
+    <updated>2016-05-14T06:33:04.007Z</updated>
     <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/ekrNgJeK.jpeg" alt=""></p>
 <h2 id="前言">前言</h2><blockquote>
 <p>统一中文文案、排版的相关用法，降低团队成员之间的沟通成本，增强网站气质。</p>
@@ -624,7 +656,7 @@
     <link href="https://wsgzao.github.io/post/fq/"/>
     <id>https://wsgzao.github.io/post/fq/</id>
     <published>2016-04-28T15:22:32.000Z</published>
-    <updated>2016-04-29T01:36:52.000Z</updated>
+    <updated>2016-04-29T01:36:52.062Z</updated>
     <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/Ur503skA.jpeg" alt=""></p>
 <h2 id="前言">前言</h2><p>政府无限的权力，都是大部分人自己放弃的。假货坑爹，让政府审核。孩子管不好，让政府关网吧。有人在微博骂我，让政府去删。房价太高，让政府去限购。我们的文化实在太独特，创造出了家长式威权政府，GFW 正是在这种背景下产生的，一个社会矛盾的终极调和器，最终生活不能自理的你每天做的每一件事情都要给政府审查一遍，以免伤害到其他同样生活不能自理的人。这是一个零和游戏，越和这样的用户打交道，越对未来持悲观态度，觉得 GFW 可能永远也不会消失，而墙内的这个局域网看起来还似乎生机勃勃的自成一体，真是让人绝望。</p>
 <p>Via <a href="https://twitter.com/clowwindy" target="_blank" rel="external">@clowwindy</a> - <a href="https://www.v2ex.com/t/166417#reply121" target="_blank" rel="external">https://www.v2ex.com/t/166417#reply121</a></p>
@@ -740,7 +772,7 @@
     <link href="https://wsgzao.github.io/post/git/"/>
     <id>https://wsgzao.github.io/post/git/</id>
     <published>2016-04-22T08:22:32.000Z</published>
-    <updated>2016-04-23T01:38:40.000Z</updated>
+    <updated>2016-04-23T01:38:40.310Z</updated>
     <content type="html"><![CDATA[<p><img src="//i.v2ex.co/fAhm82RJ.png" alt=""></p>
 <h2 id="前言">前言</h2><p>在2005年的某一天，Linux之父Linus Torvalds 发布了他的又一个里程碑作品——Git。它的出现改变了软件开发流程，大大地提高了开发流畅度，直到现在仍十分流行，完全没有衰退的迹象。其实一般情况下，只需要掌握git的几个常用命令即可，但是在使用的过程中难免会遇到各种复杂的需求，这时候经常需要搜索，非常麻烦，故总结了一下自己平常会用到的git操作。本文根据团队实践记录Git入门指南和Git常用命令，文章中不仅记录了Git的搭建和使用教程，还参考了大量Git团队使用规范上的经验，希望大家可以结合自己团队的实际应用场景让Git协作优雅的落地。</p>
 <blockquote>
@@ -813,7 +845,7 @@
     <link href="https://wsgzao.github.io/post/windows/"/>
     <id>https://wsgzao.github.io/post/windows/</id>
     <published>2016-04-19T08:35:27.000Z</published>
-    <updated>2016-04-19T01:52:25.000Z</updated>
+    <updated>2016-04-19T01:52:25.128Z</updated>
     <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/l6zV1ws3.jpeg" alt=""></p>
 <h2 id="前言">前言</h2><p>很多人都认为我是计算机高手，其实我只会帮你修理下你的电脑啦，曾几何时我也帮助过好多好多的同学和老师，尝试和体验各种各样的软件，但谁又能想到我曾今也对你们的电脑做过很多失败的坑爹操作，把你们最宝贵的数据撸得灰飞烟灭。作为一名非职业HelpDesk，我一定不是最最优秀的那一群技术大牛，但我也努力超越了99.99%的从业者，Because I just love and enjoy thinking to do better and better.</p>
 <p>如果你认同<code>高效，实用</code>的软件使用理念就跟着我走吧，让我们一起寻找<code>适合自己的好用软件</code>。</p>
@@ -1292,7 +1324,7 @@
     <link href="https://wsgzao.github.io/post/vsftpd/"/>
     <id>https://wsgzao.github.io/post/vsftpd/</id>
     <published>2016-04-15T07:42:19.000Z</published>
-    <updated>2016-04-15T08:12:26.000Z</updated>
+    <updated>2016-04-15T08:12:26.954Z</updated>
     <content type="html"><![CDATA[<h2 id="前言">前言</h2><p>正如vsftpd官方宣传中所说<code>Probably the most secure and fastest FTP server for UNIX-like systems.</code>我相信这是大多数人选择vsftpd来搭建Linux的FTP服务器的原因，当然ProFTPD用的人应该也不在少数。文章将以清晰直观的方式介绍安装vsftpd以及配置FTP虚拟用户的过程，希望对大家有帮助。</p>
 <blockquote>
 <p>首选的FTP服务器搭建方式</p>
@@ -1341,7 +1373,7 @@
     <link href="https://wsgzao.github.io/post/cobbler/"/>
     <id>https://wsgzao.github.io/post/cobbler/</id>
     <published>2016-04-12T08:22:32.000Z</published>
-    <updated>2016-04-19T01:08:53.000Z</updated>
+    <updated>2016-04-19T01:08:53.020Z</updated>
     <content type="html"><![CDATA[<p><img src="//i.v2ex.co/b1p5A8Cy.jpeg" alt=""></p>
 <h2 id="前言">前言</h2><p>Cobbler是一个自动化和简化系统安装的工具，通过使用网络引导来控制和启动安装。Cobbler的特性包括存储库镜像、Kickstart模板和连接电源管理系统。使用Cobbler之前需要先了解下PXE和Kickstart的基本原理，文章包含了Cobbler工作原理和Cobbler部署实践两部分内容，交叉关联性的内容还是蛮多的，遇到报错也不要怕，都会一步一步解决的。</p>
 <blockquote>
@@ -1375,7 +1407,7 @@
     <link href="https://wsgzao.github.io/post/yum/"/>
     <id>https://wsgzao.github.io/post/yum/</id>
     <published>2016-04-01T08:22:32.000Z</published>
-    <updated>2016-04-01T06:40:45.000Z</updated>
+    <updated>2016-04-01T06:40:45.289Z</updated>
     <content type="html"><![CDATA[<h2 id="前言">前言</h2><p>YUM（全称为 Yellow dog Updater, Modified）是一个在Fedora中的Shell前端软件包管理器。基于RPM包管理，能够从指定的服务器自动下载RPM包并且安装，可以自动处理依赖性关系，并且一次安装所有依赖的软体包，无须繁琐地一次次下载和安装。文章以RHEL(Red Hat Enterprise Linux)配置YUM源为例分享YUM常用命令技巧以及如何搭建ISO本地源和CentOS YUM源。</p>
 <blockquote>
 <p>YUM是一个安装，卸载和搜索软件包的工具</p>
@@ -1413,7 +1445,7 @@
     <link href="https://wsgzao.github.io/post/gogs/"/>
     <id>https://wsgzao.github.io/post/gogs/</id>
     <published>2016-03-31T08:22:32.000Z</published>
-    <updated>2016-03-31T09:46:22.000Z</updated>
+    <updated>2016-03-31T09:46:22.685Z</updated>
     <content type="html"><![CDATA[<p><img src="http://static.oschina.net/uploads/space/2016/0306/021849_Gf8X_852826.png" alt=""></p>
 <h2 id="前言">前言</h2><p>GitHub已经成为首选的代码托管平台，因为它又很多很棒的功能，操作简单，几乎所有的开发者都喜欢它。但是搭建GitLab过程并没有想象中的简单，利用Bitnami当然也是一种偷懒的好选择。Gogs (Go Git Service) 是一款极易搭建的自助 Git 服务，Gogs 的目标是打造一个最简单、最快速和最轻松的方式搭建自助 Git 服务。使用 Go 语言开发使得 Gogs 能够通过独立的二进制分发，并且支持 Go 语言支持的 所有平台，包括 Linux、Mac OS X、Windows 以及 ARM 平台。</p>
 <blockquote>
@@ -1591,7 +1623,7 @@
     <link href="https://wsgzao.github.io/post/service-names-port-numbers/"/>
     <id>https://wsgzao.github.io/post/service-names-port-numbers/</id>
     <published>2016-03-30T08:22:32.000Z</published>
-    <updated>2016-03-30T11:44:59.000Z</updated>
+    <updated>2016-03-30T11:44:59.183Z</updated>
     <content type="html"><![CDATA[<h2 id="前言">前言</h2><p>文章的表格中列举了Linux 中的服务、守护进程、和程序所使用的最常见的通信端口，该列表还可以在 /etc/services 文件中找到，更多详细信息推荐查看由互联网号码分派局（IANA）制定的“著名的已注册动态端口”官方列表。本文引用了维基百科中文版内的TCP/UDP端口列表，颜色和标签很清晰，感谢维护者们的更新。最后还是提醒大家开发程序时记得提前查阅一下端口是否和已经定义的存在冲突，能避免尽量不要选择共用相同的端口，为后期IP+PORT方式定位应用铺平道路。</p>
 <blockquote>
 <p>熟悉常用的TCP/UDP端口很有必要</p>
@@ -4064,7 +4096,7 @@
     <link href="https://wsgzao.github.io/post/windows-batch/"/>
     <id>https://wsgzao.github.io/post/windows-batch/</id>
     <published>2016-03-29T08:22:32.000Z</published>
-    <updated>2016-03-29T08:29:18.000Z</updated>
+    <updated>2016-03-29T08:29:18.212Z</updated>
     <content type="html"><![CDATA[<h2 id="前言">前言</h2><p>批处理文件（batch file）包含一系列 DOS命令，通常用于自动执行重复性任务。用户只需双击批处理文件便可执行任务，而无需重复输入相同指令。编写批处理文件非常简单，但难点在于确保一切按顺序执行。编写严谨的批处理文件可以极大程度地节省时间，在应对重复性工作时尤其有效。</p>
 <blockquote>
 <p>在Windows中善用批处理可以简化很多重复工作</p>
@@ -4158,7 +4190,7 @@
     <link href="https://wsgzao.github.io/post/puppet/"/>
     <id>https://wsgzao.github.io/post/puppet/</id>
     <published>2016-03-25T08:22:32.000Z</published>
-    <updated>2016-03-25T08:29:11.000Z</updated>
+    <updated>2016-03-25T08:29:11.504Z</updated>
     <content type="html"><![CDATA[<p><img src="https://upload.wikimedia.org/wikipedia/en/c/c5/Puppet_Labs_Logo.png" alt=""></p>
 <h2 id="前言">前言</h2><p>Puppet这个词实际上包括了两层含义：它既代表编写这种代码的语言，也代表对基础设施进行管理的平台。做运维总是靠流程驱动和事故驱动，无论是生产还是测试环境配置上的不统一使得团队的整体效率大打折扣。能够在开发者的笔记本或是在QA环境下正常工作的代码，往往在部署到生产环境后就会出现问题，最糟糕的是没人知道问题的根源在哪里。而Puppet是一个优秀的基础设施管理平台，可以让每个系统管理员更高效地完成工作，Puppet能够为共享的代码库提供一种强力的粘合剂，以统一不同团队的工作。Puppet可以帮助处于各种不同状况的团队增强协作能力，以进行软件开发和发布的——这种工作方式的演变通常被称做DevOps。</p>
 <blockquote>
@@ -4220,7 +4252,7 @@
     <link href="https://wsgzao.github.io/post/splunk/"/>
     <id>https://wsgzao.github.io/post/splunk/</id>
     <published>2016-03-22T08:22:32.000Z</published>
-    <updated>2016-03-22T06:45:02.000Z</updated>
+    <updated>2016-03-22T06:45:02.401Z</updated>
     <content type="html"><![CDATA[<p><img src="//i.v2ex.co/0kvIE02gl.jpeg" alt=""></p>
 <h2 id="前言">前言</h2><p>Splunk作为一款成熟的商业化日志处理分析产品无论在功能上还是用户体验上都是令人满意的，而开源方案ELK(Elasticsearch+Logstash+Kibana)相信也有很多朋友考虑或者正在使用，我在这里不想讨论孰优孰劣因为不同的业务场景出发点不同，共存也是不错的选择。文章通过1天的Splunk官方培训记录相关基础概念和动手实验，Splunk上手速度灰常快不过也需要掌握正则表达式，欢迎大家一起学习哈。</p>
 <blockquote>
@@ -4385,7 +4417,7 @@
     <link href="https://wsgzao.github.io/post/lvm/"/>
     <id>https://wsgzao.github.io/post/lvm/</id>
     <published>2016-03-18T06:59:49.000Z</published>
-    <updated>2016-03-18T05:55:32.000Z</updated>
+    <updated>2016-03-18T05:55:32.560Z</updated>
     <content type="html"><![CDATA[<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Lvm.svg/620px-Lvm.svg.png" alt=""></p>
 <h2 id="前言">前言</h2><p>Logical Volume Manager (LVM)，逻辑卷管理LVM是一个多才多艺的硬盘系统工具，无论在Linux或者其他类似的系统，都是非常的好用。传统分区使用固定大小分区，重新调整大小十分麻烦，但是LVM可以创建和管理“逻辑”卷，而不是直接使用物理硬盘，可以让管理员弹性的管理逻辑卷的扩大缩小，操作简单，而不损坏已存储的数据。可以随意将新的硬盘添加到LVM，以直接扩展已经存在的逻辑卷，LVM并不需要重启就可以让内核知道分区的存在。文章详细记录在PV/VG/LV中3个阶段的创建/添加/扩展/减小/删除等实战操作步骤，方便自己回顾一些基础用法，也希望能够帮助大家更好的理解LVM的原理。</p>
 <blockquote>
@@ -4509,7 +4541,7 @@
     <link href="https://wsgzao.github.io/post/static-routes/"/>
     <id>https://wsgzao.github.io/post/static-routes/</id>
     <published>2016-03-17T08:22:32.000Z</published>
-    <updated>2016-03-18T03:28:04.000Z</updated>
+    <updated>2016-03-18T03:28:04.351Z</updated>
     <content type="html"><![CDATA[<h2 id="前言">前言</h2><p>一般在多网卡的网络访问关系中我们通常根据目标IP地址段来添加静态路由(static-routes)，在主机系统配置层面这个需求一般都比较简单也不需要使用非常复杂的命令，说实话如果不是因为开发测试中心同事<a href="https://cn.linkedin.com/in/恒-谢-aa5598106" target="_blank" rel="external">@谢恒</a>的乱入启发，我也不会发现还有策略路由这样一种灵活通用的配置方法来实现Linux多网卡多路由的设定，灰常感谢。</p>
 <blockquote>
 <p>策略路由的出现在某些业务场景下可能更优于静态路由</p>
@@ -4632,7 +4664,7 @@
     <link href="https://wsgzao.github.io/post/ntp/"/>
     <id>https://wsgzao.github.io/post/ntp/</id>
     <published>2016-03-16T06:10:20.000Z</published>
-    <updated>2016-03-18T03:19:18.000Z</updated>
+    <updated>2016-03-18T03:19:18.522Z</updated>
     <content type="html"><![CDATA[<h2 id="前言">前言</h2><p>NTP（Network Time Protocol，网络时间协议）是用来使网络中的各个计算机时间同步的一种协议。无论是平时使用的私人计算机还是在工作中搭建的服务器集群，时间的统一性和准确性是十分重要的。本文以自己公司的NTP配置实践过程为例，过程本身并不复杂，原理部分请参考扩展阅读。</p>
 <blockquote>
 <p>时间同步真的很重要 </p>
@@ -4684,7 +4716,7 @@
     <link href="https://wsgzao.github.io/post/raid/"/>
     <id>https://wsgzao.github.io/post/raid/</id>
     <published>2016-03-10T07:52:17.000Z</published>
-    <updated>2016-03-11T06:14:43.000Z</updated>
+    <updated>2016-03-11T06:14:43.632Z</updated>
     <content type="html"><![CDATA[<p><img src="//i.v2ex.co/Ko2l48uT.png" alt=""></p>
 <h2 id="前言">前言</h2><p>RAID解释我偷个小懒引用WikipediA，独立硬盘冗余阵列（RAID, Redundant Array of Independent Disks），旧称廉价磁盘冗余阵列（Redundant Array of Inexpensive Disks），简称磁盘阵列。其基本思想就是把多个相对便宜的硬盘组合起来，成为一个硬盘阵列组，使性能达到甚至超过一个价格昂贵、容量巨大的硬盘。根据选择的版本不同，RAID比单颗硬盘有以下一个或多个方面的好处：增强数据集成度，增强容错功能，增加处理量或容量。另外，磁盘阵列对于电脑来说，看起来就像一个单独的硬盘或逻辑存储单元。写这篇文章当然不是单纯的介绍概念和使用方法，更重要的是如何针对不同的业务场景做合理的RAID配置和参数优化，对于SSD固态硬盘的加入我引入小米运维团队的实验数据，同时我也相信分布式存储会逐步走向成熟，以OpenStack，VSAN，Nutanix为代表头顶软件定义和超融合概念的技术也已经开始了暗战。</p>
 <blockquote>
@@ -4876,7 +4908,7 @@
     <link href="https://wsgzao.github.io/post/openstack/"/>
     <id>https://wsgzao.github.io/post/openstack/</id>
     <published>2016-03-04T08:22:32.000Z</published>
-    <updated>2016-03-05T10:07:39.000Z</updated>
+    <updated>2016-03-05T10:07:39.783Z</updated>
     <content type="html"><![CDATA[<p><img src="//i.v2ex.co/Cn77HG14.png" alt=""></p>
 <h2 id="前言">前言</h2><p>为期6天的Red Hat OpenStack培训受益良多，实验过程也非常丰满，有很多知识需要吸收和消化，文章中把详细的实验过程全部分享出来。实验环境是通过Vagrant部署rhel7.1快速生成，使用4G以上笔记本电脑就可以完成搭建。所有的配置参数都有备注说明，希望可以帮助大家快速学习和熟悉OpenStack。这或许也是我Blog中最长的一篇凑字数文章。</p>
 <p>OpenStack是代替VMware私有云的最佳方案之一</p>
@@ -5036,88 +5068,6 @@
     </summary>
     
       <category term="学习 | Study" scheme="https://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[熊本熊是如何成为风靡全球的吉祥物「网红」的？]]></title>
-    <link href="https://wsgzao.github.io/post/kumamon/"/>
-    <id>https://wsgzao.github.io/post/kumamon/</id>
-    <published>2016-02-18T07:31:24.000Z</published>
-    <updated>2016-02-19T01:47:46.000Z</updated>
-    <content type="html"><![CDATA[<h2 id="前言">前言</h2><p>本文为 <a href="http://socialbeta.com/t/how-kumamon-become-the-most-popular-bear" target="_blank" rel="external">SocialBeta</a> 作者 <a href="http://socialbeta.com/t/how-kumamon-become-the-most-popular-bear" target="_blank" rel="external">信河田</a> 原创作品，转载请注明 SocialBeta 链接和作者。</p>
-<blockquote>
-<p>如果要问大家 2015 年最火的吉祥物是什么，相信很多人的答案会是熊本熊！</p>
-</blockquote>
-<hr>
-<h2 id="更新历史">更新历史</h2><p>2016年02月18日 - 转载初稿</p>
-<p>阅读原文 - <a href="http://wsgzao.github.io/post/kumamon/" target="_blank" rel="external">http://wsgzao.github.io/post/kumamon/</a></p>
-<hr>
-<p><strong>如果要问大家 2015 年最火的吉祥物是什么，相信很多人的答案会是熊！本！熊！</strong></p>
-<p>这只行动笨拙、内心贱萌、自带两坨腮红的萌物在近两年迅速风靡全世界，成为年轻人的心头好。如今，熊本熊的火热程度甚至超过萌物界的前辈 Hello Kitty 和哆啦 A 梦。这家伙不仅有自己专属的本田小摩托，还有专属 Mini。</p>
-<p><img src="http://img.socialbeta.com/upload/10-1452788531.jpg" alt=""></p>
-<p><img src="http://img.socialbeta.com/upload/10-1452788533.jpg" alt=""></p>
-<p>甚至还有专属的徕卡相机。</p>
-<p><img src="http://img.socialbeta.com/upload/10-1452788534.jpg" alt=""></p>
-<p>俨然一副「熊」生赢家的样子。</p>
-<p>然而你知道他是如何一步步走到这个「熊」生巅峰的吗？今天我们就来一探究竟。</p>
-<h2 id="缘起九州新干线">缘起九州新干线</h2><p>熊本熊，大家都知道是来自熊本县的地方吉祥物。但要说到熊本县……别说我们了，就是日本人也只能模糊地说出它在九州岛上，有哪些特产和值得一看的景点则完全不知。所以，至少在熊本熊诞生之前，熊本县的知名度在日本国内都可以说是非常低的。</p>
-<p>然而，机会总还是来了。2011 年，贯通整个九州的新干线将全线开通。这意味着临县，乃至大阪等关西地区的旅客可以更便捷地来到九州观光旅行。县政府看准这个千载难逢的机遇，有意做一些特殊的地方推广活动，吸引旅客在熊本站下车。</p>
-<h2 id="高瞻远瞩的设计团队">高瞻远瞩的设计团队</h2><p>一开始，县政府找来了本县出身的知名作家小山薰堂来构想这个视觉元素，他转而找到了自己的好友——著名设计师水野学。两人最初想以「熊本惊喜」的概念制作一个 Logo，但随后水野学希望能以一个更加吸引人的方式推广这个概念，小山薰堂表示赞同。于是他们在 Logo 之外又提出了被称为「Kumamon」的熊形地方吉祥物。这个名字结合了「熊本」（Kumamoto）与熊本方言「人」（Mon）的发音，意为「熊本人」，明确了「熊本熊」出自「熊本县」的概念。</p>
-<p>虽然县政府对吉祥物的提案有些犹豫，但县知事（县长）蒲岛郁夫还是果断地接受了这一建议。于是，水野学带领自己的 good design company 工作室开始了熊本熊的形象设计。为了突出本县特色，水野学以熊本城的主色调黑色与萌系形象经常采用的两颊腮红（红色也蕴含了熊本县「火之国」的称号。）为基础，创作出了数千种形象组合，最后在其中选出了如今看到的呆萌呆萌的<a href="http://gooddesigncompany.com/works/kumamon" target="_blank" rel="external">熊本熊形象</a>。</p>
-<p><img src="http://img.socialbeta.com/upload/10-1453270260.jpg" alt=""></p>
-<p>吉祥物终究是要人来扮演的，然而出炉的第一代熊本熊皮套却长相怪异，看了可能会让人做噩梦。于是，小山薰堂赶紧找到了专制吉祥物皮套的大厂<span class="Apple-converted-space"> </span><a href="http://www.kigurumi.biz/" target="_blank" rel="external">Kigurumi.biz</a>，委托他们改进皮套，因此有了第二代皮套。而如今我们看到的是更加肥大呆萌的第三代皮套。</p>
-<p><img src="http://img.socialbeta.com/upload/10-1452788535.jpg" alt=""></p>
-<p>配合外貌，以小山薰堂为首的策划团队也为熊本熊定好了时下人见人爱的「呆萌」和「贱萌」的性格。</p>
-<p>到此为止，水野学和小山薰堂显然已经做好了自己的本职工作。但毕竟是为了更好地推广和宣传熊本县的形象，水野学之后又提出了以不收授权费的方式推广熊本熊的建议。只要通过县政府审核，证明商品有助于熊本的宣传，商家就可以使用熊本熊的形象。从诞生的 2010 年 3 月 5 日起，熊本熊呆萌的形象就逐渐出现在熊本县出产的商品中（毕竟是农业大县，土特产农产品根本不缺）。</p>
-<p><img src="http://img.socialbeta.com/upload/10-1452788543.jpg" alt=""></p>
-<p>随着曝光度的增加，熊本熊的知名度开始打响。不过此时，熊本熊的知名度也仅限于熊本和九州，要想让全日本都认识这只熊，就得靠经纪公司——县政府的支持了。</p>
-<h2 id="与熊本熊一起疯的县政府">与熊本熊一起疯的县政府</h2><p>明星要想红，除了自身要具备出色的条件外，经纪公司的大力培养也是不可或缺的因素。虽然前文提到县政府一开始对吉祥物的提案兴趣寥寥，不过在熊本熊正式诞生后，县政府还是启动了相应的营销计划，先后开通 Facebook 主页和 Twitter 账号，并为其申请到相应的宣传预算。相对于当时日本绝大多数的地方吉祥物来说，这已经是最高级别的待遇了。</p>
-<p>一切准备就绪，县政府开始了与熊本熊一起疯的营销计划。首先，县政府聘任熊本熊为临时公务员，接着县知事（县长）蒲岛郁夫将「在大阪分发一万张名片，提升熊本县知名度」的任务交给了它。</p>
-<p><img src="http://img.socialbeta.com/upload/10-1452788544.jpg" alt=""></p>
-<p>不过在大阪出差途中，被大都市的魅力所迷住，熊本熊竟然下落不明。蒲岛知事为此紧急召开记者发布会，希望有知道熊本熊消息的人通过 Twitter 告知县政府。（你们县政府真会玩……）</p>
-<iframe frameborder="0" width="640" height="498" src="http://v.qq.com/iframe/player.html?vid=t0181sebzuo&amp;tiny=0&amp;auto=0" allowfullscreen></iframe>
-
-<p>这里要提一下名片上的内容，也是有些无厘头，比如「希望变得越来越有名，有名到有假货来冒充」、「其实我很敏捷」等，看了让人忍俊不禁，加深了对它「呆萌」的印象。</p>
-<p><img src="http://img.socialbeta.com/upload/10-1452788545.jpg" alt=""></p>
-<p>一年以后，随着一系列宣传上的成功，熊本熊被蒲岛知事正式任命为熊本县营业部长，该职位在县政府内部仅次于知事与副知事，且直接听命于蒲岛知事，体现了县政府对熊本熊的重视。</p>
-<p><img src="http://img.socialbeta.com/upload/10-1452788553.jpg" alt=""></p>
-<p>2013 年 11 月，县政府又开始了一次精妙的全民营销活动。这次，熊本熊遗失了自己两颊的腮红。没了腮红，那就只是普通的熊了，「火之国」的内涵也没了。县政府认为此事件非常严重，蒲岛知事再次紧急召开新闻发布会，表示县政府已成立调查组专门调查此事，并号召大家帮熊本熊找回腮红，熊本熊也跑到东京警视厅报了案。</p>
-<p><img src="http://img.socialbeta.com/upload/10-1452788550.jpg" alt=""></p>
-<p>县政府还在各地张贴「寻腮红启事」，甚至通过电视台发出这一启事，希望大家提供线索。其实县政府是希望通过这一事件，让外界了解「红色」对于熊本县的重要性。它不仅代表了熊本县的火山地理，更代表了众多美味的红色食物。事后有日本媒体表示，这次事件达成了 6 亿日元（约合 3360 万人民币）的广告营销成果。</p>
-<iframe frameborder="0" width="640" height="498" src="http://v.qq.com/iframe/player.html?vid=o018000zngm&amp;tiny=0&amp;auto=0" allowfullscreen align=""></iframe>
-
-<p>除了这些县政府亲自参与的推广活动之外，策划团队还很好地利用了 Facebook 和 Twitter 等社交媒体，通过它们发布熊本熊的行程，并且在每一条新消息的最后，都会加上熊本熊的语气词「mon」。</p>
-<p>策划团队还会借势热点进行营销。比如冰桶挑战期间，熊本熊就被人点名参加。而他参加冰桶挑战时的反应也是非常搞笑。这些营销策略都让熊本熊极大地增加了知名度和影响力。</p>
-<iframe frameborder="0" width="640" height="498" src="http://v.qq.com/iframe/player.html?vid=r0180343hpq&amp;tiny=0&amp;auto=0" allowfullscreen></iframe>
-
-<h2 id="投入的熊本熊扮演者">投入的熊本熊扮演者</h2><p>最后还要谈一下藏在熊本熊厚大皮套里的演员。无论是一开始县政府工作人员客串，还是之后邀请专业的皮套演员进行骑车蹦极等高难度动作，他们都非常卖力地展现出了熊本熊「呆萌」和「贱萌」的性格，更让人们感受到了「熊本熊是活生生存在的」。</p>
-<p><img src="http://img.socialbeta.com/upload/10-1452790248.gif" alt=""></p>
-<p><span style="color: rgb(127, 127, 127);">捣麻糬掉手套</span></p>
-<p><img src="http://img.socialbeta.com/upload/10-1452790240.gif" alt=""></p>
-<p><span style="color: rgb(127, 127, 127);">从新干线列车上摔下</span></p>
-<p><img src="http://img.socialbeta.com/upload/10-1452790230.gif" alt=""></p>
-<p><span style="color: rgb(127, 127, 127);">烧菜起火受惊吓</span></p>
-<p><span style="color: rgb(127, 127, 127);"><img src="http://img.socialbeta.com/upload/10-1452790223.gif" alt=""></span></p>
-<p><span style="color: rgb(127, 127, 127);">掀女生裙子</span></p>
-<p><span style="color: rgb(127, 127, 127);"><img src="http://img.socialbeta.com/upload/10-1452790981.gif" alt=""></span></p>
-<p><span style="color: rgb(127, 127, 127);">殴打其他地方吉祥物（少儿不宜）</span></p>
-<p><span style="color: rgb(127, 127, 127);"><img src="http://img.socialbeta.com/upload/10-1452873260.gif" alt=""></span></p>
-<p><span style="color: rgb(127, 127, 127);">会潇洒地骑着自己的小摩托</span></p>
-<p><span style="color: rgb(127, 127, 127);"><img src="http://img.socialbeta.com/upload/10-1452873251.gif" alt=""></span></p>
-<p><span style="color: rgb(127, 127, 127);">偶尔还会挑战下极限</span></p>
-<p>这其中最有名的一次表演是在参加 2014 年红白歌会时，在后台与另一位地方吉祥物船梨精大打出手，场面之「混乱」连主持人都劝不住。</p>
-<p><img src="http://img.socialbeta.com/upload/10-1452789881.gif" alt=""></p>
-<p>如今的熊本熊早已红透半边天。到国外出访、在天皇与皇后面前大跳体操舞、被印在各种大牌商品上、参加时装周走秀、参演歌舞伎等，在熊本熊身体力行的宣传下，熊本县的知名度也有了极大的提升。2013 年 4 月，日本地方经济综合研究所的<a href="http://www.dik.or.jp/?action=cabinet2_action_main_download&amp;block_id=235&amp;room_id=1&amp;cabinet2_id=17&amp;file_id=205&amp;upload_id=384" target="_blank" rel="external">调查</a>显示，九州、关西和首都圈地区的居民对熊本县的印象分别从 2011 年的第 6 位、第 6 位和第 7 位，上升至第 2  位、第 3 位和第 5 位。此外，民众前往熊本县观光旅游的意愿也有大幅提升。申请授权的商品从 2011 年的 3600 件，升至如今的 20000 件。根据日本银行的计算，熊本熊出道的头两年（2011 年至 2013 年），它就为熊本县带来了 1244 亿日元的经济收益（约 76.3 亿人民币）。</p>
-<h2 id="熊本熊的成功启示">熊本熊的成功启示</h2><p>熊本熊的成功，是吉祥物创作者与地方政府，以及幕后工作人员亲密配合的完美成果。设计师从 Logo 到吉祥物的奇思妙想，再到提出极富远见的营销建议，县政府都没有唱反调，反倒支持这种创新。而县政府在熊本熊的营销活动中，也一改以往一贯严肃的政府形象，变得亲民且幽默。蒲岛郁夫知事甚至为此出书，详细阐述了熊本熊营销成功的心得。而浓缩为书中的一句话就是「提拔吉祥物做营业部长，这是勇于『打破盘子』的创新精神」。</p>
-<p><img src="http://img.socialbeta.com/upload/10-1452788552.jpg" alt=""><strong> </strong></p>
-]]></content>
-    <summary type="html">
-    <![CDATA[如果要问大家 2015 年最火的吉祥物是什么，相信很多人的答案会是熊本熊！]]>
-    
-    </summary>
-    
-      <category term="生活 | Life" scheme="https://wsgzao.github.io/categories/%E7%94%9F%E6%B4%BB-Life/"/>
     
   </entry>
   
