@@ -1,0 +1,530 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+  
+    <title>JBOD磁盘配置和StorCLI命令使用小结 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="利用StorCLI命令不停机在线更换JBOD硬盘">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JBOD磁盘配置和StorCLI命令使用小结">
+<meta property="og:url" content="https://wsgzao.github.io/post/jbod/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="利用StorCLI命令不停机在线更换JBOD硬盘">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JBOD磁盘配置和StorCLI命令使用小结">
+<meta name="twitter:description" content="利用StorCLI命令不停机在线更换JBOD硬盘">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/jbod/" title="JBOD磁盘配置和StorCLI命令使用小结" itemprop="url">JBOD磁盘配置和StorCLI命令使用小结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2016-12-31T06:59:49.000Z" itemprop="datePublished"> 发表于 2016-12-31</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JBOD原理"><span class="toc-number">3.</span> <span class="toc-text">JBOD原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文档和工具"><span class="toc-number">4.</span> <span class="toc-text">参考文档和工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用方式"><span class="toc-number">5.</span> <span class="toc-text">使用方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#StorCLI_Help"><span class="toc-number">6.</span> <span class="toc-text">StorCLI Help</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言">前言</h2><p>已经实施过2次Hadoop大数据平台的基础环境搭建，对于硬盘的RAID模式都不约而同选择了JBOD，毕竟大数据对于文件系统的管理本身就是基于分布式，由至少3份副本来保障数据可靠性，只是不做RAID后的SAS硬盘读写性能就有点惨不忍睹。这次Hadoop大数据平台工具选择的是Cloudera，大家感兴趣的化也可以浏览下它的官网。本篇文章主要介绍如何实现在不停机状态下在线更换JBOD硬盘。</p>
+<blockquote>
+<p>利用StorCLI命令不停机在线更换JBOD硬盘</p>
+</blockquote>
+<h2 id="更新历史">更新历史</h2><p>2016年12月31日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/jbod/" target="_blank" rel="external">https://wsgzao.github.io/post/jbod/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>Cloudera - <a href="http://www.cloudera.com/" target="_blank" rel="external">http://www.cloudera.com/</a></p>
+<hr>
+<h2 id="JBOD原理">JBOD原理</h2><p>JBOD （ Just a Bunch Of Disks ）不是标准的 RAID 等级，它通常用来表示一个没有控制软件提供协调控制的磁盘集合。 JBOD 将多个物理磁盘串联起来，提供一个巨大的逻辑磁盘。 JBOD 的数据存放机制是由第一块磁盘开始按顺序往后存储，当前磁盘存储空间用完后，再依次往后面的磁盘存储数据。 JBOD 存储性能完全等同于单块磁盘，而且也不提供数据安全保护。它只是简单提供一种扩展存储空间的机制， JBOD 可用存储容量等于所有成员磁盘的存储空间之和。目前 JBOD 常指磁盘柜，而不论其是否提供 RAID 功能。</p>
+<p>RAID磁盘阵列配置和调优小结 - <a href="https://wsgzao.github.io/post/raid/" target="_blank" rel="external">https://wsgzao.github.io/post/raid/</a></p>
+<h2 id="参考文档和工具">参考文档和工具</h2><p>StorCLI_RefMan_revf<br><a href="https://www.broadcom.com/support/download-search/?dk=StorCLI" target="_blank" rel="external">https://www.broadcom.com/support/download-search/?dk=StorCLI</a></p>
+<p>StorCLI (Command Line) Utility for Storage Management v1.07.07 on Linux<br><a href="https://www-947.ibm.com/support/entry/portal/docdisplay?lndocid=MIGR-5092950" target="_blank" rel="external">https://www-947.ibm.com/support/entry/portal/docdisplay?lndocid=MIGR-5092950</a></p>
+<h2 id="使用方式">使用方式</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#查询硬件RAID卡信息</span></span><br><span class="line">[root@localhost Linux]<span class="comment"># cat /proc/scsi/scsi |more</span></span><br><span class="line"></span><br><span class="line">Attached devices:</span><br><span class="line">Host: scsi0 Channel: <span class="number">02</span> Id: <span class="number">00</span> Lun: <span class="number">00</span></span><br><span class="line">  Vendor: IBM      Model: ServeRAID M5210  Rev: <span class="number">4.62</span></span><br><span class="line">  Type:   Direct-Access                    ANSI  SCSI revision: <span class="number">05</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#解压安装storcli</span></span><br><span class="line">unzip ibm_utl_sraidmr_storcli-<span class="number">1.07</span>.<span class="number">07</span>_linux_32-<span class="number">64</span>.zip</span><br><span class="line">rpm -Uvh storcli-<span class="number">1.07</span>.<span class="number">07</span>-<span class="number">1</span>.noarch.rpm</span><br><span class="line"></span><br><span class="line"><span class="comment">#设置软连接</span></span><br><span class="line">ln <span class="operator">-s</span> /opt/MegaRAID/storcli/storcli64 /bin/storcli</span><br><span class="line">ln <span class="operator">-s</span> /opt/MegaRAID/storcli/storcli64 /sbin/storcli</span><br><span class="line"></span><br><span class="line"><span class="comment">#Raid数量及当前状态</span></span><br><span class="line">[root@localhost Linux]<span class="comment"># storcli show ctrlcount</span></span><br><span class="line">Status Code = <span class="number">0</span></span><br><span class="line">Status = Success</span><br><span class="line">Description = None</span><br><span class="line"></span><br><span class="line">Controller Count = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#查询虚拟磁盘大小，raid结构等</span></span><br><span class="line">[root@localhost Linux]<span class="comment"># storcli /c0 /v0 show</span></span><br><span class="line">Controller = <span class="number">0</span></span><br><span class="line">Status = Success</span><br><span class="line">Description = None</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Virtual Drives :</span><br><span class="line">==============</span><br><span class="line"></span><br><span class="line">-----------------------------------------------------------</span><br><span class="line">DG/VD TYPE  State Access Consist Cache sCC       Size Name </span><br><span class="line">-----------------------------------------------------------</span><br><span class="line"><span class="number">0</span>/<span class="number">0</span>   RAID1 Optl  RW     Yes     RWTD  -   <span class="number">278.465</span> GB      </span><br><span class="line">-----------------------------------------------------------</span><br><span class="line"></span><br><span class="line">Cac=CacheCade|Rec=Recovery|OfLn=OffLine|Pdgd=Partially Degraded|dgrd=Degraded</span><br><span class="line">Optl=Optimal|RO=Read Only|RW=Read Write|B=Blocked|Consist=Consistent|</span><br><span class="line">R=Read Ahead Always|NR=No Read Ahead|WB=WriteBack|</span><br><span class="line">AWB=Always WriteBack|WT=WriteThrough|C=Cached IO|D=Direct IO|sCC=Scheduled</span><br><span class="line">Check Consistency</span><br><span class="line"><span class="comment">#可以看出此为RAID1，一个虚拟磁盘，大小为278.465 GB </span></span><br><span class="line"></span><br><span class="line"><span class="comment">#查看control0的物理硬盘</span></span><br><span class="line">[root@localhost Linux]<span class="comment"># storcli /c0 /eall /sall show</span></span><br><span class="line">Controller = <span class="number">0</span></span><br><span class="line">Status = Success</span><br><span class="line">Description = Show Drive Information Succeeded.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Drive Information :</span><br><span class="line">=================</span><br><span class="line"></span><br><span class="line">-------------------------------------------------------------------------</span><br><span class="line">EID:Slt DID State DG       Size Intf Med SED PI SeSz Model            Sp </span><br><span class="line">-------------------------------------------------------------------------</span><br><span class="line"><span class="number">252</span>:<span class="number">16</span>    <span class="number">8</span> Onln   <span class="number">0</span> <span class="number">278.465</span> GB SAS  HDD N   Y  <span class="number">512</span>B ST300MP0035    X U  </span><br><span class="line"><span class="number">252</span>:<span class="number">17</span>    <span class="number">9</span> Onln   <span class="number">0</span> <span class="number">278.465</span> GB SAS  HDD N   Y  <span class="number">512</span>B ST300MP0035    X U  </span><br><span class="line">-------------------------------------------------------------------------</span><br><span class="line"></span><br><span class="line">EID-Enclosure Device ID|Slt-Slot No.|DID-Device ID|DG-DriveGroup</span><br><span class="line">DHS-Dedicated Hot Spare|UGood-Unconfigured Good|GHS-Global Hotspare</span><br><span class="line">UBad-Unconfigured Bad|Onln-Online|Offln-Offline|Intf-Interface</span><br><span class="line">Med-Media Type|SED-Self Encryptive Drive|PI-Protection Info</span><br><span class="line">SeSz-Sector Size|Sp-Spun|U-Up|D-Down|T-Transition|F-Foreign</span><br><span class="line">UGUnsp-Unsupported|UGShld-UnConfigured shielded|HSPShld-Hotspare shielded</span><br><span class="line">CFShld-Configured shielded</span><br><span class="line"></span><br><span class="line"><span class="comment">#可以看到总计有两颗硬盘，每一颗大小278.465GB，是否在线等</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#查看control1的物理硬盘</span></span><br><span class="line">[root@localhost Linux]<span class="comment"># storcli /c1 /eall /sall show</span></span><br><span class="line">Controller = <span class="number">1</span></span><br><span class="line">Status = Success</span><br><span class="line">Description = Show Drive Information Succeeded.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Drive Information :</span><br><span class="line">=================</span><br><span class="line"></span><br><span class="line">------------------------------------------------------------------------</span><br><span class="line">EID:Slt DID State DG      Size Intf Med SED PI SeSz Model            Sp </span><br><span class="line">------------------------------------------------------------------------</span><br><span class="line"><span class="number">8</span>:<span class="number">0</span>      <span class="number">23</span> JBOD  -  <span class="number">1.0810</span> TB SAS  HDD N   Y  <span class="number">512</span>B ST1200MM0018   X U  </span><br><span class="line"><span class="number">8</span>:<span class="number">1</span>      <span class="number">24</span> JBOD  -  <span class="number">1.0810</span> TB SAS  HDD N   Y  <span class="number">512</span>B ST1200MM0018   X U  </span><br><span class="line"><span class="number">8</span>:<span class="number">2</span>      <span class="number">22</span> JBOD  -  <span class="number">1.0810</span> TB SAS  HDD N   Y  <span class="number">512</span>B ST1200MM0018   X U  </span><br><span class="line"><span class="number">8</span>:<span class="number">3</span>      <span class="number">19</span> JBOD  -  <span class="number">1.0810</span> TB SAS  HDD N   Y  <span class="number">512</span>B ST1200MM0018   X U  </span><br><span class="line"><span class="number">8</span>:<span class="number">4</span>      <span class="number">13</span> JBOD  -  <span class="number">1.0810</span> TB SAS  HDD N   Y  <span class="number">512</span>B ST1200MM0018   X U  </span><br><span class="line"><span class="number">8</span>:<span class="number">5</span>      <span class="number">14</span> JBOD  -  <span class="number">1.0810</span> TB SAS  HDD N   Y  <span class="number">512</span>B ST1200MM0018   X U  </span><br><span class="line"><span class="number">8</span>:<span class="number">6</span>      <span class="number">18</span> JBOD  -  <span class="number">1.0810</span> TB SAS  HDD N   Y  <span class="number">512</span>B ST1200MM0018   X U  </span><br><span class="line"><span class="number">8</span>:<span class="number">7</span>      <span class="number">12</span> JBOD  -  <span class="number">1.0810</span> TB SAS  HDD N   Y  <span class="number">512</span>B ST1200MM0018   X U  </span><br><span class="line"><span class="number">8</span>:<span class="number">8</span>      <span class="number">10</span> JBOD  -  <span class="number">1.0810</span> TB SAS  HDD N   Y  <span class="number">512</span>B ST1200MM0018   X U  </span><br><span class="line"><span class="number">8</span>:<span class="number">9</span>      <span class="number">16</span> JBOD  -  <span class="number">1.0810</span> TB SAS  HDD N   Y  <span class="number">512</span>B ST1200MM0018   X U  </span><br><span class="line"><span class="number">8</span>:<span class="number">10</span>     <span class="number">11</span> JBOD  -  <span class="number">1.0810</span> TB SAS  HDD N   Y  <span class="number">512</span>B ST1200MM0018   X U  </span><br><span class="line"><span class="number">8</span>:<span class="number">11</span>     <span class="number">21</span> JBOD  -  <span class="number">1.0810</span> TB SAS  HDD N   Y  <span class="number">512</span>B ST1200MM0018   X U  </span><br><span class="line"><span class="number">8</span>:<span class="number">12</span>     <span class="number">15</span> JBOD  -  <span class="number">1.0810</span> TB SAS  HDD N   Y  <span class="number">512</span>B ST1200MM0018   X U  </span><br><span class="line"><span class="number">8</span>:<span class="number">13</span>      <span class="number">9</span> JBOD  -  <span class="number">1.0810</span> TB SAS  HDD N   Y  <span class="number">512</span>B ST1200MM0018   X U  </span><br><span class="line">------------------------------------------------------------------------</span><br><span class="line"></span><br><span class="line">EID-Enclosure Device ID|Slt-Slot No.|DID-Device ID|DG-DriveGroup</span><br><span class="line">DHS-Dedicated Hot Spare|UGood-Unconfigured Good|GHS-Global Hotspare</span><br><span class="line">UBad-Unconfigured Bad|Onln-Online|Offln-Offline|Intf-Interface</span><br><span class="line">Med-Media Type|SED-Self Encryptive Drive|PI-Protection Info</span><br><span class="line">SeSz-Sector Size|Sp-Spun|U-Up|D-Down|T-Transition|F-Foreign</span><br><span class="line">UGUnsp-Unsupported|UGShld-UnConfigured shielded|HSPShld-Hotspare shielded</span><br><span class="line">CFShld-Configured shielded</span><br><span class="line"></span><br><span class="line"><span class="comment">#可以看到总计有两颗硬盘，每一颗大小1.0810 TB，是否在线等</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#设置硬盘状态</span></span><br><span class="line">storcli /c1/e8/s0 show all</span><br><span class="line"></span><br><span class="line">storcli /c1/e8/s0 start locate</span><br><span class="line">storcli /c1/e8/s0 <span class="built_in">set</span> offline</span><br><span class="line">storcli /c1/e8/s0 <span class="built_in">set</span> online</span><br><span class="line">storcli /c1/e8/s0 <span class="built_in">set</span> jbod</span><br></pre></td></tr></table></figure>
+<h2 id="StorCLI_Help">StorCLI Help</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#查看StorCLI帮助信息</span></span><br><span class="line">[root@localhost Linux]<span class="comment"># storcli -h</span></span><br><span class="line">     Storage Command Line Tool  Ver <span class="number">1.07</span>.<span class="number">07</span> Nov <span class="number">15</span>, <span class="number">2013</span></span><br><span class="line"></span><br><span class="line">     (c)Copyright <span class="number">2013</span>, LSI Corporation, All Rights Reserved.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">storcli -v </span><br><span class="line">storcli -h| -help| ? </span><br><span class="line">storcli -h| -help| ? legacy</span><br><span class="line">storcli show </span><br><span class="line">storcli show all</span><br><span class="line">storcli show ctrlcount</span><br><span class="line">storcli /cx add vd r[<span class="number">0</span>|<span class="number">1</span>|<span class="number">5</span>|<span class="number">6</span>|<span class="number">00</span>|<span class="number">10</span>|<span class="number">50</span>|<span class="number">60</span>]</span><br><span class="line">    [Size=&lt;VD1_Sz&gt;,&lt;VD2_Sz&gt;,..|all] [name=&lt;VDNAME1&gt;,..] </span><br><span class="line">    drives=e:s|e:s-x|e:s-x,y,e:s-x,y,z [PDperArray=x][SED]</span><br><span class="line">    [pdcache=on|off|default][pi][DimmerSwitch(ds)=default|automatic(auto)|</span><br><span class="line">    none|maximum(max)|MaximumWithoutCaching(maxnocache)]</span><br><span class="line">    [wt|wb|awb][nora|ra] [direct|cached] [cachevd]</span><br><span class="line">    [Strip=&lt;<span class="number">8</span>|<span class="number">16</span>|<span class="number">32</span>|<span class="number">64</span>|<span class="number">128</span>|<span class="number">256</span>|<span class="number">512</span>|<span class="number">1024</span>&gt;] [AfterVd=X] </span><br><span class="line">    [Spares = [e:]s|[e:]s-x|[e:]s-x,y] [force][ExclusiveAccess]</span><br><span class="line">storcli /cx add vd each r0 [name=&lt;VDNAME1&gt;,..] [drives=e:s|e:s-x|e:s-x,y]</span><br><span class="line">    [SED] [pdcache=on|off|default][pi] [DimmerSwitch(ds)=default|automatic(auto)|</span><br><span class="line">    none|maximum(max)|MaximumWithoutCaching(maxnocache)] </span><br><span class="line">    [wt|wb|awb] [nora|ra] [direct|cached] </span><br><span class="line">    [Strip=&lt;<span class="number">8</span>|<span class="number">16</span>|<span class="number">32</span>|<span class="number">64</span>|<span class="number">128</span>|<span class="number">256</span>|<span class="number">512</span>|<span class="number">1024</span>&gt;] [ExclusiveAccess]</span><br><span class="line">storcli /cx add VD cachecade|nytrocache r[aid][<span class="number">0</span>,<span class="number">1</span>,<span class="number">10</span>, <span class="number">1</span>EC] </span><br><span class="line">    drives = [e:]s|[e:]s-x|[e:]s-x,y [WT| WB] [assignvds = <span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>] [BOOTVOLSIZE=x]</span><br><span class="line">storcli /cx/ex show all </span><br><span class="line">storcli /cx/ex show status </span><br><span class="line">storcli /cx/vx del [cachecade] [force]</span><br><span class="line">storcli /cx delete events</span><br><span class="line">storcli /cx show events [[<span class="built_in">type</span>= &lt;sincereboot| sinceshutdown| includedeleted|</span><br><span class="line">latest=x| ccincon vd=&lt;<span class="number">0</span>,<span class="number">1</span>,...&gt;] filter=&lt;info|warning|critical|fatal&gt;]</span><br><span class="line">file=&lt;filepath&gt;</span><br><span class="line">storcli /cx show eventloginfo</span><br><span class="line">storcli /cx show health [all]</span><br><span class="line">storcli /cx delete securitykey</span><br><span class="line">storcli /cx <span class="built_in">set</span> securitykey=xxxxxxxx &#123;passphrase=xxxx&#125; &#123;keyid=xxx&#125;</span><br><span class="line">storcli /cx start Diag Duration=&lt;Val&gt; </span><br><span class="line">storcli /cx <span class="built_in">set</span> securitykey keyid=xxx</span><br><span class="line">storcli /cx compare securitykey=xxxxxxxxxx</span><br><span class="line">storcli /cx <span class="built_in">set</span> termlog[=on|off|offthisboot]</span><br><span class="line">storcli /cx show termlog [<span class="built_in">type</span>=config|contents]</span><br><span class="line">storcli /cx delete termlog</span><br><span class="line">storcli /cx Compare factorysettings file=&lt;filepath&gt;</span><br><span class="line">storcli /cx Compare factorysettings raw file=&lt;filepath&gt;</span><br><span class="line">storcli /cx <span class="built_in">set</span> securitykey=xxxxxxxx oldsecuritykey=xxxxxxxx</span><br><span class="line">    &#123;passphrase=xxxx&#125; &#123;keyid=xxx&#125;</span><br><span class="line">storcli /cx/dx show </span><br><span class="line">storcli /cx/dall show cachecade </span><br><span class="line">storcli /cx/dx show all </span><br><span class="line">storcli /cx show freespace</span><br><span class="line">storcli /cx/fall show [all] [securityKey = xxx]</span><br><span class="line">storcli /cx/fall del|delete [securityKey = xxx]</span><br><span class="line">storcli /cx/fall import [preview] [securityKey = xxx]</span><br><span class="line">storcli /cx/vx <span class="built_in">set</span> ssdcaching=on|off</span><br><span class="line">storcli /cx/dx <span class="built_in">set</span> security=on</span><br><span class="line">storcli /cx/vx show expansion</span><br><span class="line">storcli /cx show fshinting</span><br><span class="line">storcli /cx/vx <span class="built_in">set</span> fshinting=&lt;value&gt;</span><br><span class="line">storcli /cx/vx expand Size=&lt;xx&gt; [expandarray]</span><br><span class="line">storcli /cx[/ex]/sx show </span><br><span class="line">storcli /cx[/ex]/sx show all</span><br><span class="line">storcli /cx[/ex]/sx start rebuild </span><br><span class="line">storcli /cx[/ex]/sx stop rebuild </span><br><span class="line">storcli /cx[/ex]/sx pause rebuild </span><br><span class="line">storcli /cx[/ex]/sx resume rebuild </span><br><span class="line">storcli /cx[/ex]/sx show rebuild </span><br><span class="line">storcli /cx[/ex]/sx show health </span><br><span class="line">storcli /cx[/ex]/sx start copyback target=e:s </span><br><span class="line">storcli /cx[/ex]/sx stop copyback </span><br><span class="line">storcli /cx[/ex]/sx pause copyback </span><br><span class="line">storcli /cx[/ex]/sx resume copyback </span><br><span class="line">storcli /cx[/ex]/sx show copyback </span><br><span class="line">storcli /cx[/ex]/sx start initialization  </span><br><span class="line">storcli /cx[/ex]/sx stop initialization  </span><br><span class="line">storcli /cx[/ex]/sx show initialization  </span><br><span class="line">storcli /cx[/ex]/sx start locate  </span><br><span class="line">storcli /cx[/ex]/sx stop locate  </span><br><span class="line">storcli /cx[/ex]/sx show securitykey keyid </span><br><span class="line">storcli /cx[/ex]/sx add hotsparedrive [DGs=&lt;N|<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>...&gt;] [enclaffinity]</span><br><span class="line">    [nonrevertible]</span><br><span class="line">storcli /cx[/ex]/sx delete hotsparedrive</span><br><span class="line">storcli /cx[/ex]/sx spinup</span><br><span class="line">storcli /cx[/ex]/sx spindown</span><br><span class="line">storcli /cx[/ex]/sx <span class="built_in">set</span> online </span><br><span class="line">storcli /cx[/ex]/sx <span class="built_in">set</span> offline </span><br><span class="line">storcli /cx[/ex]/sx <span class="built_in">set</span> missing </span><br><span class="line">storcli /cx[/ex]/sx <span class="built_in">set</span> jbod </span><br><span class="line">storcli /cx[/ex]/sx <span class="built_in">set</span> good [force]  </span><br><span class="line">storcli /cx[/ex]/sx insert dg=A array=B row=C </span><br><span class="line">storcli /cx/vx <span class="built_in">set</span> emulationType=<span class="number">0</span>|<span class="number">1</span></span><br><span class="line">storcli /cx/vx <span class="built_in">set</span> wrcache=WT|WB|AWB</span><br><span class="line">storcli /cx/vx <span class="built_in">set</span> rdcache=RA|NoRA</span><br><span class="line">storcli /cx/vx <span class="built_in">set</span> iopolicy=Cached|Direct</span><br><span class="line">storcli /cx/vx <span class="built_in">set</span> accesspolicy=RW|RO|Blocked|RmvBlkd</span><br><span class="line">storcli /cx/vx <span class="built_in">set</span> pdcache=On|Off|Default</span><br><span class="line">storcli /cx/vx <span class="built_in">set</span> name=&lt;NameString&gt;</span><br><span class="line">storcli /cx/vx <span class="built_in">set</span> HostAccess=ExclusiveAccess|SharedAccess</span><br><span class="line">storcli /cx/vx <span class="built_in">set</span> ds=Default|Auto|None|Max|MaxNoCache</span><br><span class="line">storcli /cx/vx <span class="built_in">set</span> autobgi=On|Off</span><br><span class="line">storcli /cx/vx <span class="built_in">set</span> pi=Off</span><br><span class="line">storcli /cx/vx show</span><br><span class="line">storcli /cx/vx show all</span><br><span class="line">storcli /cx/vx show init</span><br><span class="line">storcli /cx/vx show cc</span><br><span class="line">storcli /cx/vx show erase</span><br><span class="line">storcli /cx/vx show migrate</span><br><span class="line">storcli /cx/vx show bgi</span><br><span class="line">storcli /cx/vx show autobgi</span><br><span class="line">storcli /cx/vx show trim</span><br><span class="line">storcli /cx <span class="built_in">set</span> consistencycheck|cc=[off|seq|conc] [delay=value]</span><br><span class="line">    starttime=yyyy/mm/dd hh] [excludevd=x-y,z]</span><br><span class="line">storcli /cx show cc|consistencycheck</span><br><span class="line">storcli /cx show ocr </span><br><span class="line">storcli /cx <span class="built_in">set</span> ocr=&lt;on|off&gt;</span><br><span class="line">storcli /cx/vx start init[Full][Force]</span><br><span class="line">storcli /cx/vx start erase [simple|normal|thorough|standard][patternA=&lt;val&gt;]</span><br><span class="line">[patternB=&lt;val&gt;]</span><br><span class="line">storcli /cx/vx start cc[Force]</span><br><span class="line">storcli /cx/vx start migrate <span class="built_in">type</span>=raidx [option=add|remove </span><br><span class="line">    drives=[e:]s|[e:]s-x|[e:]s-x,y] [Force] </span><br><span class="line">storcli /cx/vx stop init</span><br><span class="line">storcli /cx/vx stop erase</span><br><span class="line">storcli /cx/vx stop cc</span><br><span class="line">storcli /cx/vx stop bgi</span><br><span class="line">storcli /cx/vx pause cc</span><br><span class="line">storcli /cx/vx pause bgi</span><br><span class="line">storcli /cx/vx resume cc</span><br><span class="line">storcli /cx/vx resume bgi</span><br><span class="line">storcli /cx show </span><br><span class="line">storcli /cx show all </span><br><span class="line">storcli /cx show preservedcache </span><br><span class="line">storcli /cx/vx delete preservedcache[force] </span><br><span class="line">storcli /cx[/ex]/sx download src=&lt;filepath&gt; [satabridge] [mode= <span class="number">5</span>|<span class="number">7</span>]</span><br><span class="line">storcli /cx/ex download src=&lt;filepath&gt; [forceActivate] </span><br><span class="line">storcli /cx[/ex]/sx secureerase [force]  </span><br><span class="line">storcli /cx[/ex]/sx start erase [simple| normal| thorough | standard| threepass]</span><br><span class="line">   [patternA=&lt;val&gt;] [patternB=&lt;val&gt;]</span><br><span class="line">storcli /cx[/ex]/sx stop erase </span><br><span class="line">storcli /cx[/ex]/sx show erase </span><br><span class="line">storcli /cx[/ex]/sx show rawdata pageaddr=&lt;pageaddress <span class="keyword">in</span> hex&gt; file=&lt;filename&gt; </span><br><span class="line">storcli /cx[/ex]/sx <span class="built_in">set</span> bootdrive=&lt;on|off&gt; </span><br><span class="line">storcli /cx/vx <span class="built_in">set</span> bootdrive=&lt;on|off&gt;</span><br><span class="line">storcli /cx show bootdrive</span><br><span class="line">storcli /cx show bootwithpinnedcache</span><br><span class="line">storcli /cx <span class="built_in">set</span> bootwithpinnedcache=&lt;on|off&gt;</span><br><span class="line">storcli /cx show activityforlocate</span><br><span class="line">storcli /cx <span class="built_in">set</span> activityforlocate=&lt;on|off&gt;</span><br><span class="line">storcli /cx show copyback</span><br><span class="line">storcli /cx <span class="built_in">set</span> copyback=&lt;on|off&gt; <span class="built_in">type</span>=smartssd|smarthdd|all </span><br><span class="line">storcli /cx show jbod</span><br><span class="line">storcli /cx <span class="built_in">set</span> jbod=&lt;on|off&gt; </span><br><span class="line">storcli /cx <span class="built_in">set</span> autorebuild=&lt;on|off&gt; </span><br><span class="line">storcli /cx show autorebuild</span><br><span class="line">storcli /cx show cachebypass</span><br><span class="line">storcli /cx <span class="built_in">set</span> cachebypass=&lt;on|off&gt; </span><br><span class="line">storcli /cx show usefdeonlyencrypt</span><br><span class="line">storcli /cx <span class="built_in">set</span> usefdeonlyencrypt=&lt;on|off&gt;</span><br><span class="line">storcli /cx show prcorrectunconfiguredareas</span><br><span class="line">storcli /cx <span class="built_in">set</span> prcorrectunconfiguredareas=&lt;on|off&gt; </span><br><span class="line">storcli /cx show batterywarning</span><br><span class="line">storcli /cx <span class="built_in">set</span> batterywarning=&lt;on|off&gt; </span><br><span class="line">storcli /cx show abortcconerror</span><br><span class="line">storcli /cx <span class="built_in">set</span> abortcconerror=&lt;on|off&gt; </span><br><span class="line">storcli /cx show ncq</span><br><span class="line">storcli /cx <span class="built_in">set</span> ncq=&lt;on|off&gt; </span><br><span class="line">storcli /cx show maintainpdfailhistory</span><br><span class="line">storcli /cx <span class="built_in">set</span> maintainpdfailhistory=&lt;on|off&gt; </span><br><span class="line">storcli /cx show restorehotspare</span><br><span class="line">storcli /cx <span class="built_in">set</span> restorehotspare=&lt;on|off&gt; </span><br><span class="line">storcli /cx <span class="built_in">set</span> bios [state=&lt;on|off&gt;] [Mode=&lt;SOE|BE|HCOE|HSM&gt;] [abs=&lt;on|off&gt;]</span><br><span class="line">storcli /cx show bios </span><br><span class="line">storcli /cx show alarm</span><br><span class="line">storcli /cx <span class="built_in">set</span> alarm=&lt;on|off|silence&gt; </span><br><span class="line">storcli /cx show foreignautoimport</span><br><span class="line">storcli /cx <span class="built_in">set</span> foreignautoimport=&lt;on|off&gt; </span><br><span class="line">storcli /cx show directpdmapping</span><br><span class="line">storcli /cx <span class="built_in">set</span> directpdmapping=&lt;on|off&gt; </span><br><span class="line">storcli /cx show rebuildrate</span><br><span class="line">storcli /cx <span class="built_in">set</span> rebuildrate=&lt;value&gt; </span><br><span class="line">storcli /cx show loadbalancemode</span><br><span class="line">storcli /cx <span class="built_in">set</span> loadbalancemode=&lt;on|off&gt; </span><br><span class="line">storcli /cx show eghs</span><br><span class="line">storcli /cx <span class="built_in">set</span> eghs [state=&lt;on|off&gt;] [eug=&lt;on|off&gt;] [smarter=&lt;on|off&gt;] </span><br><span class="line">storcli /cx show cacheflushint</span><br><span class="line">storcli /cx <span class="built_in">set</span> cacheflushint=&lt;value&gt; </span><br><span class="line">storcli /cx show prrate</span><br><span class="line">storcli /cx <span class="built_in">set</span> prrate=&lt;value&gt; </span><br><span class="line">storcli /cx show ccrate</span><br><span class="line">storcli /cx <span class="built_in">set</span> ccrate=&lt;value&gt; </span><br><span class="line">storcli /cx show bgirate</span><br><span class="line">storcli /cx <span class="built_in">set</span> bgirate =&lt;value&gt; </span><br><span class="line">storcli /cx show dpm </span><br><span class="line">storcli /cx <span class="built_in">set</span> dpm =&lt;on|off&gt; </span><br><span class="line">storcli /cx show sgpioforce </span><br><span class="line">storcli /cx <span class="built_in">set</span> sgpioforce =&lt;on|off&gt; </span><br><span class="line">storcli /cx <span class="built_in">set</span> supportssdpatrolread =&lt;on|off&gt; </span><br><span class="line">storcli /cx show migraterate</span><br><span class="line">storcli /cx <span class="built_in">set</span> migraterate=&lt;value&gt; </span><br><span class="line">storcli /cx show spinupdrivecount</span><br><span class="line">storcli /cx show wbsupport</span><br><span class="line">storcli /cx <span class="built_in">set</span> spinupdrivecount=&lt;value&gt; </span><br><span class="line">storcli /cx show spinupdelay</span><br><span class="line">storcli /cx <span class="built_in">set</span> spinupdelay=&lt;value&gt; </span><br><span class="line">storcli /cx show coercion</span><br><span class="line">storcli /cx <span class="built_in">set</span> coercion=&lt;value&gt; </span><br><span class="line">storcli /cx show smartpollinterval</span><br><span class="line">storcli /cx <span class="built_in">set</span> smartpollinterval=&lt;value&gt; </span><br><span class="line">storcli /cx show eccbucketsize</span><br><span class="line">storcli /cx <span class="built_in">set</span> eccbucketsize=&lt;value&gt; </span><br><span class="line">storcli /cx show eccbucketleakrate</span><br><span class="line">storcli /cx <span class="built_in">set</span> eccbucketleakrate=&lt;value&gt; </span><br><span class="line">storcli /cx show backplane</span><br><span class="line">storcli /cx <span class="built_in">set</span> backplane mode=&lt;value&gt; expose=&lt;on/off&gt; </span><br><span class="line">storcli /cx show perfmode</span><br><span class="line">storcli /cx <span class="built_in">set</span> perfmode=&lt;value&gt; [maxflushlines=&lt;value&gt; numiostoorder=&lt;value&gt;]</span><br><span class="line">storcli /cx show perfmodevalues</span><br><span class="line">storcli /cx show pi</span><br><span class="line">storcli /cx <span class="built_in">set</span> pi [state=&lt;on|off&gt;] [import=&lt;on|off&gt;]</span><br><span class="line">storcli /cx show time</span><br><span class="line">storcli /cx <span class="built_in">set</span> time=&lt;yyyymmdd hh:mm:ss | systemtime&gt; </span><br><span class="line">storcli /cx show ds</span><br><span class="line">storcli /cx <span class="built_in">set</span> ds=OFF <span class="built_in">type</span>=<span class="number">1</span>|<span class="number">2</span>|<span class="number">3</span>|<span class="number">4</span></span><br><span class="line">storcli /cx <span class="built_in">set</span> ds=ON <span class="built_in">type</span>=<span class="number">1</span>|<span class="number">2</span> [properties]</span><br><span class="line">storcli /cx <span class="built_in">set</span> ds=ON <span class="built_in">type</span>=<span class="number">3</span>|<span class="number">4</span> DefaultLdType=&lt;val&gt; [properties]</span><br><span class="line">storcli /cx <span class="built_in">set</span> ds [properties] </span><br><span class="line">storcli /cx show safeid</span><br><span class="line">storcli /cx show rehostinfo</span><br><span class="line">storcli /cx show pci</span><br><span class="line">storcli /cx show ASO</span><br><span class="line">storcli /cx <span class="built_in">set</span> aso key=&lt;key value&gt; preview</span><br><span class="line">storcli /cx <span class="built_in">set</span> aso key=&lt;key value&gt;</span><br><span class="line">storcli /cx <span class="built_in">set</span> aso transfertovault</span><br><span class="line">storcli /cx <span class="built_in">set</span> aso rehostcomplete</span><br><span class="line">storcli /cx <span class="built_in">set</span> aso deactivatetrialkey</span><br><span class="line">storcli /cx <span class="built_in">set</span> factory defaults</span><br><span class="line">storcli /cx download file=&lt;filepath&gt; [fwtype=&lt;val&gt;] [ResetNow] [nosigchk] </span><br><span class="line">    [noverchk]</span><br><span class="line">storcli /cx flush|flushcache</span><br><span class="line">storcli /cx/px show </span><br><span class="line">storcli /cx/px show all</span><br><span class="line">storcli /cx/px <span class="built_in">set</span> linkspeed=<span class="number">0</span>|<span class="number">1.5</span>|<span class="number">3</span>|<span class="number">6</span>|<span class="number">12</span> </span><br><span class="line">storcli /cx/bbu show </span><br><span class="line">storcli /cx/bbu <span class="built_in">set</span> SCAPVPD file=&lt;input file path&gt; VPDPage=&lt;SCapVPDFixed&gt;</span><br><span class="line">storcli /cx/bbu show all </span><br><span class="line">storcli /cx/bbu show status </span><br><span class="line">storcli /cx/bbu show properties </span><br><span class="line">storcli /cx/bbu show learn </span><br><span class="line">storcli /cx/bbu show gasgauge Offset=xxxx Numbytes=n </span><br><span class="line">storcli /cx/bbu start learn </span><br><span class="line">storcli /cx/bbu show modes </span><br><span class="line">storcli /cx/bbu <span class="built_in">set</span> [ learnDelayInterval=&lt;val&gt; | bbuMode=&lt;val&gt;  </span><br><span class="line">    |learnStartTime=[DDD HH | off] | autolearnmode=&lt;val&gt; | powermode=sleep | writeaccess=sealed ]</span><br><span class="line">storcli /cx/cv show </span><br><span class="line">storcli /cx/cv show all </span><br><span class="line">storcli /cx/cv show status </span><br><span class="line">storcli /cx/cv show learn </span><br><span class="line">storcli /cx/cv start learn </span><br><span class="line">storcli /cx show securitykey keyid </span><br><span class="line">storcli /cx start patrolread</span><br><span class="line">storcli /cx stop patrolread</span><br><span class="line">storcli /cx pause patrolread</span><br><span class="line">storcli /cx resume patrolread</span><br><span class="line">storcli /cx show patrolRead</span><br><span class="line">storcli /cx show powermonitoringinfo</span><br><span class="line">storcli /cx <span class="built_in">set</span> patrolread = &#123;&#123;on mode=&lt;auto|manual&gt; &#125;|&#123;off&#125;&#125;</span><br><span class="line">storcli /cx <span class="built_in">set</span> patrolread [starttime=&lt; yyyy/mm/dd hh&gt;] </span><br><span class="line">    [maxconcurrentpd =&lt;value&gt;] [includessds=&lt;on|onlymixed|off&gt;]</span><br><span class="line">    [uncfgareas=on|off]</span><br><span class="line">storcli /cx <span class="built_in">set</span> patrolread delay = &lt;value&gt;</span><br><span class="line">storcli /cx[/ex]/sx show diag paniclog [Query] | [ExtractSlot=x] </span><br><span class="line">                                         | [EraseSlot=x] [file=filepath]</span><br><span class="line">storcli /cx[/ex]/sx show diag smartlog [file=filepath] </span><br><span class="line">storcli /cx[/ex]/sx show diag errorlog [file=filepath] </span><br><span class="line">storcli /cx del Nytrocache [force]</span><br><span class="line">storcli /cx show badblocks</span><br><span class="line">storcli /cx flasherase </span><br><span class="line">storcli /cx shutdown </span><br><span class="line">storcli /cx/mx <span class="built_in">set</span> mode=&lt;Internal | External | Auto&gt; </span><br><span class="line">storcli /cx/mx show </span><br><span class="line">storcli /cx transform iMR </span><br><span class="line">storcli /cx restart </span><br><span class="line">storcli /cx/vx show BBMT</span><br><span class="line">storcli /cx/vx delete BBMT</span><br><span class="line">storcli /xd add <span class="built_in">type</span>=CacheDev </span><br><span class="line">                &lt;devices=comma separated cache devices  | ALL&gt; [force] </span><br><span class="line">storcli /xd add <span class="built_in">type</span>=VirtualDrive </span><br><span class="line">                &lt;devices=comma separated Virtual drives | ALL&gt; </span><br><span class="line">storcli /xd delete <span class="built_in">type</span>=&lt;CacheDev | VirtualDrive&gt; </span><br><span class="line">                        &lt;devices=comma separated cache devices or </span><br><span class="line">                        Virtual drives as applicable | ALL&gt; </span><br><span class="line">storcli /xd show <span class="built_in">type</span>=&lt;CacheDev | VirtualDrive&gt; [state=&lt;assigned|unassigned&gt;] </span><br><span class="line">storcli /xd show </span><br><span class="line">storcli /xd show perfmon </span><br><span class="line">storcli /xd/wd&lt;X|ALL&gt; show </span><br><span class="line">storcli /xd/wd&lt;X|ALL&gt; show safeid </span><br><span class="line">storcli /xd <span class="built_in">set</span> online [Vds=comma separated VD ids] </span><br><span class="line">storcli /xd/wdX apply key=value </span><br><span class="line">storcli /cx[/ex]/sx start format [thorough] </span><br><span class="line">storcli /cx show dequeuelog file=&lt;filepath&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Note:Use <span class="string">'page=[x]'</span>as the last option <span class="keyword">in</span> all the commands to <span class="built_in">set</span> the page break.</span><br><span class="line">      X=lines per page. E.g. <span class="string">'storcli help page=10'</span></span><br></pre></td></tr></table></figure>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/jbod/" data-title="JBOD磁盘配置和StorCLI命令使用小结 | HelloDog" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/post/solarflare/"  title="Solarflare低延迟万兆网卡配置和性能调优实践">
+ <strong>下一篇：</strong><br/> 
+ <span>Solarflare低延迟万兆网卡配置和性能调优实践
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="post/jbod/" data-title="JBOD磁盘配置和StorCLI命令使用小结" data-url="https://wsgzao.github.io/post/jbod/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JBOD原理"><span class="toc-number">3.</span> <span class="toc-text">JBOD原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文档和工具"><span class="toc-number">4.</span> <span class="toc-text">参考文档和工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用方式"><span class="toc-number">5.</span> <span class="toc-text">使用方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#StorCLI_Help"><span class="toc-number">6.</span> <span class="toc-text">StorCLI Help</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>46</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>6</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Doing is better than perfect.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="//faisalman.github.io/ua-parser-js/src/ua-parser.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"wsgzao"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//wsgzao.github.io/embed_ua.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+<!-- baidu_push Begin -->
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+            
+<!-- baidu_push End -->
+  </body>
+</html>
