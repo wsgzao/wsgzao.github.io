@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Keep Calm and Carry On]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="https://wsgzao.github.io/"/>
-  <updated>2016-12-30T08:44:31.380Z</updated>
+  <updated>2017-01-18T03:43:45.853Z</updated>
   <id>https://wsgzao.github.io/</id>
   
   <author>
@@ -13,6 +13,42 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[tftp安装和使用小结]]></title>
+    <link href="https://wsgzao.github.io/post/tftp/"/>
+    <id>https://wsgzao.github.io/post/tftp/</id>
+    <published>2017-01-18T06:59:49.000Z</published>
+    <updated>2017-01-18T03:43:45.853Z</updated>
+    <content type="html"><![CDATA[<h2 id="前言">前言</h2><p>我相信大家接触到tftp大多数原因是PXE网络自动化部署的功劳，一般是在Linux环境下采用PXE+TFTP+DHCP+(HTTP/FTP/NFS)来实现，因为最近在生产环境中分别测试使用了云霁科技的Cloudboot和大名鼎鼎的Cobbler，只是针对大规模型号和配置不一样的物理机实现成本太高配置不够灵活，最后考虑采用Windows笔记本+交换机+tftpd32来实现。而且最近在更新Cisco网络交换机固件的时候发现使用tftp相比ftp来说更加容易，想想就整一篇简单的文档出来。</p>
+<blockquote>
+<p>tftp是一个非常简单好用的文件传输协议</p>
+</blockquote>
+<h2 id="更新历史">更新历史</h2><p>2017年01月18日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/tftp/" target="_blank" rel="external">https://wsgzao.github.io/post/tftp/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>TFTP - <a href="http://www.tftp-server.com/" target="_blank" rel="external">http://www.tftp-server.com/</a></p>
+<hr>
+<h2 id="tftp应用场景">tftp应用场景</h2><p>TFTP（Trivial File Transfer Protocol，简单文件传输协议）是TCP/IP协议族中的一个用来在客户机与服务器之间进行简单文件传输的协议，提供不复杂、开销不大的文件传输服务。端口号为69，它基于UDP协议而实现。</p>
+<ol>
+<li>交换机或路由器升级或备份</li>
+<li>无盘工作站存放boot loader</li>
+<li>嵌入式开发时装载系统</li>
+<li>大规模的服务安装布署</li>
+</ol>
+<h2 id="tftp使用">tftp使用</h2><blockquote>
+<p>注意修改防火墙和selinux配置</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#安装</span></span><br><span class="line">yum install -y tftp-server</span><br><span class="line"></span><br><span class="line"><span class="comment">#注意disable选项为no</span></span><br><span class="line"><span class="comment">#修改项server_args=，可以修改tftp-server的根目录，参数-s指定chroot，-c指定了可以创建文件</span></span><br><span class="line">vi /etc/xinetd.d/tftp</span><br><span class="line">service tftp</span><br><span class="line">&#123;</span><br><span class="line">        socket_<span class="built_in">type</span>             = dgram</span><br><span class="line">        protocol                = udp</span><br><span class="line">        <span class="built_in">wait</span>                    = yes</span><br><span class="line">        user                    = root</span><br><span class="line">        server                  = /usr/sbin/in.tftpd</span><br><span class="line">        server_args             = <span class="operator">-s</span> /var/lib/tftpboot</span><br><span class="line">        <span class="built_in">disable</span>                 = no</span><br><span class="line">        per_<span class="built_in">source</span>              = <span class="number">11</span></span><br><span class="line">        cps                     = <span class="number">100</span> <span class="number">2</span></span><br><span class="line">        flags                   = IPv4</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#设置tftp开机自动启动</span></span><br><span class="line">chkconfig tftp on  </span><br><span class="line"></span><br><span class="line"><span class="comment">#启动xinetd服务</span></span><br><span class="line">/etc/init.d/xinetd restart </span><br><span class="line"></span><br><span class="line"><span class="comment">#验证tftp是否启动成功并监听本地69端口</span></span><br><span class="line">netstat -anup | grep <span class="number">69</span></span><br><span class="line">udp    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">69</span>    <span class="number">0.0</span>.<span class="number">0.0</span>:*    <span class="number">15763</span>/xinetd      </span><br><span class="line"></span><br><span class="line"><span class="comment">#测试上传和下载</span></span><br><span class="line">yum install tftp</span><br><span class="line">tftp -i <span class="number">192.168</span>.<span class="number">1.1</span> put <span class="built_in">test</span></span><br><span class="line">tftp -i <span class="number">192.168</span>.<span class="number">1.1</span> get <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+]]></content>
+    <summary type="html">
+    <![CDATA[tftp是一个非常简单好用的文件传输协议]]>
+    
+    </summary>
+    
+      <category term="学习 | Study" scheme="https://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[JBOD磁盘配置和StorCLI命令使用小结]]></title>
@@ -4721,129 +4757,6 @@
 ]]></content>
     <summary type="html">
     <![CDATA[LVM是一个非常给力的工具，用来创建和管理可变大小的分区]]>
-    
-    </summary>
-    
-      <category term="学习 | Study" scheme="https://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[静态路由和策略路由的配置实践]]></title>
-    <link href="https://wsgzao.github.io/post/static-routes/"/>
-    <id>https://wsgzao.github.io/post/static-routes/</id>
-    <published>2016-03-17T08:22:32.000Z</published>
-    <updated>2016-03-18T03:28:04.351Z</updated>
-    <content type="html"><![CDATA[<h2 id="前言">前言</h2><p>一般在多网卡的网络访问关系中我们通常根据目标IP地址段来添加静态路由(static-routes)，在主机系统配置层面这个需求一般都比较简单也不需要使用非常复杂的命令，说实话如果不是因为开发测试中心同事<a href="https://cn.linkedin.com/in/恒-谢-aa5598106" target="_blank" rel="external">@谢恒</a>的乱入启发，我也不会发现还有策略路由这样一种灵活通用的配置方法来实现Linux多网卡多路由的设定，灰常感谢。</p>
-<blockquote>
-<p>策略路由的出现在某些业务场景下可能更优于静态路由</p>
-</blockquote>
-<hr>
-<h2 id="更新记录">更新记录</h2><p>2016年03月18日 - 更新静态路由配置和建议<br>2015年12月23日 - 增加Linux添加静态路由最佳实践<br>2015年12月18日 - 修正动态路由为策略路由描述，完善内容，感谢<a href="http://www.v2ex.com/member/extreme" target="_blank" rel="external">@extreme</a><br>2015年12月17日 - 初稿</p>
-<p>阅读原文 - <a href="http://wsgzao.github.io/post/static-routes/" target="_blank" rel="external">http://wsgzao.github.io/post/static-routes/</a></p>
-<p>扩展阅读</p>
-<ul>
-<li>Routing Tables - <a href="http://linux-ip.net/html/routing-tables.html" target="_blank" rel="external">http://linux-ip.net/html/routing-tables.html</a></li>
-<li>linux配置静态路由 - <a href="http://www.361way.com/linux-define-static-route/4053.html" target="_blank" rel="external">http://www.361way.com/linux-define-static-route/4053.html</a></li>
-<li>Linux策略性路由应用及分析(iproute2) - <a href="http://tilt.lib.tsinghua.edu.cn/node/408" target="_blank" rel="external">http://tilt.lib.tsinghua.edu.cn/node/408</a></li>
-<li>Linux Advanced Routing &amp; Traffic Control - <a href="http://lartc.org/" target="_blank" rel="external">http://lartc.org/</a></li>
-</ul>
-<hr>
-<h2 id="静态路由表和策略路由的区别">静态路由表和策略路由的区别</h2><p>通常我们维护静态路由表会手工填写所有IP地址段的路由规则，使用命令或者写入配置文件永久生效，先以Windows/Linux/AIX常用方法为例</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#Windows静态路由</span></span><br><span class="line">--键入 route -p add [目标] [mask &lt;网络掩码&gt;] [网关] [metric &lt;度量值&gt;] [<span class="keyword">if</span> &lt;接口&gt;]</span><br><span class="line">route <span class="built_in">print</span></span><br><span class="line">route delete</span><br><span class="line">route -p add <span class="number">172.16</span>.<span class="number">19.0</span> mask <span class="number">255.255</span>.<span class="number">255.0</span> <span class="number">198.15</span>.<span class="number">0.1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#RHEL静态路由</span></span><br><span class="line">vi /etc/sysconfig/network</span><br><span class="line">default via <span class="number">192.168</span>.<span class="number">3.1</span> dev eth0</span><br><span class="line"><span class="number">10.211</span>.<span class="number">6.0</span>/<span class="number">24</span> via <span class="number">192.168</span>.<span class="number">3.1</span> dev eth0</span><br><span class="line"><span class="number">10.0</span>.<span class="number">0.0</span>/<span class="number">8</span> via <span class="number">10.212</span>.<span class="number">52.1</span> dev eth1</span><br><span class="line"></span><br><span class="line"><span class="comment">#SuSE静态路由</span></span><br><span class="line">vi /etc/sysconfig/network/routes</span><br><span class="line">default <span class="number">192.168</span>.<span class="number">3.1</span> - -</span><br><span class="line"><span class="number">10.211</span>.<span class="number">6.0</span> <span class="number">192.168</span>.<span class="number">3.1</span> <span class="number">255.255</span>.<span class="number">255.0</span> eth0</span><br><span class="line"><span class="number">10.0</span>.<span class="number">0.0</span> <span class="number">10.212</span>.<span class="number">52.1</span> <span class="number">255.0</span>.<span class="number">0.0</span> eth1</span><br><span class="line"></span><br><span class="line"><span class="comment">#AIX静态路由</span></span><br><span class="line">smitty mkroute</span><br><span class="line"><span class="number">172.20</span>.<span class="number">14.0</span>/<span class="number">24</span> gw <span class="number">172.23</span>.<span class="number">14.254</span></span><br></pre></td></tr></table></figure>
-<p>这种办法针对少量的规则还可以轻松应对，但规则一旦增加麻烦也就接踵而至，网段地址不断变化就必须及时更新路由表，否则其他用户就无法访问。如果可以根据用户访问进来的路径设定策略路由就会方便很多，而rt_tables就是为此而生。</p>
-<h2 id="Linux添加静态路由最佳实践">Linux添加静态路由最佳实践</h2><blockquote>
-<p>按照RedHat官方介绍有三种方式添加永久静态路由，这里只列举最佳方式</p>
-</blockquote>
-<h3 id="临时路由">临时路由</h3><blockquote>
-<p>以下两种方法可以立即生效，但重启后会消失，切记使用场景</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#route命令参数，使用route命令，查看本机路由直接输入route -n回车即可</span></span><br><span class="line">add     增加路由</span><br><span class="line">del     删除路由</span><br><span class="line">-net    设置到某个网段的路由</span><br><span class="line">-host   设置到某台主机的路由</span><br><span class="line">gw      出口网关 IP地址</span><br><span class="line">dev     出口网关 物理设备名</span><br><span class="line"></span><br><span class="line"><span class="comment">#添加路由</span></span><br><span class="line">route add -net <span class="number">192.168</span>.<span class="number">0.0</span>/<span class="number">24</span> gw <span class="number">192.168</span>.<span class="number">0.1</span></span><br><span class="line">route add -host <span class="number">192.168</span>.<span class="number">1.1</span> dev <span class="number">192.168</span>.<span class="number">0.1</span></span><br><span class="line"><span class="comment">#删除路由</span></span><br><span class="line">route del -net <span class="number">192.168</span>.<span class="number">0.0</span>/<span class="number">24</span> gw <span class="number">192.168</span>.<span class="number">0.1</span></span><br><span class="line"><span class="comment">#添加默认路由</span></span><br><span class="line">route add default gw <span class="number">192.168</span>.<span class="number">0.1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#使用ip route 命令和route命令类似</span></span><br><span class="line">add 增加路由</span><br><span class="line">del 删除路由</span><br><span class="line">via 网关出口 IP地址</span><br><span class="line">dev 网关出口 物理设备名</span><br><span class="line"></span><br><span class="line"><span class="comment">#添加路由</span></span><br><span class="line">ip route add <span class="number">192.168</span>.<span class="number">0.0</span>/<span class="number">24</span> via <span class="number">192.168</span>.<span class="number">0.1</span></span><br><span class="line">ip route add <span class="number">192.168</span>.<span class="number">1.1</span> dev <span class="number">192.168</span>.<span class="number">0.1</span></span><br><span class="line"><span class="comment">#删除路由</span></span><br><span class="line">ip route del <span class="number">192.168</span>.<span class="number">0.0</span>/<span class="number">24</span> via <span class="number">192.168</span>.<span class="number">0.1</span></span><br><span class="line"><span class="comment">#增加默认路由</span></span><br><span class="line">ip route add default via <span class="number">192.168</span>.<span class="number">0.1</span> dev eth0</span><br></pre></td></tr></table></figure>
-<h3 id="永久路由">永久路由</h3><blockquote>
-<p>该方法需要重启网络会造成短暂的网络服务中断，但重启后优先级大于rc.local方式不会影响nfs</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#可以通过临时命令立即生效</span></span><br><span class="line">route add -net <span class="number">192.168</span>.<span class="number">3.0</span>/<span class="number">24</span> gw <span class="number">192.168</span>.<span class="number">3.254</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#在/etc/sysconfig/static-routes文件里添加如下内容 (没有static-routes的话就手动建立一个这样的文件)</span></span><br><span class="line">any net <span class="number">192.168</span>.<span class="number">3.0</span>/<span class="number">24</span> gw <span class="number">192.168</span>.<span class="number">3.254</span></span><br><span class="line">any net <span class="number">10.250</span>.<span class="number">228.128</span> netmask <span class="number">255.255</span>.<span class="number">255.192</span> gw <span class="number">10.250</span>.<span class="number">228.129</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#如果是生产系统可以考虑暂时不重启服务避免网络中断</span></span><br><span class="line">service network restart</span><br></pre></td></tr></table></figure>
-<h2 id="rt_tables">rt_tables</h2><blockquote>
-<p>rt_tables简单来说就是通过给表的命名使得管理简单化</p>
-</blockquote>
-<p>大部分人习惯直接将路由表优先级号码直接作为表的名称来使用，这样做的好处是非常直观和简明的表达了表所在优先级的位置，但是当表的优先级结构出现变动时，我们对巨大的路由表的修改就显得很烦琐和费事了。</p>
-<p>在/etc/iproute2/目录下,有这么一个文件rt_tables,只要对它进行改动，我们将很容易的完成路由表优先级结构的变动。(数值越小优先级别越高)</p>
-<p>当路由表的优先级发生变化的时候，我们只需要编辑/etc/iproute2/rt_tables这个文件就可以直接改变路由表的优先级次序。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/iproute2/rt_tables</span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># reserved values</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="number">255</span>    <span class="built_in">local</span></span><br><span class="line"><span class="number">254</span>    main</span><br><span class="line"><span class="number">253</span>    default</span><br><span class="line"><span class="number">0</span>    unspec</span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># local</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#1    inr.ruhep</span></span><br></pre></td></tr></table></figure>
-<p>Linux最多可以支持255张路由表，其中有3张表是内置的：</p>
-<p>表255 本地路由表（Local table） 本地接口地址，广播地址，已及NAT地址都放在这个表。该路由表由系统自动维护，管理员不能直接修改。</p>
-<p>表254 主路由表（Main table） 如果没有指明路由所属的表，所有的路由都默认都放在这个表里，一般来说，旧的路由工具（如route）所添加的路由都会加到这个表。一般是普通的路由。</p>
-<p>表253 默认路由表 （Default table） 一般来说默认的路由都放在这张表，但是如果特别指明放的也可以是所有的网关路由。</p>
-<p>表 0 保留</p>
-<h2 id="策略性路由应用及分析(iproute2)">策略性路由应用及分析(iproute2)</h2><p>策略性路由</p>
-<p>　　策略性是指对于IP包的路由是以网络管理员根据需要定下的一些策略为主要依据进行路由的。例如我们可以有这样的策略：“所有来直自网A的包，选择X路径；其他选择Y路径”，或者是“所有TOS为A的包选择路径F；其他选者路径K”。<br>　　Cisco 的网络操作系统 (Cisco IOS) 从11.0开始就采用新的策略性路由机制。而Linux是在内核2.1开始采用策略性路由机制的。策略性路由机制与传统的路由算法相比主要是引入了多路由表以及规则的概念。</p>
-<p>多路由表（multiple Routing Tables）</p>
-<p>　　传统的路由算法是仅使用一张路由表的。但是在有些情形底下，我们是需要使用多路由表的。例如一个子网通过一个路由器与外界相连，路由器与外界有两条线路相连，其中一条的速度比较快，一条的速度比较慢。对于子网内的大多数用户来说对速度并没有特殊的要求，所以可以让他们用比较慢的路由；但是子网内有一些特殊的用户却是对速度的要求比较苛刻，所以他们需要使用速度比较快的路由。如果使用一张路由表上述要求是无法实现的，而如果根据源地址或其它参数，对不同的用户使用不同的路由表，这样就可以大大提高路由器的性能。</p>
-<p>规则（rule）</p>
-<p>　　规则是策略性的关键性的新的概念。我们可以用自然语言这样描述规则，例如我门可以指定这样的规则：<br>　　规则一：“所有来自192.16.152.24的IP包，使用路由表10， 本规则的优先级别是1500”<br>　　规则二：“所有的包，使用路由表253，本规则的优先级别是32767”</p>
-<p>　　我们可以看到，规则包含3个要素：<br>　　什么样的包，将应用本规则（所谓的SELECTOR，可能是filter更能反映其作用）；<br>　　符合本规则的包将对其采取什么动作（ACTION），例如用那个表；<br>　　本规则的优先级别。优先级别越高的规则越先匹配（数值越小优先级别越高）。</p>
-<h2 id="环境配置">环境配置</h2><blockquote>
-<p>服务器A和B为双网卡，操作系统为rhel_7.1_64</p>
-</blockquote>
-<table>
-<thead>
-<tr>
-<th>网卡显示名称</th>
-<th>IP地址</th>
-<th>子网掩码</th>
-<th>网关</th>
-<th>备注</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ens4f0</td>
-<td>172.31.192.201</td>
-<td>255.255.255.0</td>
-<td>172.31.192.254</td>
-<td>服务器A</td>
-</tr>
-<tr>
-<td>ens9f0</td>
-<td>172.31.196.1</td>
-<td>255.255.255.0</td>
-<td>172.31.196.254</td>
-<td>服务器A</td>
-</tr>
-<tr>
-<td>ens4f0</td>
-<td>172.31.192.202</td>
-<td>255.255.255.0</td>
-<td>172.31.192.254</td>
-<td>服务器B</td>
-</tr>
-<tr>
-<td>ens9f0</td>
-<td>172.31.196.2</td>
-<td>255.255.255.0</td>
-<td>172.31.196.254</td>
-<td>服务器B</td>
-</tr>
-<tr>
-<td>/</td>
-<td>172.25.168.44</td>
-<td>255.255.255.0</td>
-<td>172.25.168.254</td>
-<td>接入测试</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p>网络配置，以服务器A为例，注意注释默认网关</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/sysconfig/network-scripts/ifcfg-ens4f0</span><br><span class="line"></span><br><span class="line">DEVICE=ens4f0</span><br><span class="line">ONBOOT=yes</span><br><span class="line">BOOTPROTO=static</span><br><span class="line">TYPE=Ethernet</span><br><span class="line">IPADDR=<span class="number">172.31</span>.<span class="number">192.201</span></span><br><span class="line">NETMASK=<span class="number">255.255</span>.<span class="number">255.0</span></span><br><span class="line"><span class="comment">#GATEWAY=172.31.192.254</span></span><br><span class="line"></span><br><span class="line">cat /etc/sysconfig/network-scripts/ifcfg-ens9f0</span><br><span class="line"></span><br><span class="line">DEVICE=ens9f0</span><br><span class="line">ONBOOT=yes</span><br><span class="line">BOOTPROTO=static</span><br><span class="line">TYPE=Ethernet</span><br><span class="line">IPADDR=<span class="number">172.31</span>.<span class="number">196.1</span></span><br><span class="line">NETMASK=<span class="number">255.255</span>.<span class="number">255.0</span></span><br><span class="line"><span class="comment">#GATEWAY=172.31.196.254</span></span><br></pre></td></tr></table></figure>
-<h2 id="策略路由配置">策略路由配置</h2><blockquote>
-<p>注意配置名称一定要吻合</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#编辑rt_tables</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"192 net_192 "</span> &gt;&gt; /etc/iproute2/rt_tables</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"196 net_196 "</span> &gt;&gt; /etc/iproute2/rt_tables</span><br><span class="line"></span><br><span class="line"><span class="comment">#清空net_192路由表</span></span><br><span class="line">ip route flush table net_192</span><br><span class="line"><span class="comment"># 添加一个路由规则到 net_192 表，这条规则是 net_192 这个路由表中数据包默认使用源 IP 172.31.192.201 通过 ens4f0 走网关 172.31.192.254</span></span><br><span class="line">ip route add default via <span class="number">172.31</span>.<span class="number">192.254</span> dev ens4f0 src <span class="number">172.31</span>.<span class="number">192.201</span> table net_192</span><br><span class="line"><span class="comment">#来自 172.31.192.201 的数据包，使用 net_192 路由表的路由规则</span></span><br><span class="line">ip rule add from <span class="number">172.31</span>.<span class="number">192.201</span> table net_192</span><br><span class="line"></span><br><span class="line"><span class="comment">#清空net_196路由表</span></span><br><span class="line">ip route flush table net_196</span><br><span class="line"><span class="comment">#添加一个路由规则到 net_196 表，这条规则是 net_196 这个路由表中数据包默认使用源 IP 172.31.196.1 通过 ens9f0 走网关 172.31.196.254</span></span><br><span class="line">ip route add default via <span class="number">172.31</span>.<span class="number">196.254</span> dev ens9f0 src <span class="number">172.31</span>.<span class="number">196.1</span> table net_196</span><br><span class="line"><span class="comment">#来自 172.31.196.1 的数据包，使用 net_196 路由表的路由规则</span></span><br><span class="line">ip rule add from <span class="number">172.31</span>.<span class="number">196.1</span> table net_196</span><br><span class="line"></span><br><span class="line"><span class="comment">#添加默认网关</span></span><br><span class="line">route add default gw <span class="number">172.31</span>.<span class="number">192.254</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#如果需要自启动生效可以写进配置文件也可以加入rc.local</span></span><br><span class="line">vi /etc/rc.local</span><br><span class="line"></span><br><span class="line">ip route flush table net_192</span><br><span class="line">ip route add default via <span class="number">172.31</span>.<span class="number">192.254</span> dev ens4f0 src <span class="number">172.31</span>.<span class="number">192.201</span> table net_192</span><br><span class="line">ip rule add from <span class="number">172.31</span>.<span class="number">192.201</span> table net_192</span><br><span class="line">ip route flush table net_196</span><br><span class="line">ip route add default via <span class="number">172.31</span>.<span class="number">196.254</span> dev ens9f0 src <span class="number">172.31</span>.<span class="number">196.1</span> table net_196</span><br><span class="line">ip rule add from <span class="number">172.31</span>.<span class="number">196.1</span> table net_196</span><br><span class="line">route add default gw <span class="number">172.31</span>.<span class="number">192.254</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#查看路由表</span></span><br><span class="line">route -n</span><br><span class="line"></span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line"><span class="number">169.254</span>.<span class="number">0.0</span>     <span class="number">0.0</span>.<span class="number">0.0</span>         <span class="number">255.255</span>.<span class="number">0.0</span>     U     <span class="number">1006</span>   <span class="number">0</span>        <span class="number">0</span> ens9f0</span><br><span class="line"><span class="number">169.254</span>.<span class="number">0.0</span>     <span class="number">0.0</span>.<span class="number">0.0</span>         <span class="number">255.255</span>.<span class="number">0.0</span>     U     <span class="number">1008</span>   <span class="number">0</span>        <span class="number">0</span> ens4f0</span><br><span class="line"><span class="number">169.254</span>.<span class="number">0.0</span>     <span class="number">0.0</span>.<span class="number">0.0</span>         <span class="number">255.255</span>.<span class="number">0.0</span>     U     <span class="number">1014</span>   <span class="number">0</span>        <span class="number">0</span> br-ex</span><br><span class="line"><span class="number">169.254</span>.<span class="number">0.0</span>     <span class="number">0.0</span>.<span class="number">0.0</span>         <span class="number">255.255</span>.<span class="number">0.0</span>     U     <span class="number">1015</span>   <span class="number">0</span>        <span class="number">0</span> br-int</span><br><span class="line"><span class="number">172.31</span>.<span class="number">192.0</span>    <span class="number">0.0</span>.<span class="number">0.0</span>         <span class="number">255.255</span>.<span class="number">255.0</span>   U     <span class="number">0</span>      <span class="number">0</span>        <span class="number">0</span> ens4f0</span><br><span class="line"><span class="number">172.31</span>.<span class="number">196.0</span>    <span class="number">0.0</span>.<span class="number">0.0</span>         <span class="number">255.255</span>.<span class="number">255.0</span>   U     <span class="number">0</span>      <span class="number">0</span>        <span class="number">0</span> ens9f0</span><br><span class="line"></span><br><span class="line"><span class="comment">#在接入测试服务器上验证连通性</span></span><br><span class="line">ping <span class="number">172.31</span>.<span class="number">192.201</span></span><br><span class="line">ping <span class="number">172.31</span>.<span class="number">196.1</span></span><br></pre></td></tr></table></figure>
-]]></content>
-    <summary type="html">
-    <![CDATA[策略路由的出现在某些业务场景下可能更优于静态路由]]>
     
     </summary>
     
