@@ -1,0 +1,629 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+  
+    <title>使用tftpd32自动化网络安装esxi6.0u2和rhel6.7实践 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="利用tftpd32快速搭建网络自动化搞机平台">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用tftpd32自动化网络安装esxi6.0u2和rhel6.7实践">
+<meta property="og:url" content="https://wsgzao.github.io/post/tftpd32/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="利用tftpd32快速搭建网络自动化搞机平台">
+<meta property="og:image" content="https://ooo.0o0.ooo/2017/01/19/588083153cca3.jpg">
+<meta property="og:image" content="https://ooo.0o0.ooo/2017/01/19/5880832627c41.jpg">
+<meta property="og:image" content="https://ooo.0o0.ooo/2017/01/19/5880832f2bd2a.jpg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用tftpd32自动化网络安装esxi6.0u2和rhel6.7实践">
+<meta name="twitter:description" content="利用tftpd32快速搭建网络自动化搞机平台">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/tftpd32/" title="使用tftpd32自动化网络安装esxi6.0u2和rhel6.7实践" itemprop="url">使用tftpd32自动化网络安装esxi6.0u2和rhel6.7实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2017-01-19T06:59:49.000Z" itemprop="datePublished"> 发表于 2017-01-19</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3点建议"><span class="toc-number">3.</span> <span class="toc-text">3点建议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#esxi"><span class="toc-number">4.</span> <span class="toc-text">esxi</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rhel"><span class="toc-number">5.</span> <span class="toc-text">rhel</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tftpd32"><span class="toc-number">6.</span> <span class="toc-text">tftpd32</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#TFTP"><span class="toc-number">6.1.</span> <span class="toc-text">TFTP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SNTP"><span class="toc-number">6.2.</span> <span class="toc-text">SNTP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DHCP"><span class="toc-number">6.3.</span> <span class="toc-text">DHCP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Syslog"><span class="toc-number">6.4.</span> <span class="toc-text">Syslog</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Tftpd_server_Settings"><span class="toc-number">6.5.</span> <span class="toc-text">Tftpd server Settings</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DHCP_Setup"><span class="toc-number">6.6.</span> <span class="toc-text">DHCP Setup</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h2 id="前言">前言</h2><p>在tftp那篇文章中我提到过一般网络安装基于Linux下PXE+TFTP+DHCP+(HTTP/FTP/NFS)来实现，然而在真实的生产环境中分别测试了Cloudboot和Cobbler，面对大量型号和配置不一样的物理机并不能满足实际需求。最后采用Windows笔记本+交换机+tftpd32+kickstart来灵活应对esxi6和rhel6.7的自动化装机，为了不依赖自动化光盘安装的低效懒人模式，中间还是踩了不少的坑。个人觉得装机并没有孰优孰劣的说法，而且未来是属于分布式存储+万兆交换机+类似VMware/OpenStack的模式，人肉装机的时代已经离我们渐行渐远。</p>
+<blockquote>
+<p>利用tftpd32快速搭建自动化网络搞机平台</p>
+</blockquote>
+<h2 id="更新历史">更新历史</h2><p>2017年01月19日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/tftpd32/" target="_blank" rel="external">https://wsgzao.github.io/post/tftpd32/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>Tftd32 - <a href="http://tftpd32.jounin.net/" target="_blank" rel="external">http://tftpd32.jounin.net/</a><br>Kickstart Generator - <a href="https://access.redhat.com/labsinfo/kickstartconfig" target="_blank" rel="external">https://access.redhat.com/labsinfo/kickstartconfig</a></p>
+<hr>
+<h2 id="3点建议">3点建议</h2><ol>
+<li>PXE只是网络安装的引导方式，自动化的核心配置文件始终依赖kickstart/autoyast/autounattend等</li>
+<li>文章内提到的引导介质均提取自rhel6.7镜像文件<code>syslinux-nonlinux-4.04-3.el6.noarch.rpm</code></li>
+<li>云霁科技的Cloudboot成熟度非常高，建议大家多参考其高质量的配置方案</li>
+</ol>
+<p>CloudBoot 云启装机平台(开源版) - <a href="http://www.idcos.com/products/cloudboot-open-source" target="_blank" rel="external">http://www.idcos.com/products/cloudboot-open-source</a></p>
+<p><img src="https://ooo.0o0.ooo/2017/01/19/588083153cca3.jpg" alt=""><br><img src="https://ooo.0o0.ooo/2017/01/19/5880832627c41.jpg" alt=""><br><img src="https://ooo.0o0.ooo/2017/01/19/5880832f2bd2a.jpg" alt=""></p>
+<h2 id="esxi">esxi</h2><blockquote>
+<p>tftpd32+esxi6.0u2+kickstart+hfs</p>
+</blockquote>
+<ol>
+<li>Windows下关闭防火墙，设置IP地址为192.168.1.1/24</li>
+<li>启动tftpd32参考上图所示配置，<code>Base Directory</code>目录选择实际定义的路径，如<code>tftpboot_esxi\</code></li>
+<li>解压ESXi ISO至<code>tftpboot_esxi\</code>，修改BOOT.CFG添加kernelopt=ks=<a href="http://192.168.1.1/esxi6/KS.CFG" target="_blank" rel="external">http://192.168.1.1/esxi6/KS.CFG</a></li>
+<li>将KS.CFG放入自定义目录，使用hfs加载</li>
+<li>复制syslinux中的pxelinux.0到<code>tftpboot_esxi\</code></li>
+<li>复制syslinux中的MENU.C32<code>替换</code>tftpboot_esxi`中的同名文件</li>
+<li>创建<code>tftpboot_esxi\pxelinux.cfg\</code>目录，复制ESXi ISO文件中的ISOLINUX.CFG至该目录并改名为default</li>
+<li>检查tftpd32服务启动正常，测试自动化网络安装esxi</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#BOOT.CFG</span></span><br><span class="line"></span><br><span class="line">bootstate=<span class="number">0</span></span><br><span class="line">title=Loading ESXi installer</span><br><span class="line">timeout=<span class="number">5</span></span><br><span class="line">kernel=/tboot.b00</span><br><span class="line">kernelopt=ks=http://<span class="number">192.168</span>.<span class="number">1.1</span>/esxi6/KS.CFG</span><br><span class="line">modules=/b.b00 --- /jumpstrt.gz --- /useropts.gz --- /k.b00 --- /chardevs.b00 --- /a.b00 --- /user.b00 --- /uc_intel.b00 --- /uc_amd.b00 --- /sb.v00 --- /s.v00 --- /scsi_mpt.v00 --- /net_tg3.v00 --- /elxnet.v00 --- /ima_be2i.v00 --- /lpfc.v00 --- /scsi_be2.v00 --- /amsHelpe.v00 --- /conrep.v00 --- /hpbootcf.v00 --- /hpe_buil.v00 --- /hpe_esxi.v00 --- /hpe_ilo.v00 --- /hpe_smx_.v00 --- /hponcfg.v00 --- /hpssacli.v00 --- /hptestev.v00 --- /char_hpc.v00 --- /hpnmi.v00 --- /scsi_hpd.v00 --- /scsi_hps.v00 --- /scsi_hpv.v00 --- /intelcim.v00 --- /net_i40e.v00 --- /net_igb.v00 --- /net_ixgb.v00 --- /nmlx4_co.v00 --- /nmlx4_en.v00 --- /misc_cni.v00 --- /net_bnx2.v00 --- /net_bnx2.v01 --- /net_cnic.v00 --- /net_nx_n.v00 --- /net_qlcn.v00 --- /qlnative.v00 --- /scsi_bfa.v00 --- /scsi_bnx.v00 --- /scsi_bnx.v01 --- /scsi_qla.v00 --- /mtip32xx.v00 --- /ata_pata.v00 --- /ata_pata.v01 --- /ata_pata.v02 --- /ata_pata.v03 --- /ata_pata.v04 --- /ata_pata.v05 --- /ata_pata.v06 --- /ata_pata.v07 --- /block_cc.v00 --- /ehci_ehc.v00 --- /emulex_e.v00 --- /weaselin.t00 --- /esx_dvfi.v00 --- /esx_ui.v00 --- /ima_qla4.v00 --- /ipmi_ipm.v00 --- /ipmi_ipm.v01 --- /ipmi_ipm.v02 --- /lsi_mr3.v00 --- /lsi_msgp.v00 --- /lsu_hp_h.v00 --- /lsu_lsi_.v00 --- /lsu_lsi_.v01 --- /lsu_lsi_.v02 --- /lsu_lsi_.v03 --- /lsu_lsi_.v04 --- /misc_dri.v00 --- /net_e100.v00 --- /net_e100.v01 --- /net_enic.v00 --- /net_forc.v00 --- /net_mlx4.v00 --- /net_mlx4.v01 --- /net_vmxn.v00 --- /nmlx4_rd.v00 --- /nvme.v00 --- /ohci_usb.v00 --- /rste.v00 --- /sata_ahc.v00 --- /sata_ata.v00 --- /sata_sat.v00 --- /sata_sat.v01 --- /sata_sat.v02 --- /sata_sat.v03 --- /sata_sat.v04 --- /scsi_aac.v00 --- /scsi_adp.v00 --- /scsi_aic.v00 --- /scsi_fni.v00 --- /scsi_ips.v00 --- /scsi_meg.v00 --- /scsi_meg.v01 --- /scsi_meg.v02 --- /scsi_mpt.v01 --- /scsi_mpt.v02 --- /uhci_usb.v00 --- /vsan.v00 --- /vsanheal.v00 --- /vsanmgmt.v00 --- /xhci_xhc.v00 --- /tools.t00 --- /nmst.v00 --- /xorg.v00 --- /imgdb.tgz --- /imgpayld.tgz</span><br><span class="line">build=</span><br><span class="line">updated=<span class="number">0</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#default</span></span><br><span class="line"></span><br><span class="line">DEFAULT menu.c32</span><br><span class="line">MENU TITLE ESXi6.<span class="number">0</span>u2 Boot Menu</span><br><span class="line">NOHALT <span class="number">1</span></span><br><span class="line">PROMPT <span class="number">0</span></span><br><span class="line">TIMEOUT <span class="number">80</span></span><br><span class="line">LABEL install</span><br><span class="line">  KERNEL mboot.c32</span><br><span class="line">  APPEND -c boot.cfg</span><br><span class="line">  MENU LABEL ESXi6.<span class="number">0</span>u2 ^Installer</span><br><span class="line">LABEL hddboot</span><br><span class="line">  LOCALBOOT <span class="number">0</span>x80</span><br><span class="line">  MENU LABEL ^Boot from <span class="built_in">local</span> disk</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#KS.CFG</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Accept the VMware End User License Agreement</span></span><br><span class="line">vmaccepteula</span><br><span class="line"></span><br><span class="line"><span class="comment"># Set the root password for the DCUI and Tech Support Mode</span></span><br><span class="line">rootpw admin123</span><br><span class="line"><span class="comment"># Install on the first local disk available on machine</span></span><br><span class="line">install --firstdisk --overwritevmfs</span><br><span class="line"></span><br><span class="line"><span class="comment"># Set the network to DHCP on the first network adapter</span></span><br><span class="line">network --bootproto=dhcp --device=vmnic0</span><br><span class="line"></span><br><span class="line"><span class="comment"># Reboot at the end</span></span><br><span class="line">reboot</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br></pre></td><td class="code"><pre><span class="line">file://H:\<span class="number">01</span>_autoinstall\tftpboot_esxi  (<span class="number">3</span> folders, <span class="number">129</span> files, <span class="number">377.76</span> MB, <span class="number">379.93</span> MB <span class="keyword">in</span> total.)</span><br><span class="line">│  .DISCINFO <span class="number">33</span> bytes</span><br><span class="line">│  A.B00 <span class="number">10.96</span> KB</span><br><span class="line">│  AMSHELPE.V00  <span class="number">1.32</span> MB</span><br><span class="line">│  ATA_PATA.V00  <span class="number">8.28</span> KB</span><br><span class="line">│  ATA_PATA.V01  <span class="number">6.22</span> KB</span><br><span class="line">│  ATA_PATA.V02  <span class="number">6.47</span> KB</span><br><span class="line">│  ATA_PATA.V03  <span class="number">7.22</span> KB</span><br><span class="line">│  ATA_PATA.V04  <span class="number">8.33</span> KB</span><br><span class="line">│  ATA_PATA.V05  <span class="number">7.01</span> KB</span><br><span class="line">│  ATA_PATA.V06  <span class="number">6.17</span> KB</span><br><span class="line">│  ATA_PATA.V07  <span class="number">7.59</span> KB</span><br><span class="line">│  B.B00 <span class="number">75.03</span> KB</span><br><span class="line">│  BLOCK_CC.V00  <span class="number">23.75</span> KB</span><br><span class="line">│  BOOT.CAT  <span class="number">512</span> bytes</span><br><span class="line">│  BOOT.CFG  <span class="number">2.07</span> KB</span><br><span class="line">│  CHAR_HPC.V00  <span class="number">9.93</span> KB</span><br><span class="line">│  CHARDEVS.B00  <span class="number">18.67</span> KB</span><br><span class="line">│  CONREP.V00    <span class="number">1.87</span> MB</span><br><span class="line">│  EFIBOOT.IMG   <span class="number">1.00</span> MB</span><br><span class="line">│  EHCI_EHC.V00  <span class="number">32.99</span> KB</span><br><span class="line">│  ELXNET.V00    <span class="number">132.88</span> KB</span><br><span class="line">│  EMULEX_E.V00  <span class="number">5.68</span> KB</span><br><span class="line">│  ESX_DVFI.V00  <span class="number">89.19</span> KB</span><br><span class="line">│  ESX_UI.V00    <span class="number">2.83</span> MB</span><br><span class="line">│  HPBOOTCF.V00  <span class="number">28.52</span> KB</span><br><span class="line">│  HPE_BUIL.V00  <span class="number">458</span> bytes</span><br><span class="line">│  HPE_ESXI.V00  <span class="number">1.51</span> MB</span><br><span class="line">│  HPE_ILO.V00   <span class="number">9.50</span> KB</span><br><span class="line">│  HPE_SMX_.V00  <span class="number">7.81</span> MB</span><br><span class="line">│  HPNMI.V00 <span class="number">4.20</span> KB</span><br><span class="line">│  HPONCFG.V00   <span class="number">96.62</span> KB</span><br><span class="line">│  HPSSACLI.V00  <span class="number">4.97</span> MB</span><br><span class="line">│  HPTESTEV.V00  <span class="number">6.29</span> KB</span><br><span class="line">│  IMA_BE2I.V00  <span class="number">489.49</span> KB</span><br><span class="line">│  IMA_QLA4.V00  <span class="number">359.39</span> KB</span><br><span class="line">│  IMGDB.TGZ <span class="number">62.35</span> KB</span><br><span class="line">│  IMGPAYLD.TGZ  <span class="number">3.94</span> MB</span><br><span class="line">│  INTELCIM.V00  <span class="number">94.06</span> KB</span><br><span class="line">│  IPMI_IPM.V00  <span class="number">9.38</span> KB</span><br><span class="line">│  IPMI_IPM.V01  <span class="number">22.99</span> KB</span><br><span class="line">│  IPMI_IPM.V02  <span class="number">27.91</span> KB</span><br><span class="line">│  ISOLINUX.BIN  <span class="number">14.00</span> KB</span><br><span class="line">│  ISOLINUX.CFG  <span class="number">231</span> bytes</span><br><span class="line">│  JUMPSTRT.GZ   <span class="number">20</span> bytes</span><br><span class="line">│  K.B00 <span class="number">3.26</span> MB</span><br><span class="line">│  KS.CFG    <span class="number">356</span> bytes</span><br><span class="line">│  LPFC.V00  <span class="number">555.77</span> KB</span><br><span class="line">│  LSI_MR3.V00   <span class="number">68.98</span> KB</span><br><span class="line">│  LSI_MSGP.V00  <span class="number">117.96</span> KB</span><br><span class="line">│  LSU_HP_H.V00  <span class="number">15.34</span> KB</span><br><span class="line">│  LSU_LSI_.V00  <span class="number">78.96</span> KB</span><br><span class="line">│  LSU_LSI_.V01  <span class="number">159.84</span> KB</span><br><span class="line">│  LSU_LSI_.V02  <span class="number">78.96</span> KB</span><br><span class="line">│  LSU_LSI_.V03  <span class="number">187.32</span> KB</span><br><span class="line">│  LSU_LSI_.V04  <span class="number">114.35</span> KB</span><br><span class="line">│  MBOOT.C32 <span class="number">84.17</span> KB</span><br><span class="line">│  MENU.C32  <span class="number">60.35</span> KB</span><br><span class="line">│  MISC_CNI.V00  <span class="number">5.51</span> KB</span><br><span class="line">│  MISC_DRI.V00  <span class="number">1.24</span> MB</span><br><span class="line">│  MTIP32XX.V00  <span class="number">67.84</span> KB</span><br><span class="line">│  NET_BNX2.V00  <span class="number">178.17</span> KB</span><br><span class="line">│  NET_BNX2.V01  <span class="number">1.00</span> MB</span><br><span class="line">│  NET_CNIC.V00  <span class="number">48.42</span> KB</span><br><span class="line">│  NET_E100.V00  <span class="number">93.66</span> KB</span><br><span class="line">│  NET_E100.V01  <span class="number">108.27</span> KB</span><br><span class="line">│  NET_ENIC.V00  <span class="number">43.63</span> KB</span><br><span class="line">│  NET_FORC.V00  <span class="number">36.61</span> KB</span><br><span class="line">│  NET_I40E.V00  <span class="number">132.01</span> KB</span><br><span class="line">│  NET_IGB.V00   <span class="number">101.62</span> KB</span><br><span class="line">│  NET_IXGB.V00  <span class="number">167.56</span> KB</span><br><span class="line">│  NET_MLX4.V00  <span class="number">107.78</span> KB</span><br><span class="line">│  NET_MLX4.V01  <span class="number">66.30</span> KB</span><br><span class="line">│  NET_NX_N.V00  <span class="number">1.32</span> MB</span><br><span class="line">│  NET_QLCN.V00  <span class="number">283.02</span> KB</span><br><span class="line">│  NET_TG3.V00   <span class="number">107.81</span> KB</span><br><span class="line">│  NET_VMXN.V00  <span class="number">30.50</span> KB</span><br><span class="line">│  NMLX4_CO.V00  <span class="number">117.53</span> KB</span><br><span class="line">│  NMLX4_EN.V00  <span class="number">119.73</span> KB</span><br><span class="line">│  NMLX4_RD.V00  <span class="number">39.92</span> KB</span><br><span class="line">│  NMST.V00  <span class="number">12.32</span> KB</span><br><span class="line">│  NVME.V00  <span class="number">63.07</span> KB</span><br><span class="line">│  OHCI_USB.V00  <span class="number">19.44</span> KB</span><br><span class="line">│  pxelinux.<span class="number">0</span>    <span class="number">26.13</span> KB</span><br><span class="line">│  QLNATIVE.V00  <span class="number">731.51</span> KB</span><br><span class="line">│  RSTE.V00  <span class="number">209.06</span> KB</span><br><span class="line">│  S.V00 <span class="number">92.98</span> MB</span><br><span class="line">│  SAFEBOOT.C32  <span class="number">61.79</span> KB</span><br><span class="line">│  SATA_AHC.V00  <span class="number">19.80</span> KB</span><br><span class="line">│  SATA_ATA.V00  <span class="number">11.79</span> KB</span><br><span class="line">│  SATA_SAT.V00  <span class="number">17.16</span> KB</span><br><span class="line">│  SATA_SAT.V01  <span class="number">10.32</span> KB</span><br><span class="line">│  SATA_SAT.V02  <span class="number">10.86</span> KB</span><br><span class="line">│  SATA_SAT.V03  <span class="number">8.03</span> KB</span><br><span class="line">│  SATA_SAT.V04  <span class="number">6.35</span> KB</span><br><span class="line">│  SB.V00    <span class="number">48.31</span> MB</span><br><span class="line">│  SCSI_AAC.V00  <span class="number">52.10</span> KB</span><br><span class="line">│  SCSI_ADP.V00  <span class="number">143.31</span> KB</span><br><span class="line">│  SCSI_AIC.V00  <span class="number">95.67</span> KB</span><br><span class="line">│  SCSI_BE2.V00  <span class="number">247.25</span> KB</span><br><span class="line">│  SCSI_BFA.V00  <span class="number">1.20</span> MB</span><br><span class="line">│  SCSI_BNX.V00  <span class="number">95.69</span> KB</span><br><span class="line">│  SCSI_BNX.V01  <span class="number">78.25</span> KB</span><br><span class="line">│  SCSI_FNI.V00  <span class="number">64.13</span> KB</span><br><span class="line">│  SCSI_HPD.V00  <span class="number">937.40</span> KB</span><br><span class="line">│  SCSI_HPS.V00  <span class="number">72.92</span> KB</span><br><span class="line">│  SCSI_HPV.V00  <span class="number">704.64</span> KB</span><br><span class="line">│  SCSI_IPS.V00  <span class="number">32.12</span> KB</span><br><span class="line">│  SCSI_MEG.V00  <span class="number">28.29</span> KB</span><br><span class="line">│  SCSI_MEG.V01  <span class="number">54.13</span> KB</span><br><span class="line">│  SCSI_MEG.V02  <span class="number">26.45</span> KB</span><br><span class="line">│  SCSI_MPT.V00  <span class="number">132.34</span> KB</span><br><span class="line">│  SCSI_MPT.V01  <span class="number">147.33</span> KB</span><br><span class="line">│  SCSI_MPT.V02  <span class="number">124.50</span> KB</span><br><span class="line">│  SCSI_QLA.V00  <span class="number">147.12</span> KB</span><br><span class="line">│  TBOOT.B00 <span class="number">43.32</span> KB</span><br><span class="line">│  TOOLS.T00 <span class="number">180.67</span> MB</span><br><span class="line">│  UC_AMD.B00    <span class="number">3.41</span> KB</span><br><span class="line">│  UC_INTEL.B00  <span class="number">135.83</span> KB</span><br><span class="line">│  UHCI_USB.V00  <span class="number">19.82</span> KB</span><br><span class="line">│  USER.B00  <span class="number">447.52</span> KB</span><br><span class="line">│  USEROPTS.GZ   <span class="number">20</span> bytes</span><br><span class="line">│  VMWARE-ESX-BASE-OSL.TXT   <span class="number">1.13</span> MB</span><br><span class="line">│  VMWARE-ESX-BASE-README    <span class="number">2.19</span> KB</span><br><span class="line">│  VSAN.V00  <span class="number">6.73</span> MB</span><br><span class="line">│  VSANHEAL.V00  <span class="number">168.57</span> KB</span><br><span class="line">│  VSANMGMT.V00  <span class="number">1.35</span> MB</span><br><span class="line">│  WEASELIN.T00  <span class="number">1.93</span> MB</span><br><span class="line">│  XHCI_XHC.V00  <span class="number">72.94</span> KB</span><br><span class="line">│  XORG.V00  <span class="number">1.28</span> MB</span><br><span class="line">├─EFI   (<span class="number">1</span> folders, <span class="number">0</span> files, <span class="number">0</span> bytes, <span class="number">193.17</span> KB <span class="keyword">in</span> total.)</span><br><span class="line">│  └─BOOT    (<span class="number">0</span> folders, <span class="number">3</span> files, <span class="number">193.17</span> KB, <span class="number">193.17</span> KB <span class="keyword">in</span> total.)</span><br><span class="line">│          BOOT.CFG  <span class="number">2.04</span> KB</span><br><span class="line">│          BOOTIA32.EFI  <span class="number">94.59</span> KB</span><br><span class="line">│          BOOTX64.EFI   <span class="number">96.53</span> KB</span><br><span class="line">├─pxelinux.cfg  (<span class="number">0</span> folders, <span class="number">1</span> files, <span class="number">231</span> bytes, <span class="number">231</span> bytes <span class="keyword">in</span> total.)</span><br><span class="line">│      default <span class="number">231</span> bytes</span><br><span class="line">└─UPGRADE   (<span class="number">0</span> folders, <span class="number">10</span> files, <span class="number">1.98</span> MB, <span class="number">1.98</span> MB <span class="keyword">in</span> total.)</span><br><span class="line">        ESXIMAGE.ZIP    <span class="number">874.17</span> KB</span><br><span class="line">        EXTLINUX    <span class="number">62.51</span> KB</span><br><span class="line">        ISOINFO <span class="number">233.62</span> KB</span><br><span class="line">        MBR.BIN <span class="number">440</span> bytes</span><br><span class="line">        MCOPY   <span class="number">584.17</span> KB</span><br><span class="line">        METADATA.XML    <span class="number">1.54</span> KB</span><br><span class="line">        METADATA.ZIP    <span class="number">141.08</span> KB</span><br><span class="line">        PRECHECK.PY <span class="number">72.78</span> KB</span><br><span class="line">        PREP.PY <span class="number">47.54</span> KB</span><br><span class="line">        PROFILE.XML <span class="number">8.85</span> KB</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>引用他人在Linux下的安装流程</p>
+</blockquote>
+<p>PEX安装ESXi6 - <a href="http://blog.csdn.net/onlyshenmin/article/details/52434743" target="_blank" rel="external">http://blog.csdn.net/onlyshenmin/article/details/52434743</a> </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#安装dhcp、tftp-server、syslinux、xinetd。</span></span><br><span class="line">yum install dhcp tftp-server syslinux xinetd</span><br><span class="line"></span><br><span class="line"><span class="comment">#挂载ESXi ISO到/mnt</span></span><br><span class="line">mount /dev/cdrom /mnt</span><br><span class="line"></span><br><span class="line"><span class="comment">#修改dhcpd.conf</span></span><br><span class="line">ddns-update-style interim;</span><br><span class="line">allow booting;</span><br><span class="line">allow bootp;</span><br><span class="line">class <span class="string">"pxeclients"</span> &#123;</span><br><span class="line">    match <span class="keyword">if</span> substring(option vendor-class-identifier, <span class="number">0</span>, <span class="number">9</span>) = <span class="string">"PXEClient"</span>;</span><br><span class="line">    next-server <span class="number">172.16</span>.<span class="number">8.7</span>;</span><br><span class="line">    filename = <span class="string">"pxelinux.0"</span>;</span><br><span class="line">&#125;</span><br><span class="line">subnet <span class="number">172.16</span>.<span class="number">8.0</span> netmask <span class="number">255.255</span>.<span class="number">255.0</span> &#123;</span><br><span class="line">    range <span class="number">172.16</span>.<span class="number">8.100</span> <span class="number">172.16</span>.<span class="number">8.199</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#启用tftp,修改/etc/xinetd.d/tftp中的disable = yes为disable = no</span></span><br><span class="line">service tftp</span><br><span class="line">&#123;</span><br><span class="line">        socket_<span class="built_in">type</span>             = dgram</span><br><span class="line">        protocol                = udp</span><br><span class="line">        <span class="built_in">wait</span>                    = yes</span><br><span class="line">        user                    = root</span><br><span class="line">        server                  = /usr/sbin/in.tftpd</span><br><span class="line">        server_args             = <span class="operator">-s</span> /var/lib/tftpboot</span><br><span class="line">        <span class="built_in">disable</span>                 = no</span><br><span class="line">        per_<span class="built_in">source</span>              = <span class="number">11</span></span><br><span class="line">        cps                     = <span class="number">100</span> <span class="number">2</span></span><br><span class="line">        flags                   = IPv4</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#复制pxelinux.0到tftp根目录</span></span><br><span class="line">cp /usr/share/syslinux/pxelinux.<span class="number">0</span> /var/lib/tftpboot/</span><br><span class="line"></span><br><span class="line"><span class="comment">#新建目录/var/lib/tftpboot/pxelinux.cfg</span></span><br><span class="line">mkdir /var/lib/tftpboot/pxelinux.cfg</span><br><span class="line"></span><br><span class="line"><span class="comment">#复制ESXi ISO文件中的isolinux.cfg到/var/lib/tftpboot/pxelinux.cfg/下并改名default</span></span><br><span class="line">cp /mnt/isolinux.cfg /var/lib/tftpboot/pxelinux.cfg/default</span><br><span class="line"></span><br><span class="line"><span class="comment">#复制ESXi ISO中的全部文件到/var/lib/tftpboot/下</span></span><br><span class="line">cp <span class="operator">-a</span>  /mnt/* /var/lib/tftpboot/</span><br><span class="line"></span><br><span class="line"><span class="comment">#复制syslinux自带的menu.c32到tftp根目录替换掉ESXI ISO里的menu.c32。</span></span><br><span class="line">cp /usr/share/syslinux/menu.c32  /var/lib/tftpboot/</span><br><span class="line"></span><br><span class="line"><span class="comment">#重启dhcp、xinetd服务</span></span><br><span class="line">systemctl restart dhcpd</span><br><span class="line">systemctl restart xinetd</span><br><span class="line"></span><br><span class="line"><span class="comment">#自定义安装脚本，安装httpd，编辑脚本ks.cfg</span></span><br><span class="line">vim /var/www/html/ks.cfg</span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Sample scripted installation file</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Accept the VMware End User License Agreement</span></span><br><span class="line">vmaccepteula</span><br><span class="line"><span class="comment"># Set the root password for the DCUI and Tech Support Mode</span></span><br><span class="line">rootpw mypassword</span><br><span class="line"><span class="comment"># Install on the first local disk available on machine</span></span><br><span class="line">install --firstdisk --overwritevmfs</span><br><span class="line"><span class="comment"># Set the network to DHCP on the first network adapter</span></span><br><span class="line">network --bootproto=dhcp --device=vmnic0</span><br><span class="line"><span class="comment"># A sample post-install script</span></span><br><span class="line">%post --interpreter=python --ignorefailure=<span class="literal">true</span></span><br><span class="line">import time</span><br><span class="line">stampFile = open(<span class="string">'/finished.stamp'</span>, mode=<span class="string">'w'</span>)</span><br><span class="line">stampFile.write( time.asctime() )</span><br><span class="line"></span><br><span class="line"><span class="comment">#编辑ESXi ISO复制过来的boot.cfg文件，添加kernelopt=ks=http://172.16.8.7/ks.cfg</span></span><br><span class="line">vim /var/lib/tftpboot/boot.cfg</span><br><span class="line"></span><br><span class="line">bootstate=<span class="number">0</span></span><br><span class="line">title=Loading ESXi installer</span><br><span class="line">timeout=<span class="number">5</span></span><br><span class="line">kernel=/tboot.b00</span><br><span class="line">kernelopt=ks=http://<span class="number">172.16</span>.<span class="number">8.7</span>/ks.cfg</span><br><span class="line">modules=/b.b00 --- /jumpstrt.gz --- /useropts.gz --- /k.b00 --- /chardevs.b00 --- /a.b00 --- /user.b00 --- /uc_intel.b00 --- /uc_amd.b00 --- /sb.v00 --- /s.v00 --- /mtip32xx.v00 --- /ata_pata.v00 --- /ata_pata.v01 --- /ata_pata.v02 --- /ata_pata.v03 --- /ata_pata.v04 --- /ata_pata.v05 --- /ata_pata.v06 --- /ata_pata.v07 --- /block_cc.v00 --- /ehci_ehc.v00 --- /elxnet.v00 --- /emulex_e.v00 --- /weaselin.t00 --- /esx_dvfi.v00 --- /esx_ui.v00 --- /ima_qla4.v00 --- /ipmi_ipm.v00 --- /ipmi_ipm.v01 --- /ipmi_ipm.v02 --- /lpfc.v00 --- /lsi_mr3.v00 --- /lsi_msgp.v00 --- /lsu_hp_h.v00 --- /lsu_lsi_.v00 --- /lsu_lsi_.v01 --- /lsu_lsi_.v02 --- /lsu_lsi_.v03 --- /lsu_lsi_.v04 --- /misc_cni.v00 --- /misc_dri.v00 --- /net_bnx2.v00 --- /net_bnx2.v01 --- /net_cnic.v00 --- /net_e100.v00 --- /net_e100.v01 --- /net_enic.v00 --- /net_forc.v00 --- /net_igb.v00 --- /net_ixgb.v00 --- /net_mlx4.v00 --- /net_mlx4.v01 --- /net_nx_n.v00 --- /net_tg3.v00 --- /net_vmxn.v00 --- /nmlx4_co.v00 --- /nmlx4_en.v00 --- /nmlx4_rd.v00 --- /nvme.v00 --- /ohci_usb.v00 --- /qlnative.v00 --- /rste.v00 --- /sata_ahc.v00 --- /sata_ata.v00 --- /sata_sat.v00 --- /sata_sat.v01 --- /sata_sat.v02 --- /sata_sat.v03 --- /sata_sat.v04 --- /scsi_aac.v00 --- /scsi_adp.v00 --- /scsi_aic.v00 --- /scsi_bnx.v00 --- /scsi_bnx.v01 --- /scsi_fni.v00 --- /scsi_hps.v00 --- /scsi_ips.v00 --- /scsi_meg.v00 --- /scsi_meg.v01 --- /scsi_meg.v02 --- /scsi_mpt.v00 --- /scsi_mpt.v01 --- /scsi_mpt.v02 --- /scsi_qla.v00 --- /uhci_usb.v00 --- /vsan.v00 --- /vsanheal.v00 --- /vsanmgmt.v00 --- /xhci_xhc.v00 --- /tools.t00 --- /xorg.v00 --- /imgdb.tgz --- /imgpayld.tgz</span><br><span class="line">build=</span><br><span class="line">updated=<span class="number">0</span></span><br></pre></td></tr></table></figure>
+<h2 id="rhel">rhel</h2><blockquote>
+<p>tftpd32+rhel6.7+kickstart+hfs</p>
+</blockquote>
+<ol>
+<li>Windows下关闭防火墙，设置IP地址为192.168.1.1/24</li>
+<li>启动tftpd32参考上图所示配置，<code>Base Directory</code>目录选择实际定义的路径，如<code>tftpboot_rhel\</code></li>
+<li>解压rhel6.7 ISO至自定义目录，使用hfs作为http文件服务器</li>
+<li>将ks.cfg放入自定义目录，使用hfs加载</li>
+<li>复制syslinux中的<code>pxelinux.0/initrd.img/vesamenu.c32/vmlinuz</code>到<code>tftpboot_rhel\</code></li>
+<li>创建pxelinux.cfg目录，复制rhel6.7 ISO文件中的ISOLINUX.CFG至该目录并改名为default</li>
+<li>修改default文件，ks=<a href="http://192.168.1.1/rhel67/ks.cfg" target="_blank" rel="external">http://192.168.1.1/rhel67/ks.cfg</a> ksdevice=eth10，出现<code>multiple network devices</code>提示一定要加入ksdevice确认网卡</li>
+<li>检查tftpd32服务启动正常，测试自动化网络安装rhel</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#default</span></span><br><span class="line"></span><br><span class="line">default vesamenu.c32</span><br><span class="line"><span class="comment">#prompt 1</span></span><br><span class="line">timeout <span class="number">60</span></span><br><span class="line"></span><br><span class="line">display boot.msg</span><br><span class="line"></span><br><span class="line">menu background splash.jpg</span><br><span class="line">menu title Welcome to Red Hat Enterprise Linux <span class="number">6.7</span>!</span><br><span class="line">menu color border <span class="number">0</span> <span class="comment">#ffffffff #00000000</span></span><br><span class="line">menu color sel <span class="number">7</span> <span class="comment">#ffffffff #ff000000</span></span><br><span class="line">menu color title <span class="number">0</span> <span class="comment">#ffffffff #00000000</span></span><br><span class="line">menu color tabmsg <span class="number">0</span> <span class="comment">#ffffffff #00000000</span></span><br><span class="line">menu color unsel <span class="number">0</span> <span class="comment">#ffffffff #00000000</span></span><br><span class="line">menu color hotsel <span class="number">0</span> <span class="comment">#ff000000 #ffffffff</span></span><br><span class="line">menu color hotkey <span class="number">7</span> <span class="comment">#ffffffff #ff000000</span></span><br><span class="line">menu color scrollbar <span class="number">0</span> <span class="comment">#ffffffff #00000000</span></span><br><span class="line"></span><br><span class="line">label linux</span><br><span class="line">  menu label ^Install or upgrade an existing system</span><br><span class="line">  menu default</span><br><span class="line">  kernel vmlinuz</span><br><span class="line">  append initrd=initrd.img ks=http://<span class="number">192.168</span>.<span class="number">1.1</span>/rhel67/ks.cfg ksdevice=eth10</span><br><span class="line">label vesa</span><br><span class="line">  menu label Install system with ^basic video driver</span><br><span class="line">  kernel vmlinuz</span><br><span class="line">  append initrd=initrd.img nomodeset</span><br><span class="line">label rescue</span><br><span class="line">  menu label ^Rescue installed system</span><br><span class="line">  kernel vmlinuz</span><br><span class="line">  append initrd=initrd.img rescue</span><br><span class="line">label <span class="built_in">local</span></span><br><span class="line">  menu label Boot from ^<span class="built_in">local</span> drive</span><br><span class="line">  localboot <span class="number">0</span>xffff</span><br><span class="line">label memtest86</span><br><span class="line">  menu label ^Memory <span class="built_in">test</span></span><br><span class="line">  kernel memtest</span><br><span class="line">  append -</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#ks.cfg</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#platform=x86, AMD64, or Intel EM64T</span></span><br><span class="line"><span class="comment">#version=DEVEL</span></span><br><span class="line"><span class="comment"># Firewall configuration</span></span><br><span class="line">firewall --disabled</span><br><span class="line"><span class="comment"># Install OS instead of upgrade</span></span><br><span class="line">install</span><br><span class="line"><span class="comment">#cdrom</span></span><br><span class="line">url --url=http://<span class="number">192.168</span>.<span class="number">1.1</span>/rhel67/</span><br><span class="line"><span class="comment"># Network</span></span><br><span class="line"><span class="comment">#network --bootproto=dhcp --device=eth0</span></span><br><span class="line"><span class="comment"># Root password</span></span><br><span class="line">rootpw admin123</span><br><span class="line"><span class="comment"># System authorization information</span></span><br><span class="line">auth  --useshadow  --passalgo=sha512</span><br><span class="line"><span class="comment"># Use text mode install</span></span><br><span class="line">text</span><br><span class="line">firstboot --disable</span><br><span class="line"><span class="comment"># System keyboard</span></span><br><span class="line">keyboard us</span><br><span class="line"><span class="comment"># System language</span></span><br><span class="line">lang en_US.UTF-<span class="number">8</span></span><br><span class="line"><span class="comment"># SELinux configuration</span></span><br><span class="line">selinux --disabled</span><br><span class="line"><span class="comment"># Installation logging level</span></span><br><span class="line">logging --level=info</span><br><span class="line"><span class="comment"># Reboot after installation</span></span><br><span class="line">reboot</span><br><span class="line"><span class="comment"># System timezone</span></span><br><span class="line">timezone Asia/Shanghai</span><br><span class="line"><span class="comment"># System bootloader configuration</span></span><br><span class="line">bootloader --location=mbr --append=<span class="string">"rhgb quiet crashkernel=auto"</span></span><br><span class="line"><span class="comment"># Clear the Master Boot Record</span></span><br><span class="line">zerombr</span><br><span class="line"><span class="comment"># Partition clearing information</span></span><br><span class="line">clearpart --all --initlabel</span><br><span class="line"><span class="comment"># Partition</span></span><br><span class="line"><span class="comment">#autopart</span></span><br><span class="line">part /boot --fstype=ext4 --size=<span class="number">500</span></span><br><span class="line">part pv.<span class="number">008002</span> --grow --size=<span class="number">1</span></span><br><span class="line">volgroup VolGroup --pesize=<span class="number">4096</span> pv.<span class="number">008002</span></span><br><span class="line">logvol / --fstype=ext4 --name=lv_root --vgname=VolGroup --size=<span class="number">20480</span></span><br><span class="line">logvol /home --fstype=ext4 --name=lv_home --vgname=VolGroup --size=<span class="number">20480</span></span><br><span class="line">logvol /opt --fstype=ext4 --name=lv_opt --vgname=VolGroup --size=<span class="number">20480</span></span><br><span class="line">logvol /tmp --fstype=ext4 --name=lv_tmp --vgname=VolGroup --size=<span class="number">20480</span></span><br><span class="line">logvol /usr --fstype=ext4 --name=lv_usr --vgname=VolGroup --size=<span class="number">20480</span></span><br><span class="line">logvol /var --fstype=ext4 --name=lv_var --vgname=VolGroup --size=<span class="number">20480</span></span><br><span class="line">logvol swap --name=lv_swap --vgname=VolGroup --size=<span class="number">65536</span></span><br><span class="line"><span class="comment"># Packages</span></span><br><span class="line">%packages</span><br><span class="line">@base</span><br><span class="line">@chinese-support</span><br><span class="line">@client-mgmt-tools</span><br><span class="line">@core</span><br><span class="line">@debugging</span><br><span class="line">@basic-desktop</span><br><span class="line">@desktop-debugging</span><br><span class="line">@desktop-platform</span><br><span class="line">@directory-client</span><br><span class="line">@fonts</span><br><span class="line">@general-desktop</span><br><span class="line">@graphical-admin-tools</span><br><span class="line">@input-methods</span><br><span class="line">@internet-browser</span><br><span class="line">@java-platform</span><br><span class="line">@legacy-x</span><br><span class="line">@network-file-system-client</span><br><span class="line">@perl-runtime</span><br><span class="line">@<span class="built_in">print</span>-client</span><br><span class="line">@remote-desktop-clients</span><br><span class="line">@server-platform</span><br><span class="line">@server-policy</span><br><span class="line">@x11</span><br><span class="line">pax</span><br><span class="line">python-dmidecode</span><br><span class="line">oddjob</span><br><span class="line">wodim</span><br><span class="line">sgpio</span><br><span class="line">genisoimage</span><br><span class="line">mtools</span><br><span class="line">abrt-gui</span><br><span class="line">certmonger</span><br><span class="line">pam_krb5</span><br><span class="line">krb5-workstation</span><br><span class="line">libXmu</span><br><span class="line">perl-DBD-SQLite</span><br><span class="line">%end</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">file://H:\<span class="number">01</span>_autoinstall\tftpboot_rhel  (<span class="number">1</span> folders, <span class="number">4</span> files, <span class="number">38.93</span> MB, <span class="number">38.93</span> MB <span class="keyword">in</span> total.)</span><br><span class="line">│  initrd.img    <span class="number">34.72</span> MB</span><br><span class="line">│  pxelinux.<span class="number">0</span>    <span class="number">26.13</span> KB</span><br><span class="line">│  vesamenu.c32  <span class="number">159.89</span> KB</span><br><span class="line">│  vmlinuz   <span class="number">4.03</span> MB</span><br><span class="line">└─pxelinux.cfg  (<span class="number">0</span> folders, <span class="number">1</span> files, <span class="number">991</span> bytes, <span class="number">991</span> bytes <span class="keyword">in</span> total.)</span><br><span class="line">        default <span class="number">991</span> bytes</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>引用他人在Linux下的安装流程</p>
+</blockquote>
+<p>RHEL6 (64bits)系统上利用PXE+DHCP+TFTP+KickStart批量安装系统<br><a href="http://chrinux.blog.51cto.com/6466723/1214641" target="_blank" rel="external">http://chrinux.blog.51cto.com/6466723/1214641</a></p>
+<p>CentOS 6.4下PXE+Kickstart无人值守安装操作系统<br><a href="http://www.cnblogs.com/mchina/p/centos-pxe-kickstart-auto-install-os.html" target="_blank" rel="external">http://www.cnblogs.com/mchina/p/centos-pxe-kickstart-auto-install-os.html</a></p>
+<h2 id="tftpd32">tftpd32</h2><blockquote>
+<p>请允许我直接偷懒引用官方简洁纯朴的英文说明，希望大家在遇到问题前回顾下每个选项的解释，谢谢</p>
+</blockquote>
+<p>Tftpd32 is a free, opensource IPv6 ready application which includes DHCP, TFTP, DNS, SNTP and Syslog servers as well as a TFTP client.</p>
+<h3 id="TFTP">TFTP</h3><p>Trivial File Transfer Protocol was first defined in 1980, it is a lightweight version of the FTP protocol that has no directory browsing or password capability. Employing UDP rather than TCP for transport, TFTP is typically used to transfer firmware upgrades to network equipment such as routers, switches and IP phones.It is also used to boot diskless computers (PXE). </p>
+<h3 id="SNTP">SNTP</h3><p>Simple Network Timle Protocol is a simplified version of NTP (Network Time Protocol). They synchronise the time on workstations across a network. </p>
+<h3 id="DHCP">DHCP</h3><p>DHCP assigns IP addresses to client stations logging onto a TCP/IP network. It eliminates having to manually assign permanent IP addresses on each station. </p>
+<h3 id="Syslog">Syslog</h3><p>Syslog is a service for remotely logging data. For example, it allows to monitor videoless network equipments. </p>
+<h3 id="Tftpd_server_Settings">Tftpd server Settings</h3><p><strong>Base directory</strong><br>The default directory used by the TFTP client and server. It may be changed from the main window.</p>
+<p><strong>Global Settings</strong><br>Enable or disable tftpd32 servers and clients.</p>
+<p><strong>TFTP security</strong></p>
+<ul>
+<li>NONE   (Not recommended !)<br>read and write requests are allowed on all disks/directories. </li>
+<li>Standard<br>read and write requests are allowed but limited to the current directory. </li>
+<li>High<br>idem standard + write requests are allowed only if the input file exists and is empty. </li>
+<li>Read only<br>idem standard + write requests are rejected. </li>
+</ul>
+<p><strong>TFTP Configuration</strong></p>
+<ul>
+<li>Timeout<br>The maximum timeout between two retransmissions </li>
+<li>Max Retransmit<br>The maximum retransmission for the same packet </li>
+<li>Tftp Port<br>The port used to listen incoming requests </li>
+<li>local ports pool<br>A range of ports (for example 3000:3030). These ports are used for the file transfers. </li>
+</ul>
+<p><strong>TFTP Configuration</strong></p>
+<ul>
+<li>Option Negotiation<br>Enables the negotiation between client and server (RFC 2347) </li>
+<li>PXE compatibility<br>Enables only the file size negotiation </li>
+<li>Show progress Bar<br>Creates a gauge window for each transfer </li>
+<li>Translate Unix file names<br>Translates any slash characters to a backslash </li>
+<li>Bind Tftpd32 to this address<br>Enables TFTP only on one interface </li>
+<li>Allow ‘\’ As virtual root<br>A file name beginning with ‘\’ points to the TFTP directory and not to the root of the disk </li>
+<li>Use anticipation window of ??? bytes<br>Tftpd32 is able to send packets before receiving acknowledgements. This feature may dramatically speed up the transfer. </li>
+<li>Hide window at startup<br>Tftpd32 main window remains hidden, but the icon in the tasktray is still present </li>
+<li>Create dir.txt files<br>For each incoming read request, Tftpd32 lists the content of the directory and put the result in a file named “dir.txt”. </li>
+<li>Create md5 file<br>For each successfull read request, Tftpd32 creates a file which is the MD5 signature of the previous file<br>Beep for long transfer<br>Tftpd32 sends a beep once a transfer has ended.    </li>
+</ul>
+<h3 id="DHCP_Setup">DHCP Setup</h3><ul>
+<li>IP Pool starting Address<br>This is the first address which will be distributed. </li>
+<li>Size of pool<br>This is the number of hosts which may be configured by Tftpd32. </li>
+<li>Lease<br>This is the amount of time in minutes the address is leased for. </li>
+<li>Boot File<br>Used by diskless stations. It is the file which will be retrieved by TFTP to start up the boot process.<br>The strings $MAC$ and $IP$ are pseudo variables which are translated into the MAC address of the client and its assignated IP address. </li>
+<li>Default router<br>The IP address of the LAN gateway. </li>
+<li>Mask<br>The network mask which will be assigned to the DHCP clients. </li>
+<li>DNS servers<br>The IP address of the DNS. Two DNS can be configured. </li>
+<li>WINS Server<br>The IP address of the WINS server. </li>
+<li>NTP Server<br>The IP address of the NTP server used for synchronisation. </li>
+<li>SIP Server<br>The IP address of the SIP server. It concerns mostly IP phones. </li>
+<li>Domain Name<br>Either the NT domain or the internet domain. </li>
+<li>Additional Option<br>The first field is the number of the option to be handled<br>The second filed is the value of the field. The value is prefixed with its type (a for list of IPv4 address, x for list of hex digits, b for list of decimal bytes, s for an ASCII string) [legacy prefixes: i for integer, n for network order integers] </li>
+<li>More Additional Options ?<br>Tftpd32 supports up to 10 additionnal options. They have to be configured by editing the tftpd32.ini settings file. Their syntax is similar to the previous one. </li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/tftpd32/" data-title="使用tftpd32自动化网络安装esxi6.0u2和rhel6.7实践 | HelloDog" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/post/tftp/"  title="tftp安装和使用小结">
+ <strong>下一篇：</strong><br/> 
+ <span>tftp安装和使用小结
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="post/tftpd32/" data-title="使用tftpd32自动化网络安装esxi6.0u2和rhel6.7实践" data-url="https://wsgzao.github.io/post/tftpd32/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3点建议"><span class="toc-number">3.</span> <span class="toc-text">3点建议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#esxi"><span class="toc-number">4.</span> <span class="toc-text">esxi</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rhel"><span class="toc-number">5.</span> <span class="toc-text">rhel</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tftpd32"><span class="toc-number">6.</span> <span class="toc-text">tftpd32</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#TFTP"><span class="toc-number">6.1.</span> <span class="toc-text">TFTP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SNTP"><span class="toc-number">6.2.</span> <span class="toc-text">SNTP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DHCP"><span class="toc-number">6.3.</span> <span class="toc-text">DHCP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Syslog"><span class="toc-number">6.4.</span> <span class="toc-text">Syslog</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Tftpd_server_Settings"><span class="toc-number">6.5.</span> <span class="toc-text">Tftpd server Settings</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DHCP_Setup"><span class="toc-number">6.6.</span> <span class="toc-text">DHCP Setup</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>48</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>6</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Doing is better than perfect.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="//faisalman.github.io/ua-parser-js/src/ua-parser.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"wsgzao"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//wsgzao.github.io/embed_ua.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+<!-- baidu_push Begin -->
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+            
+<!-- baidu_push End -->
+  </body>
+</html>
