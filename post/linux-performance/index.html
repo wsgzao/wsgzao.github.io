@@ -102,17 +102,17 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CPU"><span class="toc-number">3.</span> <span class="toc-text">CPU</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#确认CPU型号"><span class="toc-number">3.1.</span> <span class="toc-text">确认CPU型号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super_PI"><span class="toc-number">3.2.</span> <span class="toc-text">Super PI</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Disk"><span class="toc-number">4.</span> <span class="toc-text">Disk</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#清空缓存"><span class="toc-number">4.1.</span> <span class="toc-text">清空缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试读性能"><span class="toc-number">4.2.</span> <span class="toc-text">测试读性能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试写入性能"><span class="toc-number">4.3.</span> <span class="toc-text">测试写入性能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考数据"><span class="toc-number">4.4.</span> <span class="toc-text">参考数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nmon"><span class="toc-number">5.</span> <span class="toc-text">nmon</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CPU"><span class="toc-number">3.</span> <span class="toc-text">CPU</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#确认CPU型号"><span class="toc-number">3.1.</span> <span class="toc-text">确认CPU型号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-PI"><span class="toc-number">3.2.</span> <span class="toc-text">Super PI</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Disk"><span class="toc-number">4.</span> <span class="toc-text">Disk</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#清空缓存"><span class="toc-number">4.1.</span> <span class="toc-text">清空缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试读性能"><span class="toc-number">4.2.</span> <span class="toc-text">测试读性能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试写入性能"><span class="toc-number">4.3.</span> <span class="toc-text">测试写入性能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考数据"><span class="toc-number">4.4.</span> <span class="toc-text">参考数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nmon"><span class="toc-number">5.</span> <span class="toc-text">nmon</span></a></li></ol>
 		
 		</div>
 		
 		<p><img src="http://www.brendangregg.com/Perf/linux_benchmarking_tools.png" alt=""></p>
-<h2 id="前言">前言</h2><p>Linux性能测试、监控、优化是一个持续的过程，上图为LinuxCon上Brendan D. Gregg分享的<code>Linux benchmarking tools</code>示意图，涵盖面十分广泛。我们可以通过成熟的监控方案如BMC Patrol，Zabbix来捕获大部分信息，在实际工作中我们会经常关注I/O性能，一般可以使用dd/ORION/IOzone做简单的测试，如果需要获取更加全面详细的报告可以使用nmon，本文将主要介绍Super PI /dd/nmon三种简单而有效的监测方法。</p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Linux性能测试、监控、优化是一个持续的过程，上图为LinuxCon上Brendan D. Gregg分享的<code>Linux benchmarking tools</code>示意图，涵盖面十分广泛。我们可以通过成熟的监控方案如BMC Patrol，Zabbix来捕获大部分信息，在实际工作中我们会经常关注I/O性能，一般可以使用dd/ORION/IOzone做简单的测试，如果需要获取更加全面详细的报告可以使用nmon，本文将主要介绍Super PI /dd/nmon三种简单而有效的监测方法。</p>
 <blockquote>
 <p>CPU | Memory | I/O | Network 一个都不能少</p>
 </blockquote>
 <hr>
-<h2 id="更新记录">更新记录</h2><p>2015年03月06日 - 初稿</p>
+<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2015年03月06日 - 初稿</p>
 <p>阅读原文 - <a href="https://wsgzao.github.io/post/linux-performance/" target="_blank" rel="external">https://wsgzao.github.io/post/linux-performance/</a></p>
 <p>扩展阅读</p>
 <ul>
@@ -121,31 +121,31 @@
 <li>nmon - <a href="http://nmon.sourceforge.net/pmwiki.php" target="_blank" rel="external">http://nmon.sourceforge.net/pmwiki.php</a></li>
 </ul>
 <hr>
-<h2 id="CPU">CPU</h2><h3 id="确认CPU型号">确认CPU型号</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/cpuinfo |grep <span class="string">"model name"</span>|uniq|cut <span class="operator">-f</span>2 <span class="operator">-d</span>:</span><br><span class="line">    </span><br><span class="line">Intel(R) Xeon(R) CPU E5-<span class="number">2650</span> v2 @ <span class="number">2.60</span>GHz</span><br></pre></td></tr></table></figure>
-<h3 id="Super_PI">Super PI</h3><blockquote>
+<h2 id="CPU"><a href="#CPU" class="headerlink" title="CPU"></a>CPU</h2><h3 id="确认CPU型号"><a href="#确认CPU型号" class="headerlink" title="确认CPU型号"></a>确认CPU型号</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/cpuinfo |grep <span class="string">"model name"</span>|uniq|cut <span class="operator">-f</span>2 <span class="operator">-d</span>:</span><br><span class="line">    </span><br><span class="line">Intel(R) Xeon(R) CPU E5-<span class="number">2650</span> v2 @ <span class="number">2.60</span>GHz</span><br></pre></td></tr></table></figure>
+<h3 id="Super-PI"><a href="#Super-PI" class="headerlink" title="Super PI"></a>Super PI</h3><blockquote>
 <p>计算时间越短越好</p>
 </blockquote>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">time <span class="built_in">echo</span> <span class="string">"scale=500;4*a(1)"</span>|bc <span class="operator">-l</span> -q</span><br><span class="line">    </span><br><span class="line"><span class="number">3.141592653589793238462643383279502884197169399375105820974944592307</span>\</span><br><span class="line"><span class="number">81640628620899862803482534211706798214808651328230664709384460955058</span>\</span><br><span class="line"><span class="number">22317253594081284811174502841027019385211055596446229489549303819644</span>\</span><br><span class="line"><span class="number">28810975665933446128475648233786783165271201909145648566923460348610</span>\</span><br><span class="line"><span class="number">45432664821339360726024914127372458700660631558817488152092096282925</span>\</span><br><span class="line"><span class="number">40917153643678925903600113305305488204665213841469519415116094330572</span>\</span><br><span class="line"><span class="number">70365759591953092186117381932611793105118548074462379962749567351885</span>\</span><br><span class="line"><span class="number">75272489122793818301194912</span></span><br><span class="line">    </span><br><span class="line">real    <span class="number">0</span>m0.<span class="number">081</span>s</span><br><span class="line">user    <span class="number">0</span>m0.<span class="number">076</span>s</span><br><span class="line">sys     <span class="number">0</span>m0.<span class="number">000</span>s</span><br></pre></td></tr></table></figure>
 <hr>
-<h2 id="Disk">Disk</h2><h3 id="清空缓存">清空缓存</h3><blockquote>
+<h2 id="Disk"><a href="#Disk" class="headerlink" title="Disk"></a>Disk</h2><h3 id="清空缓存"><a href="#清空缓存" class="headerlink" title="清空缓存"></a>清空缓存</h3><blockquote>
 <p>每次做读写测试前建议先清空缓存</p>
 </blockquote>
-<pre><code class="bash">sync; <span class="built_in">echo</span> <span class="number">3</span> &gt; /proc/sys/vm/drop_caches
+<pre><code class="bash">sync; <span class="built_in">echo</span> 3 &gt; /proc/sys/vm/drop_caches
 </code></pre>
-<h3 id="测试读性能">测试读性能</h3><blockquote>
+<h3 id="测试读性能"><a href="#测试读性能" class="headerlink" title="测试读性能"></a>测试读性能</h3><blockquote>
 <p>选择测试磁盘，建议做2-3组取平均值</p>
 </blockquote>
 <pre><code class="bash">hdparm -t /dev/sda
 
 /dev/sda:
-Timing buffered disk reads:  <span class="number">1074</span> MB <span class="keyword">in</span>  <span class="number">3.00</span> seconds = <span class="number">357.92</span> MB/sec
+Timing buffered disk reads:  1074 MB <span class="keyword">in</span>  3.00 seconds = 357.92 MB/sec
 </code></pre>
-<h3 id="测试写入性能">测试写入性能</h3><blockquote>
+<h3 id="测试写入性能"><a href="#测试写入性能" class="headerlink" title="测试写入性能"></a>测试写入性能</h3><blockquote>
 <p>根据业务选择不同的BlockSize大小按需多次测试取平均值</p>
 </blockquote>
-<pre><code class="bash">time dd <span class="keyword">if</span>=/dev/zero of=/tmp/speed bs=<span class="number">1</span>M count=<span class="number">2</span>K conv=fsync;rm /tmp/speed
+<pre><code class="bash">time dd <span class="keyword">if</span>=/dev/zero of=/tmp/speed bs=1M count=2K conv=fsync;rm /tmp/speed
 </code></pre>
-<h3 id="参考数据">参考数据</h3><blockquote>
+<h3 id="参考数据"><a href="#参考数据" class="headerlink" title="参考数据"></a>参考数据</h3><blockquote>
 <p>以10,000 rpm 300 GB SAS硬盘为例，机型为IBM x3650 M4，Raid参数如下</p>
 </blockquote>
 <p>1.Read Policy：Ahead   （控制器缓存读策略：预读）<br>2.Write Policy：Write Back with BBU（控制器缓存写策略：有电池备份时回写）<br>3.IO Policy: Direct（IO策略：直接）<br>4.Drive Cache：disable （硬盘缓存：禁用）</p>
@@ -176,7 +176,7 @@ Timing buffered disk reads:  <span class="number">1074</span> MB <span class="ke
 </tbody>
 </table>
 <hr>
-<h2 id="nmon">nmon</h2><blockquote>
+<h2 id="nmon"><a href="#nmon" class="headerlink" title="nmon"></a>nmon</h2><blockquote>
 <p>建议根据实际需求配置间隔时间和次数，配合<code>nmon Analyser</code>可以显示直观的图表数据</p>
 </blockquote>
 <pre><code class="bash"><span class="comment">#author: OX</span>
@@ -188,7 +188,7 @@ npath=/tmp/nmon/<span class="built_in">log</span>
 <span class="comment"># monitoring per 120 senonds</span>
 <span class="comment">#nmon -s 120 -c 720 -f -m $npath</span>
 <span class="comment"># monitoring per 300 senonds</span>
-/tmp/nmon/nmon_x86_sles11 <span class="operator">-s</span> <span class="number">300</span> -c <span class="number">288</span> <span class="operator">-f</span> -m <span class="variable">$npath</span>
+/tmp/nmon/nmon_x86_sles11 <span class="_">-s</span> 300 -c 288 <span class="_">-f</span> -m <span class="variable">$npath</span>
 <span class="comment">#delete file before 365 day</span>
 <span class="comment">#find /tmp -name *.nmon  -mtime +365 -exec rm {} \;</span>
 </code></pre>
@@ -255,7 +255,7 @@ npath=/tmp/nmon/<span class="built_in">log</span>
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CPU"><span class="toc-number">3.</span> <span class="toc-text">CPU</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#确认CPU型号"><span class="toc-number">3.1.</span> <span class="toc-text">确认CPU型号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super_PI"><span class="toc-number">3.2.</span> <span class="toc-text">Super PI</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Disk"><span class="toc-number">4.</span> <span class="toc-text">Disk</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#清空缓存"><span class="toc-number">4.1.</span> <span class="toc-text">清空缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试读性能"><span class="toc-number">4.2.</span> <span class="toc-text">测试读性能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试写入性能"><span class="toc-number">4.3.</span> <span class="toc-text">测试写入性能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考数据"><span class="toc-number">4.4.</span> <span class="toc-text">参考数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nmon"><span class="toc-number">5.</span> <span class="toc-text">nmon</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CPU"><span class="toc-number">3.</span> <span class="toc-text">CPU</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#确认CPU型号"><span class="toc-number">3.1.</span> <span class="toc-text">确认CPU型号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Super-PI"><span class="toc-number">3.2.</span> <span class="toc-text">Super PI</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Disk"><span class="toc-number">4.</span> <span class="toc-text">Disk</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#清空缓存"><span class="toc-number">4.1.</span> <span class="toc-text">清空缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试读性能"><span class="toc-number">4.2.</span> <span class="toc-text">测试读性能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试写入性能"><span class="toc-number">4.3.</span> <span class="toc-text">测试写入性能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考数据"><span class="toc-number">4.4.</span> <span class="toc-text">参考数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nmon"><span class="toc-number">5.</span> <span class="toc-text">nmon</span></a></li></ol>
  
   </div>
 
@@ -291,7 +291,7 @@ npath=/tmp/nmon/<span class="built_in">log</span>
 		  
 		
 		  
-			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>6</sup></a></li>
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>7</sup></a></li>
 		  
 		
 		</ul>

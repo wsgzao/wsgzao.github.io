@@ -101,26 +101,26 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#红帽支持_RHEL_主版本之间的升级吗？"><span class="toc-number">3.</span> <span class="toc-text">红帽支持 RHEL 主版本之间的升级吗？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Environment"><span class="toc-number">3.1.</span> <span class="toc-text">Environment</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Issue"><span class="toc-number">3.2.</span> <span class="toc-text">Issue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Resolution"><span class="toc-number">3.3.</span> <span class="toc-text">Resolution</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Comment"><span class="toc-number">3.4.</span> <span class="toc-text">Comment</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#How_do_I_upgrade_from_RHEL_6_to_RHEL_7"><span class="toc-number">4.</span> <span class="toc-text">How do I upgrade from RHEL 6 to RHEL 7</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Environment-1"><span class="toc-number">4.1.</span> <span class="toc-text">Environment</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Issue-1"><span class="toc-number">4.2.</span> <span class="toc-text">Issue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Resolution-1"><span class="toc-number">4.3.</span> <span class="toc-text">Resolution</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实践步骤"><span class="toc-number">5.</span> <span class="toc-text">实践步骤</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#红帽支持-RHEL-主版本之间的升级吗？"><span class="toc-number">3.</span> <span class="toc-text">红帽支持 RHEL 主版本之间的升级吗？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Environment"><span class="toc-number">3.1.</span> <span class="toc-text">Environment</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Issue"><span class="toc-number">3.2.</span> <span class="toc-text">Issue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Resolution"><span class="toc-number">3.3.</span> <span class="toc-text">Resolution</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Comment"><span class="toc-number">3.4.</span> <span class="toc-text">Comment</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#How-do-I-upgrade-from-RHEL-6-to-RHEL-7"><span class="toc-number">4.</span> <span class="toc-text">How do I upgrade from RHEL 6 to RHEL 7</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Environment-1"><span class="toc-number">4.1.</span> <span class="toc-text">Environment</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Issue-1"><span class="toc-number">4.2.</span> <span class="toc-text">Issue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Resolution-1"><span class="toc-number">4.3.</span> <span class="toc-text">Resolution</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实践步骤"><span class="toc-number">5.</span> <span class="toc-text">实践步骤</span></a></li></ol>
 		
 		</div>
 		
-		<h2 id="前言">前言</h2><p>因为交易系统部的同事提出了一个新的需求要将现有的RHEL6.7升级至RHEL7.1(最好保留数据升级)，之前对于小版本的升级无论是CentOS还是Redhat都可以直接通过yum update的方式实现软件包和内核的迭代更新，但是这次的需求经过Redhat知识库的研究发现这几乎是一个不可能轻松实现的任务，原因就是Redhat压根不支持大版本之间的升级，考虑到跨版本兼容性问题和原厂不做技术支持这两点，通过和Redhat二线电话沟通也确认了最终的实现方案，就是先备份相关重要配置和数据格式化/分区保留其它文件系统，重装后在把数据迁移回来。整个过程虽然提不上什么惊心动魄，但至少翻阅了大量材料，官方虽然给出了跨版本升级的步骤，但实现的代价和要求真的太高，这里一并分享出来方便大家学习和思考。</p>
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>因为交易系统部的同事提出了一个新的需求要将现有的RHEL6.7升级至RHEL7.1(最好保留数据升级)，之前对于小版本的升级无论是CentOS还是Redhat都可以直接通过yum update的方式实现软件包和内核的迭代更新，但是这次的需求经过Redhat知识库的研究发现这几乎是一个不可能轻松实现的任务，原因就是Redhat压根不支持大版本之间的升级，考虑到跨版本兼容性问题和原厂不做技术支持这两点，通过和Redhat二线电话沟通也确认了最终的实现方案，就是先备份相关重要配置和数据格式化/分区保留其它文件系统，重装后在把数据迁移回来。整个过程虽然提不上什么惊心动魄，但至少翻阅了大量材料，官方虽然给出了跨版本升级的步骤，但实现的代价和要求真的太高，这里一并分享出来方便大家学习和思考。</p>
 <blockquote>
 <p>How do I upgrade from RHEL 6 to RHEL 7? Reinstall</p>
 </blockquote>
-<h2 id="更新记录">更新记录</h2><p>2016年10月13日 - 初稿</p>
+<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2016年10月13日 - 初稿</p>
 <p>阅读原文 - <a href="https://wsgzao.github.io/post/rhel-upgrade/" target="_blank" rel="external">https://wsgzao.github.io/post/rhel-upgrade/</a></p>
 <p><strong>扩展阅读</strong></p>
 <p>红帽支持 RHEL 主版本之间的升级吗？- <a href="https://access.redhat.com/zh_CN/solutions/1388653" target="_blank" rel="external">https://access.redhat.com/zh_CN/solutions/1388653</a><br>How do I upgrade from RHEL 6 to RHEL 7? - <a href="https://access.redhat.com/solutions/637583" target="_blank" rel="external">https://access.redhat.com/solutions/637583</a></p>
 <hr>
-<h2 id="红帽支持_RHEL_主版本之间的升级吗？">红帽支持 RHEL 主版本之间的升级吗？</h2><h3 id="Environment">Environment</h3><ul>
+<h2 id="红帽支持-RHEL-主版本之间的升级吗？"><a href="#红帽支持-RHEL-主版本之间的升级吗？" class="headerlink" title="红帽支持 RHEL 主版本之间的升级吗？"></a>红帽支持 RHEL 主版本之间的升级吗？</h2><h3 id="Environment"><a href="#Environment" class="headerlink" title="Environment"></a>Environment</h3><ul>
 <li>Red Hat Enterprise Linux 4</li>
 <li>Red Hat Enterprise Linux 5</li>
 <li>Red Hat Enterprise Linux 6</li>
 <li>Red Hat Enterprise Linux 7</li>
 </ul>
-<h3 id="Issue">Issue</h3><ul>
+<h3 id="Issue"><a href="#Issue" class="headerlink" title="Issue"></a>Issue</h3><ul>
 <li>如何从红帽企业版 Linux 的一个版本升级到另一个版本？</li>
 <li>可以从 RHEL 的不同主版本之间移植吗？</li>
 <li>红帽支持 RHEL 主版本之间的升级吗（比如从5升级到6）？</li>
@@ -128,7 +128,7 @@
 <li>安装介质没有包含升级选项；</li>
 <li>如何从 <code>RHEL 5</code> 升级到 <code>RHEL 6</code> ？</li>
 </ul>
-<h3 id="Resolution">Resolution</h3><blockquote>
+<h3 id="Resolution"><a href="#Resolution" class="headerlink" title="Resolution"></a>Resolution</h3><blockquote>
 <p>Red Hat Enterprise Linux 4, 5, 6</p>
 </blockquote>
 <p>红帽 <strong>不支持</strong> RHEL 主版本之间的跨大版本升级。（主版本以整数表示。比如，RHEL 5 和 RHEL 6 都是不同的主版本。）</p>
@@ -136,7 +136,7 @@
 <p>还有方法可以不进行全新安装，来进行升级。要实现这个功能，插入新版本的安装光盘，然后在 boot 命令行中输入：</p>
 <figure class="highlight vala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor"># linux upgradeany</span></span><br></pre></td></tr></table></figure>
 <p>这将引导您进行与 普通的安装过程很相近的升级步骤。再次说明，这个过程红帽是不予支持的。进行完这个升级操作后，如果您联系红帽技术支持，红帽只会当作全新的安装来提供支持。升级过程中产生的问题是不予支持的。任何时候出现的问题如果疑似与升级过程有关，红帽将要求您重新安装系统。</p>
-<h3 id="Comment">Comment</h3><ul>
+<h3 id="Comment"><a href="#Comment" class="headerlink" title="Comment"></a>Comment</h3><ul>
 <li>红帽建议，系统升级之前要先全面备份数据。</li>
 <li>如果之前安装有第三方软件，建议在新系统上重新安装。</li>
 <li>更换新版本系统后，个别软件包的配置文件可能会失效，因为新版本配置文件的格式和排列可能会有所变化。</li>
@@ -157,17 +157,17 @@
 <li><a href="https://access.redhat.com/site/documentation/en-US/Red_Hat_Enterprise_Linux/" target="_blank" rel="external">Red Hat Enterprise Linux 7 Installation Guide</a></li>
 </ul>
 <p>如有问题，请联系红帽全球支持服务 <a href="https://access.redhat.com/support/cases/new" target="_blank" rel="external">file a support case</a> ，或在 <a href="https://access.redhat.com/site/discussions/" target="_blank" rel="external">Discussions area of the Customer Portal</a> 中进行讨论。</p>
-<h2 id="How_do_I_upgrade_from_RHEL_6_to_RHEL_7">How do I upgrade from RHEL 6 to RHEL 7</h2><h3 id="Environment-1">Environment</h3><blockquote>
+<h2 id="How-do-I-upgrade-from-RHEL-6-to-RHEL-7"><a href="#How-do-I-upgrade-from-RHEL-6-to-RHEL-7" class="headerlink" title="How do I upgrade from RHEL 6 to RHEL 7"></a>How do I upgrade from RHEL 6 to RHEL 7</h2><h3 id="Environment-1"><a href="#Environment-1" class="headerlink" title="Environment"></a>Environment</h3><blockquote>
 <p>Red Hat Enterprise Linux 6.x to Red Hat Enterprise Linux 7</p>
 </blockquote>
 <table border="1"><br><tr><br><th><strong>Product Variant</strong></th><br><th><strong>x86 Architecture</strong></th><br><th><strong>x86_64 Architecture</strong></th><br><th><strong>IBM Power</strong></th><br><th><strong>IBM z Systems</strong></th><br></tr><br><tr><br><td><strong>Desktop Edition</strong></td><br><td>Not supported</td><br><td>Not supported</td><br><td>N/A</td><br><td>N/A</td><br></tr><br><tr><br><td><strong>Workstation Edition</strong></td><br><td>Not supported</td><br><td>Not supported</td><br><td>N/A</td><br><td>N/A</td><br></tr><br><tr><br><td><strong>Server Edition</strong></td><br><td>Not supported</td><br><td><font color="blue"><strong>Supported</strong></font></td><br><td><font color="blue"><strong>Supported[1]</strong></font></td><br><td><font color="blue"><strong>Supported[2]</strong></font></td><br></tr><br><tr><br><td><strong>HPC Compute Node</strong></td><br><td>Not supported</td><br><td><font color="blue"><strong>Supported</strong></font></td><br><td>N/A</td><br><td>N/A</td><br></tr><br><tr><br><td><strong>Server running CloudForms software</strong></td><br><td>N/A</td><br><td>Not supported</td><br><td>N/A</td><br><td>N/A</td><br></tr><br></table>
 
 <p>[1] Red Hat Enterprise Linux for Power, big endian<br>[2] Red Hat Enterprise Linux for IBM z Systems</p>
-<h3 id="Issue-1">Issue</h3><ul>
+<h3 id="Issue-1"><a href="#Issue-1" class="headerlink" title="Issue"></a>Issue</h3><ul>
 <li>How do I do in-place upgrading from the latest Red Hat Enterprise Linux 6 to the latest Red Hat Enterprise Linux 7?</li>
 <li>How do I use the preupgrade assistant and redhat-upgrade-tool to run a RHEL6 to RHEL7 upgrade?</li>
 </ul>
-<h3 id="Resolution-1">Resolution</h3><p>Red Hat Enterprise Linux 7 (RHEL 7) is the first major release of RHEL to allow in-place upgrades from the previous RHEL major release (RHEL 6). An in-place upgrade offers a way of upgrading a system to a new major release of Red Hat Enterprise Linux by replacing the existing operating system.</p>
+<h3 id="Resolution-1"><a href="#Resolution-1" class="headerlink" title="Resolution"></a>Resolution</h3><p>Red Hat Enterprise Linux 7 (RHEL 7) is the first major release of RHEL to allow in-place upgrades from the previous RHEL major release (RHEL 6). An in-place upgrade offers a way of upgrading a system to a new major release of Red Hat Enterprise Linux by replacing the existing operating system.</p>
 <p>This RHEL 6 to RHEL 7 upgrade procedure is fully supported if your Red Hat Enterprise Linux system meets the following criteria:</p>
 <p><strong>Latest Red Hat Enterprise Linux 6</strong>: Before upgrading to the latest RHEL 7, you must start with RHEL 6 and update your system to have the latest RHEL 6 packages installed. (This is covered in the procedure below.)</p>
 <p><strong>All Server editions (except x86)</strong>: All server editions (except x86) of Red Hat Enterprise Linux 6 can be upgraded with this procedure. Upgrades of RHEL Workstation and Desktop systems are not supported. Upgrades for the POWER architecture is supported. SEE TABLE ABOVE. Upgrade from 32-bit architecture is not supported.</p>
@@ -183,7 +183,7 @@
 <li>Run the Upgrade: Perform the actual upgrade.</li>
 <li>Provide Feedback: Create a debug log to send to Red Hat in case there are problems.</li>
 </ol>
-<h2 id="实践步骤">实践步骤</h2><blockquote>
+<h2 id="实践步骤"><a href="#实践步骤" class="headerlink" title="实践步骤"></a>实践步骤</h2><blockquote>
 <p>核心目标为格式化/分区，保留其它文件系统，做好相应备份重装RHEL7</p>
 </blockquote>
 <p>生产环境当前系统版本为RHEL6.7，推荐升级至RHEL7.1或者更新的版本</p>
@@ -269,7 +269,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#红帽支持_RHEL_主版本之间的升级吗？"><span class="toc-number">3.</span> <span class="toc-text">红帽支持 RHEL 主版本之间的升级吗？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Environment"><span class="toc-number">3.1.</span> <span class="toc-text">Environment</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Issue"><span class="toc-number">3.2.</span> <span class="toc-text">Issue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Resolution"><span class="toc-number">3.3.</span> <span class="toc-text">Resolution</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Comment"><span class="toc-number">3.4.</span> <span class="toc-text">Comment</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#How_do_I_upgrade_from_RHEL_6_to_RHEL_7"><span class="toc-number">4.</span> <span class="toc-text">How do I upgrade from RHEL 6 to RHEL 7</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Environment-1"><span class="toc-number">4.1.</span> <span class="toc-text">Environment</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Issue-1"><span class="toc-number">4.2.</span> <span class="toc-text">Issue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Resolution-1"><span class="toc-number">4.3.</span> <span class="toc-text">Resolution</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实践步骤"><span class="toc-number">5.</span> <span class="toc-text">实践步骤</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#红帽支持-RHEL-主版本之间的升级吗？"><span class="toc-number">3.</span> <span class="toc-text">红帽支持 RHEL 主版本之间的升级吗？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Environment"><span class="toc-number">3.1.</span> <span class="toc-text">Environment</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Issue"><span class="toc-number">3.2.</span> <span class="toc-text">Issue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Resolution"><span class="toc-number">3.3.</span> <span class="toc-text">Resolution</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Comment"><span class="toc-number">3.4.</span> <span class="toc-text">Comment</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#How-do-I-upgrade-from-RHEL-6-to-RHEL-7"><span class="toc-number">4.</span> <span class="toc-text">How do I upgrade from RHEL 6 to RHEL 7</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Environment-1"><span class="toc-number">4.1.</span> <span class="toc-text">Environment</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Issue-1"><span class="toc-number">4.2.</span> <span class="toc-text">Issue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Resolution-1"><span class="toc-number">4.3.</span> <span class="toc-text">Resolution</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实践步骤"><span class="toc-number">5.</span> <span class="toc-text">实践步骤</span></a></li></ol>
  
   </div>
 
@@ -305,7 +305,7 @@
 		  
 		
 		  
-			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>6</sup></a></li>
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>7</sup></a></li>
 		  
 		
 		</ul>
