@@ -9,23 +9,23 @@
         window.location.protocol = "https";
   </script> 
   
-    <title>Markdown学习路径 | HelloDog</title>
+    <title>Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选 | HelloDog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wsgzao">
     
 
     
-    <meta name="description" content="在实践中轻轻松松学习Markdown">
+    <meta name="description" content="记录 3PAR8400 存储 Multipath 多路径配置">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Markdown学习路径">
-<meta property="og:url" content="https://wsgzao.github.io/post/markdown/index.html">
+<meta property="og:title" content="Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选">
+<meta property="og:url" content="https://wsgzao.github.io/post/winsshfs/index.html">
 <meta property="og:site_name" content="HelloDog">
-<meta property="og:description" content="在实践中轻轻松松学习Markdown">
-<meta property="og:image" content="http://i.v2ex.co/3CAMX9Z2.png">
+<meta property="og:description" content="记录 3PAR8400 存储 Multipath 多路径配置">
+<meta property="og:image" content="https://ooo.0o0.ooo/2017/05/16/591ab60fd5298.png">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Markdown学习路径">
-<meta name="twitter:description" content="在实践中轻轻松松学习Markdown">
+<meta name="twitter:title" content="Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选">
+<meta name="twitter:description" content="记录 3PAR8400 存储 Multipath 多路径配置">
 
     
     <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
@@ -86,14 +86,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/post/markdown/" title="Markdown学习路径" itemprop="url">Markdown学习路径</a>
+      <a href="/post/winsshfs/" title="Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选" itemprop="url">Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
 		
   <p class="article-time">
-    <time datetime="2014-12-10T02:36:01.000Z" itemprop="datePublished"> 发表于 2014-12-10</time>
+    <time datetime="2017-05-16T06:59:49.000Z" itemprop="datePublished"> 发表于 2017-05-16</time>
     
   </p>
 </header>
@@ -102,38 +102,39 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#学习路径"><span class="toc-number">3.</span> <span class="toc-text">学习路径</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#理解Markdown语法"><span class="toc-number">3.1.</span> <span class="toc-text">理解Markdown语法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实践Markdown"><span class="toc-number">3.2.</span> <span class="toc-text">实践Markdown</span></a></li></ol></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dokan和SSHFS"><span class="toc-number">3.</span> <span class="toc-text">Dokan和SSHFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WinSSHFS"><span class="toc-number">4.</span> <span class="toc-text">WinSSHFS</span></a></li></ol>
 		
 		</div>
 		
-		<p><img src="http://i.v2ex.co/3CAMX9Z2.png" alt=""></p>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Markdown是一种轻量级的标记语言，流行程度已经得到了GitHub和Stack Overflow的广泛支持，作为普通人我们也可以轻松上手，结合Hexo我们可以十分优雅的分享知识，传递快乐。</p>
-<p>1.书写简单<br>2.展现美观</p>
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>2017年5月12日国内校园网络遭受勒索病毒蠕虫入侵损失惨重，国内的安全厂商也在第一时间发布安全告警和预防方案，可是通过防火墙直接禁用445端口来解决安全隐患的方式似乎也带来了其他问题，而Samba文件系统共享正是使用了该端口，由于安全的权重大于一切，在研究过CIFS/NFS共享协议以及GoodSync等数据同步软件后发现Dokan+SSHFS可以作为目前比较理想的解决方案。</p>
 <blockquote>
-<p>简单易读专注内容，我选Markdown</p>
+<p>使用Dokan+SSHFS实现Linux与Windows文件系统共享，解决Samba 445端口被禁的矛盾</p>
 </blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2017年05月16日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/sshfs/" target="_blank" rel="external">https://wsgzao.github.io/post/sshfs/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>Dokan -  <a href="http://dokan-dev.github.io" target="_blank" rel="external">http://dokan-dev.github.io</a><br>WinSSHFS - <a href="https://github.com/Foreveryone-cz/win-sshfs" target="_blank" rel="external">https://github.com/Foreveryone-cz/win-sshfs</a></p>
 <hr>
-<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2014年12月10日 - 撰写初稿</p>
-<p>阅读原文 - <a href="https://wsgzao.github.io/post/markdown/" target="_blank" rel="external">https://wsgzao.github.io/post/markdown/</a></p>
-<p>扩展阅读</p>
-<ul>
-<li>HelloDog Index - <a href="https://wsgzao.github.io/index/" target="_blank" rel="external">https://wsgzao.github.io/index/</a></li>
-</ul>
-<hr>
-<h2 id="学习路径"><a href="#学习路径" class="headerlink" title="学习路径"></a>学习路径</h2><h3 id="理解Markdown语法"><a href="#理解Markdown语法" class="headerlink" title="理解Markdown语法"></a>理解Markdown语法</h3><blockquote>
-<p>原理语法理解要与实践相结合</p>
+<h2 id="Dokan和SSHFS"><a href="#Dokan和SSHFS" class="headerlink" title="Dokan和SSHFS"></a>Dokan和SSHFS</h2><blockquote>
+<p>User mode file system library for windows with FUSE Wrapper</p>
 </blockquote>
-<ul>
-<li>Markdown语法 - <a href="http://wowubuntu.com/markdown/" target="_blank" rel="external">http://wowubuntu.com/markdown/</a></li>
-</ul>
-<hr>
-<h3 id="实践Markdown"><a href="#实践Markdown" class="headerlink" title="实践Markdown"></a>实践Markdown</h3><blockquote>
-<p>勤学勤练，分享知识，传递快乐</p>
+<p>Dokan是用户态的文件系统驱动，可以称之为fuse for windows。可以用来开发虚拟磁盘，即在“我的电脑”中虚拟出一个硬盘来，可以是硬盘，也可以是可移动磁盘或者网络硬盘。</p>
+<p><a href="http://dokan-dev.github.io" target="_blank" rel="external">http://dokan-dev.github.io</a></p>
+<blockquote>
+<p>SSH(SFTP) filesystem for Windows</p>
 </blockquote>
-<ul>
-<li>Cmd Markdown - <a href="https://www.zybuluo.com/mdeditor" target="_blank" rel="external">https://www.zybuluo.com/mdeditor</a></li>
-<li>简书 - <a href="http://www.jianshu.com/users/d9e9b31534af/latest_articles" target="_blank" rel="external">http://www.jianshu.com/users/d9e9b31534af/latest_articles</a></li>
-</ul>
+<p>SSH(SFTP) filesystem made using Dokan and SSH.NET library. It allows you to mount remote computers via SFTP protocol like windows network drives .</p>
+<p>sshfs 是基于 FUSE 构建的 SSH 文件系统客户端程序，通过它远程主机的配置无需作任何改变，就可以透过 SSH 协议来挂载远程文件系统了，非常方便及安全。</p>
+<p><a href="https://github.com/Foreveryone-cz/win-sshfs" target="_blank" rel="external">https://github.com/Foreveryone-cz/win-sshfs</a></p>
+<h2 id="WinSSHFS"><a href="#WinSSHFS" class="headerlink" title="WinSSHFS"></a>WinSSHFS</h2><p>使用方法很简单，这里有一篇国外的文章写得非常清晰，大家遇到问题可以参考下<br><a href="https://igikorn.com/sshfs-windows-10/" target="_blank" rel="external">https://igikorn.com/sshfs-windows-10/</a></p>
+<p><img src="https://ooo.0o0.ooo/2017/05/16/591ab60fd5298.png" alt=""></p>
+<ol>
+<li>安装Dokan</li>
+<li>安装WinSSHFS</li>
+<li>配置WinSSHFS然后Mount远端文件夹</li>
+</ol>
+<p>Get Dokan here: <a href="https://github.com/dokan-dev/dokany/releases" target="_blank" rel="external">https://github.com/dokan-dev/dokany/releases</a><br>Get WinSSHFS here: <a href="https://github.com/Foreveryone-cz/win-sshfs/releases" target="_blank" rel="external">https://github.com/Foreveryone-cz/win-sshfs/releases</a><br>百度网盘：<a href="http://pan.baidu.com/s/1dEPrPfF" target="_blank" rel="external">http://pan.baidu.com/s/1dEPrPfF</a></p>
+<p>如果需要学习Samba可以参考之前的一篇文章<br><a href="https://wsgzao.github.io/post/samba/" target="_blank" rel="external">https://wsgzao.github.io/post/samba/</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -141,7 +142,7 @@
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/Hexo/">Hexo</a>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
 </div>
 
 
@@ -151,7 +152,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://wsgzao.github.io/post/markdown/" data-title="Markdown学习路径 | HelloDog" data-tsina="null" class="share clearfix">
+	  <div data-url="https://wsgzao.github.io/post/winsshfs/" data-title="Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选 | HelloDog" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -164,19 +165,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/post/bonding/" title="Linux双网卡绑定实践">
-  <strong>上一篇：</strong><br/>
-  <span>
-  Linux双网卡绑定实践</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/post/gfw-break/"  title="OX翻墙小结">
+<a href="/post/samba/"  title="使用Samba实现Linux与Windows文件共享实践">
  <strong>下一篇：</strong><br/> 
- <span>OX翻墙小结
+ <span>使用Samba实现Linux与Windows文件共享实践
 </span>
 </a>
 </div>
@@ -197,7 +190,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#学习路径"><span class="toc-number">3.</span> <span class="toc-text">学习路径</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#理解Markdown语法"><span class="toc-number">3.1.</span> <span class="toc-text">理解Markdown语法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实践Markdown"><span class="toc-number">3.2.</span> <span class="toc-text">实践Markdown</span></a></li></ol></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dokan和SSHFS"><span class="toc-number">3.</span> <span class="toc-text">Dokan和SSHFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WinSSHFS"><span class="toc-number">4.</span> <span class="toc-text">WinSSHFS</span></a></li></ol>
  
   </div>
 

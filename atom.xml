@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://wsgzao.github.io/"/>
-  <updated>2017-05-04T06:43:02.710Z</updated>
+  <updated>2017-05-16T08:31:36.753Z</updated>
   <id>https://wsgzao.github.io/</id>
   
   <author>
@@ -14,6 +14,100 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选</title>
+    <link href="https://wsgzao.github.io/post/winsshfs/"/>
+    <id>https://wsgzao.github.io/post/winsshfs/</id>
+    <published>2017-05-16T06:59:49.000Z</published>
+    <updated>2017-05-16T08:31:36.753Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>2017年5月12日国内校园网络遭受勒索病毒蠕虫入侵损失惨重，国内的安全厂商也在第一时间发布安全告警和预防方案，可是通过防火墙直接禁用445端口来解决安全隐患的方式似乎也带来了其他问题，而Samba文件系统共享正是使用了该端口，由于安全的权重大于一切，在研究过CIFS/NFS共享协议以及GoodSync等数据同步软件后发现Dokan+SSHFS可以作为目前比较理想的解决方案。</p>
+<blockquote>
+<p>使用Dokan+SSHFS实现Linux与Windows文件系统共享，解决Samba 445端口被禁的矛盾</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2017年05月16日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/sshfs/" target="_blank" rel="external">https://wsgzao.github.io/post/sshfs/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>Dokan -  <a href="http://dokan-dev.github.io" target="_blank" rel="external">http://dokan-dev.github.io</a><br>WinSSHFS - <a href="https://github.com/Foreveryone-cz/win-sshfs" target="_blank" rel="external">https://github.com/Foreveryone-cz/win-sshfs</a></p>
+<hr>
+<h2 id="Dokan和SSHFS"><a href="#Dokan和SSHFS" class="headerlink" title="Dokan和SSHFS"></a>Dokan和SSHFS</h2><blockquote>
+<p>User mode file system library for windows with FUSE Wrapper</p>
+</blockquote>
+<p>Dokan是用户态的文件系统驱动，可以称之为fuse for windows。可以用来开发虚拟磁盘，即在“我的电脑”中虚拟出一个硬盘来，可以是硬盘，也可以是可移动磁盘或者网络硬盘。</p>
+<p><a href="http://dokan-dev.github.io" target="_blank" rel="external">http://dokan-dev.github.io</a></p>
+<blockquote>
+<p>SSH(SFTP) filesystem for Windows</p>
+</blockquote>
+<p>SSH(SFTP) filesystem made using Dokan and SSH.NET library. It allows you to mount remote computers via SFTP protocol like windows network drives .</p>
+<p>sshfs 是基于 FUSE 构建的 SSH 文件系统客户端程序，通过它远程主机的配置无需作任何改变，就可以透过 SSH 协议来挂载远程文件系统了，非常方便及安全。</p>
+<p><a href="https://github.com/Foreveryone-cz/win-sshfs" target="_blank" rel="external">https://github.com/Foreveryone-cz/win-sshfs</a></p>
+<h2 id="WinSSHFS"><a href="#WinSSHFS" class="headerlink" title="WinSSHFS"></a>WinSSHFS</h2><p>使用方法很简单，这里有一篇国外的文章写得非常清晰，大家遇到问题可以参考下<br><a href="https://igikorn.com/sshfs-windows-10/" target="_blank" rel="external">https://igikorn.com/sshfs-windows-10/</a></p>
+<p><img src="https://ooo.0o0.ooo/2017/05/16/591ab60fd5298.png" alt=""></p>
+<ol>
+<li>安装Dokan</li>
+<li>安装WinSSHFS</li>
+<li>配置WinSSHFS然后Mount远端文件夹</li>
+</ol>
+<p>Get Dokan here: <a href="https://github.com/dokan-dev/dokany/releases" target="_blank" rel="external">https://github.com/dokan-dev/dokany/releases</a><br>Get WinSSHFS here: <a href="https://github.com/Foreveryone-cz/win-sshfs/releases" target="_blank" rel="external">https://github.com/Foreveryone-cz/win-sshfs/releases</a><br>百度网盘：<a href="http://pan.baidu.com/s/1dEPrPfF" target="_blank" rel="external">http://pan.baidu.com/s/1dEPrPfF</a></p>
+<p>如果需要学习Samba可以参考之前的一篇文章<br><a href="https://wsgzao.github.io/post/samba/" target="_blank" rel="external">https://wsgzao.github.io/post/samba/</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      记录 3PAR8400 存储 Multipath 多路径配置
+    
+    </summary>
+    
+      <category term="学习 | Study" scheme="https://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>使用Samba实现Linux与Windows文件共享实践</title>
+    <link href="https://wsgzao.github.io/post/samba/"/>
+    <id>https://wsgzao.github.io/post/samba/</id>
+    <published>2017-05-16T06:31:57.000Z</published>
+    <updated>2017-05-16T08:30:22.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/Pbu91VnP.png" alt=""></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>一直以来都以为FTP和NFS是局域网文件共享的常用方式，但是在最近接触Samba之后，了解到一些用户需要简化访问学习成本，满足基础的权限控制管理，并支持实时编辑和保存文件，我才明白这些需求使用之前的方法都是很难满足的，而Samba却可以完美的支持上述需求，虽然在开始接触时花了一些时间学习，但把配置和语法梳理清楚之后就很简单了。</p>
+<blockquote>
+<p>Unix与Windows文件共享的最佳方式之一</p>
+</blockquote>
+<hr>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2017年05月16日 - 完善内容<br>2015年07月28日 - 增加Samba日志审计部分<br>2015年07月11日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/samba/" target="_blank" rel="external">https://wsgzao.github.io/post/samba/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>Samba - <a href="https://www.samba.org/samba/docs/man/Samba-HOWTO-Collection/" target="_blank" rel="external">https://www.samba.org/samba/docs/man/Samba-HOWTO-Collection/</a><br>使用Samba或NFS实现文件共享 - <a href="http://www.linuxprobe.com/chapter-12.html" target="_blank" rel="external">http://www.linuxprobe.com/chapter-12.html</a><br>SAMBA服务器 - <a href="http://vbird.dic.ksu.edu.tw/linux_server/0370samba.php" target="_blank" rel="external">http://vbird.dic.ksu.edu.tw/linux_server/0370samba.php</a><br>RHEL6.5下部署samba企业级文件服务器实战 - <a href="http://yuan2.blog.51cto.com/446689/1588085" target="_blank" rel="external">http://yuan2.blog.51cto.com/446689/1588085</a><br>Samba日志分析 - <a href="http://chenguang.blog.51cto.com/350944/1606746" target="_blank" rel="external">http://chenguang.blog.51cto.com/350944/1606746</a></p>
+<hr>
+<h2 id="安装samba"><a href="#安装samba" class="headerlink" title="安装samba"></a>安装samba</h2><blockquote>
+<p>各个平台的安装都蛮简单的，略过</p>
+</blockquote>
+<h2 id="配置samba"><a href="#配置samba" class="headerlink" title="配置samba"></a>配置samba</h2><blockquote>
+<p>建议合理规划目录和用户权限，可以利用用户组来简化授权管理，参见扩展阅读</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#创建目录（举例）</span></span><br><span class="line">mkdir -p /data2/sm</span><br><span class="line">chmod -R <span class="number">777</span> /data2/sm</span><br><span class="line"></span><br><span class="line"><span class="comment">#添加用户（举例）</span></span><br><span class="line">groupadd dengling</span><br><span class="line">useradd -g dengling <span class="operator">-s</span> /sbin/nologin dengling</span><br><span class="line"><span class="comment">#推荐使用pdbedit</span></span><br><span class="line">smbpasswd <span class="operator">-a</span> dengling</span><br><span class="line"></span><br><span class="line"><span class="comment">#备份smb配置文件并编辑</span></span><br><span class="line"><span class="built_in">cd</span> /etc/samba</span><br><span class="line">cp smb.conf smb.conf.bak</span><br><span class="line">vi smb.conf</span><br><span class="line"></span><br><span class="line"><span class="comment">#全局参数</span></span><br><span class="line">[global]</span><br><span class="line">security = share</span><br><span class="line"><span class="built_in">log</span> file = /var/<span class="built_in">log</span>/samba/log.%m</span><br><span class="line">idmap config * : backend = tdb</span><br><span class="line">guest ok = Yes</span><br><span class="line">lanman auth = Yes</span><br><span class="line">client lanman auth = yes</span><br><span class="line">client plaintext auth = yes</span><br><span class="line">hosts allow = <span class="number">127</span>., <span class="number">172</span>., <span class="number">192.168</span>.<span class="number">1</span>., <span class="number">192.168</span>.<span class="number">3</span>.</span><br><span class="line">cups options = raw</span><br><span class="line">        vfs objects = full_audit</span><br><span class="line">        full_audit:failure = none</span><br><span class="line">        full_audit:success = rename unlink rmdir open opendir pwrite write</span><br><span class="line">        full_audit:prefix = %u|%I|%m|%</span><br><span class="line">admin <span class="built_in">log</span> = yes</span><br><span class="line"><span class="built_in">log</span> level = <span class="number">2</span></span><br><span class="line">        syslog = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#共享参数</span></span><br><span class="line">[homes]</span><br><span class="line">    comment = Home Directories</span><br><span class="line">    <span class="built_in">read</span> only = No</span><br><span class="line">    browseable = No</span><br><span class="line"></span><br><span class="line">[sheji]</span><br><span class="line">    comment = sheji</span><br><span class="line">    path = /data2/sm/sheji</span><br><span class="line">    valid users = share, shenwei, xuwei, shenjiamei, humengchu, rensiqiang, yeting, tongying, jinbo, zengfanan, fengpeisi</span><br><span class="line">    <span class="built_in">read</span> only = No</span><br><span class="line">    create mask = <span class="number">0775</span></span><br><span class="line">    directory mask = <span class="number">0775</span></span><br><span class="line"></span><br><span class="line">[<span class="built_in">test</span>]</span><br><span class="line">    comment = sheji</span><br><span class="line">    path = /data2/sm/<span class="built_in">test</span></span><br><span class="line">    valid users = <span class="built_in">test</span>, <span class="built_in">test</span>2, shenwei</span><br><span class="line">    <span class="built_in">read</span> only = No</span><br><span class="line">    create mask = <span class="number">0775</span></span><br><span class="line">    directory mask = <span class="number">0775</span></span><br><span class="line"></span><br><span class="line">[q2]</span><br><span class="line">    comment = sheji</span><br><span class="line">    path = /data2/sm/q2</span><br><span class="line">    valid users = xuejia, sungaoshuai, lujingjing, huangsonghe, yefei, lvwenhan, fangyuan, zhanghuichen, liuguofa, xupeiyu, yangpengfei, lisuitao, sunzhen, shenwei, xuwei, shenjiamei, humengchu, rensiqiang, yeting, tongying, jinbo, zengfanan, fengpeisi, chenye, wuailing, pengnan, liangzhixue, chenhong, daimengyou, wangxiaoshuo, zhoujian, fenglu, linlijun, chenshuxian, linzhimin, yanyoushan, xiaguoying, zhanghuanrong, mayushu, xuyangjing, guogaoyan, huangyouyang, jinzhibin, huyuqing, shenxuemei, liukui</span><br><span class="line">    <span class="built_in">read</span> only = No</span><br><span class="line">    create mask = <span class="number">0775</span></span><br><span class="line">    directory mask = <span class="number">0775</span></span><br><span class="line"></span><br><span class="line">[market]</span><br><span class="line">    comment = sheji</span><br><span class="line">    path = /data2/sm/market</span><br><span class="line">    valid users = zhanghuichen, shenwei, chenye, wuailing, pengnan, liangzhixue, chenhong, daimengyou, wangxiaoshuo, xuyangjing, chenshuxian, linzhimin, caoling, guogaoyan, xiehaibo, huangyouyang, jinzhibin, huyuqing</span><br><span class="line">    <span class="built_in">read</span> only = No</span><br><span class="line">    create mask = <span class="number">0777</span></span><br><span class="line">    directory mask = <span class="number">0775</span></span><br><span class="line"></span><br><span class="line">[market_finance]</span><br><span class="line">    comment = sheji</span><br><span class="line">    path = /data2/sm/market_finance</span><br><span class="line">    valid users = yangqiong, shenwei, chenye, wuailing, pengnan, liangzhixue, chenhong, daimengyou, wangxiaoshuo, xiehaibo, gaofangjie, xuyangjing, chenshuxian, linzhimin, huangyouyang, jinzhibin, huyuqing</span><br><span class="line">    <span class="built_in">read</span> only = No</span><br><span class="line">    create mask = <span class="number">0777</span></span><br><span class="line">    directory mask = <span class="number">0775</span></span><br><span class="line"></span><br><span class="line">[shenwei]</span><br><span class="line">    comment = sheji</span><br><span class="line">    path = /data2/sm/develop/shenwei</span><br><span class="line">    valid users = shenwei</span><br><span class="line">    <span class="built_in">read</span> only = No</span><br><span class="line">    create mask = <span class="number">0777</span></span><br><span class="line">    directory mask = <span class="number">0775</span></span><br><span class="line"></span><br><span class="line">[qijun]</span><br><span class="line">    comment = qj</span><br><span class="line">    path = /data2/sm/homedir/qijun</span><br><span class="line">    valid users = qijun</span><br><span class="line">    <span class="built_in">read</span> only = No</span><br><span class="line">    create mask = <span class="number">0777</span></span><br><span class="line">    directory mask = <span class="number">0775</span></span><br><span class="line">    guest ok = No</span><br><span class="line"></span><br><span class="line">[wenyong]</span><br><span class="line">    comment = sheji</span><br><span class="line">    path = /data2/sm/develop/wenyong</span><br><span class="line">    valid users = wenyong</span><br><span class="line">    <span class="built_in">read</span> only = No</span><br><span class="line">    create mask = <span class="number">0777</span></span><br><span class="line">    directory mask = <span class="number">0775</span></span><br><span class="line"></span><br><span class="line">[wudi]</span><br><span class="line">    comment = sheji</span><br><span class="line">    path = /data2/sm/develop/wudi</span><br><span class="line">    valid users = wudi</span><br><span class="line">    <span class="built_in">read</span> only = No</span><br><span class="line">    create mask = <span class="number">0777</span></span><br><span class="line">    directory mask = <span class="number">0775</span></span><br><span class="line"></span><br><span class="line">[caijiannan]</span><br><span class="line">    comment = sheji</span><br><span class="line">    path = /data2/sm/develop/caijiannan</span><br><span class="line">    valid users = caijiannan</span><br><span class="line">    <span class="built_in">read</span> only = No</span><br><span class="line">    create mask = <span class="number">0777</span></span><br><span class="line">    directory mask = <span class="number">0775</span></span><br><span class="line"></span><br><span class="line">[weiduani2]</span><br><span class="line">    comment = weiduan</span><br><span class="line">    path = /data2/sm/develop/raochao/微端</span><br><span class="line">    valid users = wangfeng</span><br><span class="line">    <span class="built_in">read</span> only = No</span><br><span class="line">    create mask = <span class="number">0777</span></span><br><span class="line">    directory mask = <span class="number">0775</span></span><br><span class="line"></span><br><span class="line">[raochao]</span><br><span class="line">    comment = raochao</span><br><span class="line">    path = /data2/sm/develop/raochao</span><br><span class="line">    <span class="built_in">read</span> list = wangfeng, xuwei, shenjiamei, chenxianzhe, chenye, wuailing, liuyuting, dainan</span><br><span class="line">    write list = raochao</span><br><span class="line"></span><br><span class="line">[product]</span><br><span class="line">    comment = product</span><br><span class="line">    path = /data2/sm/product</span><br><span class="line">    <span class="built_in">read</span> only = No</span><br><span class="line">    create mask = <span class="number">0777</span></span><br><span class="line">    directory mask = <span class="number">0777</span></span><br><span class="line"></span><br><span class="line">[jinbo]</span><br><span class="line">    comment = J<span class="keyword">in</span>Bo</span><br><span class="line">    path = /data2/sm/homedir/jinbo</span><br><span class="line">    valid users = jinbo</span><br><span class="line">    <span class="built_in">read</span> only = No</span><br><span class="line">    guest ok = No</span><br><span class="line"></span><br><span class="line">[xiaoqiang]</span><br><span class="line">    comment = xiaoqiang</span><br><span class="line">    path = /data2/sm/homedir/xiaoqiang</span><br><span class="line">    valid users = xiaoqiang</span><br><span class="line">    <span class="built_in">read</span> only = No</span><br><span class="line">    guest ok = No</span><br><span class="line"></span><br><span class="line">[share]</span><br><span class="line">    comment = share</span><br><span class="line">    path = /data2/sm/homedir/share</span><br><span class="line">    valid users = share, market, wal, qijun, zhanghua</span><br><span class="line">    <span class="built_in">read</span> only = No</span><br></pre></td></tr></table></figure>
+<h2 id="启动samba"><a href="#启动samba" class="headerlink" title="启动samba"></a>启动samba</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#常用选项</span></span><br><span class="line">[shared_name]</span><br><span class="line">    path =                              <span class="comment"># 文件系统路径</span></span><br><span class="line">    browseable = &#123;yes|no&#125;               <span class="comment"># 是否可以被查看到</span></span><br><span class="line">    public = &#123;yes|no&#125;                   <span class="comment"># 是否可被所有人读</span></span><br><span class="line">    guest ok = &#123;yes|no&#125;                 <span class="comment"># 与 public 相同</span></span><br><span class="line">    <span class="built_in">read</span> only = yes                     <span class="comment"># 是否只读</span></span><br><span class="line">    writeable = yes                     <span class="comment"># 是否可写</span></span><br><span class="line">    write list = user1, user2           <span class="comment"># 可写用户列表</span></span><br><span class="line">                @group, +group          <span class="comment"># 可写组列表</span></span><br><span class="line">    valid users =                       <span class="comment"># 白名单</span></span><br><span class="line">    invalid users =                     <span class="comment"># 黑名单</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#检查语法</span></span><br><span class="line">testparm</span><br><span class="line"></span><br><span class="line"><span class="comment">#重启smb服务查看状态</span></span><br><span class="line">service smb restart</span><br><span class="line">smbstatus</span><br></pre></td></tr></table></figure>
+<h2 id="Windows客户端访问"><a href="#Windows客户端访问" class="headerlink" title="Windows客户端访问"></a>Windows客户端访问</h2><p>1.Windows上访问samba</p>
+<p>在“计算机”中输入：<code>\\xxx.xxx.xxx.xxx\</code></p>
+<p>2.Windows断开samba共享连接，实在不行可以选择注销或者重启</p>
+<p>在【开始】→【运行】→【CMD】回车中输入：<code>net use * /del /y</code></p>
+<p>3.将samba共享的Linux目录映射成Windows的一个驱动器盘符</p>
+<p>在【右键计算机】→【映射网络驱动器】→【文件夹\XX.XX.XX.XX\】</p>
+]]></content>
+    
+    <summary type="html">
+    
+      Unix与Windows文件共享的最佳方式之一
+    
+    </summary>
+    
+      <category term="学习 | Study" scheme="https://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>Multipath 多路径配置实践心得</title>
@@ -2036,230 +2130,6 @@
     <summary type="html">
     
       使用Cobbler轻松设置和管理网络安装环境
-    
-    </summary>
-    
-      <category term="学习 | Study" scheme="https://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>RHEL(Red Hat Enterprise Linux)配置YUM源</title>
-    <link href="https://wsgzao.github.io/post/yum/"/>
-    <id>https://wsgzao.github.io/post/yum/</id>
-    <published>2016-04-01T08:22:32.000Z</published>
-    <updated>2017-02-10T02:00:57.000Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>YUM（全称为 Yellow dog Updater, Modified）是一个在Fedora中的Shell前端软件包管理器。基于RPM包管理，能够从指定的服务器自动下载RPM包并且安装，可以自动处理依赖性关系，并且一次安装所有依赖的软体包，无须繁琐地一次次下载和安装。文章以RHEL(Red Hat Enterprise Linux)配置YUM源为例分享YUM常用命令技巧以及如何搭建ISO本地源和CentOS YUM源。</p>
-<blockquote>
-<p>YUM是一个安装，卸载和搜索软件包的工具</p>
-</blockquote>
-<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2016年04月01日 - 更新rhel7.1配置CentOS 7 YUM源<br>2016年03月25日 - 初稿</p>
-<p>阅读原文 - <a href="https://wsgzao.github.io/post/yum/" target="_blank" rel="external">https://wsgzao.github.io/post/yum/</a></p>
-<p><strong>扩展阅读</strong></p>
-<p>RHEL/CentOS/OracleLinux 7.x使用EPEL和REMI第三方yum源 - <a href="http://www.ha97.com/5649.html" target="_blank" rel="external">http://www.ha97.com/5649.html</a></p>
-<h2 id="YUM常用命令"><a href="#YUM常用命令" class="headerlink" title="YUM常用命令"></a>YUM常用命令</h2><blockquote>
-<p>列举平时做常用的几组YUM命令</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#清除缓存目录</span></span><br><span class="line">yum clean all</span><br><span class="line"><span class="comment">#更新缓存</span></span><br><span class="line">yum makecache</span><br><span class="line"><span class="comment">#使用YUM查找软件包</span></span><br><span class="line">yum search telnet</span><br><span class="line"><span class="comment">#用YUM安装软件包</span></span><br><span class="line">yum install telnet</span><br><span class="line"><span class="comment">#用YUM删除软件包</span></span><br><span class="line">yum remove telnet</span><br><span class="line"><span class="comment">#安装更新软件</span></span><br><span class="line">yum update</span><br><span class="line">yum update telnet</span><br></pre></td></tr></table></figure>
-<h2 id="本地YUM源"><a href="#本地YUM源" class="headerlink" title="本地YUM源"></a>本地YUM源</h2><blockquote>
-<p>无论直接加载ISO还是拷贝文件来搭建本地YUM源都是很简单的</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#通过ISO镜像挂载或者复制文件</span></span><br><span class="line">mount -o loop rhel-server-<span class="number">6.3</span>-x86_64-dvd.iso /mnt</span><br><span class="line">mkdir /tmp/repo</span><br><span class="line">cp -r /mnt/* /tmp/repo</span><br><span class="line"></span><br><span class="line"><span class="comment">#编辑本地YUM源文件</span></span><br><span class="line"><span class="built_in">cd</span> /etc/yum.repos.d/</span><br><span class="line"><span class="comment">#清除老配置，rm -rf *</span></span><br><span class="line">vi local.repo</span><br><span class="line"></span><br><span class="line">[rhel6.<span class="number">3</span>]</span><br><span class="line">name=rhel6.<span class="number">3</span></span><br><span class="line">baseurl=file:///tmp/repo</span><br><span class="line">enabled=<span class="number">1</span></span><br><span class="line">gpgcheck=<span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#清除yum缓存并更新</span></span><br><span class="line">yum clean all</span><br><span class="line">yum makecache</span><br><span class="line"></span><br><span class="line">Loaded plugins: product-id, refresh-packagekit, security, subscription-manager</span><br><span class="line">Updating certificate-based repositories.</span><br><span class="line">Unable to <span class="built_in">read</span> consumer identity</span><br><span class="line">rhel6.<span class="number">3</span>                 | <span class="number">4.0</span> kB     <span class="number">00</span>:<span class="number">00</span> ...</span><br><span class="line">rhel6.<span class="number">3</span>/filelists_db    | <span class="number">3.7</span> MB     <span class="number">00</span>:<span class="number">00</span> ...</span><br><span class="line">rhel6.<span class="number">3</span>/primary_db      | <span class="number">3.1</span> MB     <span class="number">00</span>:<span class="number">00</span> ...</span><br><span class="line">rhel6.<span class="number">3</span>/other_db        | <span class="number">1.6</span> MB     <span class="number">00</span>:<span class="number">00</span> ...</span><br><span class="line">rhel6.<span class="number">3</span>/group_gz        | <span class="number">204</span> kB     <span class="number">00</span>:<span class="number">00</span> ...</span><br><span class="line">Metadata Cache Created</span><br></pre></td></tr></table></figure>
-<h2 id="搭建YUM服务器"><a href="#搭建YUM服务器" class="headerlink" title="搭建YUM服务器"></a>搭建YUM服务器</h2><blockquote>
-<p>选择ftp或http等方式多可以，偷懒必须要简单有效</p>
-</blockquote>
-<h3 id="YUM服务端"><a href="#YUM服务端" class="headerlink" title="YUM服务端"></a>YUM服务端</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#安装apache</span></span><br><span class="line">yum install httpd*</span><br><span class="line"></span><br><span class="line"><span class="comment">#编辑apache配置文件</span></span><br><span class="line"><span class="built_in">cd</span> /etc/httpd/conf</span><br><span class="line">cp httpd.conf httpd.conf.bak</span><br><span class="line"></span><br><span class="line"><span class="comment">#删除测试启动服务</span></span><br><span class="line">rm <span class="operator">-f</span> /etc/httpd/conf.d/welcome.conf /var/www/error/noindex.html</span><br><span class="line"></span><br><span class="line"><span class="comment">#拷贝文件到目录或者修改httpd.conf中的DocumentRoot</span></span><br><span class="line">cp -r /tmp/repo /var/www/html</span><br><span class="line"><span class="built_in">cd</span> /var/www/html</span><br><span class="line">chmod -R <span class="number">755</span> repo/</span><br><span class="line"></span><br><span class="line"><span class="comment">#重启apache服务 并设置服务自启动</span></span><br><span class="line">service httpd restart</span><br><span class="line">chkconfig httpd on</span><br><span class="line">chkconfig --list | grep httpd</span><br><span class="line"></span><br><span class="line">httpd              <span class="number">0</span>:off    <span class="number">1</span>:off    <span class="number">2</span>:on    <span class="number">3</span>:on    <span class="number">4</span>:on    <span class="number">5</span>:on    <span class="number">6</span>:off</span><br></pre></td></tr></table></figure>
-<h3 id="YUM客户端"><a href="#YUM客户端" class="headerlink" title="YUM客户端"></a>YUM客户端</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /etc/yum.repos.d</span><br><span class="line"><span class="comment">#清除老配置，rm -rf *</span></span><br><span class="line">vi http.repo</span><br><span class="line"></span><br><span class="line">[rhel6.<span class="number">3</span>]</span><br><span class="line">name=rhel6.<span class="number">3</span></span><br><span class="line">baseurl=http://<span class="number">172.28</span>.<span class="number">70.160</span>/repo</span><br><span class="line">enabled=<span class="number">1</span></span><br><span class="line">gpgcheck=<span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#清除yum配置缓存并更新</span></span><br><span class="line">yum clean all</span><br><span class="line">yum makecache</span><br></pre></td></tr></table></figure>
-<h2 id="CentOS-6-X-YUM源"><a href="#CentOS-6-X-YUM源" class="headerlink" title="CentOS 6.X YUM源"></a>CentOS 6.X YUM源</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#导入GPG key</span></span><br><span class="line">sudo rpm --import http://mirrors.ustc.edu.cn/centos/RPM-GPG-KEY-CentOS-<span class="number">6</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#修改repo文件添加CentOS 6.X的YUM源</span></span><br><span class="line"><span class="built_in">cd</span> /etc/yum.repos.d/</span><br><span class="line">cp rhel-source.repo rhel-source.repo.bak</span><br><span class="line">vi rhel-source.repo</span><br><span class="line"></span><br><span class="line">[base]</span><br><span class="line">name=CentOS-<span class="variable">$releasever</span>-Base</span><br><span class="line">baseurl=http://centos.ustc.edu.cn/centos/<span class="number">6</span>/os/x86_64/</span><br><span class="line">gpgcheck=<span class="number">1</span></span><br><span class="line">gpgkey=http://mirrors.ustc.edu.cn/centos/RPM-GPG-KEY-CentOS-<span class="number">6</span></span><br><span class="line"></span><br><span class="line">[updates]</span><br><span class="line">name=CentOS-<span class="variable">$releasever</span>-Updates</span><br><span class="line">baseurl=http://centos.ustc.edu.cn/centos/<span class="number">6</span>/os/x86_64/</span><br><span class="line">gpgcheck=<span class="number">1</span></span><br><span class="line">gpgkey=http://mirrors.ustc.edu.cn/centos/RPM-GPG-KEY-CentOS-<span class="number">6</span></span><br><span class="line"></span><br><span class="line">[extras]</span><br><span class="line">name=CentOS-<span class="variable">$releasever</span>-Extras</span><br><span class="line">baseurl=http://centos.ustc.edu.cn/centos/<span class="number">6</span>/os/x86_64/</span><br><span class="line">gpgcheck=<span class="number">1</span></span><br><span class="line">gpgkey=http://mirrors.ustc.edu.cn/centos/RPM-GPG-KEY-CentOS-<span class="number">6</span></span><br><span class="line"></span><br><span class="line">[centosplus]</span><br><span class="line">name=CentOS-<span class="variable">$releasever</span>-Plus</span><br><span class="line">baseurl=http://centos.ustc.edu.cn/centos/<span class="number">6</span>/os/x86_64/</span><br><span class="line">gpgcheck=<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#清除缓存查看是否生效</span></span><br><span class="line">yum clean all</span><br><span class="line">yum makecache</span><br><span class="line">yum repolist</span><br><span class="line"></span><br><span class="line"><span class="comment">#安装yum-plugin-downloadonly插件</span></span><br><span class="line">yum install -y yum-plugin-downloadonly</span><br><span class="line"></span><br><span class="line"><span class="comment">#YUM只下载不安装</span></span><br><span class="line">yum install --downloadonly --downloaddir=/tmp/puppet puppet</span><br></pre></td></tr></table></figure>
-<h2 id="CentOS-7-X-YUM源"><a href="#CentOS-7-X-YUM源" class="headerlink" title="CentOS 7.X YUM源"></a>CentOS 7.X YUM源</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#导入GPG key</span></span><br><span class="line">sudo rpm --import http://mirrors.ustc.edu.cn/centos/RPM-GPG-KEY-CentOS-<span class="number">7</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#修改repo文件添加CentOS 7.X的YUM源</span></span><br><span class="line"><span class="built_in">cd</span> /etc/yum.repos.d/</span><br><span class="line">cp rhel-source.repo rhel-source.repo.bak</span><br><span class="line">vi rhel-source.repo</span><br><span class="line"></span><br><span class="line">[base]</span><br><span class="line">name=CentOS-<span class="variable">$releasever</span>-Base</span><br><span class="line">baseurl=http://centos.ustc.edu.cn/centos/<span class="number">7</span>/os/x86_64/</span><br><span class="line">gpgcheck=<span class="number">1</span></span><br><span class="line">gpgkey=http://mirrors.ustc.edu.cn/centos/RPM-GPG-KEY-CentOS-<span class="number">7</span></span><br><span class="line"></span><br><span class="line">[updates]</span><br><span class="line">name=CentOS-<span class="variable">$releasever</span>-Updates</span><br><span class="line">baseurl=http://centos.ustc.edu.cn/centos/<span class="number">7</span>/os/x86_64/</span><br><span class="line">gpgcheck=<span class="number">1</span></span><br><span class="line">gpgkey=http://mirrors.ustc.edu.cn/centos/RPM-GPG-KEY-CentOS-<span class="number">7</span></span><br><span class="line"></span><br><span class="line">[extras]</span><br><span class="line">name=CentOS-<span class="variable">$releasever</span>-Extras</span><br><span class="line">baseurl=http://centos.ustc.edu.cn/centos/<span class="number">7</span>/os/x86_64/</span><br><span class="line">gpgcheck=<span class="number">1</span></span><br><span class="line">gpgkey=http://mirrors.ustc.edu.cn/centos/RPM-GPG-KEY-CentOS-<span class="number">7</span></span><br><span class="line"></span><br><span class="line">[centosplus]</span><br><span class="line">name=CentOS-<span class="variable">$releasever</span>-Plus</span><br><span class="line">baseurl=http://centos.ustc.edu.cn/centos/<span class="number">7</span>/os/x86_64/</span><br><span class="line">gpgcheck=<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#清除缓存查看是否生效</span></span><br><span class="line">yum clean all</span><br><span class="line">yum makecache</span><br><span class="line">yum repolist</span><br><span class="line"></span><br><span class="line"><span class="comment">#安装yum-plugin-downloadonly插件</span></span><br><span class="line">yum install -y yum-plugin-downloadonly</span><br><span class="line"></span><br><span class="line"><span class="comment">#YUM只下载不安装</span></span><br><span class="line">yum install --downloadonly --downloaddir=/tmp/pacemaker pacemaker</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      YUM是一个安装，卸载和搜索软件包的工具
-    
-    </summary>
-    
-      <category term="学习 | Study" scheme="https://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>使用Gogs轻松搭建可能比GitLab更好用的Git服务平台</title>
-    <link href="https://wsgzao.github.io/post/gogs/"/>
-    <id>https://wsgzao.github.io/post/gogs/</id>
-    <published>2016-03-31T08:22:32.000Z</published>
-    <updated>2017-02-10T02:00:57.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="http://static.oschina.net/uploads/space/2016/0306/021849_Gf8X_852826.png" alt=""></p>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>GitHub已经成为首选的代码托管平台，因为它又很多很棒的功能，操作简单，几乎所有的开发者都喜欢它。但是搭建GitLab过程并没有想象中的简单，利用Bitnami当然也是一种偷懒的好选择。Gogs (Go Git Service) 是一款极易搭建的自助 Git 服务，Gogs 的目标是打造一个最简单、最快速和最轻松的方式搭建自助 Git 服务。使用 Go 语言开发使得 Gogs 能够通过独立的二进制分发，并且支持 Go 语言支持的 所有平台，包括 Linux、Mac OS X、Windows 以及 ARM 平台。</p>
-<blockquote>
-<p>Gogs可能是比GitLab更好的选择</p>
-</blockquote>
-<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2016年03月31日 - 初稿</p>
-<p>阅读原文 - <a href="https://wsgzao.github.io/post/gogs/" target="_blank" rel="external">https://wsgzao.github.io/post/gogs/</a></p>
-<p><strong>扩展阅读</strong></p>
-<p>Gogs - <a href="https://gogs.io/" target="_blank" rel="external">https://gogs.io/</a><br>GitLab - <a href="https://about.gitlab.com/" target="_blank" rel="external">https://about.gitlab.com/</a><br>Bitnami GitLab Stack - <a href="https://bitnami.com/stack/gitlab" target="_blank" rel="external">https://bitnami.com/stack/gitlab</a></p>
-<h2 id="Bitnami-GitLab-Stack"><a href="#Bitnami-GitLab-Stack" class="headerlink" title="Bitnami GitLab Stack"></a>Bitnami GitLab Stack</h2><blockquote>
-<p>Bitnami GitLab Stack ships with the following software versions</p>
-</blockquote>
-<ul>
-<li>GitLab 8.5.7</li>
-<li>Apache 2.4.18</li>
-<li>ImageMagick 6.7.5</li>
-<li>PostgreSQL 9.4.6</li>
-<li>Git 2.7.4</li>
-<li>Ruby 2.1.8</li>
-<li>Rails 4.2.5.1</li>
-<li>RubyGems 1.8.12</li>
-</ul>
-<blockquote>
-<p>Btinami GitLab Stack 安装真心简单，爽</p>
-</blockquote>
-<p>chmod 755 bitnami-gitlab-8.5.7-0-linux.run</p>
-<p><a href="https://bitnami.com/stack/gitlab/README.txt" target="_blank" rel="external">https://bitnami.com/stack/gitlab/README.txt</a></p>
-<h2 id="Gogs功能特性"><a href="#Gogs功能特性" class="headerlink" title="Gogs功能特性"></a>Gogs功能特性</h2><ul>
-<li>支持活动时间线</li>
-<li>支持 SSH 以及 HTTP/HTTPS 协议</li>
-<li>支持 SMTP、LDAP 和反向代理的用户认证</li>
-<li>支持反向代理子路径</li>
-<li>支持用户、组织和仓库管理系统</li>
-<li>支持仓库和组织级别 Web 钩子（包括 Slack 集成）</li>
-<li>支持仓库 Git 钩子和部署密钥</li>
-<li>支持仓库工单（Issue）、合并请求（Pull Request）和 Wiki</li>
-<li>支持添加和删除仓库协作者</li>
-<li>支持 Gravatar 以及自定义源</li>
-<li>支持邮件服务</li>
-<li>支持后台管理面板</li>
-<li>支持 MySQL、PostgreSQL、SQLite3 和 TiDB（实验性支持） 数据库</li>
-<li>支持多语言本地化（15 种语言）</li>
-</ul>
-<blockquote>
-<p>以GitHub作为参考比较对象</p>
-</blockquote>
-<table>
-<thead>
-<tr>
-<th>特性</th>
-<th>Gogs</th>
-<th>Gitlab</th>
-<th>Github</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Dashboard &amp; File Browser</td>
-<td>Y</td>
-<td>Y</td>
-<td>Y</td>
-</tr>
-<tr>
-<td>Issue Tracking, Milestones &amp; Commit keywords</td>
-<td>Y</td>
-<td>Y</td>
-<td>Y</td>
-</tr>
-<tr>
-<td>Organizations support</td>
-<td>N</td>
-<td>Y</td>
-<td>Y</td>
-</tr>
-<tr>
-<td>Wiki</td>
-<td>N</td>
-<td>Y</td>
-<td>Y</td>
-</tr>
-<tr>
-<td>Code Review</td>
-<td>N</td>
-<td>Y</td>
-<td>Y</td>
-</tr>
-<tr>
-<td>Code Snippets</td>
-<td>N</td>
-<td>Y</td>
-<td>Y</td>
-</tr>
-<tr>
-<td>Web Hooks</td>
-<td>Y</td>
-<td>Y</td>
-<td>Y</td>
-</tr>
-<tr>
-<td>Git Hooks</td>
-<td>Y</td>
-<td>* Enterprise</td>
-<td>* Enterprise</td>
-</tr>
-<tr>
-<td>LDAP Login</td>
-<td>Y</td>
-<td>Y</td>
-<td>Y</td>
-</tr>
-<tr>
-<td>LDAP Group Sync</td>
-<td>N</td>
-<td>* Enterprise</td>
-<td>* Enterprise</td>
-</tr>
-<tr>
-<td>Branded Login Page</td>
-<td>N</td>
-<td>* Enterprise</td>
-<td>* Enterprise</td>
-</tr>
-<tr>
-<td>Language</td>
-<td>Go</td>
-<td>Ruby</td>
-<td>Ruby</td>
-</tr>
-<tr>
-<td>Platform</td>
-<td>Cross-Platform</td>
-<td>Linux</td>
-<td>* Virtual Machine</td>
-</tr>
-<tr>
-<td>License</td>
-<td>MIT</td>
-<td>MIT</td>
-<td>Proprietary</td>
-</tr>
-<tr>
-<td>Resource Usage</td>
-<td>Low</td>
-<td>Medium/High</td>
-<td>Medium/High</td>
-</tr>
-</tbody>
-</table>
-<h2 id="Gogs环境要求"><a href="#Gogs环境要求" class="headerlink" title="Gogs环境要求"></a>Gogs环境要求</h2><blockquote>
-<p>我以rhel6.3为例，已经属于生命周期边缘了</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#安装git</span></span><br><span class="line">yum install -y git </span><br><span class="line">git --version</span><br><span class="line">git version <span class="number">1.7</span>.<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#安装mysql-server</span></span><br><span class="line">yum install -y mysql-server</span><br><span class="line">mysql --version</span><br><span class="line">mysql  Ver <span class="number">14.14</span> Distrib <span class="number">5.1</span>.<span class="number">73</span>, <span class="keyword">for</span> redhat-linux-gnu (x86_64) using readline <span class="number">5.1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#启动数据库</span></span><br><span class="line">service mysqld start</span><br><span class="line">chkconfig mysqld on</span><br><span class="line"></span><br><span class="line"><span class="comment">#创建gogs数据库</span></span><br><span class="line"><span class="built_in">cd</span> /home/git/gogs/scripts</span><br><span class="line"><span class="comment">#mysql -u root -p &lt; mysql.sql</span></span><br><span class="line">mysql -u root -p</span><br><span class="line"><span class="comment"># （输入密码，无密码直接跳过）</span></span><br><span class="line"><span class="built_in">set</span> global storage_engine = <span class="string">'InnoDB'</span>;</span><br><span class="line">create database gogs character <span class="built_in">set</span> utf8 collate utf8_bin;</span><br><span class="line">create user <span class="string">'gogs'</span>@<span class="string">'localhost'</span> identified by <span class="string">'gogs'</span>;</span><br><span class="line">grant all privileges on gogs.* to <span class="string">'gogs'</span>@<span class="string">'localhost'</span>;</span><br><span class="line">flush privileges;</span><br><span class="line"><span class="built_in">exit</span>;</span><br></pre></td></tr></table></figure>
-<h2 id="部署Gogs"><a href="#部署Gogs" class="headerlink" title="部署Gogs"></a>部署Gogs</h2><blockquote>
-<p>Gogs是一款极易搭建的自助Git服务</p>
-</blockquote>
-<p><a href="https://gogs.io/docs" target="_blank" rel="external">https://gogs.io/docs</a></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#创建git用户</span></span><br><span class="line">sudo adduser git</span><br><span class="line">su - git</span><br><span class="line"></span><br><span class="line"><span class="comment">#解压gogs</span></span><br><span class="line"><span class="built_in">cd</span> /home/git</span><br><span class="line">unzip gogs_v0.<span class="number">9.13</span>_linux_amd64.zip</span><br><span class="line">ls /home/git/gogs/</span><br><span class="line">gogs  LICENSE  public  README.md  README_ZH.md  scripts  templates</span><br><span class="line"></span><br><span class="line"><span class="comment">#启动gogs</span></span><br><span class="line"><span class="built_in">cd</span> /home/git/gogs</span><br><span class="line">./gogs web</span><br><span class="line"></span><br><span class="line"><span class="number">2016</span>/<span class="number">03</span>/<span class="number">31</span> <span class="number">16</span>:<span class="number">23</span>:<span class="number">53</span> [W] Custom config <span class="string">'/home/git/gogs/custom/conf/app.ini'</span> not found, ignore this <span class="keyword">if</span> you<span class="string">'re running first time</span><br><span class="line">2016/03/31 16:23:53 [T] Custom path: /home/git/gogs/custom</span><br><span class="line">2016/03/31 16:23:53 [T] Log path: /home/git/gogs/log</span><br><span class="line">2016/03/31 16:23:53 [I] Gogs: Go Git Service 0.9.13.0318</span><br><span class="line">2016/03/31 16:23:53 [I] Log Mode: Console(Trace)</span><br><span class="line">2016/03/31 16:23:53 [I] Cache Service Enabled</span><br><span class="line">2016/03/31 16:23:53 [I] Session Service Enabled</span><br><span class="line">2016/03/31 16:23:53 [I] SQLite3 Supported</span><br><span class="line">2016/03/31 16:23:53 [I] Run Mode: Development</span><br><span class="line">2016/03/31 16:23:54 [I] Listen: http://0.0.0.0:3000</span><br><span class="line"></span><br><span class="line">#后台运行</span><br><span class="line">nohup ./gogs web &amp;</span><br><span class="line">tail -f nohup.out</span></span><br></pre></td></tr></table></figure>
-<h2 id="app-ini配置文件"><a href="#app-ini配置文件" class="headerlink" title="app.ini配置文件"></a>app.ini配置文件</h2><blockquote>
-<p>注意DOMAIN和ROOT_URL这两个参数</p>
-</blockquote>
-<p><a href="https://gogs.io/docs/advanced/configuration_cheat_sheet" target="_blank" rel="external">https://gogs.io/docs/advanced/configuration_cheat_sheet</a></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#首次安装可以打开浏览器完成剩余配置</span></span><br><span class="line">http://ip:<span class="number">3000</span>/install</span><br><span class="line"></span><br><span class="line"><span class="comment">#通过修改app.ini也可以</span></span><br><span class="line">vi /home/git/gogs/custom/conf/app.ini</span><br><span class="line"></span><br><span class="line">APP_NAME = Gogs: Go Git Service</span><br><span class="line">RUN_USER = git</span><br><span class="line">RUN_MODE = prod</span><br><span class="line"></span><br><span class="line">[database]</span><br><span class="line">DB_TYPE  = mysql</span><br><span class="line">HOST     = <span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">3306</span></span><br><span class="line">NAME     = gogs</span><br><span class="line">USER     = gogs</span><br><span class="line">PASSWD   = gogs</span><br><span class="line">SSL_MODE = <span class="built_in">disable</span></span><br><span class="line">PATH     = data/gogs.db</span><br><span class="line"></span><br><span class="line">[repository]</span><br><span class="line">ROOT = /home/git/gogs-repositories</span><br><span class="line"></span><br><span class="line">[server]</span><br><span class="line">DOMAIN       = <span class="number">172.28</span>.<span class="number">70.134</span> </span><br><span class="line">HTTP_PORT    = <span class="number">3000</span></span><br><span class="line">ROOT_URL     = http://<span class="number">172.28</span>.<span class="number">70.134</span>:<span class="number">3000</span>/</span><br><span class="line">DISABLE_SSH  = <span class="literal">false</span></span><br><span class="line">SSH_PORT     = <span class="number">22</span></span><br><span class="line">OFFLINE_MODE = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">[mailer]</span><br><span class="line">ENABLED = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">[service]</span><br><span class="line">REGISTER_EMAIL_CONFIRM = <span class="literal">false</span></span><br><span class="line">ENABLE_NOTIFY_MAIL     = <span class="literal">false</span></span><br><span class="line">DISABLE_REGISTRATION   = <span class="literal">false</span></span><br><span class="line">ENABLE_CAPTCHA         = <span class="literal">true</span></span><br><span class="line">REQUIRE_SIGNIN_VIEW    = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">[picture]</span><br><span class="line">DISABLE_GRAVATAR = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">[session]</span><br><span class="line">PROVIDER = file</span><br><span class="line"></span><br><span class="line">[<span class="built_in">log</span>]</span><br><span class="line">MODE      = file</span><br><span class="line">LEVEL     = Info</span><br><span class="line">ROOT_PATH = /home/git/gogs/<span class="built_in">log</span></span><br><span class="line"></span><br><span class="line">[security]</span><br><span class="line">INSTALL_LOCK = <span class="literal">true</span></span><br><span class="line">SECRET_KEY   = i4B7R55aRaFdw8j</span><br></pre></td></tr></table></figure>
-]]></content>
-    
-    <summary type="html">
-    
-      Gogs可能是比GitLab更好的选择
     
     </summary>
     
