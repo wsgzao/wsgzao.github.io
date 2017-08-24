@@ -22,6 +22,8 @@
 <meta property="og:url" content="https://wsgzao.github.io/post/tftp/index.html">
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="tftp是一个非常简单好用的文件传输协议">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-01-18T03:43:45.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="tftp安装和使用小结">
 <meta name="twitter:description" content="tftp是一个非常简单好用的文件传输协议">
@@ -36,7 +38,7 @@
     <link rel="apple-touch-icon" href="/img/jacman.jpg">
     <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
     
-    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 
   <body>
@@ -110,7 +112,7 @@
 <p>tftp是一个非常简单好用的文件传输协议</p>
 </blockquote>
 <h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2017年01月18日 - 初稿</p>
-<p>阅读原文 - <a href="https://wsgzao.github.io/post/tftp/" target="_blank" rel="external">https://wsgzao.github.io/post/tftp/</a></p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/tftp/">https://wsgzao.github.io/post/tftp/</a></p>
 <p><strong>扩展阅读</strong></p>
 <p>TFTP - <a href="http://www.tftp-server.com/" target="_blank" rel="external">http://www.tftp-server.com/</a></p>
 <hr>
@@ -124,7 +126,7 @@
 <h2 id="tftp使用"><a href="#tftp使用" class="headerlink" title="tftp使用"></a>tftp使用</h2><blockquote>
 <p>注意修改防火墙和selinux配置</p>
 </blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#安装</span></span><br><span class="line">yum install -y tftp-server</span><br><span class="line"></span><br><span class="line"><span class="comment">#注意disable选项为no</span></span><br><span class="line"><span class="comment">#修改项server_args=，可以修改tftp-server的根目录，参数-s指定chroot，-c指定了可以创建文件</span></span><br><span class="line">vi /etc/xinetd.d/tftp</span><br><span class="line">service tftp</span><br><span class="line">&#123;</span><br><span class="line">        socket_<span class="built_in">type</span>             = dgram</span><br><span class="line">        protocol                = udp</span><br><span class="line">        <span class="built_in">wait</span>                    = yes</span><br><span class="line">        user                    = root</span><br><span class="line">        server                  = /usr/sbin/in.tftpd</span><br><span class="line">        server_args             = <span class="operator">-s</span> /var/lib/tftpboot</span><br><span class="line">        <span class="built_in">disable</span>                 = no</span><br><span class="line">        per_<span class="built_in">source</span>              = <span class="number">11</span></span><br><span class="line">        cps                     = <span class="number">100</span> <span class="number">2</span></span><br><span class="line">        flags                   = IPv4</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#设置tftp开机自动启动</span></span><br><span class="line">chkconfig tftp on  </span><br><span class="line"></span><br><span class="line"><span class="comment">#启动xinetd服务</span></span><br><span class="line">/etc/init.d/xinetd restart </span><br><span class="line"></span><br><span class="line"><span class="comment">#验证tftp是否启动成功并监听本地69端口</span></span><br><span class="line">netstat -anup | grep <span class="number">69</span></span><br><span class="line">udp    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">69</span>    <span class="number">0.0</span>.<span class="number">0.0</span>:*    <span class="number">15763</span>/xinetd      </span><br><span class="line"></span><br><span class="line"><span class="comment">#测试上传和下载</span></span><br><span class="line">yum install tftp</span><br><span class="line">tftp -i <span class="number">192.168</span>.<span class="number">1.1</span> put <span class="built_in">test</span></span><br><span class="line">tftp -i <span class="number">192.168</span>.<span class="number">1.1</span> get <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#安装</span></div><div class="line">yum install -y tftp-server</div><div class="line"></div><div class="line"><span class="comment">#注意disable选项为no</span></div><div class="line"><span class="comment">#修改项server_args=，可以修改tftp-server的根目录，参数-s指定chroot，-c指定了可以创建文件</span></div><div class="line">vi /etc/xinetd.d/tftp</div><div class="line">service tftp</div><div class="line">&#123;</div><div class="line">        socket_type             = dgram</div><div class="line">        protocol                = udp</div><div class="line">        <span class="built_in">wait</span>                    = yes</div><div class="line">        user                    = root</div><div class="line">        server                  = /usr/sbin/in.tftpd</div><div class="line">        server_args             = -s /var/lib/tftpboot</div><div class="line">        <span class="built_in">disable</span>                 = no</div><div class="line">        per_source              = 11</div><div class="line">        cps                     = 100 2</div><div class="line">        flags                   = IPv4</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">#设置tftp开机自动启动</span></div><div class="line">chkconfig tftp on  </div><div class="line"></div><div class="line"><span class="comment">#启动xinetd服务</span></div><div class="line">/etc/init.d/xinetd restart </div><div class="line"></div><div class="line"><span class="comment">#验证tftp是否启动成功并监听本地69端口</span></div><div class="line">netstat -anup | grep 69</div><div class="line">udp    0    0    0.0.0.0:69    0.0.0.0:*    15763/xinetd      </div><div class="line"></div><div class="line"><span class="comment">#测试上传和下载</span></div><div class="line">yum install tftp</div><div class="line">tftp -i 192.168.1.1 put <span class="built_in">test</span></div><div class="line">tftp -i 192.168.1.1 get <span class="built_in">test</span></div></pre></td></tr></table></figure>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -142,7 +144,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://wsgzao.github.io/post/tftp/" data-title="tftp安装和使用小结 | HelloDog" data-tsina="null" class="share clearfix">
+	  <div data-url="https://wsgzao.github.io/post/tftp/" data-title="tftp安装和使用小结 | HelloDog" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
