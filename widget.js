@@ -1,24 +1,24 @@
 (function(e) {
-    var t = "//wsgzao.github.io/";
+    var t = "//lab.lepture.com/github-cards/";
     var r, i = 0;
     var a = e.getElementsByTagName("meta");
-    var n, d, l, c;
+    var n, l, c, d;
     for (r = 0; r < a.length; r++) {
-        var s = a[r].getAttribute("name");
+        var u = a[r].getAttribute("name");
         var f = a[r].getAttribute("content");
-        if (s === "gc:url") {
+        if (u === "gc:url") {
             n = f
-        } else if (s === "gc:base") {
+        } else if (u === "gc:base") {
             t = f
-        } else if (s === "gc:client-id") {
-            d = f
-        } else if (s === "gc:client-secret") {
+        } else if (u === "gc:client-id") {
             l = f
-        } else if (s === "gc:theme") {
+        } else if (u === "gc:client-secret") {
             c = f
+        } else if (u === "gc:theme") {
+            d = f
         }
     }
-    function u(t) {
+    function s(t) {
         if (e.querySelectorAll) {
             return e.querySelectorAll("." + t)
         }
@@ -45,31 +45,31 @@
             false)
         }
     }
-    function v(r, a) {
+    function o(r, a) {
         a = a || n;
         if (!a) {
-            var s = g(r, "theme") || c || "default";
-            a = t + "cards/" + s + ".html"
+            var u = g(r, "theme") || d || "default";
+            a = t + "cards/" + u + ".html"
         }
         var f = g(r, "user");
-        var u = g(r, "repo");
-        var v = g(r, "github");
-        if (v) {
-            v = v.split("/");
-            if (v.length && !f) {
-                f = v[0];
-                u = u || v[1]
+        var s = g(r, "repo");
+        var o = g(r, "github");
+        if (o) {
+            o = o.split("/");
+            if (o.length && !f) {
+                f = o[0];
+                s = s || o[1]
             }
         }
         if (!f) {
             return
         }
         i += 1;
-        var o = g(r, "width");
+        var v = g(r, "width");
         var m = g(r, "height");
         var b = g(r, "target");
-        var w = g(r, "client-id") || d;
-        var p = g(r, "client-secret") || l;
+        var w = g(r, "client-id") || l;
+        var p = g(r, "client-secret") || c;
         var A = "ghcard-" + f + "-" + i;
         var y = e.createElement("iframe");
         y.setAttribute("id", A);
@@ -77,8 +77,8 @@
         y.setAttribute("scrolling", 0);
         y.setAttribute("allowtransparency", true);
         var E = a + "?user=" + f + "&identity=" + A;
-        if (u) {
-            E += "&repo=" + u
+        if (s) {
+            E += "&repo=" + s
         }
         if (b) {
             E += "&target=" + b
@@ -87,7 +87,7 @@
             E += "&client_id=" + w + "&client_secret=" + p
         }
         y.src = E;
-        y.width = o || Math.min(r.parentNode.clientWidth || 400, 400);
+        y.width = v || Math.min(r.parentNode.clientWidth || 400, 400);
         if (m) {
             y.height = m
         }
@@ -95,11 +95,11 @@
         r.parentNode.replaceChild(y, r);
         return y
     }
-    var o = u("github-card");
-    for (r = 0; r < o.length; r++) {
-        v(o[r])
+    var v = s("github-card");
+    for (r = 0; r < v.length; r++) {
+        o(v[r])
     }
     if (window.githubCard) {
-        window.githubCard.render = v
+        window.githubCard.render = o
     }
 })(document);
