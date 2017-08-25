@@ -9,24 +9,24 @@
         window.location.protocol = "https";
   </script> 
   
-    <title>tftp安装和使用小结 | HelloDog</title>
+    <title>PyCharm使用心得 | HelloDog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wsgzao">
     
 
     
-    <meta name="description" content="tftp是一个非常简单好用的文件传输协议">
+    <meta name="description" content="PyCharm - Python IDE for Professional Developers by JetBrains.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="tftp安装和使用小结">
-<meta property="og:url" content="https://wsgzao.github.io/post/tftp/index.html">
+<meta property="og:title" content="PyCharm使用心得">
+<meta property="og:url" content="https://wsgzao.github.io/post/pycharm/index.html">
 <meta property="og:site_name" content="HelloDog">
-<meta property="og:description" content="tftp是一个非常简单好用的文件传输协议">
+<meta property="og:description" content="PyCharm - Python IDE for Professional Developers by JetBrains.">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2017-01-18T03:43:45.000Z">
+<meta property="og:updated_time" content="2017-08-25T08:27:05.881Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="tftp安装和使用小结">
-<meta name="twitter:description" content="tftp是一个非常简单好用的文件传输协议">
+<meta name="twitter:title" content="PyCharm使用心得">
+<meta name="twitter:description" content="PyCharm - Python IDE for Professional Developers by JetBrains.">
 
     
     <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
@@ -87,14 +87,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/post/tftp/" title="tftp安装和使用小结" itemprop="url">tftp安装和使用小结</a>
+      <a href="/post/pycharm/" title="PyCharm使用心得" itemprop="url">PyCharm使用心得</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
 		
   <p class="article-time">
-    <time datetime="2017-01-18T06:59:49.000Z" itemprop="datePublished"> 发表于 2017-01-18</time>
+    <time datetime="2017-08-25T08:40:53.000Z" itemprop="datePublished"> 发表于 2017-08-25</time>
     
   </p>
 </header>
@@ -103,30 +103,43 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tftp应用场景"><span class="toc-number">3.</span> <span class="toc-text">tftp应用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tftp使用"><span class="toc-number">4.</span> <span class="toc-text">tftp使用</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#购买和使用"><span class="toc-number">3.</span> <span class="toc-text">购买和使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基本配置"><span class="toc-number">4.</span> <span class="toc-text">基本配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#字体调整"><span class="toc-number">4.1.</span> <span class="toc-text">字体调整</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#显示行号"><span class="toc-number">4.2.</span> <span class="toc-text">显示行号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#皮肤主题与编辑器主题"><span class="toc-number">4.3.</span> <span class="toc-text">皮肤主题与编辑器主题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自动生成文件头"><span class="toc-number">4.4.</span> <span class="toc-text">自动生成文件头</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常用快捷键"><span class="toc-number">4.5.</span> <span class="toc-text">常用快捷键</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用技巧"><span class="toc-number">5.</span> <span class="toc-text">使用技巧</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文献"><span class="toc-number">6.</span> <span class="toc-text">参考文献</span></a></li></ol>
 		
 		</div>
 		
-		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>我相信大家接触到tftp大多数原因是PXE网络自动化部署的功劳，一般是在Linux环境下采用PXE+TFTP+DHCP+(HTTP/FTP/NFS)来实现，因为最近在生产环境中分别测试使用了云霁科技的Cloudboot和大名鼎鼎的Cobbler，只是针对大规模型号和配置不一样的物理机实现成本太高配置不够灵活，最后考虑采用Windows笔记本+交换机+tftpd32来实现。而且最近在更新Cisco网络交换机固件的时候发现使用tftp相比ftp来说更加容易，想想就整一篇简单的文档出来。</p>
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>PyCharm是大JB旗下的产品之一，对于广大Python开发者来说应该不会陌生，对于个人开发者来说用什么IDE(VIM/Sublime Text/Visual Studio Code)可能并不重要，但是面对一个开发素质参差不齐的团队时，我相信老老实实统一使用PyCharm会是一个虽然大但是全的不错选择，因为一开始就开启pep8和pylint检测能显著提升代码质量，各种错误和警告提示会逼着你写出高质量的代码。当然统一编码和注释风格，小团队做一些适度的code review和单元测试会帮助团队一起更快的成长，良好的代码有时候靠的是自律、规范和review，而不仅仅是技术。</p>
+<p>“我不是个伟大的程序员，我只是个有着一些优秀习惯的好程序员” | By Kent Beck</p>
 <blockquote>
-<p>tftp是一个非常简单好用的文件传输协议</p>
+<p>PyCharm - Python IDE for Professional Developers by JetBrains.</p>
 </blockquote>
-<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2017年01月18日 - 初稿</p>
-<p>阅读原文 - <a href="https://wsgzao.github.io/post/tftp/">https://wsgzao.github.io/post/tftp/</a></p>
+<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2017年08月25日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/pycharm/">https://wsgzao.github.io/post/pycharm/</a></p>
 <p><strong>扩展阅读</strong></p>
-<p>TFTP - <a href="http://www.tftp-server.com/" target="_blank" rel="external">http://www.tftp-server.com/</a></p>
-<hr>
-<h2 id="tftp应用场景"><a href="#tftp应用场景" class="headerlink" title="tftp应用场景"></a>tftp应用场景</h2><p>TFTP（Trivial File Transfer Protocol，简单文件传输协议）是TCP/IP协议族中的一个用来在客户机与服务器之间进行简单文件传输的协议，提供不复杂、开销不大的文件传输服务。端口号为69，它基于UDP协议而实现。</p>
-<ol>
-<li>交换机或路由器升级或备份</li>
-<li>无盘工作站存放boot loader</li>
-<li>嵌入式开发时装载系统</li>
-<li>大规模的服务安装布署</li>
-</ol>
-<h2 id="tftp使用"><a href="#tftp使用" class="headerlink" title="tftp使用"></a>tftp使用</h2><blockquote>
-<p>注意修改防火墙和selinux配置</p>
+<p>PyCharm - <a href="https://www.jetbrains.com/pycharm/" target="_blank" rel="external">https://www.jetbrains.com/pycharm/</a></p>
+<h2 id="购买和使用"><a href="#购买和使用" class="headerlink" title="购买和使用"></a>购买和使用</h2><p>JetBrains 的产品大多数是付费形式，但是对于教育行业却实行免费授权计划，几乎涵盖所有产品，十分良心。</p>
+<p>学生授权申请方式<br><a href="https://sales.jetbrains.com/hc/zh-cn/articles/207154369-%E5%AD%A6%E7%94%9F%E6%8E%88%E6%9D%83%E7%94%B3%E8%AF%B7%E6%96%B9%E5%BC%8F" target="_blank" rel="external">https://sales.jetbrains.com/hc/zh-cn/articles/207154369-%E5%AD%A6%E7%94%9F%E6%8E%88%E6%9D%83%E7%94%B3%E8%AF%B7%E6%96%B9%E5%BC%8F</a></p>
+<p>如果已经有一定经济能力请支持正版</p>
+<h2 id="基本配置"><a href="#基本配置" class="headerlink" title="基本配置"></a>基本配置</h2><blockquote>
+<p>以下设置选项随着版本调整可能发生位置变化，但可以在Settings(Ctrl+Alt+S)左上角的搜索栏里快速进行查询</p>
 </blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#安装</span></div><div class="line">yum install -y tftp-server</div><div class="line"></div><div class="line"><span class="comment">#注意disable选项为no</span></div><div class="line"><span class="comment">#修改项server_args=，可以修改tftp-server的根目录，参数-s指定chroot，-c指定了可以创建文件</span></div><div class="line">vi /etc/xinetd.d/tftp</div><div class="line">service tftp</div><div class="line">&#123;</div><div class="line">        socket_type             = dgram</div><div class="line">        protocol                = udp</div><div class="line">        <span class="built_in">wait</span>                    = yes</div><div class="line">        user                    = root</div><div class="line">        server                  = /usr/sbin/in.tftpd</div><div class="line">        server_args             = -s /var/lib/tftpboot</div><div class="line">        <span class="built_in">disable</span>                 = no</div><div class="line">        per_source              = 11</div><div class="line">        cps                     = 100 2</div><div class="line">        flags                   = IPv4</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">#设置tftp开机自动启动</span></div><div class="line">chkconfig tftp on  </div><div class="line"></div><div class="line"><span class="comment">#启动xinetd服务</span></div><div class="line">/etc/init.d/xinetd restart </div><div class="line"></div><div class="line"><span class="comment">#验证tftp是否启动成功并监听本地69端口</span></div><div class="line">netstat -anup | grep 69</div><div class="line">udp    0    0    0.0.0.0:69    0.0.0.0:*    15763/xinetd      </div><div class="line"></div><div class="line"><span class="comment">#测试上传和下载</span></div><div class="line">yum install tftp</div><div class="line">tftp -i 192.168.1.1 put <span class="built_in">test</span></div><div class="line">tftp -i 192.168.1.1 get <span class="built_in">test</span></div></pre></td></tr></table></figure>
+<h3 id="字体调整"><a href="#字体调整" class="headerlink" title="字体调整"></a>字体调整</h3><p>默认的字体个人觉得偏小，<code>File--&gt;Settings--&gt;Editor--&gt;Font</code>，新版本不必像老版本一样调整前必须要保持一个新的Scheme，直接修改你喜欢的字体和大小应用就可以看到效果了</p>
+<h3 id="显示行号"><a href="#显示行号" class="headerlink" title="显示行号"></a>显示行号</h3><p>在<code>File--&gt;Settings--&gt;Editor--&gt;General--&gt;Appearance</code>里勾选Show line numbers</p>
+<h3 id="皮肤主题与编辑器主题"><a href="#皮肤主题与编辑器主题" class="headerlink" title="皮肤主题与编辑器主题"></a>皮肤主题与编辑器主题</h3><p>皮肤主题和编辑器主题是分开设置的</p>
+<p>皮肤主题在<code>File--&gt;Settings--&gt;Appearance &amp; Behavior--&gt;Appearance</code>的Theme选项下选择</p>
+<p>编辑器主题在<code>File--&gt;Settings--&gt;Editor--&gt;Colors Scheme</code>的Scheme选项下选择</p>
+<h3 id="自动生成文件头"><a href="#自动生成文件头" class="headerlink" title="自动生成文件头"></a>自动生成文件头</h3><p>默认情况下，新建完一个文件后，PyCharm会生成一个<strong>author</strong> = ‘$USER’的文件头，但通常每个Python文件都会添加<code># -*- coding: utf-8 -*-</code>来控制编码。可以在<code>File--&gt;Settings--&gt;File and Code Templates</code>中的Templates选中Python Script在右侧把你要自动添加的内容加进去</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># -*- coding: utf-8 -*-</span></div><div class="line"><span class="comment"># __author__ = 'wangao'</span></div></pre></td></tr></table></figure>
+<h3 id="常用快捷键"><a href="#常用快捷键" class="headerlink" title="常用快捷键"></a>常用快捷键</h3><blockquote>
+<p>温馨提示：PyCharm会实时自动保存代码并写入本地文件</p>
+</blockquote>
+<p>Ctrl + / 行注释，可以批量选择和取消<br>快速按2次Shift 全局文件名称查找，可以快速定位所要编辑的文件</p>
+<p>Ctrl + F 当前文件查找<br>Ctrl + R 当前文件替换<br>Ctrl + Shift + F 全局查找，可能会和输入法的简繁快捷键冲突，记得关闭<br>Ctrl + Shift + R 全局替换</p>
+<p>Ctrl + Z 撤销<br>Ctrl + Shift + Z 回撤</p>
+<h2 id="使用技巧"><a href="#使用技巧" class="headerlink" title="使用技巧"></a>使用技巧</h2><p>未完待续</p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><blockquote>
+<p>@陈俊岭 把Pycharm官方帮助文档翻译了一遍，如果英文不好可以适度参考</p>
+</blockquote>
+<p>我的Pycharm，我做主 - <a href="http://blog.csdn.net/u013088062/article/details/50388329" target="_blank" rel="external">http://blog.csdn.net/u013088062/article/details/50388329</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -144,7 +157,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://wsgzao.github.io/post/tftp/" data-title="tftp安装和使用小结 | HelloDog" data-tsina="" class="share clearfix">
+	  <div data-url="https://wsgzao.github.io/post/pycharm/" data-title="PyCharm使用心得 | HelloDog" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -157,19 +170,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/post/tftpd32/" title="使用tftpd32自动化网络安装esxi6.0u2和rhel6.7实践">
-  <strong>上一篇：</strong><br/>
-  <span>
-  使用tftpd32自动化网络安装esxi6.0u2和rhel6.7实践</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/post/jbod/"  title="JBOD磁盘配置和StorCLI命令使用小结">
+<a href="/post/oracle-instant-client/"  title="Install Oracle Instant Client on Linux and Windows">
  <strong>下一篇：</strong><br/> 
- <span>JBOD磁盘配置和StorCLI命令使用小结
+ <span>Install Oracle Instant Client on Linux and Windows
 </span>
 </a>
 </div>
@@ -191,7 +196,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tftp应用场景"><span class="toc-number">3.</span> <span class="toc-text">tftp应用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tftp使用"><span class="toc-number">4.</span> <span class="toc-text">tftp使用</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#购买和使用"><span class="toc-number">3.</span> <span class="toc-text">购买和使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基本配置"><span class="toc-number">4.</span> <span class="toc-text">基本配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#字体调整"><span class="toc-number">4.1.</span> <span class="toc-text">字体调整</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#显示行号"><span class="toc-number">4.2.</span> <span class="toc-text">显示行号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#皮肤主题与编辑器主题"><span class="toc-number">4.3.</span> <span class="toc-text">皮肤主题与编辑器主题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自动生成文件头"><span class="toc-number">4.4.</span> <span class="toc-text">自动生成文件头</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常用快捷键"><span class="toc-number">4.5.</span> <span class="toc-text">常用快捷键</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用技巧"><span class="toc-number">5.</span> <span class="toc-text">使用技巧</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文献"><span class="toc-number">6.</span> <span class="toc-text">参考文献</span></a></li></ol>
  
   </div>
 
