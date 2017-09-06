@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://wsgzao.github.io/"/>
-  <updated>2017-08-25T08:27:05.881Z</updated>
+  <updated>2017-09-06T08:08:18.241Z</updated>
   <id>https://wsgzao.github.io/</id>
   
   <author>
@@ -14,6 +14,81 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>NLS_LANG数据库字符集中文乱码问题分析和解决</title>
+    <link href="https://wsgzao.github.io/post/lang/"/>
+    <id>https://wsgzao.github.io/post/lang/</id>
+    <published>2017-09-06T08:40:53.000Z</published>
+    <updated>2017-09-06T08:08:18.241Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>已经有3年多没再关心或者遇到编码格式的问题了，一是离Oracle数据库操作远了，二是现在的Terminal，IDE和操作系统语言环境配置都很标准，比如清一色的UTF-8编码和UNIX(LF)，我自己的组合是以下形式，Xmanager + Visual Studio Code/Notepad2 + 增加中文语言包显示的操作系统，Oracle zhs16gbk，MySQL utf8，Python 2/3 utf-8。本来应该是非常统一而和谐的开发环境因为sqlplus spool导出中文内容而又变更混沌，索性再彻底分析以下中文乱码的源头和解决方案。</p>
+<blockquote>
+<p>保持操作系统，终端登录，数据库3者编码格式一致性很重要</p>
+</blockquote>
+<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2017年09月06日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/lang/">https://wsgzao.github.io/post/lang/</a></p>
+<h2 id="Locale"><a href="#Locale" class="headerlink" title="Locale"></a>Locale</h2><blockquote>
+<p>下面2个地址对Locale语言字符集的介绍已经很清晰了，我只强调2点</p>
+</blockquote>
+<ol>
+<li>大多数UNIX操作系统建议默认显示语言为英语，但是一定要添加中文语言支持包</li>
+<li>显示中文乱码多数原因是操作系统LANG环境变量或者类似Xshell编码不统一造成的</li>
+</ol>
+<p>Locale - <a href="http://wiki.ubuntu.org.cn/Locale" target="_blank" rel="external">http://wiki.ubuntu.org.cn/Locale</a><br>Localization - <a href="https://wiki.gentoo.org/wiki/Localization/Guide" target="_blank" rel="external">https://wiki.gentoo.org/wiki/Localization/Guide</a></p>
+<h2 id="NLS-LANG"><a href="#NLS-LANG" class="headerlink" title="NLS_LANG"></a>NLS_LANG</h2><p>本次遇到的问题主要是由于使用sqlplus spool从Oracle数据库导出中文数据引发连锁问题，虽然和数据库相关但是解决中文乱码的思路基本上是一致的，方便各位以后可以借鉴和参考。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment"># 源主机：CentOS 6.8 已安装中文语言包，保持LANG和NLS_LANG默认环境变量，Oracle Instant Client 12.2.0.1.0，已安装sqlplus</span></div><div class="line"><span class="built_in">echo</span> <span class="variable">$LANG</span></div><div class="line">en_US.UTF-8</div><div class="line"></div><div class="line"><span class="built_in">echo</span> <span class="variable">$NLS_LANG</span></div><div class="line">空</div><div class="line"></div><div class="line"><span class="comment"># 数据库服务器：Oracle Database 11.2.0.3.0，NLS_CHARACTERSET ZHS16GBK</span></div><div class="line">sqlplus system/oracle@orabiz</div><div class="line"></div><div class="line">SQL&gt; select * from v<span class="variable">$nls_parameters</span>;</div><div class="line"></div><div class="line">PARAMETER</div><div class="line">----------------------------------------------------------------</div><div class="line">VALUE</div><div class="line">----------------------------------------------------------------</div><div class="line">NLS_LANGUAGE</div><div class="line">AMERICAN</div><div class="line"></div><div class="line">NLS_TERRITORY</div><div class="line">AMERICA</div><div class="line"></div><div class="line">NLS_CURRENCY</div><div class="line">$</div><div class="line"></div><div class="line"></div><div class="line">PARAMETER</div><div class="line">----------------------------------------------------------------</div><div class="line">VALUE</div><div class="line">----------------------------------------------------------------</div><div class="line">NLS_ISO_CURRENCY</div><div class="line">AMERICA</div><div class="line"></div><div class="line">NLS_NUMERIC_CHARACTERS</div><div class="line">.,</div><div class="line"></div><div class="line">NLS_CALENDAR</div><div class="line">GREGORIAN</div><div class="line"></div><div class="line"></div><div class="line">PARAMETER</div><div class="line">----------------------------------------------------------------</div><div class="line">VALUE</div><div class="line">----------------------------------------------------------------</div><div class="line">NLS_DATE_FORMAT</div><div class="line">DD-MON-RR</div><div class="line"></div><div class="line">NLS_DATE_LANGUAGE</div><div class="line">AMERICAN</div><div class="line"></div><div class="line">NLS_CHARACTERSET</div><div class="line">ZHS16GBK</div><div class="line"></div><div class="line"></div><div class="line">PARAMETER</div><div class="line">----------------------------------------------------------------</div><div class="line">VALUE</div><div class="line">----------------------------------------------------------------</div><div class="line">NLS_SORT</div><div class="line">BINARY</div><div class="line"></div><div class="line">NLS_TIME_FORMAT</div><div class="line">HH.MI.SSXFF AM</div><div class="line"></div><div class="line">NLS_TIMESTAMP_FORMAT</div><div class="line">DD-MON-RR HH.MI.SSXFF AM</div><div class="line"></div><div class="line"></div><div class="line">PARAMETER</div><div class="line">----------------------------------------------------------------</div><div class="line">VALUE</div><div class="line">----------------------------------------------------------------</div><div class="line">NLS_TIME_TZ_FORMAT</div><div class="line">HH.MI.SSXFF AM TZR</div><div class="line"></div><div class="line">NLS_TIMESTAMP_TZ_FORMAT</div><div class="line">DD-MON-RR HH.MI.SSXFF AM TZR</div><div class="line"></div><div class="line">NLS_DUAL_CURRENCY</div><div class="line">$</div><div class="line"></div><div class="line"></div><div class="line">PARAMETER</div><div class="line">----------------------------------------------------------------</div><div class="line">VALUE</div><div class="line">----------------------------------------------------------------</div><div class="line">NLS_NCHAR_CHARACTERSET</div><div class="line">AL16UTF16</div><div class="line"></div><div class="line">NLS_COMP</div><div class="line">BINARY</div><div class="line"></div><div class="line">NLS_LENGTH_SEMANTICS</div><div class="line">BYTE</div><div class="line"></div><div class="line"></div><div class="line">PARAMETER</div><div class="line">----------------------------------------------------------------</div><div class="line">VALUE</div><div class="line">----------------------------------------------------------------</div><div class="line">NLS_NCHAR_CONV_EXCP</div><div class="line">FALSE</div><div class="line"></div><div class="line"></div><div class="line">19 rows selected.</div></pre></td></tr></table></figure>
+<h3 id="问题1：ORA-12705"><a href="#问题1：ORA-12705" class="headerlink" title="问题1：ORA-12705"></a>问题1：ORA-12705</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">ERROR:</div><div class="line">ORA-12705: Cannot access NLS data files or invalid environment specified</div><div class="line"></div><div class="line">12705, 00000, <span class="string">"Cannot access NLS data files or invalid environment specified"</span></div><div class="line">// *Cause: Either an attempt was made to issue an ALTER SESSION <span class="built_in">command</span></div><div class="line">//         with an invalid NLS parameter or value; or the environment</div><div class="line">//         variable(s) NLS_LANG, ORA_NLSxx, or ORACLE_HOME was incorrectly</div><div class="line">//         specified, therefore the NLS data files cannot be located.</div><div class="line">// *Action: Check the syntax of the ALTER SESSION <span class="built_in">command</span> and the NLS</div><div class="line">//          parameter, correct the syntax and retry the statement, or</div><div class="line">//          specify the correct directory path/values <span class="keyword">in</span> the environment</div><div class="line">//          variables.</div></pre></td></tr></table></figure>
+<p>根据以上Oracle官方提示，合理的解决思路大致是这样</p>
+<ol>
+<li>检查数据库服务器的NLS parameter</li>
+<li>在客户端中配置与服务端匹配的NLS_LANG</li>
+</ol>
+<p>比如我的环境就需要配置</p>
+<pre><code>export NLS_LANG=&quot;american_america.zhs16gbk&quot;
+</code></pre><p>它的格式如下:NLS_LANG=language_territory.charset<br>它有三个组成部分(语言、地域和字符集)，每个成分控制了NLS子集的特性。<br>Language：指定服务器消息的语言， 影响提示信息是中文还是英文<br>Territory：指定服务器的日期和数字格式，<br>Charset：指定字符集。<br>如:AMERICAN_AMERICA.ZHS16GBK, SIMPLIFIED CHINESE_CHINA.ZHS16GBK</p>
+<pre><code>export NLS_LANG=&quot;SIMPLIFIED CHINESE_CHINA.ZHS16GBK&quot;
+</code></pre><p>从NLS_LANG的组成我们可以看出，真正影响数据库字符集的其实是第三部分。<br>所以两个数据库之间的字符集只要第三部分一样就可以相互导入导出数据，前面影响的只是提示信息是中文还是英文。</p>
+<h3 id="问题2：VI打开文件中文乱码"><a href="#问题2：VI打开文件中文乱码" class="headerlink" title="问题2：VI打开文件中文乱码"></a>问题2：VI打开文件中文乱码</h3><blockquote>
+<p>其实这个问题就是由第一个问题引申出来的，主要和LANG环境变量有关</p>
+</blockquote>
+<p>Locale 是软件在运行时的语言环境, 它包括语言(Language), 地域 (Territory) 和字符集(Codeset)。<br>一个locale的书写格式为: 语言[_地域[.字符集]].</p>
+<p>zh<em>CN.GB2312＝中文</em>中华人民共和国＋国标2312字符集。<br>我说中文，身处中国大陆，使用国标2312字符集来表达字符。</p>
+<p>zh<em>TW.BIG5=中文</em>台湾.大五码字符集<br>我说中文，身处台湾地区，使用Big5字符集来表达字符。</p>
+<p>根据以上信息合理的解决思路大致是这样</p>
+<ol>
+<li>检查操作系统是否已添加中文语言包</li>
+<li>检查SecureCRT/Xshell等终端编码是否为默认编码或UTF-8</li>
+<li>检查LANG环境变量是否合适</li>
+</ol>
+<p>比如我的环境就需要配置，为什么不加zh_CN.UTF-8，你猜呢</p>
+<pre><code>export LANG=zh_CN
+</code></pre>]]></content>
+    
+    <summary type="html">
+    
+      保持操作系统，终端登录，数据库3者编码格式一致性很重要
+    
+    </summary>
+    
+      <category term="学习 | Study" scheme="https://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>NLS_LANG</title>
+    <link href="https://wsgzao.github.io/post/NLS-LANG/"/>
+    <id>https://wsgzao.github.io/post/NLS-LANG/</id>
+    <published>2017-09-06T08:00:53.000Z</published>
+    <updated>2017-09-06T08:00:53.280Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>PyCharm使用心得</title>
@@ -1344,424 +1419,6 @@
     <summary type="html">
     
       DevOps是一个持续改进的过程
-    
-    </summary>
-    
-      <category term="学习 | Study" scheme="https://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>中文文案排版指北</title>
-    <link href="https://wsgzao.github.io/post/chinese-copywriting-guidelines/"/>
-    <id>https://wsgzao.github.io/post/chinese-copywriting-guidelines/</id>
-    <published>2016-05-09T07:31:24.000Z</published>
-    <updated>2017-02-10T02:00:57.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="http://i.v2ex.co/ekrNgJeK.jpeg" alt=""></p>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><blockquote>
-<p>统一中文文案、排版的相关用法，降低团队成员之间的沟通成本，增强网站气质。</p>
-</blockquote>
-<hr>
-<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2016年05月09日 - 更新至release v0.0.9<br>2015年10月24日 - 更新官方翻译的简体中文<br>2015年07月11日 - 转载初稿，转化为简体中文</p>
-<p>本文链接 - <a href="https://wsgzao.github.io/post/chinese-copywriting-guidelines/">https://wsgzao.github.io/post/chinese-copywriting-guidelines/</a></p>
-<p><strong>原文出处</strong></p>
-<p>Chinese Copywriting Guidelines：中文文案排版指北 - <a href="https://github.com/sparanoid/chinese-copywriting-guidelines" target="_blank" rel="external">https://github.com/sparanoid/chinese-copywriting-guidelines</a><br>Chinese Copywriting Guidelines：中文文案排版指北（简体中文版） - <a href="https://github.com/mzlogin/chinese-copywriting-guidelines" target="_blank" rel="external">https://github.com/mzlogin/chinese-copywriting-guidelines</a></p>
-<hr>
-<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ul>
-<li><a href="#空格">空格</a><ul>
-<li><a href="#中英文之间需要增加空格">中英文之间需要增加空格</a></li>
-<li><a href="#中文与数字之间需要增加空格">中文与数字之间需要增加空格</a></li>
-<li><a href="#数字与单位之间需要增加空格">数字与单位之间需要增加空格</a></li>
-<li><a href="#全角标点与其他字符之间不加空格">全角标点与其他字符之间不加空格</a></li>
-<li><a href="#-ms-text-autospace-to-the-rescue"><code>-ms-text-autospace</code> to the rescue?</a></li>
-</ul>
-</li>
-<li><a href="#标点符号">标点符号</a><ul>
-<li><a href="#不重复使用标点符号">不重复使用标点符号</a></li>
-</ul>
-</li>
-<li><a href="#全角和半角">全角和半角</a><ul>
-<li><a href="#使用全角中文标点">使用全角中文标点</a></li>
-<li><a href="#数字使用半角字符">数字使用半角字符</a></li>
-<li><a href="#遇到完整的英文整句特殊名词其內容使用半角标点">遇到完整的英文整句、特殊名词，其內容使用半角标点</a></li>
-</ul>
-</li>
-<li><a href="#名词">名词</a><ul>
-<li><a href="#专有名词使用正确的大小写">专有名词使用正确的大小写</a></li>
-<li><a href="#不要使用不地道的缩写">不要使用不地道的缩写</a></li>
-</ul>
-</li>
-<li><a href="#争议">争议</a><ul>
-<li><a href="#链接之间增加空格">链接之间增加空格</a></li>
-<li><a href="#简体中文使用直角引号">简体中文使用直角引号</a></li>
-</ul>
-</li>
-<li><a href="#工具">工具</a></li>
-<li><a href="#谁在这样做">谁在这样做？</a></li>
-<li><a href="#参考文献">参考文献</a></li>
-</ul>
-<h2 id="空格"><a href="#空格" class="headerlink" title="空格"></a>空格</h2><p>「有研究显示，打字的时候不喜欢在中文和英文之间加空格的人，感情路都走得很辛苦，有七成的比例会在 34 岁的时候跟自己不爱的人结婚，而其余三成的人最后只能把遗产留给自己的猫。毕竟爱情跟书写都需要适时地留白。</p>
-<p>与大家共勉之。」——<a href="https://github.com/vinta/pangu.js" target="_blank" rel="external">vinta/paranoid-auto-spacing</a></p>
-<h3 id="中英文之间需要增加空格"><a href="#中英文之间需要增加空格" class="headerlink" title="中英文之间需要增加空格"></a>中英文之间需要增加空格</h3><p>正确：</p>
-<blockquote>
-<p>在 LeanCloud 上，数据存储是围绕 <code>AVObject</code> 进行的。</p>
-</blockquote>
-<p>错误：</p>
-<blockquote>
-<p>在LeanCloud上，数据存储是围绕<code>AVObject</code>进行的。</p>
-<p>在 LeanCloud上，数据存储是围绕<code>AVObject</code> 进行的。</p>
-</blockquote>
-<p>完整的正确用法：</p>
-<blockquote>
-<p>在 LeanCloud 上，数据存储是围绕 <code>AVObject</code> 进行的。每个 <code>AVObject</code> 都包含了与 JSON 兼容的 key-value 对应的数据。数据是 schema-free 的，你不需要在每个 <code>AVObject</code> 上提前指定存在哪些键，只要直接设定对应的 key-value 即可。</p>
-</blockquote>
-<p>例外：「豆瓣FM」等产品名词，按照官方所定义的格式书写。</p>
-<h3 id="中文与数字之间需要增加空格"><a href="#中文与数字之间需要增加空格" class="headerlink" title="中文与数字之间需要增加空格"></a>中文与数字之间需要增加空格</h3><p>正确：</p>
-<blockquote>
-<p>今天出去买菜花了 5000 元。</p>
-</blockquote>
-<p>错误：</p>
-<blockquote>
-<p>今天出去买菜花了 5000元。</p>
-<p>今天出去买菜花了5000元。</p>
-</blockquote>
-<h3 id="数字与单位之间需要增加空格"><a href="#数字与单位之间需要增加空格" class="headerlink" title="数字与单位之间需要增加空格"></a>数字与单位之间需要增加空格</h3><p>正确：</p>
-<blockquote>
-<p>我家的光纤入户宽带有 10 Gbps，SSD 一共有 20 TB。</p>
-</blockquote>
-<p>错误：</p>
-<blockquote>
-<p>我家的光纤入户宽带有 10Gbps，SSD 一共有 10TB。</p>
-</blockquote>
-<p>例外：度／百分比与数字之间不需要增加空格：</p>
-<p>正确：</p>
-<blockquote>
-<p>今天是 233° 的高温。</p>
-<p>新 MacBook Pro 有 15% 的 CPU 性能提升。</p>
-</blockquote>
-<p>错误：</p>
-<blockquote>
-<p>今天是 233 ° 的高温。</p>
-<p>新 MacBook Pro 有 15 % 的 CPU 性能提升。</p>
-</blockquote>
-<h3 id="全角标点与其他字符之间不加空格"><a href="#全角标点与其他字符之间不加空格" class="headerlink" title="全角标点与其他字符之间不加空格"></a>全角标点与其他字符之间不加空格</h3><p>正确：</p>
-<blockquote>
-<p>刚刚买了一部 iPhone，好开心！</p>
-</blockquote>
-<p>错误：</p>
-<blockquote>
-<p>刚刚买了一部 iPhone ，好开心！</p>
-</blockquote>
-<h3 id="ms-text-autospace-to-the-rescue"><a href="#ms-text-autospace-to-the-rescue" class="headerlink" title="-ms-text-autospace to the rescue?"></a><code>-ms-text-autospace</code> to the rescue?</h3><p>Microsoft 有个 <a href="http://msdn.microsoft.com/en-us/library/ie/ms531164(v=vs.85" target="_blank" rel="external"><code>-ms-text-autospace</code></a>.aspx) 的 CSS 属性可以实现自动为中英文之间增加空白。不过目前并未普及，另外在其他应用场景，例如 OS X、iOS 的用户界面目前并不存在这个特性，所以请继续保持随手加空格的习惯。</p>
-<h2 id="标点符号"><a href="#标点符号" class="headerlink" title="标点符号"></a>标点符号</h2><h3 id="不重复使用标点符号"><a href="#不重复使用标点符号" class="headerlink" title="不重复使用标点符号"></a>不重复使用标点符号</h3><p>正确：</p>
-<blockquote>
-<p>德国队竟然战胜了巴西队！</p>
-<p>她竟然对你说「喵」？！</p>
-</blockquote>
-<p>错误：</p>
-<blockquote>
-<p>德国队竟然战胜了巴西队！！</p>
-<p>德国队竟然战胜了巴西队！！！！！！！！</p>
-<p>她竟然对你说「喵」？？！！</p>
-<p>她竟然对你说「喵」？！？！？？！！</p>
-</blockquote>
-<h2 id="全角和半角"><a href="#全角和半角" class="headerlink" title="全角和半角"></a>全角和半角</h2><p>不明白什么是全角（全形）与半角（半形）符号？请查看维基百科词条『<a href="http://zh.wikipedia.org/wiki/%E5%85%A8%E5%BD%A2%E5%92%8C%E5%8D%8A%E5%BD%A2" target="_blank" rel="external">全角和半角</a>』。</p>
-<h3 id="使用全角中文标点"><a href="#使用全角中文标点" class="headerlink" title="使用全角中文标点"></a>使用全角中文标点</h3><p>正确：</p>
-<blockquote>
-<p>嗨！你知道嘛？今天前台的小妹跟我说「喵」了哎！</p>
-<p>核磁共振成像（NMRI）是什么原理都不知道？JFGI！</p>
-</blockquote>
-<p>错误：</p>
-<blockquote>
-<p>嗨! 你知道嘛? 今天前台的小妹跟我说 “喵” 了哎!</p>
-<p>嗨!你知道嘛?今天前台的小妹跟我说”喵”了哎!</p>
-<p>核磁共振成像 (NMRI) 是什么原理都不知道? JFGI!</p>
-<p>核磁共振成像(NMRI)是什么原理都不知道?JFGI!</p>
-</blockquote>
-<h3 id="数字使用半角字符"><a href="#数字使用半角字符" class="headerlink" title="数字使用半角字符"></a>数字使用半角字符</h3><p>正确：</p>
-<blockquote>
-<p>这件蛋糕只卖 1000 元。</p>
-</blockquote>
-<p>错误：</p>
-<blockquote>
-<p>这件蛋糕只卖 １０００ 元。</p>
-</blockquote>
-<p>例外：在设计稿、宣传海报中如出现极少量数字的情形时，为方便文字对齐，是可以使用全角数字的。</p>
-<h3 id="遇到完整的英文整句、特殊名词，其內容使用半角标点"><a href="#遇到完整的英文整句、特殊名词，其內容使用半角标点" class="headerlink" title="遇到完整的英文整句、特殊名词，其內容使用半角标点"></a>遇到完整的英文整句、特殊名词，其內容使用半角标点</h3><p>正确：</p>
-<blockquote>
-<p>乔布斯那句话是怎么说的？「Stay hungry, stay foolish.」</p>
-<p>推荐你阅读《Hackers &amp; Painters: Big Ideas from the Computer Age》，非常的有趣。</p>
-</blockquote>
-<p>错误：</p>
-<blockquote>
-<p>乔布斯那句话是怎么说的？「Stay hungry，stay foolish。」</p>
-<p>推荐你阅读《Hackers＆Painters：Big Ideas from the Computer Age》，非常的有趣。</p>
-</blockquote>
-<h2 id="名词"><a href="#名词" class="headerlink" title="名词"></a>名词</h2><h3 id="专有名词使用正确的大小写"><a href="#专有名词使用正确的大小写" class="headerlink" title="专有名词使用正确的大小写"></a>专有名词使用正确的大小写</h3><p>大小写相关用法原属于英文书写范畴，不属于本 wiki 讨论內容，在这里只对部分易错用法进行简述。</p>
-<p>正确：</p>
-<blockquote>
-<p>使用 GitHub 登录</p>
-<p>我们的客户有 GitHub、Foursquare、Microsoft Corporation、Google、Facebook, Inc.。</p>
-</blockquote>
-<p>错误：</p>
-<blockquote>
-<p>使用 github 登录</p>
-<p>使用 GITHUB 登录</p>
-<p>使用 Github 登录</p>
-<p>使用 gitHub 登录</p>
-<p>使用 gｲんĤЦ8 登录</p>
-<p>我们的客户有 github、foursquare、microsoft corporation、google、facebook, inc.。</p>
-<p>我们的客户有 GITHUB、FOURSQUARE、MICROSOFT CORPORATION、GOOGLE、FACEBOOK, INC.。</p>
-<p>我们的客户有 Github、FourSquare、MicroSoft Corporation、Google、FaceBook, Inc.。</p>
-<p>我们的客户有 gitHub、fourSquare、microSoft Corporation、google、faceBook, Inc.。</p>
-<p>我们的客户有 gｲんĤЦ8、ｷouЯƧquﾑгє、๓เςг๏ร๏Ŧt ς๏гק๏гคtเ๏ภn、900913、ƒ4ᄃëв๏๏к, IПᄃ.。</p>
-</blockquote>
-<p>注意：当网页中需要配合整体视觉风格而出现全部大写／小写的情形，HTML 中请使用标准的大小写规范进行书写；并通过 <code>text-transform: uppercase;</code>／<code>text-transform: lowercase;</code> 对表现形式进行定义。</p>
-<h3 id="不要使用不地道的缩写"><a href="#不要使用不地道的缩写" class="headerlink" title="不要使用不地道的缩写"></a>不要使用不地道的缩写</h3><p>正确：</p>
-<blockquote>
-<p>我们需要一位熟悉 JavaScript、HTML5，至少理解一种框架（如 Backbone.js、AngularJS、React 等）的前端开发者。</p>
-</blockquote>
-<p>错误：</p>
-<blockquote>
-<p>我们需要一位熟悉 Js、h5，至少理解一种框架（如 backbone、angular、RJS 等）的 FED。</p>
-</blockquote>
-<h2 id="争议"><a href="#争议" class="headerlink" title="争议"></a>争议</h2><p>以下用法略带有个人色彩，既：无论是否遵循下述规则，从语法的角度来讲都是<strong>正确</strong>的。</p>
-<h3 id="链接之间增加空格"><a href="#链接之间增加空格" class="headerlink" title="链接之间增加空格"></a>链接之间增加空格</h3><p>用法：</p>
-<blockquote>
-<p>请 <a href="#">提交一个 issue</a> 并分配给相关同事。</p>
-<p>访问我们网站的最新动态，请 <a href="#">点击这里</a> 进行订阅！</p>
-</blockquote>
-<p>对比用法：</p>
-<blockquote>
-<p>请<a href="#">提交一个 issue</a> 并分配给相关同事。</p>
-<p>访问我们网站的最新动态，请<a href="#">点击这里</a>进行订阅！</p>
-</blockquote>
-<h3 id="简体中文使用直角引号"><a href="#简体中文使用直角引号" class="headerlink" title="简体中文使用直角引号"></a>简体中文使用直角引号</h3><p>用法：</p>
-<blockquote>
-<p>「老师，『有条不紊』的『紊』是什么意思？」</p>
-</blockquote>
-<p>对比用法：</p>
-<blockquote>
-<p>“老师，‘有条不紊’的‘紊’是什么意思？”</p>
-</blockquote>
-<h2 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h2><table>
-<thead>
-<tr>
-<th>仓库</th>
-<th>语言</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="https://github.com/vinta/paranoid-auto-spacing" target="_blank" rel="external">vinta/paranoid-auto-spacing</a></td>
-<td>JavaScript</td>
-</tr>
-<tr>
-<td><a href="https://github.com/huei90/pangu.node" target="_blank" rel="external">huei90/pangu.node</a></td>
-<td>Node.js</td>
-</tr>
-<tr>
-<td><a href="https://github.com/huacnlee/auto-correct" target="_blank" rel="external">huacnlee/auto-correct</a></td>
-<td>Ruby</td>
-</tr>
-<tr>
-<td><a href="https://github.com/sparanoid/space-lover" target="_blank" rel="external">sparanoid/space-lover</a></td>
-<td>PHP (WordPress)</td>
-</tr>
-<tr>
-<td><a href="https://github.com/NauxLiu/auto-correct" target="_blank" rel="external">nauxliu/auto-correct</a></td>
-<td>PHP</td>
-</tr>
-<tr>
-<td><a href="https://github.com/hotoo/pangu.vim" target="_blank" rel="external">hotoo/pangu.vim</a></td>
-<td>Vim</td>
-</tr>
-<tr>
-<td><a href="https://github.com/sparanoid/grunt-auto-spacing" target="_blank" rel="external">sparanoid/grunt-auto-spacing</a></td>
-<td>Node.js (Grunt)</td>
-</tr>
-<tr>
-<td><a href="https://github.com/hjiang/scripts/blob/master/add-space-between-latin-and-cjk" target="_blank" rel="external">hjiang/scripts/add-space-between-latin-and-cjk</a></td>
-<td>Python</td>
-</tr>
-</tbody>
-</table>
-<h2 id="谁在这样做？"><a href="#谁在这样做？" class="headerlink" title="谁在这样做？"></a>谁在这样做？</h2><table>
-<thead>
-<tr>
-<th>网站</th>
-<th>文案</th>
-<th>UGC</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="http://www.apple.com/cn/" target="_blank" rel="external">Apple 中国</a></td>
-<td>Yes</td>
-<td>N/A</td>
-</tr>
-<tr>
-<td><a href="http://www.apple.com/hk/" target="_blank" rel="external">Apple 香港</a></td>
-<td>Yes</td>
-<td>N/A</td>
-</tr>
-<tr>
-<td><a href="http://www.apple.com/tw/" target="_blank" rel="external">Apple 台湾</a></td>
-<td>Yes</td>
-<td>N/A</td>
-</tr>
-<tr>
-<td><a href="http://www.microsoft.com/zh-cn/" target="_blank" rel="external">Microsoft 中国</a></td>
-<td>Yes</td>
-<td>N/A</td>
-</tr>
-<tr>
-<td><a href="http://www.microsoft.com/zh-hk/" target="_blank" rel="external">Microsoft 香港</a></td>
-<td>Yes</td>
-<td>N/A</td>
-</tr>
-<tr>
-<td><a href="http://www.microsoft.com/zh-tw/" target="_blank" rel="external">Microsoft 台湾</a></td>
-<td>Yes</td>
-<td>N/A</td>
-</tr>
-<tr>
-<td><a href="https://leancloud.cn/" target="_blank" rel="external">LeanCloud</a></td>
-<td>Yes</td>
-<td>N/A</td>
-</tr>
-<tr>
-<td><a href="https://www.zhihu.com/" target="_blank" rel="external">知乎</a></td>
-<td>Yes</td>
-<td>部分用户达成</td>
-</tr>
-<tr>
-<td><a href="https://www.v2ex.com/" target="_blank" rel="external">V2EX</a></td>
-<td>Yes</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td><a href="https://segmentfault.com/" target="_blank" rel="external">SegmentFault</a></td>
-<td>Yes</td>
-<td>部分用户达成</td>
-</tr>
-<tr>
-<td><a href="http://apple4us.com/" target="_blank" rel="external">Apple4us</a></td>
-<td>Yes</td>
-<td>N/A</td>
-</tr>
-<tr>
-<td><a href="https://www.wandoujia.com/" target="_blank" rel="external">豌豆荚</a></td>
-<td>Yes</td>
-<td>N/A</td>
-</tr>
-<tr>
-<td><a href="https://ruby-china.org/" target="_blank" rel="external">Ruby China</a></td>
-<td>Yes</td>
-<td>标题达成</td>
-</tr>
-<tr>
-<td><a href="https://phphub.org/" target="_blank" rel="external">PHPHub</a></td>
-<td>Yes</td>
-<td>标题达成</td>
-</tr>
-</tbody>
-</table>
-<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ul>
-<li><a href="http://grammar.about.com/od/punctuationandmechanics/a/Guidelines-For-Using-Capital-Letters.htm" target="_blank" rel="external">Guidelines for Using Capital Letters</a></li>
-<li><a href="http://en.wikipedia.org/wiki/Letter_case" target="_blank" rel="external">Letter case - Wikipedia</a></li>
-<li><a href="http://www.oxforddictionaries.com/words/punctuation" target="_blank" rel="external">Punctuation - Oxford Dictionaries</a></li>
-<li><a href="https://owl.english.purdue.edu/owl/section/1/6/" target="_blank" rel="external">Punctuation - The Purdue OWL</a></li>
-<li><a href="http://www.wikihow.com/Use-English-Punctuation-Correctly" target="_blank" rel="external">How to Use English Punctuation Corrently - wikiHow</a></li>
-<li><a href="https://zh.opensuse.org/index.php?title=Help:%E6%A0%BC%E5%BC%8F" target="_blank" rel="external">格式 - openSUSE</a></li>
-<li><a href="http://zh.wikipedia.org/wiki/%E5%85%A8%E5%BD%A2%E5%92%8C%E5%8D%8A%E5%BD%A2" target="_blank" rel="external">全角和半角 - 维基百科</a></li>
-<li><a href="http://zh.wikipedia.org/wiki/%E5%BC%95%E8%99%9F" target="_blank" rel="external">引号 - 维基百科</a></li>
-<li><a href="http://zh.wikipedia.org/wiki/%E7%96%91%E5%95%8F%E9%A9%9A%E5%98%86%E8%99%9F" target="_blank" rel="external">疑问惊叹号 - 维基百科</a></li>
-</ul>
-]]></content>
-    
-    <summary type="html">
-    
-      统一中文文案、排版的相关用法，降低团队成员之间的沟通成本，增强网站气质。
-    
-    </summary>
-    
-      <category term="学习 | Study" scheme="https://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>Git常用命令和Git团队使用规范指南</title>
-    <link href="https://wsgzao.github.io/post/git/"/>
-    <id>https://wsgzao.github.io/post/git/</id>
-    <published>2016-04-22T08:22:32.000Z</published>
-    <updated>2017-02-10T02:00:57.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="//i.v2ex.co/fAhm82RJ.png" alt=""></p>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在2005年的某一天，Linux之父Linus Torvalds 发布了他的又一个里程碑作品——Git。它的出现改变了软件开发流程，大大地提高了开发流畅度，直到现在仍十分流行，完全没有衰退的迹象。其实一般情况下，只需要掌握git的几个常用命令即可，但是在使用的过程中难免会遇到各种复杂的需求，这时候经常需要搜索，非常麻烦，故总结了一下自己平常会用到的git操作。本文根据团队实践记录Git入门指南和Git常用命令，文章中不仅记录了Git的搭建和使用教程，还参考了大量Git团队使用规范上的经验，希望大家可以结合自己团队的实际应用场景让Git协作优雅的落地。</p>
-<blockquote>
-<p>Git是目前世界上最先进的分布式版本控制系统</p>
-</blockquote>
-<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2016年04月22日 - 初稿</p>
-<p>阅读原文 - <a href="https://wsgzao.github.io/post/git/">https://wsgzao.github.io/post/git/</a></p>
-<p><strong>扩展阅读</strong></p>
-<p>Git Book - <a href="https://git-scm.com/book/zh/" target="_blank" rel="external">https://git-scm.com/book/zh/</a><br>git简明指南 - <a href="http://rogerdudler.github.io/git-guide/index.zh.html" target="_blank" rel="external">http://rogerdudler.github.io/git-guide/index.zh.html</a><br>常用 Git 命令清单 - <a href="http://www.ruanyifeng.com/blog/2015/12/git-cheat-sheet.html" target="_blank" rel="external">http://www.ruanyifeng.com/blog/2015/12/git-cheat-sheet.html</a><br>猴子都能懂的GIT入门 - <a href="http://backlogtool.com/git-guide/cn/" target="_blank" rel="external">http://backlogtool.com/git-guide/cn/</a><br>Git教程 - <a href="http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000" target="_blank" rel="external">http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000</a></p>
-<h2 id="SVN与Git的最主要的区别"><a href="#SVN与Git的最主要的区别" class="headerlink" title="SVN与Git的最主要的区别"></a>SVN与Git的最主要的区别</h2><p>SVN是集中式版本控制系统，版本库是集中放在中央服务器的，而干活的时候，用的都是自己的电脑，所以首先要从中央服务器哪里得到最新的版本，然后干活，干完后，需要把自己做完的活推送到中央服务器。集中式版本控制系统是必须联网才能工作，如果在局域网还可以，带宽够大，速度够快，如果在互联网下，如果网速慢的话，就纳闷了。</p>
-<p>Git是分布式版本控制系统，那么它就没有中央服务器的，每个人的电脑就是一个完整的版本库，这样，工作的时候就不需要联网了，因为版本都是在自己的电脑上。既然每个人的电脑都有一个完整的版本库，那多个人如何协作呢？比如说自己在电脑上改了文件A，其他人也在电脑上改了文件A，这时，你们两之间只需把各自的修改推送给对方，就可以互相看到对方的修改了。</p>
-<h2 id="Git搭建和使用"><a href="#Git搭建和使用" class="headerlink" title="Git搭建和使用"></a>Git搭建和使用</h2><blockquote>
-<p>Git上手并不难，深入学习还是建议多实践，可以参考扩展阅读中廖雪峰的Git教程</p>
-</blockquote>
-<h3 id="Git服务端"><a href="#Git服务端" class="headerlink" title="Git服务端"></a>Git服务端</h3><blockquote>
-<p>服务端搭建Git很简单，有更多需求不妨试试Gogs和Gitlab</p>
-</blockquote>
-<p>使用Gogs轻松搭建可能比GitLab更好用的Git服务平台 - <a href="https://wsgzao.github.io/post/gogs/">https://wsgzao.github.io/post/gogs/</a></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#安装git</span></div><div class="line">sudo apt-get install git</div><div class="line">yum install git</div><div class="line"></div><div class="line"><span class="comment">#创建一个git用户，用来运行git服务</span></div><div class="line">sudo adduser git</div><div class="line"></div><div class="line"><span class="comment">#创建证书使用公钥免密码登录(可选)</span></div><div class="line">ssh-keygen -t rsa</div><div class="line">vi ~/.ssh/authorized_keys</div><div class="line"></div><div class="line"><span class="comment">#初始化Git仓库</span></div><div class="line">sudo git init --bare sample.git</div><div class="line">sudo chown -R git:git sample.git</div><div class="line"></div><div class="line"><span class="comment">#禁用shell登录</span></div><div class="line">vi /etc/passwd</div><div class="line">git:x:1001:1001:,,,:/home/git:/usr/bin/git-shell</div><div class="line"></div><div class="line"><span class="comment">#在客户端上克隆远程仓库</span></div><div class="line">git <span class="built_in">clone</span> git@server:/srv/sample.git</div></pre></td></tr></table></figure>
-<p>管理公钥推荐使用Gitosis<br>Gitosis - <a href="https://github.com/res0nat0r/gitosis" target="_blank" rel="external">https://github.com/res0nat0r/gitosis</a><br>Gitosis配置手记 - <a href="http://debugo.com/gitosis/" target="_blank" rel="external">http://debugo.com/gitosis/</a></p>
-<p>管理权限推荐使用Gitolite<br>Gitolite - <a href="https://github.com/sitaramc/gitolite" target="_blank" rel="external">https://github.com/sitaramc/gitolite</a></p>
-<h3 id="Git客户端"><a href="#Git客户端" class="headerlink" title="Git客户端"></a>Git客户端</h3><blockquote>
-<p>Git客户端可以按个人习惯来选择，遵守团队协作中的Git规范标准才是更重要的</p>
-</blockquote>
-<p>Git - <a href="https://git-scm.com/" target="_blank" rel="external">https://git-scm.com/</a><br>TortoiseGit - <a href="https://tortoisegit.org/" target="_blank" rel="external">https://tortoisegit.org/</a><br>SourceTree - <a href="https://www.sourcetreeapp.com/" target="_blank" rel="external">https://www.sourcetreeapp.com/</a></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#以最基本的Git命令行为例，先下载Git</span></div><div class="line">https://git-scm.com/download/</div><div class="line"></div><div class="line"><span class="comment">#配置git提交用户名和邮箱，定义别名方便区分</span></div><div class="line">git config --global user.name <span class="string">"你的姓名"</span></div><div class="line">git config --global user.email <span class="string">"you@example.com"</span></div><div class="line"></div><div class="line"><span class="comment">#克隆仓库</span></div><div class="line">git <span class="built_in">clone</span> <span class="built_in">cap</span>@172.28.70.243:/<span class="built_in">cap</span>/cap.git</div><div class="line"></div><div class="line">$ git <span class="built_in">clone</span> <span class="built_in">cap</span>@172.28.70.243:/<span class="built_in">cap</span>/cap.git</div><div class="line">Cloning into <span class="string">'cap'</span>...</div><div class="line">warning: You appear to have cloned an empty repository.</div><div class="line">Checking connectivity... <span class="keyword">done</span>.</div><div class="line"></div><div class="line"><span class="comment">#测试推送</span></div><div class="line">touch README</div><div class="line">git add README</div><div class="line">git commit -m <span class="string">"add readme"</span></div><div class="line">git push origin master</div><div class="line"></div><div class="line">Counting objects: 3, <span class="keyword">done</span>.</div><div class="line">Writing objects: 100% (3/3), 199 bytes | 0 bytes/s, <span class="keyword">done</span>.</div><div class="line">Total 3 (delta 0), reused 0 (delta 0)</div><div class="line">To <span class="built_in">cap</span>@172.28.70.243:/<span class="built_in">cap</span>/cap.git</div><div class="line"> * [new branch]      master -&gt; master</div></pre></td></tr></table></figure>
-<h2 id="Git常用命令"><a href="#Git常用命令" class="headerlink" title="Git常用命令"></a>Git常用命令</h2><p><strong>符号约定</strong></p>
-<ul>
-<li><code>&lt;xxx&gt;</code> 自定义内容</li>
-<li><code>[xxx]</code> 可选内容</li>
-<li><code>[&lt;xxx&gt;]</code>自定义可选内容</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#初始设置</span></div><div class="line">git config --global user.name <span class="string">"&lt;用户名&gt;"</span> <span class="comment">#设置用户名</span></div><div class="line">git config --global user.email <span class="string">"&lt;电子邮件&gt;"</span> <span class="comment">#设置电子邮件</span></div><div class="line"></div><div class="line"><span class="comment">#本地操作</span></div><div class="line">git add [-i] <span class="comment">#保存更新，-i为逐个确认。</span></div><div class="line">git status <span class="comment">#检查更新。</span></div><div class="line">git commit [-a] -m <span class="string">"&lt;更新说明&gt;"</span> <span class="comment">#提交更新，-a为包含内容修改和增删，-m为说明信息，也可以使用 -am。</span></div><div class="line"></div><div class="line"><span class="comment">#远端操作</span></div><div class="line">git <span class="built_in">clone</span> &lt;git地址&gt; <span class="comment">#克隆到本地。</span></div><div class="line">git fetch <span class="comment">#远端抓取。</span></div><div class="line">git merge <span class="comment">#与本地当前分支合并。</span></div><div class="line">git pull [&lt;远端别名&gt;] [&lt;远端branch&gt;] <span class="comment">#抓取并合并,相当于第2、3步</span></div><div class="line">git push [-f] [&lt;远端别名&gt;] [&lt;远端branch&gt;] <span class="comment">#推送到远端，-f为强制覆盖</span></div><div class="line">git remote add &lt;别名&gt; &lt;git地址&gt; <span class="comment">#设置远端别名</span></div><div class="line">git remote [-v] <span class="comment">#列出远端，-v为详细信息</span></div><div class="line">git remote show &lt;远端别名&gt; <span class="comment">#查看远端信息</span></div><div class="line">git remote rename &lt;远端别名&gt; &lt;新远端别名&gt; <span class="comment">#重命名远端</span></div><div class="line">git remote rm &lt;远端别名&gt; <span class="comment">#删除远端</span></div><div class="line">git remote update [&lt;远端别名&gt;] <span class="comment">#更新分支列表</span></div><div class="line"></div><div class="line"><span class="comment">#分支相关</span></div><div class="line">git branch [-r] [-a] <span class="comment">#列出分支，-r远端 ,-a全部</span></div><div class="line">git branch &lt;分支名&gt; <span class="comment">#新建分支</span></div><div class="line">git branch -b &lt;分支名&gt; <span class="comment">#新建并切换分支</span></div><div class="line">git branch -d &lt;分支名&gt; <span class="comment">#删除分支</span></div><div class="line">git checkout &lt;分支名&gt; <span class="comment">#切换到分支</span></div><div class="line">git checkout -b &lt;本地branch&gt; [-t &lt;远端别名&gt;/&lt;远端分支&gt;] <span class="comment">#-b新建本地分支并切换到分支, -t绑定远端分支</span></div><div class="line">git merge &lt;分支名&gt; <span class="comment">#合并某分支到当前分支</span></div></pre></td></tr></table></figure>
-<p>Git常用命令 - <a href="http://gityuan.com/2015/06/27/git-notes/" target="_blank" rel="external">http://gityuan.com/2015/06/27/git-notes/</a></p>
-<p><img src="http://gityuan.com/images/git/1.png" alt=""></p>
-<ul>
-<li>workspace: 本地的工作目录。（记作A）</li>
-<li>index：缓存区域，临时保存本地改动。（记作B）</li>
-<li>local repository: 本地仓库，只想最后一次提交HEAD。（记作C）</li>
-<li>remote repository：远程仓库。（记作D）</li>
-</ul>
-<blockquote>
-<p>以下所有的命令的功能说明，都采用上述的标记的A、B、C、D的方式来阐述。</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#初始化</span></div><div class="line">git init //创建</div><div class="line">git <span class="built_in">clone</span> /path/to/repository //检出</div><div class="line">git config --global user.email <span class="string">"you@example.com"</span> //配置email</div><div class="line">git config --global user.name <span class="string">"Name"</span> //配置用户名</div><div class="line"></div><div class="line"><span class="comment">#操作</span></div><div class="line">git add &lt;file&gt; // 文件添加，A → B</div><div class="line">git add . // 所有文件添加，A → B</div><div class="line"></div><div class="line">git commit -m <span class="string">"代码提交信息"</span> //文件提交，B → C</div><div class="line">git commit --amend //与上次commit合并, *B → C</div><div class="line"></div><div class="line">git push origin master //推送至master分支, C → D</div><div class="line">git pull //更新本地仓库至最新改动， D → A</div><div class="line">git fetch //抓取远程仓库更新， D → C</div><div class="line"></div><div class="line">git <span class="built_in">log</span> //查看提交记录</div><div class="line">git status //查看修改状态</div><div class="line">git diff//查看详细修改内容</div><div class="line">git show//显示某次提交的内容</div><div class="line"></div><div class="line"><span class="comment">#撤销操作</span></div><div class="line">git reset &lt;file&gt;//某个文件索引会回滚到最后一次提交， C → B</div><div class="line">git reset//索引会回滚到最后一次提交， C → B</div><div class="line">git reset --hard // 索引会回滚到最后一次提交， C → B → A</div><div class="line"></div><div class="line">git checkout // 从index复制到workspace， B → A</div><div class="line">git checkout -- files // 文件从index复制到workspace， B → A</div><div class="line">git checkout HEAD -- files // 文件从<span class="built_in">local</span> repository复制到workspace， C → A</div><div class="line"></div><div class="line"><span class="comment">#分支相关</span></div><div class="line">git checkout -b branch_name //创建名叫“branch_name”的分支，并切换过去</div><div class="line">git checkout master //切换回主分支</div><div class="line">git branch -d branch_name // 删除名叫“branch_name”的分支</div><div class="line">git push origin branch_name //推送分支到远端仓库</div><div class="line">git merge branch_name // 合并分支branch_name到当前分支(如master)</div><div class="line">git rebase //衍合，线性化的自动， D → A</div><div class="line"></div><div class="line"><span class="comment">#冲突处理</span></div><div class="line">git diff //对比workspace与index</div><div class="line">git diff HEAD //对于workspace与最后一次commit</div><div class="line">git diff &lt;source_branch&gt; &lt;target_branch&gt; //对比差异</div><div class="line">git add &lt;filename&gt; //修改完冲突，需要add以标记合并成功</div><div class="line"></div><div class="line"><span class="comment">#其他</span></div><div class="line">gitk //开灯图形化git</div><div class="line">git config color.ui <span class="literal">true</span> //彩色的 git 输出</div><div class="line">git config format.pretty oneline //显示历史记录时，每个提交的信息只显示一行</div><div class="line">git add -i //交互式添加文件到暂存区</div></pre></td></tr></table></figure>
-<h2 id="Git使用规范"><a href="#Git使用规范" class="headerlink" title="Git使用规范"></a>Git使用规范</h2><p>Git 使用规范流程 - <a href="http://www.ruanyifeng.com/blog/2015/08/git-use-process.html" target="_blank" rel="external">http://www.ruanyifeng.com/blog/2015/08/git-use-process.html</a><br>团队中的 Git 实践 - <a href="https://ourai.ws/posts/working-with-git-in-team/" target="_blank" rel="external">https://ourai.ws/posts/working-with-git-in-team/</a><br>构家网 git 团队协作使用规范 v2 - <a href="http://wenku.baidu.com/view/e1430d1b7f1922791788e81e" target="_blank" rel="external">http://wenku.baidu.com/view/e1430d1b7f1922791788e81e</a></p>
-<blockquote>
-<p>Git使用规范提醒</p>
-</blockquote>
-<ul>
-<li>使用Git过程中，必须通过创建分支进行开发，坚决禁止在主干分支上直接开发。review的同事有责任检查其他同事是否遵循分支规范。</li>
-<li>在Git中，默认是不会提交空目录的，如果想提交某个空目录到版本库中，需要在该目录下新建一个 .gitignore 的空白文件，就可以提交了</li>
-<li>把外部文件纳入到自己的 Git 分支来的时候一定要记得是先比对，确认所有修改都是自己修改的，然后再纳入。不然，容易出现代码回溯</li>
-<li>多人协作时，不要各自在自己的 Git 分支开发，然后发文件合并。正确的方法应该是开一个远程分支，然后一起在远程分支里协作。不然，容易出现代码回溯（即别人的代码被覆盖的情况）</li>
-<li>每个人提交代码是一定要 git diff 看提交的东西是不是都是自己修改的。如果有不是自己修改的内容，很可能就是代码回溯</li>
-<li>review 代码的时候如果看到有被删除掉的代码，一定要确实是否是写代码的同事自己删除的。如果不是，很可能就是代码回溯</li>
-</ul>
-]]></content>
-    
-    <summary type="html">
-    
-      Git是目前世界上最先进的分布式版本控制系统
     
     </summary>
     
