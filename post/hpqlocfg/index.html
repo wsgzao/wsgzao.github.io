@@ -9,24 +9,24 @@
         window.location.protocol = "https";
   </script> 
   
-    <title>NLS_LANG | HelloDog</title>
+    <title>HPQLOCFG 批量管理 HP iLO 实践 | HelloDog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wsgzao">
     
 
     
-    <meta name="description" content="HelloDog是一个基于Github和Hexo的静态Blog，希望用简单而清晰的写作方式Markdown分享自己的心得体会。">
+    <meta name="description" content="HP Lights-Out Configuration Utility 批量管理 HP iLO 2/3/4">
 <meta property="og:type" content="article">
-<meta property="og:title" content="NLS_LANG">
-<meta property="og:url" content="https://wsgzao.github.io/post/NLS-LANG/index.html">
+<meta property="og:title" content="HPQLOCFG 批量管理 HP iLO 实践">
+<meta property="og:url" content="https://wsgzao.github.io/post/hpqlocfg/index.html">
 <meta property="og:site_name" content="HelloDog">
-<meta property="og:description" content="HelloDog是一个基于Github和Hexo的静态Blog，希望用简单而清晰的写作方式Markdown分享自己的心得体会。">
+<meta property="og:description" content="HP Lights-Out Configuration Utility 批量管理 HP iLO 2/3/4">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2017-09-06T08:00:53.280Z">
+<meta property="og:updated_time" content="2018-04-02T10:13:30.801Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="NLS_LANG">
-<meta name="twitter:description" content="HelloDog是一个基于Github和Hexo的静态Blog，希望用简单而清晰的写作方式Markdown分享自己的心得体会。">
+<meta name="twitter:title" content="HPQLOCFG 批量管理 HP iLO 实践">
+<meta name="twitter:description" content="HP Lights-Out Configuration Utility 批量管理 HP iLO 2/3/4">
 
     
     <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
@@ -87,14 +87,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/post/NLS-LANG/" title="NLS_LANG" itemprop="url">NLS_LANG</a>
+      <a href="/post/hpqlocfg/" title="HPQLOCFG 批量管理 HP iLO 实践" itemprop="url">HPQLOCFG 批量管理 HP iLO 实践</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
 		
   <p class="article-time">
-    <time datetime="2017-09-06T08:00:53.000Z" itemprop="datePublished"> 发表于 2017-09-06</time>
+    <time datetime="2018-04-02T08:40:53.000Z" itemprop="datePublished"> 发表于 2018-04-02</time>
     
   </p>
 </header>
@@ -103,14 +103,51 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下载-HP-iLO-管理软件和模板"><span class="toc-number">3.</span> <span class="toc-text">下载 HP iLO 管理软件和模板</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实践方法"><span class="toc-number">4.</span> <span class="toc-text">实践方法</span></a></li></ol>
 		
 		</div>
 		
-		  
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>HP iLO, Dell iDRAC, IBM/Lenovo IMM 等这些名字对于服务器硬件工程师来说应该不会陌生，当然在服务器采购回来大规模上架的时刻很多小伙伴估计就要崩溃了，OOB带外管理的IP需要手动配置，NTP和License也需要记得配置，万一忘记了，咳咳，那可就惨喽。这次我们就碰上了NTP时间同步没有配置，导致时区和时间的显示直接影响硬件故障时收集日志判断，为了避免人力资源浪费，网上搜索了一圈发现HP iLO有自己的批量化管理客户端程序，希望大家举一反三提升运维的效率。</p>
+<blockquote>
+<p>HP Lights-Out Configuration Utility 批量管理 HP iLO 2/3/4</p>
+</blockquote>
+<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2018年04月01日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/hpqlocfg/">https://wsgzao.github.io/post/hpqlocfg/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>HP ilo4 批量管理 - <a href="http://blog.51cto.com/gregdefanhua/2089408" target="_blank" rel="external">http://blog.51cto.com/gregdefanhua/2089408</a></p>
+<h2 id="下载-HP-iLO-管理软件和模板"><a href="#下载-HP-iLO-管理软件和模板" class="headerlink" title="下载 HP iLO 管理软件和模板"></a>下载 HP iLO 管理软件和模板</h2><blockquote>
+<p>扩展阅读中的信息已过期，cpqlocfg现在更名为hpqlocfg，沿用了作者的思路在此表示感谢</p>
+</blockquote>
+<p>RECOMMENDED * HP Lights-Out Configuration Utility<br><a href="https://support.hpe.com/hpsc/swd/public/detail?swItemId=MTX_d7e7146b56324eb0879f0a98e2#tab1" target="_blank" rel="external">https://support.hpe.com/hpsc/swd/public/detail?swItemId=MTX_d7e7146b56324eb0879f0a98e2#tab1</a></p>
+<p>用于 Windows 的 HP Lights-Out XML Scripting Sample<br><a href="https://support.hpe.com/hpsc/swd/public/detail?swItemId=MTX_f045db3f567040f291bf645684#tab1" target="_blank" rel="external">https://support.hpe.com/hpsc/swd/public/detail?swItemId=MTX_f045db3f567040f291bf645684#tab1</a></p>
+<h2 id="实践方法"><a href="#实践方法" class="headerlink" title="实践方法"></a>实践方法</h2><blockquote>
+<p>拷贝HPQLOCFG.exe和相关dll文件至脚本当前路径</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">file://C:\Users\wsgzao\Desktop\ilo_ntp	(1 folders, 12 files, 211.96 KB, 3.70 MB <span class="keyword">in</span> total.)</div><div class="line">│  172.25.240.45	266 bytes</div><div class="line">│  HPQLOCFG.exe	59.00 KB</div><div class="line">│  HPQLOCFG.exe.config	712 bytes</div><div class="line">│  HPSSLConnection.dll	13.50 KB</div><div class="line">│  ilo_ntp.log	0 bytes</div><div class="line">│  ip.txt	150 bytes</div><div class="line">│  log.txt	2.24 KB</div><div class="line">│  Parser.dll	133.00 KB</div><div class="line">│  README.txt	2.03 KB</div><div class="line">│  SetNTP.bat	181 bytes</div><div class="line">│  SetNTP.xml	555 bytes</div><div class="line">│  操作步骤.txt	381 bytes</div><div class="line">└─HP官方文件	(0 folders, 3 files, 3.50 MB, 3.50 MB <span class="keyword">in</span> total.)</div><div class="line">        HPE iLO 4 脚本和命令行指南.pdf	2.95 MB</div><div class="line">        SP58155.exe	392.67 KB</div><div class="line">        windows-LOsamplescripts4.80.0.zip	168.34 KB</div></pre></td></tr></table></figure>
+<p>编写XML文件 SetNTP.xml</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">RIBCL</span> <span class="attr">VERSION</span>=<span class="string">"2.0"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">LOGIN</span> <span class="attr">USER_LOGIN</span>=<span class="string">"iloadmin"</span> <span class="attr">PASSWORD</span>=<span class="string">"iloadmin"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">RIB_INFO</span> <span class="attr">MODE</span>=<span class="string">"write"</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">MOD_NETWORK_SETTINGS</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">DHCP_SNTP_SETTINGS</span> <span class="attr">value</span>=<span class="string">"No"</span>/&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">DHCPV6_SNTP_SETTINGS</span> <span class="attr">value</span>=<span class="string">"No"</span>/&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">SNTP_SERVER1</span> <span class="attr">value</span>=<span class="string">"%ntp1%"</span>/&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">TIMEZONE</span> <span class="attr">value</span>=<span class="string">"Asia/Shanghai"</span>/&gt;</span></div><div class="line">            <span class="tag">&lt;/<span class="name">MOD_NETWORK_SETTINGS</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">MOD_GLOBAL_SETTINGS</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">PROPAGATE_TIME_TO_HOST</span> <span class="attr">VALUE</span>=<span class="string">"No"</span> /&gt;</span> </div><div class="line">            <span class="tag">&lt;/<span class="name">MOD_GLOBAL_SETTINGS</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">RIB_INFO</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">LOGIN</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">RIBCL</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>编写批处理  SetNTP.bat</p>
+<figure class="highlight bat"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">@<span class="built_in">echo</span> off</div><div class="line"><span class="keyword">for</span> /f <span class="variable">%%a</span> <span class="keyword">in</span> (ip.txt) <span class="keyword">do</span> (</div><div class="line">    <span class="built_in">set</span> ip=<span class="variable">%%a</span></div><div class="line">    <span class="built_in">set</span> ntp="<span class="number">172</span>.<span class="number">25</span>.<span class="number">240</span>.<span class="number">254</span>"</div><div class="line">    <span class="keyword">call</span> hpqlocfg -s <span class="variable">%%i</span>p%% -l log.txt -f SetNTP.xml -u iloadmin -p iloadmin -t ntp1=<span class="variable">%%n</span>tp%%</div><div class="line">)</div></pre></td></tr></table></figure>
+<blockquote>
+<p>修改2处内容</p>
+</blockquote>
+<ol>
+<li>修改ip.txt，添加信息</li>
+<li>修改SetNTP.bat中set ntp=”172.28.70.254”</li>
+</ol>
+<blockquote>
+<p>执行方法</p>
+</blockquote>
+<pre><code>SetNTP.bat
+</code></pre>  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
 
 
 </div>
@@ -119,7 +156,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://wsgzao.github.io/post/NLS-LANG/" data-title="NLS_LANG | HelloDog" data-tsina="" class="share clearfix">
+	  <div data-url="https://wsgzao.github.io/post/hpqlocfg/" data-title="HPQLOCFG 批量管理 HP iLO 实践 | HelloDog" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -132,19 +169,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/post/lang/" title="NLS_LANG数据库字符集中文乱码问题分析和解决">
-  <strong>上一篇：</strong><br/>
-  <span>
-  NLS_LANG数据库字符集中文乱码问题分析和解决</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/post/pycharm/"  title="PyCharm使用心得">
+<a href="/post/ac18/"  title="腾达AC18刷梅林固件(KoolShare)和恢复原厂固件实践心得">
  <strong>下一篇：</strong><br/> 
- <span>PyCharm使用心得
+ <span>腾达AC18刷梅林固件(KoolShare)和恢复原厂固件实践心得
 </span>
 </a>
 </div>
@@ -160,13 +189,14 @@
 </section>
 
 
+
 </div>  
       <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下载-HP-iLO-管理软件和模板"><span class="toc-number">3.</span> <span class="toc-text">下载 HP iLO 管理软件和模板</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实践方法"><span class="toc-number">4.</span> <span class="toc-text">实践方法</span></a></li></ol>
  
   </div>
 
@@ -193,7 +223,7 @@
 		  
 		
 		  
-			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>56</sup></a></li>
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>57</sup></a></li>
 		  
 		
 		  
@@ -244,7 +274,7 @@
 	
 	<section class="info">
 		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
-			Doing is better than perfect.</p>
+			Keep Calm and Carry On.</p>
 	</section>
 	 
 	<div class="social-font" class="clearfix">
@@ -267,7 +297,7 @@
 		
 
 		<p class="copyright">
-		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
 		
 		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
 		
@@ -432,6 +462,16 @@ var disqus_shortname = 'wsgzao';
 </script>
 
 
+
+
+
+
+
+  <script>
+    var xlm_wid='12835';
+    var xlm_url='https://www.xianliao.me/';
+  </script>
+  <script type='text/javascript' charset='UTF-8' src='https://www.xianliao.me/embed.js'></script>
 
 
 
