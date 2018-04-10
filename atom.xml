@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://wsgzao.github.io/"/>
-  <updated>2018-04-02T10:13:30.801Z</updated>
+  <updated>2018-04-10T08:27:08.367Z</updated>
   <id>https://wsgzao.github.io/</id>
   
   <author>
@@ -14,6 +14,79 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>RHEL7/CentOS7在线和离线安装GitLab配置使用实践</title>
+    <link href="https://wsgzao.github.io/post/gitlab/"/>
+    <id>https://wsgzao.github.io/post/gitlab/</id>
+    <published>2018-04-10T08:40:53.000Z</published>
+    <updated>2018-04-10T08:27:08.367Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>GitLab Community Edition 新版本已经集成了CI/CD的支持，从某种程度上来说可以告别对于Jenkins的依赖，我本来计划是写基于Docker部署GitLab但感觉还是有点重，对于内网离线环境来说基于容器部署也未必是合理的方案，这里沿用传统的部署方式介绍简单且长期有效的GitLab部署方案供大家参考，或许未来会增加基于容器的部署方案和CI/CD的分享，因需而变。</p>
+<blockquote>
+<p>RHEL7/CentOS7在线和离线安装GitLab配置实践，GitLab汉化配置使用小结</p>
+</blockquote>
+<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2018年04月10日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/gitlab/">https://wsgzao.github.io/post/gitlab/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>GitLab Installation - <a href="https://about.gitlab.com/installation" target="_blank" rel="external">https://about.gitlab.com/installation</a></p>
+<h2 id="GitLab简介"><a href="#GitLab简介" class="headerlink" title="GitLab简介"></a>GitLab简介</h2><p>GitLab是利用Ruby On Rails开发的一个开源版本管理系统，实现了一个自托管的Git项目仓库，是集代码托管，测试，部署于一体的开源git仓库管理软件，可通过web界面来进行访问公开的或私人项目。与Github类似，GitLab能够浏览代码，管理缺陷和注释。可以管理团队对仓库的访问，它非常易于浏览提交过的版本，并提供一个文件历史库。它还提供一个代码片段收集功能可以轻松实现代码复用，便于日后需要的时候查找。</p>
+<blockquote>
+<p>Git的家族成员</p>
+</blockquote>
+<ul>
+<li>Git：是一种版本控制系统，是一个命令，是一种工具。</li>
+<li>Gitlib：是用于实现Git功能的开发库。</li>
+<li>Github：是一个基于Git实现的在线代码托管仓库，公开项目是免费的，也可以付费创建私人项目。</li>
+<li>GitLab：是一个基于Git实现的在线代码仓库托管软件，可以用GitLab搭建一套类似Github的系统。</li>
+</ul>
+<p>GitLab对硬件还是有一定要求的，1核心的CPU基本上可以满足需求，大概支撑100个左右的用户，不过在运行GitLab网站的同时还需要运行多个后台job，就会显得有点捉襟见肘了。需要至少4GB的可寻址内存（RAM交换）来安装和使用GitLab，操作系统和任何其他正在运行的应用程序也将使用内存，因此请记住，在运行GitLab之前，您至少需要4GB的可用空间。如果使用更少的内存，GitLab将在重新配置运行期间给出奇怪的错误，我用虚拟机来分别新建1G,2G内存的CentOS系统来装GitLab，确实非常捉襟见肘啊，伤不起。</p>
+<h3 id="Gitlab的服务构成"><a href="#Gitlab的服务构成" class="headerlink" title="Gitlab的服务构成"></a>Gitlab的服务构成</h3><ul>
+<li>Nginx：静态web服务器</li>
+<li>gitlab-shell：用于处理Git命令和修改authorized keys列表</li>
+<li>gitlab-workhorse: 轻量级的反向代理服务器</li>
+<li>logrotate：日志文件管理工具</li>
+<li>postgresql：数据库</li>
+<li>redis：缓存数据库</li>
+<li>sidekiq：用于在后台执行队列任务（异步执行）</li>
+<li>unicorn：An HTTP server for Rack applications，GitLab Rails应用是托管在这个服务器上面的</li>
+</ul>
+<h3 id="GitLab工作流程"><a href="#GitLab工作流程" class="headerlink" title="GitLab工作流程"></a>GitLab工作流程</h3><p><img src="http://docs-aliyun.cn-hangzhou.oss.aliyun-inc.com/assets/pic/52857/cn_zh/1492756915645/%E5%9B%BE%E7%89%878.png" alt=""></p>
+<h2 id="GitLab安装"><a href="#GitLab安装" class="headerlink" title="GitLab安装"></a>GitLab安装</h2><h3 id="在线安装gitlab-ce"><a href="#在线安装gitlab-ce" class="headerlink" title="在线安装gitlab-ce"></a>在线安装gitlab-ce</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 安装必要的依赖包，如果不需要可以考虑跳过</span></div><div class="line">yum install pygpgme yum-utils</div><div class="line"><span class="comment"># On CentOS 7 (and RedHat/Oracle/Scientific Linux 7), the commands below will also open HTTP and SSH access in the system firewall.</span></div><div class="line">sudo yum install -y curl policycoreutils-python openssh-server</div><div class="line">sudo systemctl <span class="built_in">enable</span> sshd</div><div class="line">sudo systemctl start sshd</div><div class="line">sudo firewall-cmd --permanent --add-service=http</div><div class="line">sudo systemctl reload firewalld</div><div class="line"><span class="comment"># Next, install Postfix to send notification emails. If you want to use another solution to send emails please skip this step and configure an external SMTP server after GitLab has been installed.</span></div><div class="line">sudo yum install postfix</div><div class="line">sudo systemctl <span class="built_in">enable</span> postfix</div><div class="line">sudo systemctl start postfix</div><div class="line"></div><div class="line"><span class="comment"># 使用阿里云作加速</span></div><div class="line"><span class="built_in">cd</span> /etc/yum.repos.d/ &amp;&amp; rm -f *.repo</div><div class="line">wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo</div><div class="line">wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo</div><div class="line"></div><div class="line"><span class="comment"># 添加GitLab镜像源并安装，建议切换国内资源加速访问</span></div><div class="line">curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash</div><div class="line"></div><div class="line"><span class="comment"># 创建gitlab-ce的repo，使用清华大学加速</span></div><div class="line">vim /etc/yum.repos.d/gitlab_gitlab-ce.repo</div><div class="line"></div><div class="line">[gitlab-ce]</div><div class="line">name=gitlab-ce</div><div class="line">baseurl=http://mirrors.tuna.tsinghua.edu.cn/gitlab-ce/yum/el7</div><div class="line">repo_gpgcheck=0</div><div class="line">gpgcheck=0</div><div class="line">enabled=1</div><div class="line">gpgkey=https://packages.gitlab.com/gpg.key</div><div class="line"></div><div class="line"><span class="comment">#配置并启动 GitLab</span></div><div class="line">gitlab-ctl reconfigure</div><div class="line"></div><div class="line"><span class="comment"># 第一次访问GitLab，系统会重定向页面到重定向到重置密码页面，你需要输入初始化管理员账号的密码，管理员的用户名为root，重置密码后新密码即为刚输入的密码。</span></div><div class="line">0.0.0.0:80</div></pre></td></tr></table></figure>
+<h3 id="离线安装gitlab-ce"><a href="#离线安装gitlab-ce" class="headerlink" title="离线安装gitlab-ce"></a>离线安装gitlab-ce</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 使用阿里云作加速</span></div><div class="line"><span class="built_in">cd</span> /etc/yum.repos.d/ &amp;&amp; rm -f *.repo</div><div class="line">wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo</div><div class="line">wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo</div><div class="line"></div><div class="line"><span class="comment"># 添加GitLab镜像源并安装，建议切换国内资源加速访问</span></div><div class="line">curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash</div><div class="line"></div><div class="line"><span class="comment"># 创建gitlab-ce的repo，使用清华大学加速</span></div><div class="line">vim /etc/yum.repos.d/gitlab_gitlab-ce.repo</div><div class="line"></div><div class="line">[gitlab-ce]</div><div class="line">name=gitlab-ce</div><div class="line">baseurl=http://mirrors.tuna.tsinghua.edu.cn/gitlab-ce/yum/el7</div><div class="line">repo_gpgcheck=0</div><div class="line">gpgcheck=0</div><div class="line">enabled=1</div><div class="line">gpgkey=https://packages.gitlab.com/gpg.key</div><div class="line"></div><div class="line"><span class="comment">#安装yum-plugin-downloadonly插件</span></div><div class="line">yum install -y yum-plugin-downloadonly</div><div class="line"></div><div class="line"><span class="comment"># 下载gitlab-ce相关rpm到指定目录</span></div><div class="line">mkdir -p /tmp/repo/gitlab-ce/</div><div class="line">yum install --downloadonly --downloaddir=/tmp/repo/gitlab-ce/ gitlab-ce</div><div class="line"></div><div class="line"><span class="comment"># 拷贝文件至内网离线安装</span></div><div class="line">rpm -ivh /tmp/repo/gitlab-ce/*</div><div class="line"></div><div class="line"><span class="comment">#配置并启动 GitLab</span></div><div class="line">gitlab-ctl reconfigure</div><div class="line"></div><div class="line"><span class="comment"># 第一次访问GitLab，系统会重定向页面到重定向到重置密码页面，你需要输入初始化管理员账号的密码，管理员的用户名为root，重置密码后新密码即为刚输入的密码。</span></div><div class="line">0.0.0.0:80</div></pre></td></tr></table></figure>
+<h2 id="GitLab汉化"><a href="#GitLab汉化" class="headerlink" title="GitLab汉化"></a>GitLab汉化</h2><blockquote>
+<p>如果团队里英文水平都不错的话，是没必要汉化的，我个人的建议是坚持使用原版不做汉化</p>
+</blockquote>
+<p>GitLab中文社区的项目，v7-v8.8是由Larry Li发起的“GitLab中文社区版项目”<br><a href="https://gitlab.com/larryli/gitlab" target="_blank" rel="external">https://gitlab.com/larryli/gitlab</a></p>
+<p>从v8.9之后由@xhang开始继续汉化项目<br><a href="https://gitlab.com/xhang/gitlab" target="_blank" rel="external">https://gitlab.com/xhang/gitlab</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 如没安装git，需提前安装</span></div><div class="line">yum install -y git</div><div class="line"></div><div class="line"><span class="comment"># 创建gitlba汉化包下载目录</span></div><div class="line">mkdir -p /tmp/gitlab</div><div class="line"><span class="built_in">cd</span> /tmp/gitlab</div><div class="line"></div><div class="line"><span class="comment"># 下载最新的汉化包</span></div><div class="line">git <span class="built_in">clone</span> https://gitlab.com/xhang/gitlab.git</div><div class="line"></div><div class="line"><span class="comment"># 如果是要下载老版本的汉化包，需要加上老版本的分支，如果想下载10.0.2，可以运行如下语句</span></div><div class="line">git <span class="built_in">clone</span> https://gitlab.com/xhang/gitlab.git -b v10.0.2-zh</div><div class="line"></div><div class="line"><span class="comment"># 停止GitLab并执行如下语句</span></div><div class="line">gitlab-ctl stop</div><div class="line">cp /tmp/gitlab/gitlab/* /opt/gitlab/embedded/service/gitlab-rails/ -rf</div><div class="line"></div><div class="line"><span class="comment"># 复制时可能不断提示是否要覆盖，这时可能是系统每次执行cp命令时，其实是执行了cp -i命令的别名。出现这种情况可以修改~/.bashrc，在“alias cp=’cp-i’”前加#注释即可。使用命令或者注销登录即可</span></div><div class="line"><span class="built_in">source</span> ~/.bashrc</div><div class="line"></div><div class="line"><span class="comment"># 接下来可以重新配置和启动</span></div><div class="line">gitlab-ctl reconfigure</div><div class="line">gitlab-ctl restart</div></pre></td></tr></table></figure>
+<h2 id="GitLab命令"><a href="#GitLab命令" class="headerlink" title="GitLab命令"></a>GitLab命令</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 语法</span></div><div class="line">gitlab-ctl <span class="built_in">command</span> (subcommand)</div><div class="line"></div><div class="line">Service Management Commands</div><div class="line"></div><div class="line">start <span class="comment"># 启动所有服务</span></div><div class="line">stop <span class="comment"># 关闭所有服务</span></div><div class="line">restart <span class="comment"># 重启所有服务</span></div><div class="line">status <span class="comment"># 查看所有服务状态</span></div><div class="line">tail <span class="comment"># 查看日志信息</span></div><div class="line">service-list <span class="comment"># 列举所有启动服务</span></div><div class="line">graceful-kill <span class="comment"># 平稳停止一个服务</span></div><div class="line"></div><div class="line"><span class="comment"># 启动所有服务</span></div><div class="line">gitlab-ctl start </div><div class="line"><span class="comment"># 启动单独一个服务</span></div><div class="line">gitlab-ctl start nginx</div><div class="line"><span class="comment">#查看日志，查看所有日志</span></div><div class="line">gitlab-ctl tail</div><div class="line"><span class="comment">#查看具体一个日志,类似tail -f</span></div><div class="line">gitlab-ctl tail nginx</div><div class="line"></div><div class="line">General Commands</div><div class="line"></div><div class="line"><span class="built_in">help</span> <span class="comment"># 帮助</span></div><div class="line">reconfigure <span class="comment"># 修改配置文件之后，需要重新加载下</span></div><div class="line">show-config <span class="comment"># 查看所有服务配置文件信息</span></div><div class="line">uninstall <span class="comment"># 卸载这个软件</span></div><div class="line">cleanse <span class="comment"># 删除gitlab数据，重新白手起家</span></div><div class="line"></div><div class="line"><span class="comment"># 显示所有服务配置文件</span></div><div class="line">gitlab-ctl show-config</div><div class="line"></div><div class="line"><span class="comment"># 卸载gitlab</span></div><div class="line">gitlab-ctl uninstall</div></pre></td></tr></table></figure>
+<h2 id="QQ邮箱配置"><a href="#QQ邮箱配置" class="headerlink" title="QQ邮箱配置"></a>QQ邮箱配置</h2><p>默认情况下，GitLab用qq邮箱注册是发不出确认邮件的。查看了网上很多邮箱配置的教程，大部分都是误导的。像这类软件，归根到底总结为一句话：一切以官网文档为准。QQ邮箱最好用企业邮箱，本人用个人邮箱进行测试是有些小问题的，正确配置如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 编辑gitlab.rb</span></div><div class="line">vim /etc/gitlab/gitlab.rb</div><div class="line"></div><div class="line">gitlab_rails[<span class="string">'smtp_enable'</span>] = <span class="literal">true</span></div><div class="line">gitlab_rails[<span class="string">'smtp_address'</span>] = <span class="string">"smtp.exmail.qq.com"</span></div><div class="line">gitlab_rails[<span class="string">'smtp_port'</span>] = 465</div><div class="line">gitlab_rails[<span class="string">'smtp_user_name'</span>] = <span class="string">"xxxx@xx.com"</span></div><div class="line">gitlab_rails[<span class="string">'smtp_password'</span>] = <span class="string">"password"</span></div><div class="line">gitlab_rails[<span class="string">'smtp_authentication'</span>] = <span class="string">"login"</span></div><div class="line">gitlab_rails[<span class="string">'smtp_enable_starttls_auto'</span>] = <span class="literal">true</span></div><div class="line">gitlab_rails[<span class="string">'smtp_tls'</span>] = <span class="literal">true</span></div><div class="line">gitlab_rails[<span class="string">'gitlab_email_from'</span>] = <span class="string">'xxxx@xx.com'</span></div></pre></td></tr></table></figure>
+<h2 id="GitLab使用"><a href="#GitLab使用" class="headerlink" title="GitLab使用"></a>GitLab使用</h2><h3 id="登录GitLab"><a href="#登录GitLab" class="headerlink" title="登录GitLab"></a>登录GitLab</h3><ol>
+<li>在浏览器的地址栏中输入IP即可登录GitLab的界面，老版本第一次登录使用的用户名和密码为 <code>root</code> 和 <code>5iveL!fe</code></li>
+<li>首次登录会强制用户修改密码。密码修改成功后，输入新密码进行登录</li>
+</ol>
+<h3 id="创建Project"><a href="#创建Project" class="headerlink" title="创建Project"></a>创建Project</h3><p>1.安装Git工具linux：安装Git，使用自带的源安装</p>
+<pre><code>yum install git
+</code></pre><p>2.生成密钥文件：使用ssh-keygen生成密钥文件.ssh/id_rsa.pub。</p>
+<pre><code>ssh-keygen -t rsa
+</code></pre><p>3.在GitLab的主页中新建一个Project</p>
+<p>4.添加ssh key导入步骤2中生成的密钥文件内容：</p>
+<pre><code>Profile Settings =&gt; SSH Keys =&gt; Add SSH key
+</code></pre><h3 id="简单配置"><a href="#简单配置" class="headerlink" title="简单配置"></a>简单配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 配置使用Git仓库的人员姓名</span></div><div class="line">git config --global user.name <span class="string">"wangao"</span> </div><div class="line"><span class="comment"># 配置使用Git仓库的人员email，填写自己的公司邮箱</span></div><div class="line">git config --global user.email <span class="string">"wangao@test.com"</span> </div><div class="line"><span class="comment"># 克隆项目，在本地生成同名目录，并且目录中会有所有的项目文件</span></div><div class="line">git <span class="built_in">clone</span> git@172.28.70.126:root/test.git</div><div class="line"><span class="comment"># 进入到项目目录</span></div><div class="line"><span class="built_in">cd</span> <span class="built_in">test</span>/ </div><div class="line"><span class="comment"># 创建需要上传到GitLab中的目标文件</span></div><div class="line"><span class="built_in">echo</span> <span class="string">"test"</span> &gt; test.sh</div><div class="line"><span class="comment"># 将test.sh文件加入到索引中</span></div><div class="line">git add test.sh</div><div class="line"><span class="comment"># 将test.sh提交到本地仓库</span></div><div class="line">git commit -m <span class="string">"test.sh"</span></div><div class="line"><span class="comment"># 将文件同步到GitLab服务器上</span></div><div class="line">git push -u origin master</div><div class="line"><span class="comment"># 在网页中查看上传的test.sh文件已经同步到GitLab中</span></div></pre></td></tr></table></figure>
+]]></content>
+    
+    <summary type="html">
+    
+      RHEL7/CentOS7在线和离线安装GitLab配置实践，GitLab汉化配置使用小结
+    
+    </summary>
+    
+      <category term="学习 | Study" scheme="https://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>HPQLOCFG 批量管理 HP iLO 实践</title>
@@ -1547,78 +1620,6 @@
     </summary>
     
       <category term="学习 | Study" scheme="https://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>从大苏菲TL-WDR8600退货降级至腾达AC9的决断</title>
-    <link href="https://wsgzao.github.io/post/wdr8600/"/>
-    <id>https://wsgzao.github.io/post/wdr8600/</id>
-    <published>2016-06-12T08:17:46.000Z</published>
-    <updated>2017-09-04T02:35:47.090Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="http://ww3.sinaimg.cn/large/7207510dgw1f4sim1qwuhj20zk0p07ds.jpg" alt=""></p>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>无线路由器从高中老师赠送的NetGear开始，TP-LINK*2，极路由1，小米路由mini，到回归大苏菲感受5G千兆网络技术革新，然而7天的使用体验又促使我降级选择了腾达AC9，技术超前和实用场景的不契合也让我吃了螃蟹坑了爹。虽然不是发烧友但也从KoolShare这样的专业论坛学到不少知识，体验第一代iPhone的人因为热爱和好奇心驱动，折腾自己有时很傻很天真，但也正因为如此他们才会成为第一批看见蓝海的开拓者。</p>
-<blockquote>
-<p>可惜自己再一次错爱了TP-LINK，不再推荐TP-LINK产品给其他朋友</p>
-</blockquote>
-<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2016年06月09日 - TL-WDR8600退货，降级腾达AC9<br>2016年06月01日 - 初稿</p>
-<p>阅读原文 - <a href="https://wsgzao.github.io/post/wdr8600/">https://wsgzao.github.io/post/wdr8600/</a></p>
-<p><strong>扩展阅读</strong></p>
-<p>AC9 1200M 5口全千兆双频无线路由器 - <a href="http://www.tenda.com.cn/product/AC9.html" target="_blank" rel="external">http://www.tenda.com.cn/product/AC9.html</a><br>TL-WDR8600 AC2600 双频千兆无线路由器 - <a href="http://www.tp-link.com.cn/product_497.html" target="_blank" rel="external">http://www.tp-link.com.cn/product_497.html</a><br>TP-LINK TL-WDR8600 裸照 - <a href="http://koolshare.cn/thread-39144-1-1.html" target="_blank" rel="external">http://koolshare.cn/thread-39144-1-1.html</a><br>诚意之作-腾达AC9千兆双频路由器众测报告 - <a href="http://test.smzdm.com/pingce/p/31659/" target="_blank" rel="external">http://test.smzdm.com/pingce/p/31659/</a></p>
-<h2 id="购买记录"><a href="#购买记录" class="headerlink" title="购买记录"></a>购买记录</h2><blockquote>
-<p>价格：京东 6.1 日活动满 1000 减 200 入手TL-WDR8600，大概800元出头，然而我又以259购买腾达AC9，原因后续会说</p>
-</blockquote>
-<p>TP-LINK TL-WDR8600 2600M 11AC双频千兆无线路由器 - <a href="http://item.jd.com/2471759.html" target="_blank" rel="external">http://item.jd.com/2471759.html</a></p>
-<p>腾达（Tenda）AC9 1200M 11AC 千兆口无线增强型路由器 - <a href="http://item.jd.com/2720472.html" target="_blank" rel="external">http://item.jd.com/2720472.html</a></p>
-<h2 id="购买原因"><a href="#购买原因" class="headerlink" title="购买原因"></a>购买原因</h2><blockquote>
-<p>无线路由器我最关心3点</p>
-</blockquote>
-<ol>
-<li>信号覆盖</li>
-<li>连接稳定性</li>
-<li>高速性能</li>
-</ol>
-<p>在极路由，小米路由，360路由，华为荣耀路由杀入无线路由器市场的今天，百兆带宽下的选择其实已经很多，而且价位多数都可以保持在200元以内，对于大家来说选择谁其实已经不重要了，自己喜欢就好。</p>
-<p>我为什么会选择一款TP的新款顶配，虽然被TP坑过2回但我还是想再重新认识曾今<code>家用无线路由器</code>全球市场占有率第一的中国品牌，我希望可以看到TP-Link技术上的进步和用户体验上的改进。</p>
-<p><img src="http://ww4.sinaimg.cn/large/7207510dgw1f4siqunejwj20ue0h9tbj.jpg" alt=""></p>
-<p>最终7天体验后决定把大苏菲退货购买一款腾达的中端路由器，一方面是TP的高价格高规格并没有给我带来更优质的体验，微信语音丢包这个现象也让我十分困扰TP-Link的旗舰路由器到底值不值得。最后也是基于大量的网友评测数据和实际需求做出的决断，而TP-Link的这次出局或许值得大家一起分析下。</p>
-<p><img src="http://ww3.sinaimg.cn/large/7207510dgw1f4sir6nml7j20ph0nn44i.jpg" alt=""></p>
-<h2 id="评测内容"><a href="#评测内容" class="headerlink" title="评测内容"></a>评测内容</h2><blockquote>
-<p>我没有KoolShare这么专业，大家可以参考其它无线路由产品的专业评测，比如R8500</p>
-</blockquote>
-<p><a href="http://koolshare.cn/portal.php?mod=list&amp;catid=9" target="_blank" rel="external">http://koolshare.cn/portal.php?mod=list&amp;catid=9</a></p>
-<p><strong>测试方案</strong></p>
-<blockquote>
-<p>家用宽带上海电信 200M ，面积 96 平方米 </p>
-</blockquote>
-<ol>
-<li>有线，无线，移动端分别测出当前极限值</li>
-<li>开启满速下载测试ping延迟和丢包率</li>
-<li>7天测试日常使用场景包括，小米盒子5G，2.4G关门最远距离测试30分钟以上微信语音</li>
-</ol>
-<p><img src="http://ww2.sinaimg.cn/large/7207510dgw1f4sirgf80aj20go0aa0tq.jpg" alt=""><br><img src="http://ww1.sinaimg.cn/large/7207510dgw1f4sirtl3zyj21kw166dxj.jpg" alt=""><br><img src="http://ww3.sinaimg.cn/large/7207510dgw1f4sis29szkj21kw166av9.jpg" alt=""><br><img src="http://ww2.sinaimg.cn/large/7207510dgw1f4sisp5zdij21kw166e81.jpg" alt=""><br><img src="http://ww1.sinaimg.cn/large/7207510dgw1f4sisybo0hj20u01hcq78.jpg" alt=""><br><img src="http://ww4.sinaimg.cn/large/7207510dgw1f4sit3kk8xj20u01hc78k.jpg" alt=""></p>
-<h2 id="评测小结"><a href="#评测小结" class="headerlink" title="评测小结"></a>评测小结</h2><blockquote>
-<p>家用路由器我按以下 5 个产品为标杆进行排序</p>
-</blockquote>
-<p>腾达AC9 &lt; 腾达 AC15(AC18众筹中) &lt; 网件 R7000 &lt; 华硕 AC68 &lt; 网件 R8500</p>
-<ol>
-<li>TP-LINK顶级家用产品最终以退货的形式出局实在是很难堪，而腾达中端的初体验也让我眼前一亮</li>
-<li>无<code>单线并发多拨</code>和<code>通过路由器代理</code>的需求可以不考虑刷机，当然Merlin固件也是功不可没</li>
-<li>如果你的预算在500元以内，通过软路由，无线放大器，无线中继等方式也可以达到满意的效果</li>
-<li>极路由/小米路由/360路由/华为荣耀路由等，或许之前/现在仍然做得不够好，但不代表未来的无限可能</li>
-</ol>
-<p>​题图 - 重要的体验提升，始于重要的技术革新 By TP-LINK</p>
-]]></content>
-    
-    <summary type="html">
-    
-      可惜自己再一次错爱了TP-LINK，不再推荐TP-LINK产品给其他朋友
-    
-    </summary>
-    
-      <category term="生活 | Life" scheme="https://wsgzao.github.io/categories/%E7%94%9F%E6%B4%BB-Life/"/>
     
     
   </entry>
