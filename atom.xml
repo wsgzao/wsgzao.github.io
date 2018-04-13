@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://wsgzao.github.io/"/>
-  <updated>2018-04-10T08:27:08.367Z</updated>
+  <updated>2018-04-13T07:32:36.750Z</updated>
   <id>https://wsgzao.github.io/</id>
   
   <author>
@@ -16,11 +16,207 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>使用pypiserver快速搭建内网离线pypi仓库实践</title>
+    <link href="https://wsgzao.github.io/post/pypiserver/"/>
+    <id>https://wsgzao.github.io/post/pypiserver/</id>
+    <published>2018-04-12T08:40:53.000Z</published>
+    <updated>2018-04-13T07:32:36.750Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文介绍了如何快速搭建一个pypiserver，通过自建pypiserver，我们可以解决网络环境不好，或者离线无法安装python包的问题。如果结合最新的GitLab CI/CD和pipenv我相信各位还可以玩出更多的花样。</p>
+<blockquote>
+<p>pypiserver - minimal PyPI server for use with pip/easy_install</p>
+</blockquote>
+<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2018年04月12日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/pypiserver/">https://wsgzao.github.io/post/pypiserver/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>pypiserver - <a href="https://github.com/pypiserver/pypiserver" target="_blank" rel="external">https://github.com/pypiserver/pypiserver</a></p>
+<h2 id="pypiserver-简介"><a href="#pypiserver-简介" class="headerlink" title="pypiserver 简介"></a>pypiserver 简介</h2><p>pypiserver is a minimal PyPI compatible server for pip or easy_install. It is based on bottle and serves packages from regular directories. Wheels, bdists, eggs and accompanying PGP-signatures can be uploaded either with pip, setuptools, twine, pypi-uploader, or simply copied with scp.</p>
+<h2 id="pypiserver-服务端配置"><a href="#pypiserver-服务端配置" class="headerlink" title="pypiserver 服务端配置"></a>pypiserver 服务端配置</h2><blockquote>
+<p>如果你的Linux环境缺少Python 2.7可以参考我的文章直接离线升级至最新版本</p>
+</blockquote>
+<p>Python 2.6 升级至 Python 2.7 的实践心得<br><a href="https://wsgzao.github.io/post/python-2-6-update-to-2-7/">https://wsgzao.github.io/post/python-2-6-update-to-2-7/</a></p>
+<p>pypiserver &gt; 1.2.x works with python 2.7 and 3.3+ or pypy. Older python-versions may still work, but they are not tested. For legacy python versions, use pypiserver-1.1.x series.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 替换pip为阿里云，感概豆瓣的时代已经过去</span></div><div class="line">tee ~/.pip/pip.conf &lt;&lt;-<span class="string">'EOF'</span></div><div class="line">[global]</div><div class="line">index-url = https://mirrors.aliyun.com/pypi/simple/</div><div class="line">[install]</div><div class="line">trusted-host= mirrors.aliyun.com</div><div class="line">EOF</div><div class="line"></div><div class="line"><span class="comment"># 直接在线安装pypiserver</span></div><div class="line">pip install pypiserver</div><div class="line"><span class="comment"># 离线下载pypiserver</span></div><div class="line">mkdir /tmp/pypiserver</div><div class="line">pip install -d /tmp/pypiserver/ pypiserver</div><div class="line"></div><div class="line"><span class="comment"># Copy packages into this directory.</span></div><div class="line">mkdir ~/packages</div><div class="line"><span class="comment"># Copy some packages into your ~/packages folder and then get your pypiserver up and running:</span></div><div class="line">pypi-server -p 8080 ~/packages &amp;</div></pre></td></tr></table></figure>
+<h2 id="pypiserver-客户端配置"><a href="#pypiserver-客户端配置" class="headerlink" title="pypiserver 客户端配置"></a>pypiserver 客户端配置</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">## Download and Install hosted packages.</span></div><div class="line">pip install  --extra-index-url http://localhost:8080/simple/ ...</div><div class="line"></div><div class="line"><span class="comment"># or</span></div><div class="line">pip install --extra-index-url http://localhost:8080</div><div class="line"></div><div class="line"><span class="comment">## Search hosted packages</span></div><div class="line">pip search --index http://localhost:8080 ...</div><div class="line"></div><div class="line"><span class="comment"># 个人推荐的配置</span></div><div class="line">tee ~/.pip/pip.conf &lt;&lt;-<span class="string">'EOF'</span></div><div class="line">[global]</div><div class="line">index-url = http://172.28.70.126/simple</div><div class="line">extra-index-url = https://mirrors.aliyun.com/pypi/simple/</div><div class="line">[install]</div><div class="line">trusted-host = 172.28.70.126</div><div class="line">EOF</div></pre></td></tr></table></figure>
+<h2 id="pypiserver-进阶配置"><a href="#pypiserver-进阶配置" class="headerlink" title="pypiserver 进阶配置"></a>pypiserver 进阶配置</h2><blockquote>
+<p>pypiserver Running as a systemd service</p>
+</blockquote>
+<p><a href="https://github.com/pypiserver/pypiserver#running-as-a-systemd-service" target="_blank" rel="external">https://github.com/pypiserver/pypiserver#running-as-a-systemd-service</a></p>
+<p>Adjusting the paths and adding this file as pypiserver.service into your systemd/system directory will allow management of the pypiserver process with systemctl, e.g. systemctl start pypiserver.</p>
+<p>More useful information about systemd can be found at <a href="https://www.digitalocean.com/community/tutorials/how-to-use-systemctl-to-manage-systemd-services-and-units" target="_blank" rel="external">https://www.digitalocean.com/community/tutorials/how-to-use-systemctl-to-manage-systemd-services-and-units</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 安装需要的包</span></div><div class="line">yum install nginx -y</div><div class="line">pip install passlib pypiserver gunicorn</div><div class="line"></div><div class="line"><span class="comment"># 创建pypiserver服务方便服务启停管理</span></div><div class="line">tee /usr/lib/systemd/system/pypiserver.service &lt;&lt;-<span class="string">'EOF'</span></div><div class="line">[Unit]</div><div class="line">Description=gunicorn daemon</div><div class="line">After=network.target</div><div class="line"></div><div class="line">[Service]</div><div class="line">PIDFile=/run/pypiserver.pid</div><div class="line">ExecStart=/usr/<span class="built_in">local</span>/bin/gunicorn -w16 \</div><div class="line">    --pid /run/pypiserver.pid \</div><div class="line">    -b :10012 \</div><div class="line">    <span class="string">'pypiserver:app(root="/var/www/pypi")'</span></div><div class="line">ExecReload=/bin/<span class="built_in">kill</span> -s HUP <span class="variable">$MAINPID</span></div><div class="line">ExecStop=/bin/<span class="built_in">kill</span> -s TERM <span class="variable">$MAINPID</span></div><div class="line"></div><div class="line">[Install]</div><div class="line">WantedBy=multi-user.target </div><div class="line">EOF</div><div class="line"></div><div class="line"><span class="comment"># Warning: pypiserver.service changed on disk. Run 'systemctl daemon-reload' to reload units.</span></div><div class="line">systemctl daemon-reload</div><div class="line"></div><div class="line"><span class="comment"># 启动pypiserver服务</span></div><div class="line">systemctl <span class="built_in">enable</span> pypiserver.service</div><div class="line">systemctl start pypiserver.service</div><div class="line">systemctl status pypiserver.service</div><div class="line"></div><div class="line"><span class="comment"># 停止pypiserver服务</span></div><div class="line">systemctl <span class="built_in">disable</span> pypiserver.service</div><div class="line">systemctl stop pypiserver.service</div><div class="line">systemctl status pypiserver.service</div><div class="line"></div><div class="line">[root@centos7 run]<span class="comment"># systemctl status pypiserver.service</span></div><div class="line">● pypiserver.service - gunicorn daemon</div><div class="line">   Loaded: loaded (/usr/lib/systemd/system/pypiserver.service; disabled; vendor preset: disabled)</div><div class="line">   Active: active (running) since Fri 2018-04-13 15:14:08 CST; 859ms ago</div><div class="line"> Main PID: 22524 (gunicorn)</div><div class="line">   CGroup: /system.slice/pypiserver.service</div><div class="line">           ├─22524 /usr/<span class="built_in">local</span>/bin/python /usr/<span class="built_in">local</span>/bin/gunicorn -w16 --pid /run/pypiserver.pid -b :10012 pypiserver:app(root=<span class="string">"/var/www/pypi"</span>)</div><div class="line">           ├─22530 /usr/<span class="built_in">local</span>/bin/python /usr/<span class="built_in">local</span>/bin/gunicorn -w16 --pid /run/pypiserver.pid -b :10012 pypiserver:app(root=<span class="string">"/var/www/pypi"</span>)</div><div class="line">           ├─22531 /usr/<span class="built_in">local</span>/bin/python /usr/<span class="built_in">local</span>/bin/gunicorn -w16 --pid /run/pypiserver.pid -b :10012 pypiserver:app(root=<span class="string">"/var/www/pypi"</span>)</div><div class="line">           ├─22532 /usr/<span class="built_in">local</span>/bin/python /usr/<span class="built_in">local</span>/bin/gunicorn -w16 --pid /run/pypiserver.pid -b :10012 pypiserver:app(root=<span class="string">"/var/www/pypi"</span>)</div><div class="line">           ├─22533 /usr/<span class="built_in">local</span>/bin/python /usr/<span class="built_in">local</span>/bin/gunicorn -w16 --pid /run/pypiserver.pid -b :10012 pypiserver:app(root=<span class="string">"/var/www/pypi"</span>)</div><div class="line">           ├─22534 /usr/<span class="built_in">local</span>/bin/python /usr/<span class="built_in">local</span>/bin/gunicorn -w16 --pid /run/pypiserver.pid -b :10012 pypiserver:app(root=<span class="string">"/var/www/pypi"</span>)</div><div class="line">           ├─22535 /usr/<span class="built_in">local</span>/bin/python /usr/<span class="built_in">local</span>/bin/gunicorn -w16 --pid /run/pypiserver.pid -b :10012 pypiserver:app(root=<span class="string">"/var/www/pypi"</span>)</div><div class="line">           ├─22536 /usr/<span class="built_in">local</span>/bin/python /usr/<span class="built_in">local</span>/bin/gunicorn -w16 --pid /run/pypiserver.pid -b :10012 pypiserver:app(root=<span class="string">"/var/www/pypi"</span>)</div><div class="line">           ├─22537 /usr/<span class="built_in">local</span>/bin/python /usr/<span class="built_in">local</span>/bin/gunicorn -w16 --pid /run/pypiserver.pid -b :10012 pypiserver:app(root=<span class="string">"/var/www/pypi"</span>)</div><div class="line">           ├─22538 /usr/<span class="built_in">local</span>/bin/python /usr/<span class="built_in">local</span>/bin/gunicorn -w16 --pid /run/pypiserver.pid -b :10012 pypiserver:app(root=<span class="string">"/var/www/pypi"</span>)</div><div class="line">           ├─22539 /usr/<span class="built_in">local</span>/bin/python /usr/<span class="built_in">local</span>/bin/gunicorn -w16 --pid /run/pypiserver.pid -b :10012 pypiserver:app(root=<span class="string">"/var/www/pypi"</span>)</div><div class="line">           └─22540 /usr/<span class="built_in">local</span>/bin/python /usr/<span class="built_in">local</span>/bin/gunicorn -w16 --pid /run/pypiserver.pid -b :10012 pypiserver:app(root=<span class="string">"/var/www/pypi"</span>)</div><div class="line"></div><div class="line">Apr 13 15:14:08 centos7 gunicorn[22524]: [2018-04-13 15:14:08 +0000] [22531] [INFO] Booting worker with pid: 22531</div><div class="line">Apr 13 15:14:08 centos7 gunicorn[22524]: [2018-04-13 15:14:08 +0000] [22532] [INFO] Booting worker with pid: 22532</div><div class="line">Apr 13 15:14:08 centos7 gunicorn[22524]: [2018-04-13 15:14:08 +0000] [22533] [INFO] Booting worker with pid: 22533</div><div class="line">Apr 13 15:14:08 centos7 gunicorn[22524]: [2018-04-13 15:14:08 +0000] [22534] [INFO] Booting worker with pid: 22534</div><div class="line">Apr 13 15:14:08 centos7 gunicorn[22524]: [2018-04-13 15:14:08 +0000] [22535] [INFO] Booting worker with pid: 22535</div><div class="line">Apr 13 15:14:08 centos7 gunicorn[22524]: [2018-04-13 15:14:08 +0000] [22536] [INFO] Booting worker with pid: 22536</div><div class="line">Apr 13 15:14:08 centos7 gunicorn[22524]: [2018-04-13 15:14:08 +0000] [22537] [INFO] Booting worker with pid: 22537</div><div class="line">Apr 13 15:14:08 centos7 gunicorn[22524]: [2018-04-13 15:14:08 +0000] [22538] [INFO] Booting worker with pid: 22538</div><div class="line">Apr 13 15:14:08 centos7 gunicorn[22524]: [2018-04-13 15:14:08 +0000] [22539] [INFO] Booting worker with pid: 22539</div><div class="line">Apr 13 15:14:08 centos7 gunicorn[22524]: [2018-04-13 15:14:08 +0000] [22540] [INFO] Booting worker with pid: 22540</div><div class="line">[root@centos7 run]<span class="comment"># netstat -tnlp</span></div><div class="line">Active Internet connections (only servers)</div><div class="line">Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    </div><div class="line">tcp        0      0 0.0.0.0:111             0.0.0.0:*               LISTEN      1/systemd           </div><div class="line">tcp        0      0 192.168.122.1:53        0.0.0.0:*               LISTEN      1517/dnsmasq        </div><div class="line">tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      977/sshd            </div><div class="line">tcp        0      0 127.0.0.1:631           0.0.0.0:*               LISTEN      978/cupsd           </div><div class="line">tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN      1383/master         </div><div class="line">tcp        0      0 127.0.0.1:6011          0.0.0.0:*               LISTEN      19378/sshd: root@pt </div><div class="line">tcp        0      0 0.0.0.0:10012           0.0.0.0:*               LISTEN      22524/python        </div><div class="line">tcp6       0      0 :::111                  :::*                    LISTEN      1/systemd           </div><div class="line">tcp6       0      0 :::22                   :::*                    LISTEN      977/sshd            </div><div class="line">tcp6       0      0 ::1:631                 :::*                    LISTEN      978/cupsd           </div><div class="line">tcp6       0      0 ::1:25                  :::*                    LISTEN      1383/master         </div><div class="line">tcp6       0      0 ::1:6011                :::*                    LISTEN      19378/sshd: root@pt </div><div class="line"></div><div class="line"><span class="comment"># 检查pypiserver服务</span></div><div class="line"><span class="built_in">cd</span> /var/www/pypi</div><div class="line"><span class="comment"># 向仓库中添加python package</span></div><div class="line">[root@centos7 pypi]<span class="comment"># pip download pypiserver</span></div><div class="line">Collecting pypiserver</div><div class="line">  Downloading https://mirrors.aliyun.com/pypi/packages/d7/78/5772432dad2b9e754ab92f4d301fa507069b9decc8c943c1b18c2043ff4f/pypiserver-1.2.1-py2.py3-none-any.whl (83kB)</div><div class="line">    100% |████████████████████████████████| 92kB 643kB/s </div><div class="line">  Saved ./pypiserver-1.2.1-py2.py3-none-any.whl</div><div class="line">Successfully downloaded pypiserver</div><div class="line"></div><div class="line">[root@centos7 pypi]<span class="comment"># ll</span></div><div class="line">total 84</div><div class="line">-rw-r--r-- 1 root root 83529 Apr 13 14:55 pypiserver-1.2.1-py2.py3-none-any.whl</div><div class="line"></div><div class="line"><span class="comment"># 搜索刚才下载的package</span></div><div class="line">[root@centos7 pypi]<span class="comment"># pip search -i http://127.0.0.1:10012 pypiserver</span></div><div class="line">pypiserver (1.2.1)  - 1.2.1</div><div class="line">  INSTALLED: 1.2.1 (latest)</div><div class="line"></div><div class="line"><span class="comment"># 配置nginx做反向代理</span></div><div class="line">tee /etc/nginx/conf.d/pypi.conf &lt;&lt;-<span class="string">'EOF'</span></div><div class="line">upstream pypiserver &#123;</div><div class="line">  server 127.0.0.1:10012;</div><div class="line">&#125;</div><div class="line"></div><div class="line">server &#123;</div><div class="line">  listen 10087;</div><div class="line"></div><div class="line">  <span class="comment"># disable any limits to avoid HTTP 413 for large package uploads</span></div><div class="line">  client_max_body_size 0;</div><div class="line"></div><div class="line">  location / &#123;</div><div class="line">    proxy_pass http://pypiserver/;</div><div class="line">    proxy_set_header Host <span class="variable">$host</span>;</div><div class="line">    proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</div><div class="line">    proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</div><div class="line"></div><div class="line">    <span class="comment"># When setting up pypiserver behind other proxy, such as an Nginx instance, remove the below line if the proxy already has similar settings.</span></div><div class="line">    proxy_set_header X-Forwarded-Proto <span class="variable">$scheme</span>;</div><div class="line"></div><div class="line">    proxy_buffering off;</div><div class="line">    proxy_request_buffering off;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  location /packages/ &#123;</div><div class="line">    <span class="built_in">alias</span> /var/www/pypi; <span class="comment"># static file</span></div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">EOF</div><div class="line"></div><div class="line"><span class="comment"># 启动nginx</span></div><div class="line">systemctl <span class="built_in">enable</span> nginx</div><div class="line">systemctl start nginx</div><div class="line">systemctl status nginx</div><div class="line"></div><div class="line"><span class="comment"># 检查nginx服务</span></div><div class="line">pip search -i http://172.28.79.126:10087 pypiserver</div><div class="line">pypiserver (1.2.1)  - 1.2.1</div><div class="line">  INSTALLED: 1.2.1 (latest)</div></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      pypiserver - minimal PyPI server for use with pip/easy_install
+    
+    </summary>
+    
+      <category term="学习 | Study" scheme="https://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选</title>
+    <link href="https://wsgzao.github.io/post/winsshfs/"/>
+    <id>https://wsgzao.github.io/post/winsshfs/</id>
+    <published>2018-04-12T06:59:49.000Z</published>
+    <updated>2018-04-13T07:38:16.986Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>2017年5月12日国内校园网络遭受勒索病毒蠕虫入侵损失惨重，国内的安全厂商也在第一时间发布安全告警和预防方案，可是通过防火墙直接禁用445端口来解决安全隐患的方式似乎也带来了其他问题，而Samba文件系统共享正是使用了该端口，由于安全的权重大于一切，在研究过CIFS/NFS共享协议以及GoodSync等数据同步软件后发现Dokan+SSHFS可以作为目前比较理想的解决方案。</p>
+<blockquote>
+<p>使用Dokan+SSHFS实现Linux与Windows文件系统共享，解决Samba 445端口被禁的矛盾</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018年04月12日 - 增加方案NetDrive<br>2017年07月11日 - 补充ExpanDrive和SFTP Net Drive<br>2017年05月16日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/winsshfs/">https://wsgzao.github.io/post/winsshfs/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>Dokan -  <a href="http://dokan-dev.github.io" target="_blank" rel="external">http://dokan-dev.github.io</a><br>WinSSHFS - <a href="https://github.com/Foreveryone-cz/win-sshfs" target="_blank" rel="external">https://github.com/Foreveryone-cz/win-sshfs</a></p>
+<hr>
+<h2 id="Dokan和SSHFS"><a href="#Dokan和SSHFS" class="headerlink" title="Dokan和SSHFS"></a>Dokan和SSHFS</h2><blockquote>
+<p>User mode file system library for windows with FUSE Wrapper</p>
+</blockquote>
+<p>Dokan是用户态的文件系统驱动，可以称之为fuse for windows。可以用来开发虚拟磁盘，即在“我的电脑”中虚拟出一个硬盘来，可以是硬盘，也可以是可移动磁盘或者网络硬盘。</p>
+<p><a href="http://dokan-dev.github.io" target="_blank" rel="external">http://dokan-dev.github.io</a></p>
+<blockquote>
+<p>SSH(SFTP) filesystem for Windows</p>
+</blockquote>
+<p>SSH(SFTP) filesystem made using Dokan and SSH.NET library. It allows you to mount remote computers via SFTP protocol like windows network drives .</p>
+<p>sshfs 是基于 FUSE 构建的 SSH 文件系统客户端程序，通过它远程主机的配置无需作任何改变，就可以透过 SSH 协议来挂载远程文件系统了，非常方便及安全。</p>
+<p><a href="https://github.com/Foreveryone-cz/win-sshfs" target="_blank" rel="external">https://github.com/Foreveryone-cz/win-sshfs</a></p>
+<h2 id="WinSSHFS"><a href="#WinSSHFS" class="headerlink" title="WinSSHFS"></a>WinSSHFS</h2><p>使用方法很简单，这里有一篇国外的文章写得非常清晰，大家遇到问题可以参考下<br><a href="https://igikorn.com/sshfs-windows-10/" target="_blank" rel="external">https://igikorn.com/sshfs-windows-10/</a></p>
+<p><img src="https://ooo.0o0.ooo/2017/05/16/591ab60fd5298.png" alt=""></p>
+<ol>
+<li>安装Dokan</li>
+<li>安装WinSSHFS</li>
+<li>配置WinSSHFS然后Mount远端文件夹</li>
+</ol>
+<p>Get Dokan here: <a href="https://github.com/dokan-dev/dokany/releases" target="_blank" rel="external">https://github.com/dokan-dev/dokany/releases</a><br>Get WinSSHFS here: <a href="https://github.com/Foreveryone-cz/win-sshfs/releases" target="_blank" rel="external">https://github.com/Foreveryone-cz/win-sshfs/releases</a><br>百度网盘：<a href="http://pan.baidu.com/s/1dEPrPfF" target="_blank" rel="external">http://pan.baidu.com/s/1dEPrPfF</a></p>
+<h2 id="其他代替方案"><a href="#其他代替方案" class="headerlink" title="其他代替方案"></a>其他代替方案</h2><ol>
+<li>ExpanDrive - <a href="http://www.expandrive.com/" target="_blank" rel="external">http://www.expandrive.com/</a></li>
+<li>NetDrive - NetDrive </li>
+<li>SFTP Net Drive - <a href="http://www.sftpnetdrive.com/" target="_blank" rel="external">http://www.sftpnetdrive.com/</a></li>
+</ol>
+<blockquote>
+<p>这里推荐方案3，主要是因为免费但在离线环境下安装不友好，需要设置key</p>
+</blockquote>
+<p>Sorry for the trouble here. The reason this happens is because the free version does technically have a product key, it is just a “special” product key that we use for all free users. Usually, you never notice, because an online machine will activate this special product key without you doing anything. But since your machine is offline, you have to activate it manually. Here are the steps to do that:</p>
+<ol>
+<li>Download this file and run it on the offline machine you will use SFTP NetDrive on to get something called your “Node ID”, you’ll need it in a moment:<a href="http://www.nsoftware.com/lic/nodeid.exe" target="_blank" rel="external">http://www.nsoftware.com/lic/nodeid.exe</a></li>
+<li>If you have the 2016 installer, go to this page on a machine that has internet, then go to step 4: <a href="http://www.nsoftware.com/lic/?prod=NDXB-A&amp;sno=NSXBAS-PERSONAL&amp;key=PXE-K3A" target="_blank" rel="external">http://www.nsoftware.com/lic/?prod=NDXB-A&amp;sno=NSXBAS-PERSONAL&amp;key=PXE-K3A</a> (if not, go to step 3)</li>
+<li>If you have the 2017 installer, go to this page instead: <a href="http://www.nsoftware.com/lic/?w64=1&amp;prod=ndxca&amp;sno=NDXCAS-PERSONAL&amp;key=DRG-K4V" target="_blank" rel="external">http://www.nsoftware.com/lic/?w64=1&amp;prod=ndxca&amp;sno=NDXCAS-PERSONAL&amp;key=DRG-K4V</a></li>
+<li>Enter your information on the form on that page, using the Node ID you got from step 1. Then, click “Download Keys” to download a keys.reg file.</li>
+<li>Copy the .reg file back to your offline machine and run it to add the information to your registry.</li>
+<li>Re-run your installer. It should recognize that you already have the free version’s special product key now, and you’ll be able to install it.</li>
+</ol>
+<p>If you have any trouble, let me know and I’ll be happy to assist you.</p>
+<p>Regards,<br>Brenden Kromhout<br>/n software, inc.</p>
+<p>如果需要学习Samba可以参考之前的一篇文章<br><a href="https://wsgzao.github.io/post/samba/">https://wsgzao.github.io/post/samba/</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      使用Dokan+SSHFS实现Linux与Windows文件系统共享，解决Samba 445端口被禁的矛盾
+    
+    </summary>
+    
+      <category term="学习 | Study" scheme="https://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Python 2.6 升级至 Python 2.7 的实践心得</title>
+    <link href="https://wsgzao.github.io/post/python-2-6-update-to-2-7/"/>
+    <id>https://wsgzao.github.io/post/python-2-6-update-to-2-7/</id>
+    <published>2018-04-12T06:59:49.000Z</published>
+    <updated>2018-04-13T07:30:25.552Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>CentOS 6.8 安装 Python 2.7.13，因为软件版本上的需求所以考虑将 Python 升级至 2.7.14，加上生产环境还是以 RHEL 6 为主，互联网自动化运维平台大多数也推荐以Python 2.7.x + CentOS 6.x 来操作，选择 Python 2 还是 Python 3 也没有定论，找到适合的搭配即可。</p>
+<blockquote>
+<p>Python 2.6 升级至 Python 2.7 的实践心得</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018年04月12日 - 升级Python 2.7.14<br>2017年07月11日 - 完善Windows下Python的部署细节<br>2017年04月26日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/python-2-6-update-to-2-7/">https://wsgzao.github.io/post/python-2-6-update-to-2-7/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>Python - <a href="https://www.python.org/" target="_blank" rel="external">https://www.python.org/</a><br>PyPI - <a href="https://pypi.python.org/pypi" target="_blank" rel="external">https://pypi.python.org/pypi</a><br>pip - <a href="https://pip.pypa.io/en/stable/user_guide/#configuration" target="_blank" rel="external">https://pip.pypa.io/en/stable/user_guide/#configuration</a></p>
+<hr>
+<h2 id="简单安装"><a href="#简单安装" class="headerlink" title="简单安装"></a>简单安装</h2><blockquote>
+<p>因为Python 2.7.13以后版本会自动完善yum配置，所以不必参考以前的网上文章去修改其他地方</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 查看当前系统中的 Python 版本，返回 Python 2.6.6 为正常，rhel7以上版本为2.7.5</span></div><div class="line">python --version</div><div class="line"></div><div class="line">Python 2.6.6</div><div class="line"></div><div class="line"><span class="comment"># 检查 CentOS 版本，返回 CentOS release 6.8 (Final) 为正常</span></div><div class="line">cat /etc/redhat-release</div><div class="line"></div><div class="line">CentOS release 6.8 (Final)</div><div class="line"></div><div class="line"><span class="comment"># 安装所有的开发工具包</span></div><div class="line">yum groupinstall -y <span class="string">"Development tools"</span></div><div class="line"><span class="comment"># 安装其它的必需包</span></div><div class="line">yum install -y zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel</div><div class="line"></div><div class="line"><span class="comment"># 下载、编译和安装 Python 2.7.13</span></div><div class="line"><span class="comment">#wget https://www.python.org/ftp/python/2.7.13/Python-2.7.13.tgz</span></div><div class="line">tar zxf Python-2.7.13.tgz</div><div class="line"><span class="built_in">cd</span> Python-2.7.13</div><div class="line">./configure</div><div class="line">make &amp;&amp; make install</div><div class="line"></div><div class="line"><span class="comment"># 查看新的 Python 版本，返回 Python 2.7.13 为正常</span></div><div class="line">python --version</div><div class="line"></div><div class="line">Python 2.7.13</div></pre></td></tr></table></figure>
+<h2 id="ansible离线安装实践"><a href="#ansible离线安装实践" class="headerlink" title="ansible离线安装实践"></a>ansible离线安装实践</h2><blockquote>
+<p>这里利用了一些内网离线安装ansible的小技巧，相关文件我会上传至网盘</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Install Python</span></div><div class="line">tar xf Python-2.7.13.tgz</div><div class="line"><span class="built_in">cd</span> Python-2.7.13</div><div class="line">./configure</div><div class="line">make</div><div class="line">make install</div><div class="line"></div><div class="line"><span class="comment"># ImportError: No module named six.moves</span></div><div class="line">tar xf six-1.10.0.tar.gz</div><div class="line"><span class="built_in">cd</span> six-1.10.0</div><div class="line">python setup.py install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"></div><div class="line"><span class="comment"># ImportError: No module named packaging.version</span></div><div class="line">tar xf packaging-16.8.tar.gz</div><div class="line"><span class="built_in">cd</span> packaging-16.8</div><div class="line">python setup.py install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"><span class="comment"># ImportError: No module named pyparsing</span></div><div class="line">tar xf pyparsing-2.2.0.tar.gz</div><div class="line"><span class="built_in">cd</span> pyparsing-2.2.0</div><div class="line">python setup.py install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"></div><div class="line"><span class="comment"># ImportError: No module named appdirs</span></div><div class="line">tar xf appdirs-1.4.3.tar.gz</div><div class="line"><span class="built_in">cd</span> appdirs-1.4.3</div><div class="line">python setup.py install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"></div><div class="line"><span class="comment"># Install Setuptools</span></div><div class="line">unzip setuptools-34.2.0.zip</div><div class="line"><span class="built_in">cd</span> setuptools-34.2.0</div><div class="line">python setup.py install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"></div><div class="line"><span class="comment"># Install pip</span></div><div class="line">tar xf pip-9.0.1.tar.gz</div><div class="line"><span class="built_in">cd</span> pip-9.0.1</div><div class="line">python setup.py install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"></div><div class="line"><span class="comment"># pip 离线下载依赖包</span></div><div class="line">pip install -d ~/tmp/ ansible</div><div class="line">pip install -d ~/tmp/ ansible-cmdb</div><div class="line"></div><div class="line"><span class="comment"># pip 离线安装</span></div><div class="line">pip install ansible --index-url=http://172.31.197.1:7000/simple/ --trusted-host=172.31.197.1</div><div class="line">pip install ansible-cmdb --index-url=http://172.31.197.1:7000/simple/ --trusted-host=172.31.197.1</div><div class="line"></div><div class="line"><span class="comment"># 查看安装好的版本</span></div><div class="line">[root@ansible-wangao ansible]<span class="comment"># pip -V</span></div><div class="line">pip 9.0.1 from /usr/<span class="built_in">local</span>/lib/python2.7/site-packages/pip-9.0.1-py2.7.egg (python 2.7)</div><div class="line"></div><div class="line">[root@ansible-wangao ansible]<span class="comment"># ansible --version</span></div><div class="line">ansible 2.3.0.0</div><div class="line">  config file = /etc/ansible/ansible.cfg</div><div class="line">  configured module search path = Default w/o overrides</div><div class="line">  python version = 2.7.13 (default, Apr 25 2017, 17:19:23) [GCC 4.4.7 20120313 (Red Hat 4.4.7-17)]</div><div class="line"></div><div class="line">[root@ansible-wangao ansible]<span class="comment"># ansible-cmdb --version</span></div><div class="line">ansible-cmdb v1.20</div><div class="line"></div><div class="line"><span class="comment"># 更换豆瓣pip源</span></div><div class="line">vim  <span class="variable">$HOME</span>/.pip/pip.conf</div><div class="line"></div><div class="line">[global]</div><div class="line">index-url = https://pypi.doubanio.com/simple/</div><div class="line">[install]</div><div class="line"></div><div class="line">trusted-host=pypi.doubanio.com</div></pre></td></tr></table></figure>
+<h2 id="Windows-安装-Python-2-7-x"><a href="#Windows-安装-Python-2-7-x" class="headerlink" title="Windows 安装 Python 2.7.x"></a>Windows 安装 Python 2.7.x</h2><blockquote>
+<p>Windows下安装扩展包可能没有想象中那么顺利，遇到安装不上的包推荐去下面这个网址看看</p>
+</blockquote>
+<p><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/" target="_blank" rel="external">http://www.lfd.uci.edu/~gohlke/pythonlibs/</a></p>
+<p>一般情况先安装编译库Microsoft Visual C++ Compiler for Python 2.7<br><a href="https://www.microsoft.com/en-us/download/details.aspx?id=44266" target="_blank" rel="external">https://www.microsoft.com/en-us/download/details.aspx?id=44266</a></p>
+<p>下载Python，如 2.7.13<br><a href="https://www.python.org/downloads/" target="_blank" rel="external">https://www.python.org/downloads/</a><br><a href="https://www.python.org/ftp/python/2.7.13/python-2.7.13.msi" target="_blank" rel="external">https://www.python.org/ftp/python/2.7.13/python-2.7.13.msi</a></p>
+<p>安装时注意勾选环境变量<br>Add python.exe to Path</p>
+<p>如果忘记勾选也没关系，可以自行在PATH添加环境变量<br>右键计算机【属性】-&gt;【高级系统设置】-&gt;【环境变量】-&gt;【系统变量】-&gt;【PATH】<br>D:\Python27\;D:\Python27\Scripts;</p>
+<p>安装python2.7.13默认自带pip版本为9.0.1<br>PS C:\Users\Administrator&gt; pip -V<br>pip 9.0.1 from c:\python27\lib\site-packages (python 2.7)</p>
+<p>安装Python后升级pip<br>python -m pip install –upgrade pip</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 更换pypi国内源，运行以下python代码会自动建立pip.ini</span></div><div class="line"><span class="keyword">import</span> os</div><div class="line"></div><div class="line">ini=<span class="string">"""[global]</span></div><div class="line"><span class="string">index-url = https://pypi.doubanio.com/simple/</span></div><div class="line"><span class="string">[install]</span></div><div class="line"><span class="string">trusted-host=pypi.doubanio.com</span></div><div class="line"><span class="string">"""</span></div><div class="line">pippath=os.environ[<span class="string">"USERPROFILE"</span>]+<span class="string">"\\pip\\"</span></div><div class="line"></div><div class="line"><span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(pippath):</div><div class="line">    os.mkdir(pippath)</div><div class="line"></div><div class="line"><span class="keyword">with</span> open(pippath+<span class="string">"pip.ini"</span>,<span class="string">"w+"</span>) <span class="keyword">as</span> f:</div><div class="line">    f.write(ini)</div></pre></td></tr></table></figure>
+<h2 id="离线安装包"><a href="#离线安装包" class="headerlink" title="离线安装包"></a>离线安装包</h2><p><a href="http://pan.baidu.com/s/1o7J8QBw" target="_blank" rel="external">http://pan.baidu.com/s/1o7J8QBw</a></p>
+<h2 id="Python-2-7-14"><a href="#Python-2-7-14" class="headerlink" title="Python 2.7.14"></a>Python 2.7.14</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Install Packages</span></div><div class="line">yum install gcc zlib zlib-devel openssl-devel -y</div><div class="line"></div><div class="line"><span class="comment"># Install Python</span></div><div class="line">tar xf Python-2.7.14.tgz</div><div class="line"><span class="built_in">cd</span> Python-2.7.14</div><div class="line">./configure</div><div class="line">make</div><div class="line">make install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"></div><div class="line"><span class="comment"># ImportError: No module named six.moves</span></div><div class="line">tar xf six-1.11.0.tar.gz </div><div class="line"><span class="built_in">cd</span> six-1.11.0</div><div class="line">python setup.py install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"></div><div class="line"><span class="comment"># ImportError: No module named packaging.version</span></div><div class="line">tar xf packaging-17.1.tar.gz </div><div class="line"><span class="built_in">cd</span> packaging-17.1</div><div class="line">python setup.py install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"></div><div class="line"><span class="comment"># ImportError: No module named pyparsing</span></div><div class="line">tar xf pyparsing-2.2.0.tar.gz </div><div class="line"><span class="built_in">cd</span> pyparsing-2.2.0</div><div class="line">python setup.py install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"></div><div class="line"><span class="comment"># ImportError: No module named appdirs</span></div><div class="line">tar xf appdirs-1.4.3.tar.gz </div><div class="line"><span class="built_in">cd</span> appdirs-1.4.3</div><div class="line">python setup.py install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"></div><div class="line"><span class="comment"># Install Setuptools</span></div><div class="line">unzip setuptools-38.5.2.zip</div><div class="line"><span class="built_in">cd</span> setuptools-38.5.2</div><div class="line">python setup.py install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"></div><div class="line"><span class="comment"># Install pip</span></div><div class="line">tar xf pip-9.0.1.tar.gz</div><div class="line"><span class="built_in">cd</span> pip-9.0.1</div><div class="line">python setup.py install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"></div><div class="line"><span class="comment"># pip 离线下载</span></div><div class="line"><span class="comment"># pip install --download DIR -r requirements.txt</span></div><div class="line">pip install -d ~/ansible/ ansible</div><div class="line"></div><div class="line"><span class="comment"># pip 离线安装</span></div><div class="line"><span class="comment"># pip install --no-index --find-links=DIR -r requirements.txt</span></div><div class="line">pip install --no-index --find-links=pip-ansible-2.3.3.0/ -r requirements.txt</div><div class="line"></div><div class="line"><span class="comment"># pip 离线安装pipenv</span></div><div class="line">pip install --no-index --find-links=pip-pipenv/ pipenv</div><div class="line"></div><div class="line"><span class="comment"># 使用pipenv创建虚拟环境</span></div><div class="line">mkdir win_ansible</div><div class="line"><span class="built_in">cd</span> win_ansible</div><div class="line">pipenv shell</div><div class="line">pip install --no-index --find-links=pip-ansible-2.4.3.0/ -r requirements.txt</div><div class="line"></div><div class="line"><span class="comment"># 退出虚拟环境</span></div><div class="line"><span class="built_in">exit</span></div><div class="line"></div><div class="line"><span class="comment"># RuntimeError: Compression requires the (missing) zlib module</span></div><div class="line">yum install zlib zlib-devel -y</div><div class="line"><span class="built_in">cd</span> Python-2.7.14</div><div class="line">make</div><div class="line">make install</div><div class="line"></div><div class="line"><span class="comment"># pip is configured with locations that require TLS/SSL, however the ssl module in Python is not available.</span></div><div class="line">yum install openssl-devel -y</div><div class="line"><span class="built_in">cd</span> Python-2.7.14</div><div class="line">make</div><div class="line">make install</div></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      Python 2.6 升级至 Python 2.7 的实践心得
+    
+    </summary>
+    
+      <category term="学习 | Study" scheme="https://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>使用virtualenv和virtualenvwrapper管理多版本Python开发环境</title>
+    <link href="https://wsgzao.github.io/post/virtualenv/"/>
+    <id>https://wsgzao.github.io/post/virtualenv/</id>
+    <published>2018-04-11T06:59:49.000Z</published>
+    <updated>2018-04-11T07:00:23.058Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>之前一篇文章分享了从Python 2.6 升级至 Python 2.7，在开发环境中我们也和很多朋友一样使用virtualenv和virtualenvwrapper来管理和解决不同用户和应用之间的冲突，比如一个DevOps团队在Linux环境中协作开发，每个用户都需要搭建一套Django+Ansible</p>
+<blockquote>
+<p>virtualenv为应用提供了隔离的Python运行环境，解决了不同应用间多版本的冲突问题</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018年04月11日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/virtualenv/">https://wsgzao.github.io/post/virtualenv/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>PyPI - <a href="https://pypi.python.org/pypi/virtualenv" target="_blank" rel="external">https://pypi.python.org/pypi/virtualenv</a><br>virtualenv - <a href="http://pythonguidecn.readthedocs.io/zh/latest/dev/virtualenvs.html" target="_blank" rel="external">http://pythonguidecn.readthedocs.io/zh/latest/dev/virtualenvs.html</a><br>virtualenvwrapper - <a href="http://virtualenvwrapper.readthedocs.io/en/latest/index.html" target="_blank" rel="external">http://virtualenvwrapper.readthedocs.io/en/latest/index.html</a></p>
+<hr>
+<h2 id="virtualenv"><a href="#virtualenv" class="headerlink" title="virtualenv"></a>virtualenv</h2><blockquote>
+<p>virtualenv 是一个创建隔绝的Python环境的工具。virtualenv创建一个包含所有必要的可执行文件的文件夹，用来使用Python工程所需的包。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 检查python版本是否升级至2.7以上</span></div><div class="line">python -V</div><div class="line">Python 2.7.13</div><div class="line"></div><div class="line"><span class="comment"># 安装virtualenv</span></div><div class="line">pip install virtualenv</div><div class="line"><span class="comment"># 切换用户创建一个虚拟环境</span></div><div class="line">su - wangao</div><div class="line"><span class="comment"># virtualenv -p /usr/bin/python2.7 venv</span></div><div class="line"><span class="comment"># virtualenv --no-site-packages venv</span></div><div class="line">[wangao@localhost ~]$ virtualenv venv</div><div class="line">New python executable <span class="keyword">in</span> /home/wangao/venv/bin/python</div><div class="line">Installing setuptools, pip, wheel...done.</div><div class="line"><span class="comment"># 激活虚拟环境</span></div><div class="line">[wangao@localhost ~]$ <span class="built_in">source</span> venv/bin/activate</div><div class="line">(venv) [wangao@localhost ~]$ pip install requests</div><div class="line"><span class="comment"># 如果你在虚拟环境中暂时完成了工作，则可以停用它：</span></div><div class="line">(venv) [wangao@localhost ~]$ deactivate</div><div class="line"><span class="comment"># 要删除一个虚拟环境，只需删除它的文件夹</span></div><div class="line">rm -rf venv</div></pre></td></tr></table></figure>
+<h2 id="virtualenvwrapper"><a href="#virtualenvwrapper" class="headerlink" title="virtualenvwrapper"></a>virtualenvwrapper</h2><blockquote>
+<p>virtualenvwrapper 提供了一系列命令使得和虚拟环境工作变得愉快许多。它把你所有的虚拟环境都放在一个地方。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 推荐直接使用virtualenvwrapper来管理python虚拟环境</span></div><div class="line">pip install virtualenvwrapper</div><div class="line"></div><div class="line"><span class="comment"># 安装好之后需要简单配置下，主要是设置独立环境的保存路径，推荐在.bash_profile下追加</span></div><div class="line">[wangao@localhost ~]$ vim .bash_profile</div><div class="line"></div><div class="line"><span class="comment"># 建议放入.bash_profile</span></div><div class="line"><span class="built_in">export</span> WORKON_HOME=~/.virtualenvs</div><div class="line"><span class="comment"># 不同系统virtualenvwrapper.sh存放的位置可能不同</span></div><div class="line"><span class="built_in">source</span> /usr/<span class="built_in">local</span>/bin/virtualenvwrapper.sh</div><div class="line"><span class="comment"># 强制只允许在虚拟环境下安装软件</span></div><div class="line"><span class="built_in">export</span> PIP_REQUIRE_VIRTUALENV=<span class="literal">true</span></div><div class="line"></div><div class="line">[wangao@localhost ~]$ <span class="built_in">source</span> .bash_profile</div><div class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/premkproject</div><div class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/postmkproject</div><div class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/initialize</div><div class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/premkvirtualenv</div><div class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/postmkvirtualenv</div><div class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/prermvirtualenv</div><div class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/postrmvirtualenv</div><div class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/predeactivate</div><div class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/postdeactivate</div><div class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/preactivate</div><div class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/postactivate</div><div class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/get_env_details</div><div class="line"></div><div class="line"><span class="comment"># 基础使用</span></div><div class="line">su - wangao</div><div class="line"><span class="comment"># 创建一个虚拟环境</span></div><div class="line">[wangao@localhost ~]$ mkvirtualenv venv</div><div class="line">New python executable <span class="keyword">in</span> /home/wangao/.virtualenvs/venv/bin/python</div><div class="line">Installing setuptools, pip, wheel...done.</div><div class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/venv/bin/predeactivate</div><div class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/venv/bin/postdeactivate</div><div class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/venv/bin/preactivate</div><div class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/venv/bin/postactivate</div><div class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/venv/bin/get_env_details</div><div class="line"><span class="comment"># 在虚拟环境上工作</span></div><div class="line">(venv) [wangao@localhost ~]$ workon venv</div><div class="line"><span class="comment"># 停止是一样的</span></div><div class="line">(venv) [wangao@localhost ~]$ deactivate</div><div class="line">[wangao@localhost ~]$</div><div class="line"><span class="comment"># 删除</span></div><div class="line">[wangao@localhost ~]$  rmvirtualenv venv</div></pre></td></tr></table></figure>
+]]></content>
+    
+    <summary type="html">
+    
+      virtualenv为应用提供了隔离的Python运行环境，解决了不同应用间多版本的冲突问题
+    
+    </summary>
+    
+      <category term="学习 | Study" scheme="https://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
+    
+    
+  </entry>
+  
+  <entry>
     <title>RHEL7/CentOS7在线和离线安装GitLab配置使用实践</title>
     <link href="https://wsgzao.github.io/post/gitlab/"/>
     <id>https://wsgzao.github.io/post/gitlab/</id>
     <published>2018-04-10T08:40:53.000Z</published>
-    <updated>2018-04-10T08:27:08.367Z</updated>
+    <updated>2018-04-13T06:03:25.182Z</updated>
     
     <content type="html"><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>GitLab Community Edition 新版本已经集成了CI/CD的支持，从某种程度上来说可以告别对于Jenkins的依赖，我本来计划是写基于Docker部署GitLab但感觉还是有点重，对于内网离线环境来说基于容器部署也未必是合理的方案，这里沿用传统的部署方式介绍简单且长期有效的GitLab部署方案供大家参考，或许未来会增加基于容器的部署方案和CI/CD的分享，因需而变。</p>
 <blockquote>
@@ -932,122 +1128,6 @@
   </entry>
   
   <entry>
-    <title>Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选</title>
-    <link href="https://wsgzao.github.io/post/winsshfs/"/>
-    <id>https://wsgzao.github.io/post/winsshfs/</id>
-    <published>2017-07-11T06:59:49.000Z</published>
-    <updated>2017-07-11T07:11:11.000Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>2017年5月12日国内校园网络遭受勒索病毒蠕虫入侵损失惨重，国内的安全厂商也在第一时间发布安全告警和预防方案，可是通过防火墙直接禁用445端口来解决安全隐患的方式似乎也带来了其他问题，而Samba文件系统共享正是使用了该端口，由于安全的权重大于一切，在研究过CIFS/NFS共享协议以及GoodSync等数据同步软件后发现Dokan+SSHFS可以作为目前比较理想的解决方案。</p>
-<blockquote>
-<p>使用Dokan+SSHFS实现Linux与Windows文件系统共享，解决Samba 445端口被禁的矛盾</p>
-</blockquote>
-<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2017年07月11日 - 补充ExpanDrive和SFTP Net Drive<br>2017年05月16日 - 初稿</p>
-<p>阅读原文 - <a href="https://wsgzao.github.io/post/winsshfs/">https://wsgzao.github.io/post/winsshfs/</a></p>
-<p><strong>扩展阅读</strong></p>
-<p>Dokan -  <a href="http://dokan-dev.github.io" target="_blank" rel="external">http://dokan-dev.github.io</a><br>WinSSHFS - <a href="https://github.com/Foreveryone-cz/win-sshfs" target="_blank" rel="external">https://github.com/Foreveryone-cz/win-sshfs</a></p>
-<hr>
-<h2 id="Dokan和SSHFS"><a href="#Dokan和SSHFS" class="headerlink" title="Dokan和SSHFS"></a>Dokan和SSHFS</h2><blockquote>
-<p>User mode file system library for windows with FUSE Wrapper</p>
-</blockquote>
-<p>Dokan是用户态的文件系统驱动，可以称之为fuse for windows。可以用来开发虚拟磁盘，即在“我的电脑”中虚拟出一个硬盘来，可以是硬盘，也可以是可移动磁盘或者网络硬盘。</p>
-<p><a href="http://dokan-dev.github.io" target="_blank" rel="external">http://dokan-dev.github.io</a></p>
-<blockquote>
-<p>SSH(SFTP) filesystem for Windows</p>
-</blockquote>
-<p>SSH(SFTP) filesystem made using Dokan and SSH.NET library. It allows you to mount remote computers via SFTP protocol like windows network drives .</p>
-<p>sshfs 是基于 FUSE 构建的 SSH 文件系统客户端程序，通过它远程主机的配置无需作任何改变，就可以透过 SSH 协议来挂载远程文件系统了，非常方便及安全。</p>
-<p><a href="https://github.com/Foreveryone-cz/win-sshfs" target="_blank" rel="external">https://github.com/Foreveryone-cz/win-sshfs</a></p>
-<h2 id="WinSSHFS"><a href="#WinSSHFS" class="headerlink" title="WinSSHFS"></a>WinSSHFS</h2><p>使用方法很简单，这里有一篇国外的文章写得非常清晰，大家遇到问题可以参考下<br><a href="https://igikorn.com/sshfs-windows-10/" target="_blank" rel="external">https://igikorn.com/sshfs-windows-10/</a></p>
-<p><img src="https://ooo.0o0.ooo/2017/05/16/591ab60fd5298.png" alt=""></p>
-<ol>
-<li>安装Dokan</li>
-<li>安装WinSSHFS</li>
-<li>配置WinSSHFS然后Mount远端文件夹</li>
-</ol>
-<p>Get Dokan here: <a href="https://github.com/dokan-dev/dokany/releases" target="_blank" rel="external">https://github.com/dokan-dev/dokany/releases</a><br>Get WinSSHFS here: <a href="https://github.com/Foreveryone-cz/win-sshfs/releases" target="_blank" rel="external">https://github.com/Foreveryone-cz/win-sshfs/releases</a><br>百度网盘：<a href="http://pan.baidu.com/s/1dEPrPfF" target="_blank" rel="external">http://pan.baidu.com/s/1dEPrPfF</a></p>
-<h2 id="其他代替方案"><a href="#其他代替方案" class="headerlink" title="其他代替方案"></a>其他代替方案</h2><ol>
-<li>ExpanDrive - <a href="http://www.expandrive.com/" target="_blank" rel="external">http://www.expandrive.com/</a></li>
-<li>SFTP Net Drive - <a href="http://www.sftpnetdrive.com/" target="_blank" rel="external">http://www.sftpnetdrive.com/</a></li>
-</ol>
-<blockquote>
-<p>这里推荐方案2，主要是因为免费但在离线环境下安装不友好，需要设置key</p>
-</blockquote>
-<p>Sorry for the trouble here. The reason this happens is because the free version does technically have a product key, it is just a “special” product key that we use for all free users. Usually, you never notice, because an online machine will activate this special product key without you doing anything. But since your machine is offline, you have to activate it manually. Here are the steps to do that:</p>
-<ol>
-<li>Download this file and run it on the offline machine you will use SFTP NetDrive on to get something called your “Node ID”, you’ll need it in a moment:<a href="http://www.nsoftware.com/lic/nodeid.exe" target="_blank" rel="external">http://www.nsoftware.com/lic/nodeid.exe</a></li>
-<li>If you have the 2016 installer, go to this page on a machine that has internet, then go to step 4: <a href="http://www.nsoftware.com/lic/?prod=NDXB-A&amp;sno=NSXBAS-PERSONAL&amp;key=PXE-K3A" target="_blank" rel="external">http://www.nsoftware.com/lic/?prod=NDXB-A&amp;sno=NSXBAS-PERSONAL&amp;key=PXE-K3A</a> (if not, go to step 3)</li>
-<li>If you have the 2017 installer, go to this page instead: <a href="http://www.nsoftware.com/lic/?w64=1&amp;prod=ndxca&amp;sno=NDXCAS-PERSONAL&amp;key=DRG-K4V" target="_blank" rel="external">http://www.nsoftware.com/lic/?w64=1&amp;prod=ndxca&amp;sno=NDXCAS-PERSONAL&amp;key=DRG-K4V</a></li>
-<li>Enter your information on the form on that page, using the Node ID you got from step 1. Then, click “Download Keys” to download a keys.reg file.</li>
-<li>Copy the .reg file back to your offline machine and run it to add the information to your registry.</li>
-<li>Re-run your installer. It should recognize that you already have the free version’s special product key now, and you’ll be able to install it.</li>
-</ol>
-<p>If you have any trouble, let me know and I’ll be happy to assist you.</p>
-<p>Regards,<br>Brenden Kromhout<br>/n software, inc.</p>
-<p>如果需要学习Samba可以参考之前的一篇文章<br><a href="https://wsgzao.github.io/post/samba/">https://wsgzao.github.io/post/samba/</a></p>
-]]></content>
-    
-    <summary type="html">
-    
-      使用Dokan+SSHFS实现Linux与Windows文件系统共享，解决Samba 445端口被禁的矛盾
-    
-    </summary>
-    
-      <category term="学习 | Study" scheme="https://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>Python 2.6 升级至 Python 2.7 的实践心得</title>
-    <link href="https://wsgzao.github.io/post/python-2-6-update-to-2-7/"/>
-    <id>https://wsgzao.github.io/post/python-2-6-update-to-2-7/</id>
-    <published>2017-07-11T06:59:49.000Z</published>
-    <updated>2017-07-11T03:02:54.000Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>CentOS 6.8 安装 Python 2.7.13，因为软件版本上的需求所以考虑将 Python 升级至 2.7.13，加上生产环境还是以 RHEL 6 为主，互联网自动化运维平台大多数也推荐以Python 2.7.x + CentOS 6.x 来操作，选择 Python 2 还是 Python 3 也没有定论，找到适合的搭配即可。</p>
-<blockquote>
-<p>Python 2.6 升级至 Python 2.7 的实践心得</p>
-</blockquote>
-<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2017年07月11日 - 完善Windows下Python的部署细节<br>2017年04月26日 - 初稿</p>
-<p>阅读原文 - <a href="https://wsgzao.github.io/post/python-2-6-update-to-2-7/">https://wsgzao.github.io/post/python-2-6-update-to-2-7/</a></p>
-<p><strong>扩展阅读</strong></p>
-<p>Python - <a href="https://www.python.org/" target="_blank" rel="external">https://www.python.org/</a><br>PyPI - <a href="https://pypi.python.org/pypi" target="_blank" rel="external">https://pypi.python.org/pypi</a><br>pip - <a href="https://pip.pypa.io/en/stable/user_guide/#configuration" target="_blank" rel="external">https://pip.pypa.io/en/stable/user_guide/#configuration</a></p>
-<hr>
-<h2 id="简单安装"><a href="#简单安装" class="headerlink" title="简单安装"></a>简单安装</h2><blockquote>
-<p>因为Python 2.7.13以后版本会自动完善yum配置，所以不必参考以前的网上文章去修改其他地方</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 查看当前系统中的 Python 版本，返回 Python 2.6.6 为正常</span></div><div class="line">python --version</div><div class="line"></div><div class="line">Python 2.6.6</div><div class="line"></div><div class="line"><span class="comment"># 检查 CentOS 版本，返回 CentOS release 6.8 (Final) 为正常</span></div><div class="line">cat /etc/redhat-release</div><div class="line"></div><div class="line">CentOS release 6.8 (Final)</div><div class="line"></div><div class="line"><span class="comment"># 安装所有的开发工具包</span></div><div class="line">yum groupinstall -y <span class="string">"Development tools"</span></div><div class="line"><span class="comment"># 安装其它的必需包</span></div><div class="line">yum install -y zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel</div><div class="line"></div><div class="line"><span class="comment"># 下载、编译和安装 Python 2.7.13</span></div><div class="line"><span class="comment">#wget https://www.python.org/ftp/python/2.7.13/Python-2.7.13.tgz</span></div><div class="line">tar zxf Python-2.7.13.tgz</div><div class="line"><span class="built_in">cd</span> Python-2.7.13</div><div class="line">./configure</div><div class="line">make &amp;&amp; make install</div><div class="line"></div><div class="line"><span class="comment"># 查看新的 Python 版本，返回 Python 2.7.13 为正常</span></div><div class="line">python --version</div><div class="line"></div><div class="line">Python 2.7.13</div></pre></td></tr></table></figure>
-<h2 id="ansible离线安装实践"><a href="#ansible离线安装实践" class="headerlink" title="ansible离线安装实践"></a>ansible离线安装实践</h2><blockquote>
-<p>这里利用了一些内网离线安装ansible的小技巧，相关文件我会上传至网盘</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Install Python</span></div><div class="line">tar xf Python-2.7.13.tgz</div><div class="line"><span class="built_in">cd</span> Python-2.7.13</div><div class="line">./configure</div><div class="line">make</div><div class="line">make install</div><div class="line"></div><div class="line"><span class="comment"># ImportError: No module named six.moves</span></div><div class="line">tar xf six-1.10.0.tar.gz</div><div class="line"><span class="built_in">cd</span> six-1.10.0</div><div class="line">python setup.py install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"></div><div class="line"><span class="comment"># ImportError: No module named packaging.version</span></div><div class="line">tar xf packaging-16.8.tar.gz</div><div class="line"><span class="built_in">cd</span> packaging-16.8</div><div class="line">python setup.py install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"><span class="comment"># ImportError: No module named pyparsing</span></div><div class="line">tar xf pyparsing-2.2.0.tar.gz</div><div class="line"><span class="built_in">cd</span> pyparsing-2.2.0</div><div class="line">python setup.py install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"></div><div class="line"><span class="comment"># ImportError: No module named appdirs</span></div><div class="line">tar xf appdirs-1.4.3.tar.gz</div><div class="line"><span class="built_in">cd</span> appdirs-1.4.3</div><div class="line">python setup.py install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"></div><div class="line"><span class="comment"># Install Setuptools</span></div><div class="line">unzip setuptools-34.2.0.zip</div><div class="line"><span class="built_in">cd</span> setuptools-34.2.0</div><div class="line">python setup.py install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"></div><div class="line"><span class="comment"># Install pip</span></div><div class="line">tar xf pip-9.0.1.tar.gz</div><div class="line"><span class="built_in">cd</span> pip-9.0.1</div><div class="line">python setup.py install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"></div><div class="line"><span class="comment"># pip 离线下载依赖包</span></div><div class="line">pip install -d ~/tmp/ ansible</div><div class="line">pip install -d ~/tmp/ ansible-cmdb</div><div class="line"></div><div class="line"><span class="comment"># pip 离线安装</span></div><div class="line">pip install ansible --index-url=http://172.31.197.1:7000/simple/ --trusted-host=172.31.197.1</div><div class="line">pip install ansible-cmdb --index-url=http://172.31.197.1:7000/simple/ --trusted-host=172.31.197.1</div><div class="line"></div><div class="line"><span class="comment"># 查看安装好的版本</span></div><div class="line">[root@ansible-wangao ansible]<span class="comment"># pip -V</span></div><div class="line">pip 9.0.1 from /usr/<span class="built_in">local</span>/lib/python2.7/site-packages/pip-9.0.1-py2.7.egg (python 2.7)</div><div class="line"></div><div class="line">[root@ansible-wangao ansible]<span class="comment"># ansible --version</span></div><div class="line">ansible 2.3.0.0</div><div class="line">  config file = /etc/ansible/ansible.cfg</div><div class="line">  configured module search path = Default w/o overrides</div><div class="line">  python version = 2.7.13 (default, Apr 25 2017, 17:19:23) [GCC 4.4.7 20120313 (Red Hat 4.4.7-17)]</div><div class="line"></div><div class="line">[root@ansible-wangao ansible]<span class="comment"># ansible-cmdb --version</span></div><div class="line">ansible-cmdb v1.20</div><div class="line"></div><div class="line"><span class="comment"># 更换豆瓣pip源</span></div><div class="line">vim  <span class="variable">$HOME</span>/.pip/pip.conf</div><div class="line"></div><div class="line">[global]</div><div class="line">index-url = https://pypi.doubanio.com/simple/</div><div class="line">[install]</div><div class="line"></div><div class="line">trusted-host=pypi.doubanio.com</div></pre></td></tr></table></figure>
-<h2 id="Windows-安装-Python-2-7-x"><a href="#Windows-安装-Python-2-7-x" class="headerlink" title="Windows 安装 Python 2.7.x"></a>Windows 安装 Python 2.7.x</h2><blockquote>
-<p>Windows下安装扩展包可能没有想象中那么顺利，遇到安装不上的包推荐去下面这个网址看看</p>
-</blockquote>
-<p><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/" target="_blank" rel="external">http://www.lfd.uci.edu/~gohlke/pythonlibs/</a></p>
-<p>一般情况先安装编译库Microsoft Visual C++ Compiler for Python 2.7<br><a href="https://www.microsoft.com/en-us/download/details.aspx?id=44266" target="_blank" rel="external">https://www.microsoft.com/en-us/download/details.aspx?id=44266</a></p>
-<p>下载Python，如 2.7.13<br><a href="https://www.python.org/downloads/" target="_blank" rel="external">https://www.python.org/downloads/</a><br><a href="https://www.python.org/ftp/python/2.7.13/python-2.7.13.msi" target="_blank" rel="external">https://www.python.org/ftp/python/2.7.13/python-2.7.13.msi</a></p>
-<p>安装时注意勾选环境变量<br>Add python.exe to Path</p>
-<p>如果忘记勾选也没关系，可以自行在PATH添加环境变量<br>右键计算机【属性】-&gt;【高级系统设置】-&gt;【环境变量】-&gt;【系统变量】-&gt;【PATH】<br>D:\Python27\;D:\Python27\Scripts;</p>
-<p>安装python2.7.13默认自带pip版本为9.0.1<br>PS C:\Users\Administrator&gt; pip -V<br>pip 9.0.1 from c:\python27\lib\site-packages (python 2.7)</p>
-<p>安装Python后升级pip<br>python -m pip install –upgrade pip</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 更换pypi国内源，运行以下python代码会自动建立pip.ini</span></div><div class="line"><span class="keyword">import</span> os</div><div class="line"></div><div class="line">ini=<span class="string">"""[global]</span></div><div class="line"><span class="string">index-url = https://pypi.doubanio.com/simple/</span></div><div class="line"><span class="string">[install]</span></div><div class="line"><span class="string">trusted-host=pypi.doubanio.com</span></div><div class="line"><span class="string">"""</span></div><div class="line">pippath=os.environ[<span class="string">"USERPROFILE"</span>]+<span class="string">"\\pip\\"</span></div><div class="line"></div><div class="line"><span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(pippath):</div><div class="line">    os.mkdir(pippath)</div><div class="line"></div><div class="line"><span class="keyword">with</span> open(pippath+<span class="string">"pip.ini"</span>,<span class="string">"w+"</span>) <span class="keyword">as</span> f:</div><div class="line">    f.write(ini)</div></pre></td></tr></table></figure>
-<h2 id="离线安装包"><a href="#离线安装包" class="headerlink" title="离线安装包"></a>离线安装包</h2><p><a href="http://pan.baidu.com/s/1o7J8QBw" target="_blank" rel="external">http://pan.baidu.com/s/1o7J8QBw</a></p>
-]]></content>
-    
-    <summary type="html">
-    
-      Python 2.6 升级至 Python 2.7 的实践心得
-    
-    </summary>
-    
-      <category term="学习 | Study" scheme="https://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
-    
-    
-  </entry>
-  
-  <entry>
     <title>使用Samba实现Linux与Windows文件共享实践</title>
     <link href="https://wsgzao.github.io/post/samba/"/>
     <id>https://wsgzao.github.io/post/samba/</id>
@@ -1459,163 +1539,6 @@
     <summary type="html">
     
       Solarflare make servers faster and more secure.
-    
-    </summary>
-    
-      <category term="学习 | Study" scheme="https://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>Red Hat Enterprise Linux 6 升级 Red Hat Enterprise Linux 7 经验分享</title>
-    <link href="https://wsgzao.github.io/post/rhel-upgrade/"/>
-    <id>https://wsgzao.github.io/post/rhel-upgrade/</id>
-    <published>2016-10-13T03:17:46.000Z</published>
-    <updated>2016-10-13T03:41:29.000Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>因为交易系统部的同事提出了一个新的需求要将现有的RHEL6.7升级至RHEL7.1(最好保留数据升级)，之前对于小版本的升级无论是CentOS还是Redhat都可以直接通过yum update的方式实现软件包和内核的迭代更新，但是这次的需求经过Redhat知识库的研究发现这几乎是一个不可能轻松实现的任务，原因就是Redhat压根不支持大版本之间的升级，考虑到跨版本兼容性问题和原厂不做技术支持这两点，通过和Redhat二线电话沟通也确认了最终的实现方案，就是先备份相关重要配置和数据格式化/分区保留其它文件系统，重装后在把数据迁移回来。整个过程虽然提不上什么惊心动魄，但至少翻阅了大量材料，官方虽然给出了跨版本升级的步骤，但实现的代价和要求真的太高，这里一并分享出来方便大家学习和思考。</p>
-<blockquote>
-<p>How do I upgrade from RHEL 6 to RHEL 7? Reinstall</p>
-</blockquote>
-<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2016年10月13日 - 初稿</p>
-<p>阅读原文 - <a href="https://wsgzao.github.io/post/rhel-upgrade/">https://wsgzao.github.io/post/rhel-upgrade/</a></p>
-<p><strong>扩展阅读</strong></p>
-<p>红帽支持 RHEL 主版本之间的升级吗？- <a href="https://access.redhat.com/zh_CN/solutions/1388653" target="_blank" rel="external">https://access.redhat.com/zh_CN/solutions/1388653</a><br>How do I upgrade from RHEL 6 to RHEL 7? - <a href="https://access.redhat.com/solutions/637583" target="_blank" rel="external">https://access.redhat.com/solutions/637583</a></p>
-<hr>
-<h2 id="红帽支持-RHEL-主版本之间的升级吗？"><a href="#红帽支持-RHEL-主版本之间的升级吗？" class="headerlink" title="红帽支持 RHEL 主版本之间的升级吗？"></a>红帽支持 RHEL 主版本之间的升级吗？</h2><h3 id="Environment"><a href="#Environment" class="headerlink" title="Environment"></a>Environment</h3><ul>
-<li>Red Hat Enterprise Linux 4</li>
-<li>Red Hat Enterprise Linux 5</li>
-<li>Red Hat Enterprise Linux 6</li>
-<li>Red Hat Enterprise Linux 7</li>
-</ul>
-<h3 id="Issue"><a href="#Issue" class="headerlink" title="Issue"></a>Issue</h3><ul>
-<li>如何从红帽企业版 Linux 的一个版本升级到另一个版本？</li>
-<li>可以从 RHEL 的不同主版本之间移植吗？</li>
-<li>红帽支持 RHEL 主版本之间的升级吗（比如从5升级到6）？</li>
-<li>可以在 RHEL 5 上安装 RHEL 6 吗？</li>
-<li>安装介质没有包含升级选项；</li>
-<li>如何从 <code>RHEL 5</code> 升级到 <code>RHEL 6</code> ？</li>
-</ul>
-<h3 id="Resolution"><a href="#Resolution" class="headerlink" title="Resolution"></a>Resolution</h3><blockquote>
-<p>Red Hat Enterprise Linux 4, 5, 6</p>
-</blockquote>
-<p>红帽 <strong>不支持</strong> RHEL 主版本之间的跨大版本升级。（主版本以整数表示。比如，RHEL 5 和 RHEL 6 都是不同的主版本。）</p>
-<p>不同主版本之间的跨大版本升级，不会保留所有系统设置、服务配置和自定义设置。因此， <strong>红帽强烈建议重新安装系统，以进行主版本之间的升级</strong> 。建议在运行着的服务器旁，使用新的服务器安装一个全新的RHEL，然后把原有的设 置、软件和数据迁移到新服务器上，以确保系统和软件能在新服务器上正确运行。 这还有助于确保数据安全地从备份转移到新的系统。</p>
-<p>还有方法可以不进行全新安装，来进行升级。要实现这个功能，插入新版本的安装光盘，然后在 boot 命令行中输入：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># linux upgradeany</div></pre></td></tr></table></figure>
-<p>这将引导您进行与 普通的安装过程很相近的升级步骤。再次说明，这个过程红帽是不予支持的。进行完这个升级操作后，如果您联系红帽技术支持，红帽只会当作全新的安装来提供支持。升级过程中产生的问题是不予支持的。任何时候出现的问题如果疑似与升级过程有关，红帽将要求您重新安装系统。</p>
-<h3 id="Comment"><a href="#Comment" class="headerlink" title="Comment"></a>Comment</h3><ul>
-<li>红帽建议，系统升级之前要先全面备份数据。</li>
-<li>如果之前安装有第三方软件，建议在新系统上重新安装。</li>
-<li>更换新版本系统后，个别软件包的配置文件可能会失效，因为新版本配置文件的格式和排列可能会有所变化。</li>
-<li>如果之前安装有红帽的 layered products （比如 Cluster Suite）, 需要在新系统完全安装之后，手动升级它们。</li>
-<li>用升级选项进行升级，系统可能会出现不稳定的情况。</li>
-<li>如果出现意外情况，红帽全球支持只能建议您按照建议的方式，重新安装系统并进行迁移。</li>
-</ul>
-<p>可参考文档， <a href="https://access.redhat.com/knowledge/docs/en-US/Red_Hat_Enterprise_Linux/6/html/Installation_Guide/ch-upgrade-x86.html" target="_blank" rel="external">Red Hat Enterprise Linux 6 Installation Guide, Chapter 37. Upgrading Your Current System</a></p>
-<p>升级或重新安装系统后，请重新注册系统，请参考 <a href="https://access.redhat.com/knowledge/docs/en-US/Red_Hat_Enterprise_Linux/6/html/Installation_Guide/ch-upgrade-x86.html" target="_blank" rel="external">Red Hat Enterprise Linux 6 Installation Guide, Chapter 37. Upgrading Your Current System</a></p>
-<blockquote>
-<p>Red Hat Enterprise Linux 7</p>
-</blockquote>
-<p>对于特定的使用情况，红帽支持从 <code>Red Hat Enterprise Linux 6</code> 升级到 <code>Red Hat Enterprise Linux 7</code> 。更多信息，请参考以下文档：</p>
-<ul>
-<li><a href="https://access.redhat.com/site/solutions/637583" target="_blank" rel="external">How do I upgrade from RHEL 6 to RHEL 7?</a></li>
-<li><a href="https://access.redhat.com/site/solutions/799813" target="_blank" rel="external">What are the supported use cases for upgrading from RHEL 6 to RHEL 7?</a></li>
-<li><a href="https://access.redhat.com/site/solutions/912213" target="_blank" rel="external">How do I subscribe to the RHEL Extras channel/repo?</a></li>
-<li><a href="https://access.redhat.com/site/documentation/en-US/Red_Hat_Enterprise_Linux/" target="_blank" rel="external">Red Hat Enterprise Linux 7 Installation Guide</a></li>
-</ul>
-<p>如有问题，请联系红帽全球支持服务 <a href="https://access.redhat.com/support/cases/new" target="_blank" rel="external">file a support case</a> ，或在 <a href="https://access.redhat.com/site/discussions/" target="_blank" rel="external">Discussions area of the Customer Portal</a> 中进行讨论。</p>
-<h2 id="How-do-I-upgrade-from-RHEL-6-to-RHEL-7"><a href="#How-do-I-upgrade-from-RHEL-6-to-RHEL-7" class="headerlink" title="How do I upgrade from RHEL 6 to RHEL 7"></a>How do I upgrade from RHEL 6 to RHEL 7</h2><h3 id="Environment-1"><a href="#Environment-1" class="headerlink" title="Environment"></a>Environment</h3><blockquote>
-<p>Red Hat Enterprise Linux 6.x to Red Hat Enterprise Linux 7</p>
-</blockquote>
-<table border="1"><br><tr><br><th><strong>Product Variant</strong></th><br><th><strong>x86 Architecture</strong></th><br><th><strong>x86_64 Architecture</strong></th><br><th><strong>IBM Power</strong></th><br><th><strong>IBM z Systems</strong></th><br></tr><br><tr><br><td><strong>Desktop Edition</strong></td><br><td>Not supported</td><br><td>Not supported</td><br><td>N/A</td><br><td>N/A</td><br></tr><br><tr><br><td><strong>Workstation Edition</strong></td><br><td>Not supported</td><br><td>Not supported</td><br><td>N/A</td><br><td>N/A</td><br></tr><br><tr><br><td><strong>Server Edition</strong></td><br><td>Not supported</td><br><td><font color="blue"><strong>Supported</strong></font></td><br><td><font color="blue"><strong>Supported[1]</strong></font></td><br><td><font color="blue"><strong>Supported[2]</strong></font></td><br></tr><br><tr><br><td><strong>HPC Compute Node</strong></td><br><td>Not supported</td><br><td><font color="blue"><strong>Supported</strong></font></td><br><td>N/A</td><br><td>N/A</td><br></tr><br><tr><br><td><strong>Server running CloudForms software</strong></td><br><td>N/A</td><br><td>Not supported</td><br><td>N/A</td><br><td>N/A</td><br></tr><br></table>
-
-<p>[1] Red Hat Enterprise Linux for Power, big endian<br>[2] Red Hat Enterprise Linux for IBM z Systems</p>
-<h3 id="Issue-1"><a href="#Issue-1" class="headerlink" title="Issue"></a>Issue</h3><ul>
-<li>How do I do in-place upgrading from the latest Red Hat Enterprise Linux 6 to the latest Red Hat Enterprise Linux 7?</li>
-<li>How do I use the preupgrade assistant and redhat-upgrade-tool to run a RHEL6 to RHEL7 upgrade?</li>
-</ul>
-<h3 id="Resolution-1"><a href="#Resolution-1" class="headerlink" title="Resolution"></a>Resolution</h3><p>Red Hat Enterprise Linux 7 (RHEL 7) is the first major release of RHEL to allow in-place upgrades from the previous RHEL major release (RHEL 6). An in-place upgrade offers a way of upgrading a system to a new major release of Red Hat Enterprise Linux by replacing the existing operating system.</p>
-<p>This RHEL 6 to RHEL 7 upgrade procedure is fully supported if your Red Hat Enterprise Linux system meets the following criteria:</p>
-<p><strong>Latest Red Hat Enterprise Linux 6</strong>: Before upgrading to the latest RHEL 7, you must start with RHEL 6 and update your system to have the latest RHEL 6 packages installed. (This is covered in the procedure below.)</p>
-<p><strong>All Server editions (except x86)</strong>: All server editions (except x86) of Red Hat Enterprise Linux 6 can be upgraded with this procedure. Upgrades of RHEL Workstation and Desktop systems are not supported. Upgrades for the POWER architecture is supported. SEE TABLE ABOVE. Upgrade from 32-bit architecture is not supported.</p>
-<p><strong>Limited package groups</strong>: The upgrade process handles only the following package groups and packages: Minimal (@minimal), Base (@base), Web Server (@web-server), DHCP Server, File Server (@nfs-server), and Print Server (@print-server). Although upgrades of other packages and groups are not supported, in some cases, packages can be uninstalled from the RHEL 6 system and reinstalled on the upgraded RHEL 7 system without a problem. SEE TABLE BELOW.</p>
-<p>The supported use cases for upgrading RHEL 6 to RHEL 7:</p>
-<table><br><thead><br><tr><br><th></th><br><th>Supported</th><br><th>Unsupported</th><br></tr><br></thead><br><tbody><br><tr><br><td><strong>Source to Upgrade</strong></td><br><td>The latest RHEL-6.X</td><br><td>RHEL 6.4 and earlier</td><br></tr><br><tr><br><td><strong>File Systems</strong></td><br><td>Like-file system upgrades<br>For example ext3 to ext3, ext4 to ext4, xfs to xfs</td><br><td>Unlike-file system upgrades<br>For example ext4 to xfs</td><br></tr><br><tr><br><td><strong>GNOME, KDE</strong></td><br><td>None</td><br><td>All GNOME, KDE installs</td><br></tr><br><tr><br><td><strong>Packages/Groups</strong></td><br><td>Minimal (@minimal)<br>Base (@base)<br>Web Server (@web-server)<br>DHCP Server<br>File Server (@nfs-server)<br>Print Server</td><br><td>All others</td><br></tr><br><tr><br><td><strong>Virtualization</strong></td><br><td>KVM, VMWare</td><br><td>Microsoft Hyper-V (coming soon)</td><br></tr><br><tr><br><td><strong>Red Hat Software Collections</strong></td><br><td>Using tested process</td><br><td>All others</td><br></tr><br><tr><br><td><strong>High Availability</strong></td><br><td>None</td><br><td>All</td><br></tr><br></tbody><br></table>
-
-<p>The upgrade procedure consists of the following basic steps:</p>
-<ol>
-<li>Prepare for Upgrade: Make sure your system is backed up and up to date before beginning the preupgrade.</li>
-<li>Install the Preupgrade Assistant: Enable the required repositories and install the preupgrade packages.</li>
-<li>Run the Preupgrade Assistant: Check your system for upgrade issues before running the actual upgrade. No changes are made to your system and you can repeat this step until all issues are dealt with.</li>
-<li>Run the Upgrade: Perform the actual upgrade.</li>
-<li>Provide Feedback: Create a debug log to send to Red Hat in case there are problems.</li>
-</ol>
-<h2 id="实践步骤"><a href="#实践步骤" class="headerlink" title="实践步骤"></a>实践步骤</h2><blockquote>
-<p>核心目标为格式化/分区，保留其它文件系统，做好相应备份重装RHEL7</p>
-</blockquote>
-<p>生产环境当前系统版本为RHEL6.7，推荐升级至RHEL7.1或者更新的版本</p>
-<blockquote>
-<p>通过RHEL7.1的ISO引导至INSTALLATION SUMMARY</p>
-</blockquote>
-<ul>
-<li>DATE &amp; TIME设置为Asia/Shanghai timezone</li>
-<li>LANGUAGE SUPPORT添加English(United States),简体中文(中国)</li>
-<li>SOFTWARE SELECTION设置为Server with GUI</li>
-<li>UBSTAKKATUIB DESTINATION分区选择I will configure partioning，点击DONE</li>
-<li>找到现有系统中的/分区，选中后在右侧勾选Reformat，Mount Point设置为/，SYSTEM其它分区SWAP,/boot,/usr,/tmp,/var参照同样操作，DATA数据分区不动，点击DONE</li>
-<li>Begin Install</li>
-</ul>
-<blockquote>
-<p>安装结束后恢复备份数据</p>
-</blockquote>
-<ul>
-<li>恢复原有网卡配置项和IP地址</li>
-<li>恢复主机名/Hosts/Profile</li>
-<li>恢复fstab分区检查数据一致性</li>
-</ul>
-]]></content>
-    
-    <summary type="html">
-    
-      How do I upgrade from RHEL 6 to RHEL 7? Reinstall
-    
-    </summary>
-    
-      <category term="学习 | Study" scheme="https://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>Linux使用ntfs-3g挂载NTFS最佳实践</title>
-    <link href="https://wsgzao.github.io/post/ntfs-3g/"/>
-    <id>https://wsgzao.github.io/post/ntfs-3g/</id>
-    <published>2016-07-29T08:17:46.000Z</published>
-    <updated>2016-07-29T08:46:14.000Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Linux和Mac OS X因为某些原因本身不支持读写NTFS文件系统，大多数人平时也不需要与NTFS做数据文件的交互，只是有时候Windows用户应急状态下需要使用大容量移动硬盘拷贝数据，必须实现Linux下挂载NTFS，而Tuxera恰好为Linux和Mac用户提供了灰常简单的实现方法。</p>
-<blockquote>
-<p>Open Source: NTFS-3G，Read-Write NTFS Driver</p>
-</blockquote>
-<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2016年07月29日 - 初稿</p>
-<p>阅读原文 - <a href="https://wsgzao.github.io/post/ntfs-3g/">https://wsgzao.github.io/post/ntfs-3g/</a></p>
-<p><strong>扩展阅读</strong></p>
-<p>Tuxera - <a href="https://www.tuxera.com/" target="_blank" rel="external">https://www.tuxera.com/</a></p>
-<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><blockquote>
-<p>我偷个大懒直接引用官方的原话</p>
-</blockquote>
-<p>NTFS-3G is a stable, full-featured, read-write NTFS driver for Linux, Android, Mac OS X, FreeBSD, NetBSD, OpenSolaris, QNX, Haiku, and other operating systems. It provides safe handling of the Windows XP, Windows Server 2003, Windows 2000, Windows Vista, Windows Server 2008, Windows 7, Windows 8 and Windows 10 NTFS file systems. A <span class="Apple-converted-space"></span> <a href="http://www.tuxera.com/products/tuxera-ntfs-embedded/performance/" target="_blank" rel="external">high-performance</a> <span class="Apple-converted-space"></span> alternative, called Tuxera NTFS is available for <span class="Apple-converted-space"></span> <a href="http://www.tuxera.com/products/tuxera-ntfs-embedded/" target="_blank" rel="external">embedded devices</a> <span class="Apple-converted-space"></span> and <span class="Apple-converted-space"></span> <a href="http://www.tuxera.com/products/tuxera-ntfs-for-mac/" target="_blank" rel="external">Mac OS X</a>.</p>
-<p>The release notes and the software changes can be found on the <span class="Apple-converted-space"></span> <a href="http://www.tuxera.com/community/release-history/" target="_blank" rel="external">Release History</a> <span class="Apple-converted-space"></span> page. Subscribe <span class="Apple-converted-space"></span> <a href="http://lists.sourceforge.net/mailman/listinfo/ntfs-3g-news" target="_blank" rel="external">here</a> <span class="Apple-converted-space"></span> for new release notifications.</p>
-<h2 id="Open-Source-NTFS-3G"><a href="#Open-Source-NTFS-3G" class="headerlink" title="Open Source: NTFS-3G"></a>Open Source: NTFS-3G</h2><p>Latest Download - <a href="http://www.tuxera.com/community/open-source-ntfs-3g/" target="_blank" rel="external">http://www.tuxera.com/community/open-source-ntfs-3g/</a><br>NTFS-3G Manual -  <a href="http://www.tuxera.com/community/ntfs-3g-manual/" target="_blank" rel="external">http://www.tuxera.com/community/ntfs-3g-manual/</a><br>stable version - <a href="https://tuxera.com/opensource/ntfs-3g_ntfsprogs-2016.2.22.tgz" target="_blank" rel="external">https://tuxera.com/opensource/ntfs-3g_ntfsprogs-2016.2.22.tgz</a></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#Installation</span></div><div class="line">tar zxvf /tmp/ntfs-3g_ntfsprogs-2016.2.22.tgz</div><div class="line"><span class="built_in">cd</span> ntfs*</div><div class="line"><span class="comment">#yum install gcc</span></div><div class="line">./configure</div><div class="line">make</div><div class="line">make install <span class="comment"># or 'sudo make install' if you aren't root</span></div><div class="line"></div><div class="line"><span class="comment">#Usage</span></div><div class="line">fdisk -l</div><div class="line">mkdir -p /mnt/windows</div><div class="line">mount -t ntfs-3g /dev/sda1 /mnt/windows</div><div class="line"><span class="comment">#You can also make NTFS to be mounted during boot by adding the following line to the end of the /etc/fstab file:</span></div><div class="line">vi /etc/fstab</div><div class="line">/dev/sda1 /mnt/windows ntfs-3g defaults 0 0</div></pre></td></tr></table></figure>
-<h2 id="Tuxera-NTFS-for-Mac"><a href="#Tuxera-NTFS-for-Mac" class="headerlink" title="Tuxera NTFS for Mac"></a>Tuxera NTFS for Mac</h2><p>Mac新手入门以及常用软件推荐 - <a href="https://wsgzao.github.io/post/mac/">https://wsgzao.github.io/post/mac/</a></p>
-]]></content>
-    
-    <summary type="html">
-    
-      Open Source NTFS-3G，Read-Write NTFS Driver
     
     </summary>
     
