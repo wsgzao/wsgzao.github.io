@@ -9,26 +9,24 @@
         window.location.protocol = "https";
   </script> 
   
-    <title>Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选 | HelloDog</title>
+    <title>3proxy 使用指北 | HelloDog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wsgzao">
     
 
     
-    <meta name="description" content="使用Dokan+SSHFS实现Linux与Windows文件系统共享，解决Samba 445端口被禁的矛盾">
+    <meta name="description" content="3proxy tiny free proxy server">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选">
-<meta property="og:url" content="https://wsgzao.github.io/post/winsshfs/index.html">
+<meta property="og:title" content="3proxy 使用指北">
+<meta property="og:url" content="https://wsgzao.github.io/post/3proxy/index.html">
 <meta property="og:site_name" content="HelloDog">
-<meta property="og:description" content="使用Dokan+SSHFS实现Linux与Windows文件系统共享，解决Samba 445端口被禁的矛盾">
+<meta property="og:description" content="3proxy tiny free proxy server">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://ooo.0o0.ooo/2017/05/16/591ab60fd5298.png">
-<meta property="og:updated_time" content="2018-04-13T07:38:16.986Z">
+<meta property="og:updated_time" content="2018-04-17T02:04:49.034Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选">
-<meta name="twitter:description" content="使用Dokan+SSHFS实现Linux与Windows文件系统共享，解决Samba 445端口被禁的矛盾">
-<meta name="twitter:image" content="https://ooo.0o0.ooo/2017/05/16/591ab60fd5298.png">
+<meta name="twitter:title" content="3proxy 使用指北">
+<meta name="twitter:description" content="3proxy tiny free proxy server">
 
     
     <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
@@ -89,14 +87,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/post/winsshfs/" title="Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选" itemprop="url">Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选</a>
+      <a href="/post/3proxy/" title="3proxy 使用指北" itemprop="url">3proxy 使用指北</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
 		
   <p class="article-time">
-    <time datetime="2018-04-12T06:59:49.000Z" itemprop="datePublished"> 发表于 2018-04-12</time>
+    <time datetime="2018-04-17T06:59:49.000Z" itemprop="datePublished"> 发表于 2018-04-17</time>
     
   </p>
 </header>
@@ -105,58 +103,43 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dokan和SSHFS"><span class="toc-number">3.</span> <span class="toc-text">Dokan和SSHFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WinSSHFS"><span class="toc-number">4.</span> <span class="toc-text">WinSSHFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他代替方案"><span class="toc-number">5.</span> <span class="toc-text">其他代替方案</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3proxy简介"><span class="toc-number">3.</span> <span class="toc-text">3proxy简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3proxy安装配置"><span class="toc-number">4.</span> <span class="toc-text">3proxy安装配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux"><span class="toc-number">4.1.</span> <span class="toc-text">Linux</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Windows"><span class="toc-number">4.2.</span> <span class="toc-text">Windows</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#客户端代理使用"><span class="toc-number">5.</span> <span class="toc-text">客户端代理使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#windows"><span class="toc-number">5.1.</span> <span class="toc-text">windows</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux-1"><span class="toc-number">5.2.</span> <span class="toc-text">Linux</span></a></li></ol></li></ol>
 		
 		</div>
 		
-		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>2017年5月12日国内校园网络遭受勒索病毒蠕虫入侵损失惨重，国内的安全厂商也在第一时间发布安全告警和预防方案，可是通过防火墙直接禁用445端口来解决安全隐患的方式似乎也带来了其他问题，而Samba文件系统共享正是使用了该端口，由于安全的权重大于一切，在研究过CIFS/NFS共享协议以及GoodSync等数据同步软件后发现Dokan+SSHFS可以作为目前比较理想的解决方案。</p>
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文推荐的是3proxy但是也不能不提一下SSH端口转发，因为很多使用场景可能只需要借助SSH即可实现。SSH有三种端口转发模式，本地端口转发(Local Port Forwarding)，远程端口转发(Remote Port Forwarding)以及动态端口转发(Dynamic Port Forwarding)。对于本地/远程端口转发，两者的方向恰好相反。动态端口转发则可以用于科学上网。3roxy的角色类似于CCProxy，如果你熟悉CCProxy那配置3proxy应该也不会存在太大问题。</p>
 <blockquote>
-<p>使用Dokan+SSHFS实现Linux与Windows文件系统共享，解决Samba 445端口被禁的矛盾</p>
+<p>3proxy tiny free proxy server</p>
 </blockquote>
-<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018年04月12日 - 增加方案NetDrive<br>2017年07月11日 - 补充ExpanDrive和SFTP Net Drive<br>2017年05月16日 - 初稿</p>
-<p>阅读原文 - <a href="https://wsgzao.github.io/post/winsshfs/">https://wsgzao.github.io/post/winsshfs/</a></p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2017年04月17日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/3proxy/">https://wsgzao.github.io/post/3proxy/</a></p>
 <p><strong>扩展阅读</strong></p>
-<p>Dokan -  <a href="http://dokan-dev.github.io" target="_blank" rel="external">http://dokan-dev.github.io</a><br>WinSSHFS - <a href="https://github.com/Foreveryone-cz/win-sshfs" target="_blank" rel="external">https://github.com/Foreveryone-cz/win-sshfs</a></p>
+<p>3proxy - <a href="https://3proxy.ru/" target="_blank" rel="external">https://3proxy.ru/</a></p>
 <hr>
-<h2 id="Dokan和SSHFS"><a href="#Dokan和SSHFS" class="headerlink" title="Dokan和SSHFS"></a>Dokan和SSHFS</h2><blockquote>
-<p>User mode file system library for windows with FUSE Wrapper</p>
+<h2 id="3proxy简介"><a href="#3proxy简介" class="headerlink" title="3proxy简介"></a>3proxy简介</h2><p>3proxy是一款代理软件支持http/socks，支持windows和linux平台，安装和配置都很简单<br><a href="http://3proxy.ru/" target="_blank" rel="external">http://3proxy.ru/</a></p>
+<p>详细的配置文档可以参考3proxy documentation How To (English, very incomplete)<br><a href="https://3proxy.ru/doc/howtoe.html" target="_blank" rel="external">https://3proxy.ru/doc/howtoe.html</a></p>
+<p>关于3proxy的比较好的资料是<br><a href="http://linux.die.net/man/3/3proxy.cfg" target="_blank" rel="external">http://linux.die.net/man/3/3proxy.cfg</a><br><a href="https://github.com/z3APA3A/3proxy/wiki" target="_blank" rel="external">https://github.com/z3APA3A/3proxy/wiki</a></p>
+<h2 id="3proxy安装配置"><a href="#3proxy安装配置" class="headerlink" title="3proxy安装配置"></a>3proxy安装配置</h2><h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><p>3proxy的代码代管在github上面，地址是：<a href="https://github.com/z3APA3A/3proxy" target="_blank" rel="external">https://github.com/z3APA3A/3proxy</a><br>安装步骤如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 通过git下载最新版3proxy源码</span></div><div class="line">git <span class="built_in">clone</span> https://github.com/z3APA3A/3proxy.git</div><div class="line"><span class="comment"># 切换到3proxy目录</span></div><div class="line"><span class="built_in">cd</span> 3proxy</div><div class="line"><span class="comment"># 编译3proxy,如果你的系统没有gcc，你需求先安装gcc</span></div><div class="line">make -f Makefile.Linux</div><div class="line"><span class="comment"># 安装3proxy</span></div><div class="line">make -f Makefile.Linux install</div></pre></td></tr></table></figure>
+<p>编辑生成3proxy.cfg配置文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/local/bin/3proxy</span></div><div class="line"></div><div class="line">timeouts 1 5 30 60 180 1800 15 60</div><div class="line">service</div><div class="line"><span class="comment">#users ox:CL:ox</span></div><div class="line"><span class="built_in">log</span> /etc/3proxy/3proxy.log D</div><div class="line">logformat <span class="string">"- +_L%t.%.  %N.%p %E %U %C:%c %R:%r %O %I %h %T"</span></div><div class="line">rotate 30</div><div class="line">external 0.0.0.0</div><div class="line">internal 0.0.0.0</div><div class="line">auth iponly strong</div><div class="line">allow *</div><div class="line">proxy -a -p6666</div><div class="line">socks -p6667</div></pre></td></tr></table></figure>
+<p>执行配置文件，如果有报错比如日志目录不存在和语法错误都会有具体提示</p>
+<pre><code>3proxy 3proxy.cfg 
+</code></pre><p>后台执行</p>
+<pre><code>3proxy 3proxy.cfg &amp;
+</code></pre><h3 id="Windows"><a href="#Windows" class="headerlink" title="Windows"></a>Windows</h3><figure class="highlight powershell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># string into 3proxy.cfg. Now, start command prompt (cmd.exe). Change directory to 3proxy installation and run 3proxy.exe --install:</span></div><div class="line">D:\&gt;C:</div><div class="line">C:\&gt;cd C:\Program Files\<span class="number">3</span>proxy</div><div class="line">C:\Program Files\<span class="number">3</span>proxy&gt;<span class="number">3</span>proxy.exe --install</div><div class="line"></div><div class="line"><span class="comment"># Now, you should have 3proxy service installed and running. If service is not started, remove "service" string from 3proxy.cfg, run 3proxy.exe manually and correct all errors.</span></div><div class="line"><span class="comment"># To remove 3proxy run 3proxy --remove:</span></div><div class="line"></div><div class="line">D:\&gt;C:</div><div class="line">C:\&gt;cd C:\Program Files\<span class="number">3</span>proxy</div><div class="line">C:\Program Files\<span class="number">3</span>proxy&gt;net stop <span class="number">3</span>proxy</div><div class="line">C:\Program Files\<span class="number">3</span>proxy&gt;<span class="number">3</span>proxy.exe --remove</div></pre></td></tr></table></figure>
+<h2 id="客户端代理使用"><a href="#客户端代理使用" class="headerlink" title="客户端代理使用"></a>客户端代理使用</h2><h3 id="windows"><a href="#windows" class="headerlink" title="windows"></a>windows</h3><blockquote>
+<p>有钱任性，服务端可以购买使用CCProxy</p>
 </blockquote>
-<p>Dokan是用户态的文件系统驱动，可以称之为fuse for windows。可以用来开发虚拟磁盘，即在“我的电脑”中虚拟出一个硬盘来，可以是硬盘，也可以是可移动磁盘或者网络硬盘。</p>
-<p><a href="http://dokan-dev.github.io" target="_blank" rel="external">http://dokan-dev.github.io</a></p>
-<blockquote>
-<p>SSH(SFTP) filesystem for Windows</p>
-</blockquote>
-<p>SSH(SFTP) filesystem made using Dokan and SSH.NET library. It allows you to mount remote computers via SFTP protocol like windows network drives .</p>
-<p>sshfs 是基于 FUSE 构建的 SSH 文件系统客户端程序，通过它远程主机的配置无需作任何改变，就可以透过 SSH 协议来挂载远程文件系统了，非常方便及安全。</p>
-<p><a href="https://github.com/Foreveryone-cz/win-sshfs" target="_blank" rel="external">https://github.com/Foreveryone-cz/win-sshfs</a></p>
-<h2 id="WinSSHFS"><a href="#WinSSHFS" class="headerlink" title="WinSSHFS"></a>WinSSHFS</h2><p>使用方法很简单，这里有一篇国外的文章写得非常清晰，大家遇到问题可以参考下<br><a href="https://igikorn.com/sshfs-windows-10/" target="_blank" rel="external">https://igikorn.com/sshfs-windows-10/</a></p>
-<p><img src="https://ooo.0o0.ooo/2017/05/16/591ab60fd5298.png" alt=""></p>
-<ol>
-<li>安装Dokan</li>
-<li>安装WinSSHFS</li>
-<li>配置WinSSHFS然后Mount远端文件夹</li>
-</ol>
-<p>Get Dokan here: <a href="https://github.com/dokan-dev/dokany/releases" target="_blank" rel="external">https://github.com/dokan-dev/dokany/releases</a><br>Get WinSSHFS here: <a href="https://github.com/Foreveryone-cz/win-sshfs/releases" target="_blank" rel="external">https://github.com/Foreveryone-cz/win-sshfs/releases</a><br>百度网盘：<a href="http://pan.baidu.com/s/1dEPrPfF" target="_blank" rel="external">http://pan.baidu.com/s/1dEPrPfF</a></p>
-<h2 id="其他代替方案"><a href="#其他代替方案" class="headerlink" title="其他代替方案"></a>其他代替方案</h2><ol>
-<li>ExpanDrive - <a href="http://www.expandrive.com/" target="_blank" rel="external">http://www.expandrive.com/</a></li>
-<li>NetDrive - NetDrive </li>
-<li>SFTP Net Drive - <a href="http://www.sftpnetdrive.com/" target="_blank" rel="external">http://www.sftpnetdrive.com/</a></li>
-</ol>
-<blockquote>
-<p>这里推荐方案3，主要是因为免费但在离线环境下安装不友好，需要设置key</p>
-</blockquote>
-<p>Sorry for the trouble here. The reason this happens is because the free version does technically have a product key, it is just a “special” product key that we use for all free users. Usually, you never notice, because an online machine will activate this special product key without you doing anything. But since your machine is offline, you have to activate it manually. Here are the steps to do that:</p>
-<ol>
-<li>Download this file and run it on the offline machine you will use SFTP NetDrive on to get something called your “Node ID”, you’ll need it in a moment:<a href="http://www.nsoftware.com/lic/nodeid.exe" target="_blank" rel="external">http://www.nsoftware.com/lic/nodeid.exe</a></li>
-<li>If you have the 2016 installer, go to this page on a machine that has internet, then go to step 4: <a href="http://www.nsoftware.com/lic/?prod=NDXB-A&amp;sno=NSXBAS-PERSONAL&amp;key=PXE-K3A" target="_blank" rel="external">http://www.nsoftware.com/lic/?prod=NDXB-A&amp;sno=NSXBAS-PERSONAL&amp;key=PXE-K3A</a> (if not, go to step 3)</li>
-<li>If you have the 2017 installer, go to this page instead: <a href="http://www.nsoftware.com/lic/?w64=1&amp;prod=ndxca&amp;sno=NDXCAS-PERSONAL&amp;key=DRG-K4V" target="_blank" rel="external">http://www.nsoftware.com/lic/?w64=1&amp;prod=ndxca&amp;sno=NDXCAS-PERSONAL&amp;key=DRG-K4V</a></li>
-<li>Enter your information on the form on that page, using the Node ID you got from step 1. Then, click “Download Keys” to download a keys.reg file.</li>
-<li>Copy the .reg file back to your offline machine and run it to add the information to your registry.</li>
-<li>Re-run your installer. It should recognize that you already have the free version’s special product key now, and you’ll be able to install it.</li>
-</ol>
-<p>If you have any trouble, let me know and I’ll be happy to assist you.</p>
-<p>Regards,<br>Brenden Kromhout<br>/n software, inc.</p>
-<p>如果需要学习Samba可以参考之前的一篇文章<br><a href="https://wsgzao.github.io/post/samba/">https://wsgzao.github.io/post/samba/</a></p>
+<ul>
+<li>浏览器代理</li>
+<li>Proxifier</li>
+</ul>
+<h3 id="Linux-1"><a href="#Linux-1" class="headerlink" title="Linux"></a>Linux</h3><ul>
+<li>export http_proxy=””</li>
+<li>proxychains(proxychains-ng)</li>
+<li>redsocks + iptables</li>
+</ul>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -174,7 +157,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://wsgzao.github.io/post/winsshfs/" data-title="Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选 | HelloDog" data-tsina="" class="share clearfix">
+	  <div data-url="https://wsgzao.github.io/post/3proxy/" data-title="3proxy 使用指北 | HelloDog" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -187,19 +170,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/post/python-2-6-update-to-2-7/" title="Python 2.6 升级至 Python 2.7 的实践心得">
-  <strong>上一篇：</strong><br/>
-  <span>
-  Python 2.6 升级至 Python 2.7 的实践心得</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/post/virtualenv/"  title="使用virtualenv和virtualenvwrapper管理多版本Python开发环境">
+<a href="/post/proxychains/"  title="proxychains 使用指北">
  <strong>下一篇：</strong><br/> 
- <span>使用virtualenv和virtualenvwrapper管理多版本Python开发环境
+ <span>proxychains 使用指北
 </span>
 </a>
 </div>
@@ -222,7 +197,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dokan和SSHFS"><span class="toc-number">3.</span> <span class="toc-text">Dokan和SSHFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WinSSHFS"><span class="toc-number">4.</span> <span class="toc-text">WinSSHFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他代替方案"><span class="toc-number">5.</span> <span class="toc-text">其他代替方案</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3proxy简介"><span class="toc-number">3.</span> <span class="toc-text">3proxy简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3proxy安装配置"><span class="toc-number">4.</span> <span class="toc-text">3proxy安装配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux"><span class="toc-number">4.1.</span> <span class="toc-text">Linux</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Windows"><span class="toc-number">4.2.</span> <span class="toc-text">Windows</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#客户端代理使用"><span class="toc-number">5.</span> <span class="toc-text">客户端代理使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#windows"><span class="toc-number">5.1.</span> <span class="toc-text">windows</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux-1"><span class="toc-number">5.2.</span> <span class="toc-text">Linux</span></a></li></ol></li></ol>
  
   </div>
 
