@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://docs-aliyun.cn-hangzhou.oss.aliyun-inc.com/assets/pic/52857/cn_zh/1492756915645/%E5%9B%BE%E7%89%878.png">
 <meta property="og:image" content="https://www.ilanni.com/wp-content/uploads/2018/04/clip_image011_thumb-1.png">
-<meta property="og:updated_time" content="2018-04-19T02:55:09.836Z">
+<meta property="og:updated_time" content="2018-04-19T02:57:07.027Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RHEL7&#x2F;CentOS7在线和离线安装GitLab配置使用实践">
 <meta name="twitter:description" content="RHEL7/CentOS7在线和离线安装GitLab配置实践，GitLab汉化配置使用小结">
@@ -182,7 +182,7 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 停止gitlab</span></div><div class="line">gitlab-ctl stop</div><div class="line"><span class="comment"># 从1524016954编号备份中恢复</span></div><div class="line">gitlab-rake gitlab:backup:restore BACKUP=1524016954 </div><div class="line"><span class="comment"># 启动gitlab</span></div><div class="line">gitlab-ctl start</div></pre></td></tr></table></figure>
 <h2 id="GitLab-常见问题"><a href="#GitLab-常见问题" class="headerlink" title="GitLab 常见问题"></a>GitLab 常见问题</h2><h3 id="更改管理员密码"><a href="#更改管理员密码" class="headerlink" title="更改管理员密码"></a>更改管理员密码</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">gitlab-rails console production</div><div class="line"></div><div class="line">Loading production environment (Rails 4.8.5.2)</div><div class="line">irb(main):001:0&gt; user = User.where(id: 1).first</div><div class="line">=&gt; <span class="comment">#&lt;User id: 1, email: "admin@example.com", ...</span></div><div class="line">irb(main):002:0&gt; user.password=123456</div><div class="line">=&gt; 123456</div><div class="line">irb(main):003:0&gt; user.password_confirmation=123456</div><div class="line">=&gt; 123456</div><div class="line">irb(main):004:0&gt; user.save!</div><div class="line">=&gt; <span class="literal">true</span></div><div class="line">irb(main):005:0&gt; quit</div></pre></td></tr></table></figure>
 <h3 id="webhooks不生效"><a href="#webhooks不生效" class="headerlink" title="webhooks不生效"></a>webhooks不生效</h3><p><a href="https://gitlab.com/gitlab-org/gitlab-ce/issues/45334" target="_blank" rel="external">https://gitlab.com/gitlab-org/gitlab-ce/issues/45334</a><br><a href="https://gitlab.com/gitlab-org/omnibus-gitlab/issues/3307#note_64245578" target="_blank" rel="external">https://gitlab.com/gitlab-org/omnibus-gitlab/issues/3307#note_64245578</a></p>
-<p>Admin Area —- Settings —- Outbound request —- 勾选以下内容<br>Allow request to the local network from hooks and services</p>
+<p>Admin Area - Settings - Outbound request - 勾选以下内容<br>Allow request to the local network from hooks and services</p>
 <p><img src="https://www.ilanni.com/wp-content/uploads/2018/04/clip_image011_thumb-1.png" alt=""></p>
   
 	</div>
@@ -214,6 +214,14 @@
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/post/hexo-jacman/" title="Jacman基于Pacman修改的Hexo主题">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Jacman基于Pacman修改的Hexo主题</span>
+</a>
+</div>
+
 
 <div class="next">
 <a href="/post/3proxy/"  title="3proxy 使用指北">
