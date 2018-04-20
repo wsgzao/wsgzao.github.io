@@ -1,0 +1,600 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+  
+    <title>使用Network Recycle Bin启用映射网络驱动器上的回收站 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="使用Network Recycle Bin为局域网巧设“回收站”">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Network Recycle Bin启用映射网络驱动器上的回收站">
+<meta property="og:url" content="https://wsgzao.github.io/post/network-recycle-bin/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="使用Network Recycle Bin为局域网巧设“回收站”">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.loli.net/2018/04/20/5ad9525cde76c.jpg">
+<meta property="og:image" content="https://i.loli.net/2018/04/20/5ad956a54cab2.jpg">
+<meta property="og:image" content="https://i.loli.net/2018/04/20/5ad951ff94b8e.png">
+<meta property="og:image" content="http://www.networkrecyclebin.info/images/network_recycle_bin2.png">
+<meta property="og:image" content="http://www.networkrecyclebin.info/images/network_recycle_bin1.png">
+<meta property="og:image" content="http://www.networkrecyclebin.info/images/network_recycle_bin3.png">
+<meta property="og:updated_time" content="2018-04-20T02:58:37.190Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用Network Recycle Bin启用映射网络驱动器上的回收站">
+<meta name="twitter:description" content="使用Network Recycle Bin为局域网巧设“回收站”">
+<meta name="twitter:image" content="https://i.loli.net/2018/04/20/5ad9525cde76c.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/network-recycle-bin/" title="使用Network Recycle Bin启用映射网络驱动器上的回收站" itemprop="url">使用Network Recycle Bin启用映射网络驱动器上的回收站</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2018-04-20T02:59:49.000Z" itemprop="datePublished"> 发表于 2018-04-20</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何启用映射网络驱动器上的回收站"><span class="toc-number">3.</span> <span class="toc-text">如何启用映射网络驱动器上的回收站</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Enable-Recycle-Bin-on-mapped-network-drives"><span class="toc-number">4.</span> <span class="toc-text">Enable Recycle Bin on mapped network drives</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Network-Recycle-Bin-Tool简介"><span class="toc-number">5.</span> <span class="toc-text">Network Recycle Bin Tool简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Server-Edition"><span class="toc-number">5.1.</span> <span class="toc-text">Server Edition</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Personal-Client-Machine-Edition"><span class="toc-number">5.2.</span> <span class="toc-text">Personal Client Machine Edition</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Network-Recycle-Bin-Tool使用方法"><span class="toc-number">5.3.</span> <span class="toc-text">Network Recycle Bin Tool使用方法</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在内网环境中我们经常会使用NAS或者Samba在Windows中映射网络驱动器，方便局域网用户实时共享交换数据。但当存储在网络或映射网络上的任何文件被删除时，该文件将被永久删除。它不会去到本地计算机回收站，也不会去到服务器的回收站，我通过google在mydigitallife和microsoft technet中搜索到很多方法，但针对不同操作系统且涉及到域用户管理的复杂情况下，单纯的依赖注册表修改可能已经支撑不住需求的膨胀了。在所有的方法中使用Network Recycle Bin可以轻松解决映射网络驱动器上的回收站。</p>
+<blockquote>
+<p>使用Network Recycle Bin为局域网巧设“回收站”</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2017年04月20日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/network-recycle-bin/">https://wsgzao.github.io/post/network-recycle-bin/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>Network Recycle Bin Tool - <a href="http://www.networkrecyclebin.info/index.html" target="_blank" rel="external">http://www.networkrecyclebin.info/index.html</a></p>
+<hr>
+<h2 id="如何启用映射网络驱动器上的回收站"><a href="#如何启用映射网络驱动器上的回收站" class="headerlink" title="如何启用映射网络驱动器上的回收站"></a>如何启用映射网络驱动器上的回收站</h2><p>映射驱动器不过是将本地驱动器连接到另一台计算机上特别分配的共享目录或文件夹。 一旦驱动器被映射，您就可以访问共享资源，您可以像对待您的系统本地一样对待它。可以将多个计算机驱动器映射到共享资源，并利用此网络空间。</p>
+<p>当存储在网络或映射网络上的任何文件被删除时，该文件将被永久删除。 它不会去到本地计算机回收站，也不会去到服务器的回收站。 为了避免将来出现这种数据丢失情况，您可以在映射的网络驱动器上启用回收站。 按照以下给出的步骤在映射的网络驱动器上启用回收站.</p>
+<ol>
+<li>将网络驱动器映射到要使用的网络共享。 确保登录后重新连接驱动器</li>
+<li>然后进入C：&gt; 用户 &gt; 用户名</li>
+<li>右键单击该位置的任何文件夹，然后单击 属性 &gt; 位置选项卡</li>
+<li>单击移动并浏览根驱动器（在步骤1中映射），然后点击选择文件夹</li>
+<li>然后点击 好 并当对话框出现命中 是</li>
+<li>只需在PC上为每个用户重复这些步骤</li>
+</ol>
+<p>注意：要验证此过程是否正常工作，请右键单击回收站并转至属性，并检查网络驱动器是否在回收站的位置列中列出。</p>
+<p><img src="https://i.loli.net/2018/04/20/5ad9525cde76c.jpg" alt=""><br><img src="https://i.loli.net/2018/04/20/5ad956a54cab2.jpg" alt=""></p>
+<p><strong>需要注意的事情</strong></p>
+<p>这仅适用于通过映射的网络驱动器而不是UNC路径访问的文件。 我们举一个例子：如果你已经将\server\share映射到E：并从这个E：驱动器中删除了一些东西，那么它将会进入回收站。 但是，如果您浏览到\server\share并擦除文件，它将被永久删除。</p>
+<h2 id="Enable-Recycle-Bin-on-mapped-network-drives"><a href="#Enable-Recycle-Bin-on-mapped-network-drives" class="headerlink" title="Enable Recycle Bin on mapped network drives"></a>Enable Recycle Bin on mapped network drives</h2><blockquote>
+<p>方案1，通过重定向文件位置的方式我自己在Windows 10下测试可用，但Windows 7失败了</p>
+</blockquote>
+<p><a href="https://forums.mydigitallife.net/threads/tip-network-recycle-bin.16974/" target="_blank" rel="external">https://forums.mydigitallife.net/threads/tip-network-recycle-bin.16974/</a></p>
+<p>You may have noticed that when you delete a file stored on a network location or mapped network drive that the file is permanently deleted. It does not go to the local computer’s recycle bin and does not go to the server’s recycle bin. I have discovered a work-around that extends recycle bin coverage to include mapped network drives. The solution is not 100% perfect, but works extremely well and does not rely on Shadow Copies or 3rd-party software.</p>
+<p><img src="https://i.loli.net/2018/04/20/5ad951ff94b8e.png" alt=""></p>
+<p>Here’s how:</p>
+<ol>
+<li>Map a network drive to the network share you want to use. Make sure that the drive is re-connected on logon. If you don’t know how to do this, search Google.</li>
+<li>Browse to C:\users\<user name="">.</user></li>
+<li>Right-click on one of the folders in this location (I chose saved games) and click properties.</li>
+<li>Select the Location tab.</li>
+<li>Click Move, browse to to root of the drive you mapped in step 1, and click Select Folder.</li>
+<li>Click Ok and click yes in the dialogue box that appears.</li>
+<li>Repeat these same steps for all users on the computer.</li>
+</ol>
+<blockquote>
+<p>方案2，通过修改注册表搞定回收站问题，实际测试喜忧参半，通用性不高，不推荐</p>
+</blockquote>
+<p><a href="https://social.technet.microsoft.com/Forums/windows/en-US/a349801f-398f-4139-8e8b-b0a92f599e2b/enable-recycle-bin-on-mapped-network-drives" target="_blank" rel="external">https://social.technet.microsoft.com/Forums/windows/en-US/a349801f-398f-4139-8e8b-b0a92f599e2b/enable-recycle-bin-on-mapped-network-drives</a></p>
+<p>Just copy and paste the following into notepad<br>and save it as “Network Recycling Bin - auto make registry file.bat”</p>
+<figure class="highlight bat"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">echo</span> off </div><div class="line"><span class="comment">REM ========== MAIN FUNCTION  ======================== </span></div><div class="line">  </div><div class="line"><span class="keyword">Call</span> :CreateREGfile </div><div class="line"><span class="built_in">PAUSE</span> </div><div class="line"><span class="keyword">goto</span> :eof </div><div class="line">  </div><div class="line">  </div><div class="line">  </div><div class="line">  </div><div class="line"><span class="comment">REM ========== SUB FUNCTIONS  ======================== </span></div><div class="line">  </div><div class="line">:CreateREGfile </div><div class="line"><span class="built_in">set</span> /p RelativePath=Enter current mapped <span class="built_in">path</span> of drive (e.g. X:\FileShare\D_Drive): </div><div class="line"><span class="comment">REM replace \ with \\ (for reg value its a requirement) </span></div><div class="line"><span class="built_in">Set</span> RelativePath=<span class="variable">%RelativePath:\=\\%</span>  </div><div class="line">  </div><div class="line">  </div><div class="line"><span class="built_in">set</span> /p MaxBinSize_Dec=Enter max size (<span class="keyword">in</span> mb) (eg <span class="number">11</span>gb=<span class="number">11000</span>): </div><div class="line"><span class="keyword">call</span> :toHex <span class="variable">%MaxBinSize_Dec%</span> MaxBinSize_Hex </div><div class="line">  </div><div class="line">  </div><div class="line"><span class="built_in">Set</span> outputREG="Network Recycling Bin - <span class="variable">%RelativePath:~0,1%</span> Drive (<span class="variable">%MaxBinSize_Dec%</span>mb).reg" </div><div class="line">  </div><div class="line">  </div><div class="line"><span class="keyword">call</span> :MakeGUID_VBS NewGUID </div><div class="line"><span class="comment">REM echo My new GUID : %NewGUID% </span></div><div class="line">  </div><div class="line">  </div><div class="line"><span class="built_in">echo</span> Windows Registry Editor Version <span class="number">5</span>.<span class="number">00</span> &gt; <span class="variable">%outputREG%</span> </div><div class="line"><span class="built_in">echo</span> [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\<span class="variable">%NewGUID%</span>] &gt;&gt; <span class="variable">%outputREG%</span> </div><div class="line"><span class="built_in">echo</span> "RelativePath"="<span class="variable">%RelativePath%</span>" &gt;&gt; <span class="variable">%outputREG%</span> </div><div class="line"><span class="built_in">echo</span> "Category"=dword:<span class="number">00000004</span> &gt;&gt; <span class="variable">%outputREG%</span> </div><div class="line"><span class="built_in">echo</span> "Name"="NetworkDrive2RecyclingBin_<span class="variable">%NewGUID:~1,5%</span>" &gt;&gt; <span class="variable">%outputREG%</span> </div><div class="line"><span class="comment">      REM The "Name" value is required, but is not the name that will be shown if you right-click on the Recycle Bin and select properties. That will be autoset to the network drive name. </span></div><div class="line"><span class="built_in">echo</span>.&gt;&gt; <span class="variable">%outputREG%</span> </div><div class="line"><span class="built_in">echo</span> [HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\BitBucket\KnownFolder\<span class="variable">%NewGUID%</span>]  &gt;&gt; <span class="variable">%outputREG%</span> </div><div class="line"><span class="built_in">echo</span> "MaxCapacity"=dword:<span class="variable">%MaxBinSize_Hex%</span> &gt;&gt; <span class="variable">%outputREG%</span> </div><div class="line"><span class="built_in">echo</span> "NukeOnDelete"=dword:<span class="number">00000000</span> &gt;&gt; <span class="variable">%outputREG%</span> </div><div class="line"><span class="keyword">goto</span> :eof </div><div class="line">  </div><div class="line">  </div><div class="line">  </div><div class="line">:MakeGUID_VBS </div><div class="line"><span class="built_in">echo</span> <span class="built_in">set</span> obj = CreateObject("Scriptlet.TypeLib") &gt; TEMP_generateGUID.vbs </div><div class="line"><span class="built_in">echo</span> WScript.<span class="built_in">Echo</span> obj.GUID &gt;&gt; TEMP_generateGUID.vbs </div><div class="line"><span class="keyword">FOR</span> /F "usebackq tokens=*" <span class="variable">%%r</span><span class="keyword">in</span> (`CSCRIPT "TEMP_generateGUID.vbs"`)<span class="keyword">DO</span> <span class="built_in">SET</span> RESULT=<span class="variable">%%r</span> </div><div class="line"><span class="built_in">set</span> <span class="variable">%1=%</span>RESULT% </div><div class="line">  </div><div class="line"><span class="built_in">del</span> TEMP_generateGUID.vbs </div><div class="line"><span class="keyword">goto</span> :eof </div><div class="line">  </div><div class="line">  </div><div class="line">:toDec </div><div class="line">:: todec hex dec -- <span class="built_in">convert</span> a hexadecimal number to decimal </div><div class="line">::             -- hex [<span class="keyword">in</span>]      - hexadecimal number to <span class="built_in">convert</span> </div><div class="line">::             -- dec [out,opt] - variable to store the converted decimal number <span class="keyword">in</span> </div><div class="line"><span class="built_in">SETLOCAL</span> </div><div class="line"><span class="built_in">set</span> /a dec=<span class="number">0</span>x%~<span class="number">1</span> </div><div class="line">( <span class="built_in">ENDLOCAL</span> &amp; <span class="built_in">REM</span> RETURN VALUES </div><div class="line">    <span class="keyword">IF</span> "%~<span class="number">2</span>" <span class="keyword">NEQ</span> "" (<span class="built_in">SET</span> <span class="variable">%~2=%</span>dec%)<span class="keyword">ELSE</span> <span class="built_in">ECHO</span>.<span class="variable">%dec%</span> </div><div class="line">) </div><div class="line"><span class="keyword">EXIT</span> /b </div><div class="line">  </div><div class="line">  </div><div class="line">:toHex </div><div class="line">:: eg  <span class="keyword">call</span> :toHex dec hex -- <span class="built_in">convert</span> a decimal number to hexadecimal, i.e. -<span class="number">20</span> to FFFFFFEC or <span class="number">26</span> to <span class="number">0000001</span>A </div><div class="line">::             -- dec [<span class="keyword">in</span>]      - decimal number to <span class="built_in">convert</span> </div><div class="line">::             -- hex [out,opt] - variable to store the converted hexadecimal number <span class="keyword">in</span> </div><div class="line">::Thanks to 'dbenham' dostips forum users who inspired to improve this function </div><div class="line">:$created <span class="number">20091203</span> :$changed <span class="number">20110330</span> :$categories Arithmetic,Encoding </div><div class="line">:$source http://www.dostips.com </div><div class="line"><span class="built_in">SETLOCAL</span> ENABLEDELAYEDEXPANSION </div><div class="line"><span class="built_in">set</span> /a dec=%~<span class="number">1</span> </div><div class="line"><span class="built_in">set</span> "hex=" </div><div class="line"><span class="built_in">set</span> "map=<span class="number">0123456789</span>ABCDEF" </div><div class="line"><span class="keyword">for</span> /L <span class="variable">%%N</span><span class="keyword">in</span> (<span class="number">1</span>,<span class="number">1</span>,<span class="number">8</span>)<span class="keyword">do</span> ( </div><div class="line">    <span class="built_in">set</span> /a "d=dec&amp;<span class="number">15</span>,dec&gt;&gt;=<span class="number">4</span>" </div><div class="line">    <span class="keyword">for</span> <span class="variable">%%D</span><span class="keyword">in</span> (<span class="variable">!d!</span>)<span class="keyword">do</span> <span class="built_in">set</span> "hex=<span class="variable">!map:~%%D,1!</span><span class="variable">!hex!</span>" </div><div class="line">) </div><div class="line"><span class="comment">rem !!!! REMOVE LEADING ZEROS by activating the next line, e.g. will return 1A instead of 0000001A </span></div><div class="line"><span class="comment">rem for /f "tokens=* delims=0" %%A in ("%hex%") do set "hex=%%A"&amp;if not defined hex set "hex=0" </span></div><div class="line">( <span class="built_in">ENDLOCAL</span> &amp; <span class="built_in">REM</span> RETURN VALUES </div><div class="line">    <span class="keyword">IF</span> "%~<span class="number">2</span>" <span class="keyword">NEQ</span> "" (<span class="built_in">SET</span> <span class="variable">%~2=%</span>hex%)<span class="keyword">ELSE</span> <span class="built_in">ECHO</span>.<span class="variable">%hex%</span> </div><div class="line">) </div><div class="line"><span class="keyword">EXIT</span> /b </div><div class="line">  </div><div class="line">  </div><div class="line">:eof</div></pre></td></tr></table></figure>
+<h2 id="Network-Recycle-Bin-Tool简介"><a href="#Network-Recycle-Bin-Tool简介" class="headerlink" title="Network Recycle Bin Tool简介"></a>Network Recycle Bin Tool简介</h2><blockquote>
+<p>本文主要使用Network Recycle Bin Tool Personal Client Machine Edition客户端</p>
+</blockquote>
+<h3 id="Server-Edition"><a href="#Server-Edition" class="headerlink" title="Server Edition"></a>Server Edition</h3><p>version 6.1.1.3</p>
+<p>This version has been designed for the server usage. You should install it on the server to monitor shared folders. When network user will delete a shared file it will copy it to the “network recycle bin”. You have not install any additional software on client machines.</p>
+<h3 id="Personal-Client-Machine-Edition"><a href="#Personal-Client-Machine-Edition" class="headerlink" title="Personal Client Machine Edition"></a>Personal Client Machine Edition</h3><p>version 5.2.3.8</p>
+<p>When you delete a file stored on a <code>network location</code> or mapped network drive that the file is permanently deleted. It does not go to the local computer’s recycle bin and does not go to the server’s <code>recycle bin</code>.</p>
+<p>How to enable a recycle bin for shared folders on a network ? There is the proper solution of restoring and securing your information even after deleting it - The Network Recycle Bin Tool allows you to <code>recover deleted files</code>.</p>
+<p>Once you have this tool in your system, it will automatically keep a track of all the network deleted files and you can easily recover them. Instead of removing the files, this tool sends them directly to its predefined recycle bin folder.</p>
+<p>There are various options to tune it up. For example: you can set size limits for files stored in the <code>Network Recycle Bin</code>, you can define the list of network drives or network folders to track deleted files.</p>
+<p>Additionaly it offers you the Protect Files tool which <code>prevents deletion</code> of network files for specified folders according the file mask. Export and import functions help you to install software with same options on network machines. The <code>password control</code> disallows unauthorized access.</p>
+<p>In the long run, losing your important network files and information accidentally is not an issue these days. Instead of getting anxious and worried, feel free to download network recycle bin tool from any reliable source and make sure that you have pre-installed this <code>recovery tool</code>.</p>
+<h3 id="Network-Recycle-Bin-Tool使用方法"><a href="#Network-Recycle-Bin-Tool使用方法" class="headerlink" title="Network Recycle Bin Tool使用方法"></a>Network Recycle Bin Tool使用方法</h3><blockquote>
+<p>使用方法非常简单，安装好Network Recycle Bin Tool只需要4步即可，其它需求可以自定义Options</p>
+</blockquote>
+<ol>
+<li>选择<code>Protect Folders</code>添加你需要保护的的映射网络驱动器</li>
+<li>在<code>Options</code>中确认删除文件的存储路径，默认可以不修改</li>
+<li>在映射网络驱动器中尝试删除测试文件，在<code>Deleted Files</code>可以看到删除的文件</li>
+<li>可以批量选中要恢复或者删除的文件点击<code>Recovery Files</code>或者<code>Delete Files</code></li>
+</ol>
+<p><img src="http://www.networkrecyclebin.info/images/network_recycle_bin2.png" alt=""><br><img src="http://www.networkrecyclebin.info/images/network_recycle_bin1.png" alt=""><br><img src="http://www.networkrecyclebin.info/images/network_recycle_bin3.png" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/network-recycle-bin/" data-title="使用Network Recycle Bin启用映射网络驱动器上的回收站 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/post/hexo-jacman/"  title="Jacman基于Pacman修改的Hexo主题">
+ <strong>下一篇：</strong><br/> 
+ <span>Jacman基于Pacman修改的Hexo主题
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何启用映射网络驱动器上的回收站"><span class="toc-number">3.</span> <span class="toc-text">如何启用映射网络驱动器上的回收站</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Enable-Recycle-Bin-on-mapped-network-drives"><span class="toc-number">4.</span> <span class="toc-text">Enable Recycle Bin on mapped network drives</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Network-Recycle-Bin-Tool简介"><span class="toc-number">5.</span> <span class="toc-text">Network Recycle Bin Tool简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Server-Edition"><span class="toc-number">5.1.</span> <span class="toc-text">Server Edition</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Personal-Client-Machine-Edition"><span class="toc-number">5.2.</span> <span class="toc-text">Personal Client Machine Edition</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Network-Recycle-Bin-Tool使用方法"><span class="toc-number">5.3.</span> <span class="toc-text">Network Recycle Bin Tool使用方法</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>63</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+  <script>
+    var xlm_wid='12835';
+    var xlm_url='https://www.xianliao.me/';
+  </script>
+  <script type='text/javascript' charset='UTF-8' src='https://www.xianliao.me/embed.js'></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>
