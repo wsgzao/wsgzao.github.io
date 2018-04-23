@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://docs-aliyun.cn-hangzhou.oss.aliyun-inc.com/assets/pic/52857/cn_zh/1492756915645/%E5%9B%BE%E7%89%878.png">
 <meta property="og:image" content="https://www.ilanni.com/wp-content/uploads/2018/04/clip_image011_thumb-1.png">
-<meta property="og:updated_time" content="2018-04-19T02:57:07.028Z">
+<meta property="og:updated_time" content="2018-04-20T07:34:11.606Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RHEL7&#x2F;CentOS7在线和离线安装GitLab配置使用实践">
 <meta name="twitter:description" content="RHEL7/CentOS7在线和离线安装GitLab配置实践，GitLab汉化配置使用小结">
@@ -146,6 +146,7 @@
 <h2 id="GitLab汉化"><a href="#GitLab汉化" class="headerlink" title="GitLab汉化"></a>GitLab汉化</h2><blockquote>
 <p>如果团队里英文水平都不错的话，是没必要汉化的，我个人的建议是坚持使用原版不做汉化</p>
 </blockquote>
+<p>我这边测试GitLab 10.6.3 新版本中官方已经集成了简体中文，虽然不完整但应该是一个好的开端，设置方式如下<br>右上角用户头像-Settings-Profile-Main settings-Preferred language-简体中文<br>保存选择Update profile settings，然后Sign out重新登录就可以看到效果了<br>当然我还是希望大家习惯English界面，Trouble Shooting也方便</p>
 <p>GitLab中文社区的项目，v7-v8.8是由Larry Li发起的“GitLab中文社区版项目”<br><a href="https://gitlab.com/larryli/gitlab" target="_blank" rel="external">https://gitlab.com/larryli/gitlab</a></p>
 <p>从v8.9之后由@xhang开始继续汉化项目<br><a href="https://gitlab.com/xhang/gitlab" target="_blank" rel="external">https://gitlab.com/xhang/gitlab</a></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 如没安装git，需提前安装</span></div><div class="line">yum install -y git</div><div class="line"></div><div class="line"><span class="comment"># 创建gitlba汉化包下载目录</span></div><div class="line">mkdir -p /tmp/gitlab</div><div class="line"><span class="built_in">cd</span> /tmp/gitlab</div><div class="line"></div><div class="line"><span class="comment"># 下载最新的汉化包</span></div><div class="line">git <span class="built_in">clone</span> https://gitlab.com/xhang/gitlab.git</div><div class="line"></div><div class="line"><span class="comment"># 如果是要下载老版本的汉化包，需要加上老版本的分支，如果想下载10.0.2，可以运行如下语句</span></div><div class="line">git <span class="built_in">clone</span> https://gitlab.com/xhang/gitlab.git -b v10.0.2-zh</div><div class="line"></div><div class="line"><span class="comment"># 停止GitLab并执行如下语句</span></div><div class="line">gitlab-ctl stop</div><div class="line">cp /tmp/gitlab/gitlab/* /opt/gitlab/embedded/service/gitlab-rails/ -rf</div><div class="line"></div><div class="line"><span class="comment"># 复制时可能不断提示是否要覆盖，这时可能是系统每次执行cp命令时，其实是执行了cp -i命令的别名。出现这种情况可以修改~/.bashrc，在“alias cp=’cp-i’”前加#注释即可。使用命令或者注销登录即可</span></div><div class="line"><span class="built_in">source</span> ~/.bashrc</div><div class="line"></div><div class="line"><span class="comment"># 接下来可以重新配置和启动</span></div><div class="line">gitlab-ctl reconfigure</div><div class="line">gitlab-ctl restart</div></pre></td></tr></table></figure>
@@ -276,7 +277,7 @@
 		  
 		
 		  
-			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>63</sup></a></li>
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>64</sup></a></li>
 		  
 		
 		  
