@@ -9,24 +9,24 @@
         window.location.protocol = "https";
   </script> 
   
-    <title>tftp安装和使用小结 | HelloDog</title>
+    <title>使用Anaconda实现Python2和Python3共存及相互转换 | HelloDog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wsgzao">
     
 
     
-    <meta name="description" content="tftp是一个非常简单好用的文件传输协议">
+    <meta name="description" content="使用Anaconda轻松解决Python2和Python3共存">
 <meta property="og:type" content="article">
-<meta property="og:title" content="tftp安装和使用小结">
-<meta property="og:url" content="https://wsgzao.github.io/post/tftp/index.html">
+<meta property="og:title" content="使用Anaconda实现Python2和Python3共存及相互转换">
+<meta property="og:url" content="https://wsgzao.github.io/post/anaconda/index.html">
 <meta property="og:site_name" content="HelloDog">
-<meta property="og:description" content="tftp是一个非常简单好用的文件传输协议">
+<meta property="og:description" content="使用Anaconda轻松解决Python2和Python3共存">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2017-01-18T03:43:45.000Z">
+<meta property="og:updated_time" content="2018-05-04T03:24:53.224Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="tftp安装和使用小结">
-<meta name="twitter:description" content="tftp是一个非常简单好用的文件传输协议">
+<meta name="twitter:title" content="使用Anaconda实现Python2和Python3共存及相互转换">
+<meta name="twitter:description" content="使用Anaconda轻松解决Python2和Python3共存">
 
     
     <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
@@ -87,14 +87,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/post/tftp/" title="tftp安装和使用小结" itemprop="url">tftp安装和使用小结</a>
+      <a href="/post/anaconda/" title="使用Anaconda实现Python2和Python3共存及相互转换" itemprop="url">使用Anaconda实现Python2和Python3共存及相互转换</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
 		
   <p class="article-time">
-    <time datetime="2017-01-18T06:59:49.000Z" itemprop="datePublished"> 发表于 2017-01-18</time>
+    <time datetime="2018-05-04T06:59:49.000Z" itemprop="datePublished"> 发表于 2018-05-04</time>
     
   </p>
 </header>
@@ -103,30 +103,33 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tftp应用场景"><span class="toc-number">3.</span> <span class="toc-text">tftp应用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tftp使用"><span class="toc-number">4.</span> <span class="toc-text">tftp使用</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Anaconda简介"><span class="toc-number">3.</span> <span class="toc-text">Anaconda简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装Anaconda"><span class="toc-number">4.</span> <span class="toc-text">安装Anaconda</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#python2和python3版本转换"><span class="toc-number">5.</span> <span class="toc-text">python2和python3版本转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装django实践"><span class="toc-number">6.</span> <span class="toc-text">安装django实践</span></a></li></ol>
 		
 		</div>
 		
-		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>我相信大家接触到tftp大多数原因是PXE网络自动化部署的功劳，一般是在Linux环境下采用PXE+TFTP+DHCP+(HTTP/FTP/NFS)来实现，因为最近在生产环境中分别测试使用了云霁科技的Cloudboot和大名鼎鼎的Cobbler，只是针对大规模型号和配置不一样的物理机实现成本太高配置不够灵活，最后考虑采用Windows笔记本+交换机+tftpd32来实现。而且最近在更新Cisco网络交换机固件的时候发现使用tftp相比ftp来说更加容易，想想就整一篇简单的文档出来。</p>
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>初学Python时，总是被python的两个不太兼容的版本搞得头昏脑胀。按目前的发展趋势，python未来的主流版为python3。但是，我们经常会遇到一些很有意思代码使用的是python2版本。于是，我们需要同时拥有python2和python3的运行环境。这里介绍一个强大的软件Anaconda，它实现python2和python3两个版本的共存，并且可以相互转换。 </p>
 <blockquote>
-<p>tftp是一个非常简单好用的文件传输协议</p>
+<p>使用Anaconda轻松解决Python2和Python3共存</p>
 </blockquote>
-<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2017年01月18日 - 初稿</p>
-<p>阅读原文 - <a href="https://wsgzao.github.io/post/tftp/">https://wsgzao.github.io/post/tftp/</a></p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018年05月04日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/anaconda/">https://wsgzao.github.io/post/anaconda/</a></p>
 <p><strong>扩展阅读</strong></p>
-<p>TFTP - <a href="http://www.tftp-server.com/" target="_blank" rel="external">http://www.tftp-server.com/</a></p>
+<p>Anaconda - <a href="https://anaconda.org/" target="_blank" rel="external">https://anaconda.org/</a></p>
 <hr>
-<h2 id="tftp应用场景"><a href="#tftp应用场景" class="headerlink" title="tftp应用场景"></a>tftp应用场景</h2><p>TFTP（Trivial File Transfer Protocol，简单文件传输协议）是TCP/IP协议族中的一个用来在客户机与服务器之间进行简单文件传输的协议，提供不复杂、开销不大的文件传输服务。端口号为69，它基于UDP协议而实现。</p>
-<ol>
-<li>交换机或路由器升级或备份</li>
-<li>无盘工作站存放boot loader</li>
-<li>嵌入式开发时装载系统</li>
-<li>大规模的服务安装布署</li>
-</ol>
-<h2 id="tftp使用"><a href="#tftp使用" class="headerlink" title="tftp使用"></a>tftp使用</h2><blockquote>
-<p>注意修改防火墙和selinux配置</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#安装</span></div><div class="line">yum install -y tftp-server</div><div class="line"></div><div class="line"><span class="comment">#注意disable选项为no</span></div><div class="line"><span class="comment">#修改项server_args=，可以修改tftp-server的根目录，参数-s指定chroot，-c指定了可以创建文件</span></div><div class="line">vi /etc/xinetd.d/tftp</div><div class="line">service tftp</div><div class="line">&#123;</div><div class="line">        socket_type             = dgram</div><div class="line">        protocol                = udp</div><div class="line">        <span class="built_in">wait</span>                    = yes</div><div class="line">        user                    = root</div><div class="line">        server                  = /usr/sbin/in.tftpd</div><div class="line">        server_args             = -s /var/lib/tftpboot</div><div class="line">        <span class="built_in">disable</span>                 = no</div><div class="line">        per_source              = 11</div><div class="line">        cps                     = 100 2</div><div class="line">        flags                   = IPv4</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">#设置tftp开机自动启动</span></div><div class="line">chkconfig tftp on  </div><div class="line"></div><div class="line"><span class="comment">#启动xinetd服务</span></div><div class="line">/etc/init.d/xinetd restart </div><div class="line"></div><div class="line"><span class="comment">#验证tftp是否启动成功并监听本地69端口</span></div><div class="line">netstat -anup | grep 69</div><div class="line">udp    0    0    0.0.0.0:69    0.0.0.0:*    15763/xinetd      </div><div class="line"></div><div class="line"><span class="comment">#测试上传和下载</span></div><div class="line">yum install tftp</div><div class="line">tftp -i 192.168.1.1 put <span class="built_in">test</span></div><div class="line">tftp -i 192.168.1.1 get <span class="built_in">test</span></div></pre></td></tr></table></figure>
+<h2 id="Anaconda简介"><a href="#Anaconda简介" class="headerlink" title="Anaconda简介"></a>Anaconda简介</h2><p>Anaconda 是一个包含数据科学常用包的发行版本。它基于 conda ——一个包和环境管理器——衍生而来。</p>
+<p>Anaconda 实际上是一个软件发行版，它附带了 conda、Python 和 150 多个科学包及其依赖项。应用程序 conda 是包和环境管理器。Anaconda 的下载文件比较大（约 500 MB），因为它附带了 Python 中最常用的数据科学包。如果只需要某些包，或者需要节省带宽或存储空间，也可以使用 Miniconda 这个较小的发行版（仅包含 conda 和 Python）。</p>
+<h2 id="安装Anaconda"><a href="#安装Anaconda" class="headerlink" title="安装Anaconda"></a>安装Anaconda</h2><p>Anaconda 可用于 Windows、Mac OS X 和 Linux。可以在 <a href="https://www.anaconda.com/download/" target="_blank" rel="external">https://www.anaconda.com/download/</a> 上找到安装程序和安装说明。</p>
+<p>如果计算机上已经安装了 Python，这不会有任何影响。实际上，脚本和程序使用的默认 Python 是 Anaconda 附带的 Python。这里需要注意的是选对自己操作系统对应的版本。安装完后打开cmd,输入conda list可以查看当前安装的内容。输入conda upgrade –all，可以更新默认环境下的所有包。并在提示是否更新的时候输入y（Yes）以便让更新继续。初次安装下的软件包版本一般都比较老旧，因此提前更新可以避免未来不必要的问题。</p>
+<p>本人使用的操作系统：Win10，前往anaconda官网下载对应的版本，本人选择的是Python3.6 + Python 2.7（实际上下载一个即可，推荐3.6）<br>在win10环境下，进行傻瓜式安装。当安装完成时，计算机便具备了Python3.6的环境。 </p>
+<p>接下来，在cmd的环境下，输入以下命令安装Python2.7的环境</p>
+<pre><code>conda create -n python27 python=2.7 anaconda
+</code></pre><p>上面的代码创建了一个名为python27的python2.7的环境，最后一个参数表示安装anaconda下python2.7的所有默认包，这个参数时可选的。 </p>
+<h2 id="python2和python3版本转换"><a href="#python2和python3版本转换" class="headerlink" title="python2和python3版本转换"></a>python2和python3版本转换</h2><p>我们进入cmd环境，现在默认的python版本时python3.6，只需要一行简单的代码就可以转为python2.7的环境</p>
+<pre><code>activate python27
+</code></pre><p>此时，本窗口下的python版本变为了python2.7。那么你肯定猜到了恢复到python3.6的命令</p>
+<pre><code>deactivate python27
+</code></pre><p>其实呢，一般没有必要恢复到原环境。只要打开一个新的cmd窗口，默认的python版本就是python3.6</p>
+<h2 id="安装django实践"><a href="#安装django实践" class="headerlink" title="安装django实践"></a>安装django实践</h2><p>conda create -n django1.x</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -144,7 +147,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://wsgzao.github.io/post/tftp/" data-title="tftp安装和使用小结 | HelloDog" data-tsina="" class="share clearfix">
+	  <div data-url="https://wsgzao.github.io/post/anaconda/" data-title="使用Anaconda实现Python2和Python3共存及相互转换 | HelloDog" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -157,19 +160,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/post/tftpd32/" title="使用tftpd32自动化网络安装esxi6.0u2和rhel6.7实践">
-  <strong>上一篇：</strong><br/>
-  <span>
-  使用tftpd32自动化网络安装esxi6.0u2和rhel6.7实践</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/post/jbod/"  title="JBOD磁盘配置和StorCLI命令使用小结">
+<a href="/post/pip/"  title="pip离线安装和配置pypi国内加速镜像实践">
  <strong>下一篇：</strong><br/> 
- <span>JBOD磁盘配置和StorCLI命令使用小结
+ <span>pip离线安装和配置pypi国内加速镜像实践
 </span>
 </a>
 </div>
@@ -192,7 +187,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tftp应用场景"><span class="toc-number">3.</span> <span class="toc-text">tftp应用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tftp使用"><span class="toc-number">4.</span> <span class="toc-text">tftp使用</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Anaconda简介"><span class="toc-number">3.</span> <span class="toc-text">Anaconda简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装Anaconda"><span class="toc-number">4.</span> <span class="toc-text">安装Anaconda</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#python2和python3版本转换"><span class="toc-number">5.</span> <span class="toc-text">python2和python3版本转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装django实践"><span class="toc-number">6.</span> <span class="toc-text">安装django实践</span></a></li></ol>
  
   </div>
 
