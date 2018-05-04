@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="使用Anaconda轻松解决Python2和Python3共存">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-05-04T03:24:53.224Z">
+<meta property="og:updated_time" content="2018-05-04T07:45:49.395Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用Anaconda实现Python2和Python3共存及相互转换">
 <meta name="twitter:description" content="使用Anaconda轻松解决Python2和Python3共存">
@@ -103,7 +103,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Anaconda简介"><span class="toc-number">3.</span> <span class="toc-text">Anaconda简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装Anaconda"><span class="toc-number">4.</span> <span class="toc-text">安装Anaconda</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#python2和python3版本转换"><span class="toc-number">5.</span> <span class="toc-text">python2和python3版本转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装django实践"><span class="toc-number">6.</span> <span class="toc-text">安装django实践</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Anaconda简介"><span class="toc-number">3.</span> <span class="toc-text">Anaconda简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装Anaconda"><span class="toc-number">4.</span> <span class="toc-text">安装Anaconda</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#python2和python3版本转换"><span class="toc-number">5.</span> <span class="toc-text">python2和python3版本转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装django实践"><span class="toc-number">6.</span> <span class="toc-text">安装django实践</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#创建mysite"><span class="toc-number"></span> <span class="toc-text">创建mysite</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#启动服务"><span class="toc-number"></span> <span class="toc-text">启动服务</span></a>
 		
 		</div>
 		
@@ -120,7 +120,8 @@
 <p>Anaconda 实际上是一个软件发行版，它附带了 conda、Python 和 150 多个科学包及其依赖项。应用程序 conda 是包和环境管理器。Anaconda 的下载文件比较大（约 500 MB），因为它附带了 Python 中最常用的数据科学包。如果只需要某些包，或者需要节省带宽或存储空间，也可以使用 Miniconda 这个较小的发行版（仅包含 conda 和 Python）。</p>
 <h2 id="安装Anaconda"><a href="#安装Anaconda" class="headerlink" title="安装Anaconda"></a>安装Anaconda</h2><p>Anaconda 可用于 Windows、Mac OS X 和 Linux。可以在 <a href="https://www.anaconda.com/download/" target="_blank" rel="external">https://www.anaconda.com/download/</a> 上找到安装程序和安装说明。</p>
 <p>如果计算机上已经安装了 Python，这不会有任何影响。实际上，脚本和程序使用的默认 Python 是 Anaconda 附带的 Python。这里需要注意的是选对自己操作系统对应的版本。安装完后打开cmd,输入conda list可以查看当前安装的内容。输入conda upgrade –all，可以更新默认环境下的所有包。并在提示是否更新的时候输入y（Yes）以便让更新继续。初次安装下的软件包版本一般都比较老旧，因此提前更新可以避免未来不必要的问题。</p>
-<p>本人使用的操作系统：Win10，前往anaconda官网下载对应的版本，本人选择的是Python3.6 + Python 2.7（实际上下载一个即可，推荐3.6）<br>在win10环境下，进行傻瓜式安装。当安装完成时，计算机便具备了Python3.6的环境。 </p>
+<p>本人使用的操作系统：Win10，前往anaconda官网下载对应的版本，本人选择的是Python3.6 + Python 2.7（实际上下载一个即可，推荐3.6）</p>
+<p>在win10环境下，进行傻瓜式安装。当安装完成时，计算机便具备了Python3.6的环境。 </p>
 <p>接下来，在cmd的环境下，输入以下命令安装Python2.7的环境</p>
 <pre><code>conda create -n python27 python=2.7 anaconda
 </code></pre><p>上面的代码创建了一个名为python27的python2.7的环境，最后一个参数表示安装anaconda下python2.7的所有默认包，这个参数时可选的。 </p>
@@ -129,7 +130,9 @@
 </code></pre><p>此时，本窗口下的python版本变为了python2.7。那么你肯定猜到了恢复到python3.6的命令</p>
 <pre><code>deactivate python27
 </code></pre><p>其实呢，一般没有必要恢复到原环境。只要打开一个新的cmd窗口，默认的python版本就是python3.6</p>
-<h2 id="安装django实践"><a href="#安装django实践" class="headerlink" title="安装django实践"></a>安装django实践</h2><p>conda create -n django1.x</p>
+<h2 id="安装django实践"><a href="#安装django实践" class="headerlink" title="安装django实践"></a>安装django实践</h2><p>conda create -n django1.x<br>activate django1.x<br>conda search django<br>conda install django==1.11.10<br>cd C:\Users\wsgzao\AppData\Local\conda\conda\envs\django1.x</p>
+<h1 id="创建mysite"><a href="#创建mysite" class="headerlink" title="创建mysite"></a>创建mysite</h1><p>django-admin startproject mysite</p>
+<h1 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h1><p>python manage.py runserver</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -187,7 +190,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Anaconda简介"><span class="toc-number">3.</span> <span class="toc-text">Anaconda简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装Anaconda"><span class="toc-number">4.</span> <span class="toc-text">安装Anaconda</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#python2和python3版本转换"><span class="toc-number">5.</span> <span class="toc-text">python2和python3版本转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装django实践"><span class="toc-number">6.</span> <span class="toc-text">安装django实践</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Anaconda简介"><span class="toc-number">3.</span> <span class="toc-text">Anaconda简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装Anaconda"><span class="toc-number">4.</span> <span class="toc-text">安装Anaconda</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#python2和python3版本转换"><span class="toc-number">5.</span> <span class="toc-text">python2和python3版本转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装django实践"><span class="toc-number">6.</span> <span class="toc-text">安装django实践</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#创建mysite"><span class="toc-number"></span> <span class="toc-text">创建mysite</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#启动服务"><span class="toc-number"></span> <span class="toc-text">启动服务</span></a>
  
   </div>
 
