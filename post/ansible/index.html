@@ -1,0 +1,643 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+  
+    <title>Ansible 使用指北 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="Ansible is Simple IT Automation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ansible 使用指北">
+<meta property="og:url" content="https://wsgzao.github.io/post/ansible/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="Ansible is Simple IT Automation">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.loli.net/2018/05/15/5afa41c006a97.jpg">
+<meta property="og:image" content="https://i.loli.net/2018/05/15/5afa3f4dcb4d3.png">
+<meta property="og:updated_time" content="2018-05-15T02:44:01.467Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Ansible 使用指北">
+<meta name="twitter:description" content="Ansible is Simple IT Automation">
+<meta name="twitter:image" content="https://i.loli.net/2018/05/15/5afa41c006a97.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/ansible/" title="Ansible 使用指北" itemprop="url">Ansible 使用指北</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2018-05-15T02:59:49.000Z" itemprop="datePublished"> 发表于 2018-05-15</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ansible-标准化学习路径"><span class="toc-number">3.</span> <span class="toc-text">Ansible 标准化学习路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于-Ansible-的开源项目"><span class="toc-number">4.</span> <span class="toc-text">基于 Ansible 的开源项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ansible-项目实践"><span class="toc-number">5.</span> <span class="toc-text">Ansible 项目实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ansible-部署"><span class="toc-number">5.1.</span> <span class="toc-text">ansible 部署</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ansible-cfg-配置解析"><span class="toc-number">5.2.</span> <span class="toc-text">ansible.cfg 配置解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux"><span class="toc-number">5.3.</span> <span class="toc-text">Linux</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Windows"><span class="toc-number">5.4.</span> <span class="toc-text">Windows</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结语"><span class="toc-number">6.</span> <span class="toc-text">结语</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>因为工作的缘故接触并积极推动Ansible在企业级生产环境的落地，独立承担并实现了《基于ansible的主机自动化配置管理》项目，此前也先后接触过Puppet和SaltStack，本文不会讨论开源或者自主研发方案的优劣，重点是和大伙儿分享自己在ansible技术领域积累的一些项目实战经验，如果大家遇到任何问题也欢迎通过留言或者其他方式进行互动，我尽力做到有效回复。</p>
+<blockquote>
+<p>Ansible is Simple IT Automation</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018年05月15日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/ansible/">https://wsgzao.github.io/post/ansible/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>ansible - <a href="https://docs.ansible.com/" target="_blank" rel="external">https://docs.ansible.com/</a></p>
+<hr>
+<h2 id="Ansible-标准化学习路径"><a href="#Ansible-标准化学习路径" class="headerlink" title="Ansible 标准化学习路径"></a>Ansible 标准化学习路径</h2><blockquote>
+<p>Ansible相关的书籍在逐步增多，由于Ansible版本迭代更新频率高但学习成本低，个人建议书为辅，官方文档为主</p>
+</blockquote>
+<p>Ansible is an IT automation tool. It can configure systems, deploy software, and orchestrate more advanced IT tasks such as continuous deployments or zero downtime rolling updates.</p>
+<p>Ansible’s main goals are simplicity and ease-of-use. It also has a strong focus on security and reliability, featuring a minimum of moving parts, usage of OpenSSH for transport (with other transports and pull modes as alternatives), and a language that is designed around auditability by humans–even those not familiar with the program.</p>
+<p>We believe simplicity is relevant to all sizes of environments, so we design for busy users of all types: developers, sysadmins, release engineers, IT managers, and everyone in between. Ansible is appropriate for managing all environments, from small setups with a handful of instances to enterprise environments with many thousands of instances.</p>
+<p>Ansible manages machines in an agent-less manner. There is never a question of how to upgrade remote daemons or the problem of not being able to manage systems because daemons are uninstalled. Because OpenSSH is one of the most peer-reviewed open source components, security exposure is greatly reduced. Ansible is decentralized–it relies on your existing OS credentials to control access to remote machines. If needed, Ansible can easily connect with Kerberos, LDAP, and other centralized authentication management systems.</p>
+<p>This documentation covers the current released version of Ansible (2.5) and also some development version features. For recent features, we note in each section the version of Ansible where the feature was added.</p>
+<p>Ansible releases a new major release of Ansible approximately every two months. The core application evolves somewhat conservatively, valuing simplicity in language design and setup. However, the community around new modules and plugins being developed and contributed moves very quickly, adding many new modules in each release.</p>
+<blockquote>
+<p>Ansible Lightbulb 是 Ansible 官方推荐的入门教材，普通用户大概只需要10-20分钟时间即可入门</p>
+</blockquote>
+<p>Ansible Lightbulb - <a href="https://github.com/ansible/lightbulb" target="_blank" rel="external">https://github.com/ansible/lightbulb</a></p>
+<blockquote>
+<p>Ansible Documentation 是 Ansible 官方文档，我的建议还是对英文不要害怕，多动手查多敲命令去理解</p>
+</blockquote>
+<p>The Ansible Lightbulb project is an effort to provide a content toolkit and educational reference for effectively communicating and teaching Ansible topics.</p>
+<p>Ansible Documentation - <a href="http://docs.ansible.com/ansible/latest/index.html" target="_blank" rel="external">http://docs.ansible.com/ansible/latest/index.html</a></p>
+<h2 id="基于-Ansible-的开源项目"><a href="#基于-Ansible-的开源项目" class="headerlink" title="基于 Ansible 的开源项目"></a>基于 Ansible 的开源项目</h2><blockquote>
+<p>以下开源项目是基于完整的Web平台开发，推荐学习和参考</p>
+</blockquote>
+<p>Ansible - <a href="https://github.com/ansible/ansible" target="_blank" rel="external">https://github.com/ansible/ansible</a></p>
+<p>Jumpserver - <a href="http://www.jumpserver.org/" target="_blank" rel="external">http://www.jumpserver.org/</a> </p>
+<p>OpsManage - <a href="https://github.com/welliamcao/OpsManage" target="_blank" rel="external">https://github.com/welliamcao/OpsManage</a> </p>
+<p>adminset - <a href="https://github.com/guohongze/adminset" target="_blank" rel="external">https://github.com/guohongze/adminset</a> </p>
+<h2 id="Ansible-项目实践"><a href="#Ansible-项目实践" class="headerlink" title="Ansible 项目实践"></a>Ansible 项目实践</h2><blockquote>
+<p>以下内容来自于《基于ansible的主机自动化配置管理》项目</p>
+</blockquote>
+<p><img src="https://i.loli.net/2018/05/15/5afa41c006a97.jpg" alt=""></p>
+<p><img src="https://i.loli.net/2018/05/15/5afa3f4dcb4d3.png" alt=""></p>
+<h3 id="ansible-部署"><a href="#ansible-部署" class="headerlink" title="ansible 部署"></a>ansible 部署</h3><blockquote>
+<p>因为生产环境为内外网物理隔离，所有的安装部署都是离线进行的</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Install Packages</span></div><div class="line">yum install gcc zlib zlib-devel openssl-devel -y</div><div class="line"></div><div class="line"><span class="comment"># Install Python</span></div><div class="line">tar xf Python-2.7.14.tgz</div><div class="line"><span class="built_in">cd</span> Python-2.7.14</div><div class="line">./configure</div><div class="line">make</div><div class="line">make install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"></div><div class="line"><span class="comment"># renew python env</span></div><div class="line"><span class="built_in">exit</span></div><div class="line"></div><div class="line"><span class="comment"># ImportError: No module named six.moves</span></div><div class="line">tar xf six-1.11.0.tar.gz </div><div class="line"><span class="built_in">cd</span> six-1.11.0</div><div class="line">python setup.py install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"></div><div class="line"><span class="comment"># ImportError: No module named packaging.version</span></div><div class="line">tar xf packaging-17.1.tar.gz </div><div class="line"><span class="built_in">cd</span> packaging-17.1</div><div class="line">python setup.py install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"></div><div class="line"><span class="comment"># ImportError: No module named pyparsing</span></div><div class="line">tar xf pyparsing-2.2.0.tar.gz </div><div class="line"><span class="built_in">cd</span> pyparsing-2.2.0</div><div class="line">python setup.py install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"></div><div class="line"><span class="comment"># ImportError: No module named appdirs</span></div><div class="line">tar xf appdirs-1.4.3.tar.gz </div><div class="line"><span class="built_in">cd</span> appdirs-1.4.3</div><div class="line">python setup.py install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"></div><div class="line"><span class="comment"># Install Setuptools</span></div><div class="line">unzip setuptools-38.5.2.zip</div><div class="line"><span class="built_in">cd</span> setuptools-38.5.2</div><div class="line">python setup.py install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"></div><div class="line"><span class="comment"># Install pip</span></div><div class="line">tar xf pip-9.0.1.tar.gz</div><div class="line"><span class="built_in">cd</span> pip-9.0.1</div><div class="line">python setup.py install</div><div class="line"><span class="built_in">cd</span> ..</div><div class="line"></div><div class="line"><span class="comment"># pip 离线下载</span></div><div class="line"><span class="comment"># pip download -d DIR -r requirements.txt</span></div><div class="line">pip download -d ~/ansible/ ansible</div><div class="line"></div><div class="line"><span class="comment"># pip 离线安装</span></div><div class="line"><span class="comment"># pip install --no-index --find-links=DIR -r requirements.txt</span></div><div class="line">pip install --no-index --find-links=pip-ansible-2.3.3/ -r requirements.txt</div><div class="line">pip install --no-index --find-links=pip-ansible-2.5.0/ -r requirements.txt -U</div><div class="line"></div><div class="line"><span class="comment"># pip 离线安装pipenv</span></div><div class="line">pip install --no-index --find-links=pip-pipenv/ pipenv</div><div class="line"></div><div class="line"><span class="comment"># 使用pipenv创建虚拟环境</span></div><div class="line">mkdir win_ansible</div><div class="line"><span class="built_in">cd</span> win_ansible</div><div class="line">pipenv shell</div><div class="line">pip install --no-index --find-links=pip-ansible-2.5.2/ -r requirements.txt</div></pre></td></tr></table></figure>
+<h3 id="ansible-cfg-配置解析"><a href="#ansible-cfg-配置解析" class="headerlink" title="ansible.cfg 配置解析"></a>ansible.cfg 配置解析</h3><blockquote>
+<p>ansible.cfg不影响执行结果但合理的配置会有效提升效率</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">配置文件路径（优先级）</div><div class="line">./ansible.cfg</div><div class="line">/etc/ansible/ansible.cfg</div><div class="line"></div><div class="line">配置文件内容</div><div class="line">[defaults]</div><div class="line"><span class="comment">#inventory = /etc/ansible/hosts</span></div><div class="line"><span class="comment">#log_path = /var/log/ansible.log</span></div><div class="line">forks = 100 <span class="comment"># 设置并发数</span></div><div class="line">host_key_checking = False <span class="comment"># 不检查SSH主机登录的密钥</span></div><div class="line">display_skipped_hosts = False <span class="comment"># 不显示已跳过的主机</span></div><div class="line">retry_files_enabled = False <span class="comment"># 不创建任务失败后的重试文件</span></div><div class="line"><span class="comment"># 按照1d设置setup缓存，优化执行效率</span></div><div class="line">gathering = smart</div><div class="line">fact_caching_timeout = 86400</div><div class="line">fact_caching = jsonfile</div><div class="line">fact_caching_connection = cachedir</div></pre></td></tr></table></figure>
+<h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><ul>
+<li>服务端操作系统：RHEL 6/7（Windows不可作为控制端）</li>
+<li>服务端Python版本：2.7.14（实测安装完成无需额外调整）</li>
+<li>Ansible版本：2.3.3.0（实测2.4以上版本已不支持rhel5.5，客户端需simplejson）</li>
+<li>管理对象：目前主要针对RHEL 5/6/7（Windows使用高版本Ansible）</li>
+<li>基线标准：参考《主机岗配置基线 v1.1.xlsx》</li>
+</ul>
+<blockquote>
+<p>服务端</p>
+</blockquote>
+<ul>
+<li>操作系统版本：RHEL 5/6/7</li>
+<li>Python版本：2.7.14</li>
+<li>安装方式：pip离线安装依赖包</li>
+</ul>
+<blockquote>
+<p>客户端</p>
+</blockquote>
+<ul>
+<li>非最小模式安装无需做调整</li>
+<li>RHEL5.5需要安装simplejson</li>
+</ul>
+<blockquote>
+<p>核心用法</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 检测ansible是否可以正常访问主机</span></div><div class="line">ansible-playbook -i hosts playbooks/ping.yml -v</div><div class="line"><span class="comment"># 配置好inventory，执行以下命令创建用户并建立信任关系</span></div><div class="line">ansible-playbook -i hosts playbooks/user/default.yml -v</div><div class="line"><span class="comment"># 配置时间同步/进程服务/基线文件</span></div><div class="line">ansible-playbook -i hosts playbooks/baseline/cfgset.yml -v</div><div class="line">ansible-playbook -i hosts playbooks/baseline/cfgset.yml -v --tags=<span class="string">"repo"</span></div><div class="line">ansible-playbook -i hosts playbooks/baseline/cfgset.yml -v --skip-tags=<span class="string">"ntp,repo"</span></div><div class="line"><span class="comment"># 更新系统软件包和补丁包</span></div><div class="line">ansible-playbook -i hosts playbooks/baseline/pakset.yml -v</div><div class="line"><span class="comment"># 修改用户密码</span></div><div class="line">ansible-playbook -i hosts_changepw playbooks/user/changepw.yml -v -e <span class="string">"@userpass.json"</span></div><div class="line"><span class="comment"># 备份配置，支持自定义日期命名，默认为"%Y%m%d"</span></div><div class="line">ansible-playbook -i hosts backup/backup.yml -v</div><div class="line"><span class="comment"># 恢复配置，支持按日期目录全局或者局部主机恢复</span></div><div class="line">ansible-playbook -i hosts backup/restore.yml -v -e <span class="string">"var_backup_date=20180305"</span></div></pre></td></tr></table></figure>
+<h3 id="Windows"><a href="#Windows" class="headerlink" title="Windows"></a>Windows</h3><ul>
+<li>服务端操作系统：RHEL6/7（Windows不可作为控制端）</li>
+<li>服务端Python版本：2.7.14（实测安装完成无需额外调整）</li>
+<li>Ansible版本：2.4.3.0（Windows原生模块支持需要持续更新Ansible新版本）</li>
+<li>管理对象：目前主要针对Windows7/2008/2012（不支持xp/2003）</li>
+<li>基线标准：参考《Windows 安全基线》</li>
+</ul>
+<blockquote>
+<p>服务端</p>
+</blockquote>
+<ul>
+<li>操作系统版本：Window 7/2008/2012</li>
+<li>Python版本：2.7.14</li>
+<li>安装方式：pip离线安装依赖包（目前使用pipenv切换管理Linux和Windows）</li>
+</ul>
+<blockquote>
+<p>客户端</p>
+</blockquote>
+<ul>
+<li>WinRM（Windows 7/2008 需要升级至 Powershell v3.0）</li>
+</ul>
+<blockquote>
+<p>核心用法</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 检测ansible是否可以正常访问主机</span></div><div class="line">ansible-playbook -i hosts win_playbooks/ping.yml -v</div><div class="line"><span class="comment"># 配置好inventory，执行以下命令创建用户并建立信任关系</span></div><div class="line">ansible-playbook -i hosts win_playbooks/user/default.yml -v</div><div class="line"><span class="comment"># 配置时间同步/进程服务/基线文件</span></div><div class="line">ansible-playbook -i hosts win_playbooks/baseline/cfgset.yml -v</div><div class="line">ansible-playbook -i hosts win_playbooks/baseline/cfgset.yml -v --tags=<span class="string">"wsus"</span></div><div class="line">ansible-playbook -i hosts win_playbooks/baseline/cfgset.yml -v --skip-tags=<span class="string">"ntp,wsus"</span></div><div class="line"><span class="comment"># 更新系统软件包和补丁包</span></div><div class="line">ansible-playbook -i hosts win_playbooks/baseline/pakset.yml -v</div><div class="line"><span class="comment"># 修改用户密码</span></div><div class="line">ansible-playbook -i win_hosts_changepw win_playbooks/user/changepw.yml -v -e <span class="string">"@userpass.json"</span></div><div class="line"><span class="comment"># 备份配置，支持自定义日期命名，默认为"%Y%m%d"</span></div><div class="line">ansible-playbook -i win_hosts win_backup/backup.yml -v</div><div class="line"><span class="comment"># 恢复配置，支持按日期目录全局或者局部主机恢复</span></div><div class="line">ansible-playbook -i win_hosts win_backup/restore.yml -v -e <span class="string">"var_backup_date=20180305"</span></div></pre></td></tr></table></figure>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><blockquote>
+<p>很抱歉我暂时不能分享全部信息，但是这并不妨碍技术上的交流</p>
+</blockquote>
+<ol>
+<li>遵循what/why/how思路，要理解ansible能解决什么问题，为什么选择ansible，怎么使用ansible去解决</li>
+<li>Ansible学习成本低但不等同于没有难度，学习路径推荐参考官方文档并积极实践，官网没有答案要善用Google搜索</li>
+<li>Ansible v1.0纯后台模式只解决了部分问题，还有更多需求要通过Ansible v2.0自动化运维平台来实现，拥抱开源技术不能固步自封</li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/ansible/" data-title="Ansible 使用指北 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/singapore/" title="新加坡生活指北">
+  <strong>上一篇：</strong><br/>
+  <span>
+  新加坡生活指北</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/django/"  title="Django 1.11 和 Django 2.0 学习笔记">
+ <strong>下一篇：</strong><br/> 
+ <span>Django 1.11 和 Django 2.0 学习笔记
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ansible-标准化学习路径"><span class="toc-number">3.</span> <span class="toc-text">Ansible 标准化学习路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于-Ansible-的开源项目"><span class="toc-number">4.</span> <span class="toc-text">基于 Ansible 的开源项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ansible-项目实践"><span class="toc-number">5.</span> <span class="toc-text">Ansible 项目实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ansible-部署"><span class="toc-number">5.1.</span> <span class="toc-text">ansible 部署</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ansible-cfg-配置解析"><span class="toc-number">5.2.</span> <span class="toc-text">ansible.cfg 配置解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux"><span class="toc-number">5.3.</span> <span class="toc-text">Linux</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Windows"><span class="toc-number">5.4.</span> <span class="toc-text">Windows</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结语"><span class="toc-number">6.</span> <span class="toc-text">结语</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>70</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+  <script>
+    var xlm_wid='12835';
+    var xlm_url='https://www.xianliao.me/';
+  </script>
+  <script type='text/javascript' charset='UTF-8' src='https://www.xianliao.me/embed.js'></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>
