@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://ws3.sinaimg.cn/large/7207510dgy1frc11ptyclj21092x9th8.jpg">
 <meta property="og:image" content="https://ws3.sinaimg.cn/large/7207510dgy1frc11zz64jj20pe0fxtc4.jpg">
-<meta property="og:updated_time" content="2018-05-15T06:57:54.581Z">
+<meta property="og:updated_time" content="2018-05-15T07:05:10.127Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Ansible 使用指北">
 <meta name="twitter:description" content="Ansible is Simple IT Automation">
@@ -156,7 +156,7 @@
 <h3 id="ansible-cfg-配置解析"><a href="#ansible-cfg-配置解析" class="headerlink" title="ansible.cfg 配置解析"></a>ansible.cfg 配置解析</h3><blockquote>
 <p>ansible.cfg不影响执行结果但合理的配置会有效提升效率</p>
 </blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">配置文件路径（优先级）</div><div class="line">./ansible.cfg</div><div class="line">/etc/ansible/ansible.cfg</div><div class="line"></div><div class="line">配置文件内容</div><div class="line">[defaults]</div><div class="line"><span class="comment">#inventory = /etc/ansible/hosts</span></div><div class="line"><span class="comment">#log_path = /var/log/ansible.log</span></div><div class="line">forks = 100 <span class="comment"># 设置并发数</span></div><div class="line">host_key_checking = False <span class="comment"># 不检查SSH主机登录的密钥</span></div><div class="line">display_skipped_hosts = False <span class="comment"># 不显示已跳过的主机</span></div><div class="line">retry_files_enabled = False <span class="comment"># 不创建任务失败后的重试文件</span></div><div class="line"><span class="comment"># 按照1d设置setup缓存，优化执行效率</span></div><div class="line">gathering = smart</div><div class="line">fact_caching_timeout = 86400</div><div class="line">fact_caching = jsonfile</div><div class="line">fact_caching_connection = cachedir</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 配置文件路径（优先级）</span></div><div class="line">./ansible.cfg</div><div class="line">/etc/ansible/ansible.cfg</div><div class="line"></div><div class="line"><span class="comment"># 配置文件内容</span></div><div class="line">[defaults]</div><div class="line"><span class="comment">#inventory = /etc/ansible/hosts</span></div><div class="line"><span class="comment">#log_path = /var/log/ansible.log</span></div><div class="line">forks = 100 <span class="comment"># 设置并发数</span></div><div class="line">host_key_checking = False <span class="comment"># 不检查SSH主机登录的密钥</span></div><div class="line">display_skipped_hosts = False <span class="comment"># 不显示已跳过的主机</span></div><div class="line">retry_files_enabled = False <span class="comment"># 不创建任务失败后的重试文件</span></div><div class="line"><span class="comment"># 按照1d设置setup缓存，优化执行效率</span></div><div class="line">gathering = smart</div><div class="line">fact_caching_timeout = 86400</div><div class="line">fact_caching = jsonfile</div><div class="line">fact_caching_connection = cachedir</div></pre></td></tr></table></figure>
 <h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><ul>
 <li>服务端操作系统：RHEL 6/7（Windows不可作为控制端）</li>
 <li>服务端Python版本：2.7.14（实测安装完成无需额外调整）</li>
@@ -168,7 +168,7 @@
 <p>服务端</p>
 </blockquote>
 <ul>
-<li>操作系统版本：RHEL 5/6/7</li>
+<li>操作系统版本：RHEL 6/7</li>
 <li>Python版本：2.7.14</li>
 <li>安装方式：pip离线安装依赖包</li>
 </ul>
@@ -176,6 +176,7 @@
 <p>客户端</p>
 </blockquote>
 <ul>
+<li>操作系统版本：RHEL 5/6/7</li>
 <li>非最小模式安装无需做调整</li>
 <li>RHEL5.5需要安装simplejson</li>
 </ul>
@@ -184,9 +185,9 @@
 </blockquote>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 检测ansible是否可以正常访问主机</span></div><div class="line">ansible-playbook -i hosts playbooks/ping.yml -v</div><div class="line"><span class="comment"># 配置好inventory，执行以下命令创建用户并建立信任关系</span></div><div class="line">ansible-playbook -i hosts playbooks/user/default.yml -v</div><div class="line"><span class="comment"># 配置时间同步/进程服务/基线文件</span></div><div class="line">ansible-playbook -i hosts playbooks/baseline/cfgset.yml -v</div><div class="line">ansible-playbook -i hosts playbooks/baseline/cfgset.yml -v --tags=<span class="string">"repo"</span></div><div class="line">ansible-playbook -i hosts playbooks/baseline/cfgset.yml -v --skip-tags=<span class="string">"ntp,repo"</span></div><div class="line"><span class="comment"># 更新系统软件包和补丁包</span></div><div class="line">ansible-playbook -i hosts playbooks/baseline/pakset.yml -v</div><div class="line"><span class="comment"># 修改用户密码</span></div><div class="line">ansible-playbook -i hosts_changepw playbooks/user/changepw.yml -v -e <span class="string">"@userpass.json"</span></div><div class="line"><span class="comment"># 备份配置，支持自定义日期命名，默认为"%Y%m%d"</span></div><div class="line">ansible-playbook -i hosts backup/backup.yml -v</div><div class="line"><span class="comment"># 恢复配置，支持按日期目录全局或者局部主机恢复</span></div><div class="line">ansible-playbook -i hosts backup/restore.yml -v -e <span class="string">"var_backup_date=20180305"</span></div></pre></td></tr></table></figure>
 <h3 id="Windows"><a href="#Windows" class="headerlink" title="Windows"></a>Windows</h3><ul>
-<li>服务端操作系统：RHEL6/7（Windows不可作为控制端）</li>
+<li>服务端操作系统：RHEL 6/7（Windows不可作为控制端）</li>
 <li>服务端Python版本：2.7.14（实测安装完成无需额外调整）</li>
-<li>Ansible版本：2.4.3.0（Windows原生模块支持需要持续更新Ansible新版本）</li>
+<li>Ansible版本：2.5.0（Windows原生模块支持需要持续更新Ansible新版本）</li>
 <li>管理对象：目前主要针对Windows7/2008/2012（不支持xp/2003）</li>
 <li>基线标准：参考《Windows 安全基线》</li>
 </ul>
@@ -194,7 +195,7 @@
 <p>服务端</p>
 </blockquote>
 <ul>
-<li>操作系统版本：Window 7/2008/2012</li>
+<li>操作系统版本：RHEL 6/7</li>
 <li>Python版本：2.7.14</li>
 <li>安装方式：pip离线安装依赖包（目前使用pipenv切换管理Linux和Windows）</li>
 </ul>
@@ -202,6 +203,7 @@
 <p>客户端</p>
 </blockquote>
 <ul>
+<li>操作系统版本：Window 7/2008/2012</li>
 <li>WinRM（Windows 7/2008 需要升级至 Powershell v3.0）</li>
 </ul>
 <blockquote>
