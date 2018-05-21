@@ -9,26 +9,27 @@
         window.location.protocol = "https";
   </script> 
   
-    <title>Markdown学习路径 | HelloDog</title>
+    <title>在Windows下部署Ansible客户端 | HelloDog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wsgzao">
     
 
     
-    <meta name="description" content="在实践中轻轻松松学习Markdown">
+    <meta name="description" content="轻松解决使用Ansible管理Windows客户端">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Markdown学习路径">
-<meta property="og:url" content="https://wsgzao.github.io/post/markdown/index.html">
+<meta property="og:title" content="在Windows下部署Ansible客户端">
+<meta property="og:url" content="https://wsgzao.github.io/post/ansible-windows/index.html">
 <meta property="og:site_name" content="HelloDog">
-<meta property="og:description" content="在实践中轻轻松松学习Markdown">
+<meta property="og:description" content="轻松解决使用Ansible管理Windows客户端">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://i.v2ex.co/3CAMX9Z2.png">
-<meta property="og:updated_time" content="2017-02-10T02:00:57.000Z">
+<meta property="og:image" content="http://ws1.sinaimg.cn/large/7207510dgy1frixssianuj20w30ecwfi.jpg">
+<meta property="og:image" content="http://ws4.sinaimg.cn/large/7207510dgy1friytqqra5j20b10bg3z1.jpg">
+<meta property="og:updated_time" content="2018-05-21T07:02:44.026Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Markdown学习路径">
-<meta name="twitter:description" content="在实践中轻轻松松学习Markdown">
-<meta name="twitter:image" content="http://i.v2ex.co/3CAMX9Z2.png">
+<meta name="twitter:title" content="在Windows下部署Ansible客户端">
+<meta name="twitter:description" content="轻松解决使用Ansible管理Windows客户端">
+<meta name="twitter:image" content="http://ws1.sinaimg.cn/large/7207510dgy1frixssianuj20w30ecwfi.jpg">
 
     
     <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
@@ -89,14 +90,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/post/markdown/" title="Markdown学习路径" itemprop="url">Markdown学习路径</a>
+      <a href="/post/ansible-windows/" title="在Windows下部署Ansible客户端" itemprop="url">在Windows下部署Ansible客户端</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
 		
   <p class="article-time">
-    <time datetime="2014-12-10T02:36:01.000Z" itemprop="datePublished"> 发表于 2014-12-10</time>
+    <time datetime="2018-05-21T02:59:49.000Z" itemprop="datePublished"> 发表于 2018-05-21</time>
     
   </p>
 </header>
@@ -105,38 +106,64 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#学习路径"><span class="toc-number">3.</span> <span class="toc-text">学习路径</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#理解Markdown语法"><span class="toc-number">3.1.</span> <span class="toc-text">理解Markdown语法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实践Markdown"><span class="toc-number">3.2.</span> <span class="toc-text">实践Markdown</span></a></li></ol></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Windows部署"><span class="toc-number">3.</span> <span class="toc-text">Windows部署</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#客户端"><span class="toc-number">4.</span> <span class="toc-text">客户端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务端"><span class="toc-number">5.</span> <span class="toc-text">服务端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#网盘下载"><span class="toc-number">6.</span> <span class="toc-text">网盘下载</span></a></li></ol>
 		
 		</div>
 		
-		<p><img src="http://i.v2ex.co/3CAMX9Z2.png" alt=""></p>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Markdown是一种轻量级的标记语言，流行程度已经得到了GitHub和Stack Overflow的广泛支持，作为普通人我们也可以轻松上手，结合Hexo我们可以十分优雅的分享知识，传递快乐。</p>
-<p>1.书写简单<br>2.展现美观</p>
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文主要介绍在Windows下部署Ansible客户端，Ansible官方提供了一个很方便的安装脚本，对于外网用户来说安装真的很轻松，可惜我遇到的问题是如何在内网部署，有相同烦恼的小伙伴不妨参考下</p>
 <blockquote>
-<p>简单易读专注内容，我选Markdown</p>
+<p>轻松解决使用Ansible管理Windows客户端</p>
 </blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018年05月21日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/ansible-windows/">https://wsgzao.github.io/post/ansible-windows/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>Ansible Windows Guides - <a href="http://docs.ansible.com/ansible/latest/user_guide/windows.html" target="_blank" rel="external">http://docs.ansible.com/ansible/latest/user_guide/windows.html</a></p>
 <hr>
-<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2014年12月10日 - 撰写初稿</p>
-<p>阅读原文 - <a href="https://wsgzao.github.io/post/markdown/">https://wsgzao.github.io/post/markdown/</a></p>
-<p>扩展阅读</p>
-<ul>
-<li>HelloDog Index - <a href="https://wsgzao.github.io/index/">https://wsgzao.github.io/index/</a></li>
-</ul>
-<hr>
-<h2 id="学习路径"><a href="#学习路径" class="headerlink" title="学习路径"></a>学习路径</h2><h3 id="理解Markdown语法"><a href="#理解Markdown语法" class="headerlink" title="理解Markdown语法"></a>理解Markdown语法</h3><blockquote>
-<p>原理语法理解要与实践相结合</p>
+<h2 id="Windows部署"><a href="#Windows部署" class="headerlink" title="Windows部署"></a>Windows部署</h2><blockquote>
+<p>Ansible在2.3版本之前对于Windows支持的并不算很友好，从2.4版本开始已经可以使用原生模块实现很多需求</p>
 </blockquote>
+<p>Because Windows is a non-POSIX-compliant operating system, there are differences between how Ansible interacts with them and the way Windows works. These guides will highlight some of the differences between Linux/Unix hosts and hosts running Windows.</p>
 <ul>
-<li>Markdown语法 - <a href="http://wowubuntu.com/markdown/" target="_blank" rel="external">http://wowubuntu.com/markdown/</a></li>
+<li>Ansible’s supported Windows versions generally match those under current and extended support from Microsoft. Supported desktop OSs include Windows 7, 8.1, and 10, and supported server OSs are Windows Server 2008, 2008 R2, 2012, 2012 R2, and - 2016.</li>
+<li>Ansible requires PowerShell 3.0 or newer and at least .NET 4.0 to be installed on the Windows host.</li>
+<li>A WinRM listener should be created and activated. More details for this can be found below.</li>
 </ul>
-<hr>
-<h3 id="实践Markdown"><a href="#实践Markdown" class="headerlink" title="实践Markdown"></a>实践Markdown</h3><blockquote>
-<p>勤学勤练，分享知识，传递快乐</p>
+<p><img src="http://ws1.sinaimg.cn/large/7207510dgy1frixssianuj20w30ecwfi.jpg" alt="image"></p>
+<blockquote>
+<p>Ansible does not support managing Windows XP or Server 2003 hosts. The supported operating system versions are:</p>
 </blockquote>
-<ul>
-<li>Cmd Markdown - <a href="https://www.zybuluo.com/mdeditor" target="_blank" rel="external">https://www.zybuluo.com/mdeditor</a></li>
-<li>简书 - <a href="http://www.jianshu.com/users/d9e9b31534af/latest_articles" target="_blank" rel="external">http://www.jianshu.com/users/d9e9b31534af/latest_articles</a></li>
-</ul>
+<p>Windows Server 2008<br>Windows Server 2008 R2<br>Windows Server 2012<br>Windows Server 2012 R2<br>Windows Server 2016<br>Windows 7<br>Windows 8.1<br>Windows 10</p>
+<ol>
+<li>在官方文档中已经提到了在Windows中使用Ansible的最要前提，WinRM</li>
+<li>WinRM依赖Powershell 3.0以上版本的支持，牵扯出PowerShell 2.0 to PowerShell 3.0/5.0的问题</li>
+<li>而Powershell升级则带来.Net Framework是否跟随升级至4.6.2/4.7.2的选择</li>
+<li>关于WinRM的参数配置可以参考下面的链接Setting up a Windows Host</li>
+</ol>
+<p><a href="https://github.com/ansible/ansible/blob/devel/examples/scripts/upgrade_to_ps3.ps1" target="_blank" rel="external">https://github.com/ansible/ansible/blob/devel/examples/scripts/upgrade_to_ps3.ps1</a><br><a href="https://github.com/ansible/ansible/blob/devel/examples/scripts/ConfigureRemotingForAnsible.ps1" target="_blank" rel="external">https://github.com/ansible/ansible/blob/devel/examples/scripts/ConfigureRemotingForAnsible.ps1</a></p>
+<p>Setting up a Windows Host<br><a href="http://docs.ansible.com/ansible/latest/user_guide/windows_setup.html" target="_blank" rel="external">http://docs.ansible.com/ansible/latest/user_guide/windows_setup.html</a></p>
+<p>.NET Framework 4.7.2/4.6.2<br><a href="https://www.microsoft.com/net/download/dotnet-framework-runtime" target="_blank" rel="external">https://www.microsoft.com/net/download/dotnet-framework-runtime</a></p>
+<p>Powershell 3.0<br><a href="https://www.microsoft.com/en-us/download/details.aspx?id=34595" target="_blank" rel="external">https://www.microsoft.com/en-us/download/details.aspx?id=34595</a></p>
+<p>Powershell 5.1<br><a href="https://www.microsoft.com/en-us/download/details.aspx?id=54616" target="_blank" rel="external">https://www.microsoft.com/en-us/download/details.aspx?id=54616</a></p>
+<blockquote>
+<p>我个人目前的建议是Win7/2008升级至Powershell 3.0，.Net Framework升级至4.6.2，其他情况需要可以参考官方文档后做决定</p>
+</blockquote>
+<p>Ansible Windows Guides - <a href="http://docs.ansible.com/ansible/latest/user_guide/windows.html" target="_blank" rel="external">http://docs.ansible.com/ansible/latest/user_guide/windows.html</a></p>
+<h2 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h2><p>1.客户端配置windows主机,以管理员身份打开powershell, 并查看当前ps版本<br>get-host<br>2.系统自带的powershell版本是2.0，需要更新至powershell 3 以上版本<br><a href="https://www.microsoft.com/net/download/dotnet-framework-runtime" target="_blank" rel="external">https://www.microsoft.com/net/download/dotnet-framework-runtime</a><br><a href="https://www.microsoft.com/en-us/download/details.aspx?id=34595" target="_blank" rel="external">https://www.microsoft.com/en-us/download/details.aspx?id=34595</a><br>3.安装完重启服务器查看powershell版本</p>
+<p>.NET Framework 4.6以上版本无法建立到信任根颁发机构的证书链<br>原因：系统缺少信任 Microsoft Root Certificate Authority 2011 根证书<br>下载：MicrosoftRootCertificateAuthority2011.cer<br><a href="http://go.microsoft.com/fwlink/?LinkID=747875&amp;clcid=0x409" target="_blank" rel="external">http://go.microsoft.com/fwlink/?LinkID=747875&amp;clcid=0x409</a><br>运行 certmgr.msc<br>导入证书到“受信任的根证书颁发机构”</p>
+<p><img src="http://ws4.sinaimg.cn/large/7207510dgy1friytqqra5j20b10bg3z1.jpg" alt="image"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 配置winrm</span></div><div class="line">mkdir C:\temp</div><div class="line"><span class="built_in">cd</span> C:\temp</div><div class="line"><span class="comment"># 下载ConfigureRemotingForAnsible.ps1</span></div><div class="line">https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1</div><div class="line"><span class="comment"># 开启WinRM服务</span></div><div class="line">powershell -ExecutionPolicy RemoteSigned .\ConfigureRemotingForAnsible.ps1 -SkipNetworkProfileCheck</div></pre></td></tr></table></figure>
+<h2 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 服务端使用pip安装pywinrm</span></div><div class="line">pip install pywinrm</div><div class="line"></div><div class="line"><span class="comment"># 功能测试，配置ansible控制机</span></div><div class="line">vi /etc/ansible/hosts</div><div class="line"></div><div class="line">[windows]</div><div class="line">192.168.67.139</div><div class="line">[windows:vars]</div><div class="line">ansible_user=Administrator</div><div class="line">ansible_password=Admin123</div><div class="line">ansible_port=5986</div><div class="line">ansible_connection=winrm</div><div class="line">ansible_winrm_server_cert_validation=ignore  </div><div class="line"></div><div class="line"><span class="comment"># 要注意的是端口方面ssl即https方式的使用5986，http使用5985</span></div><div class="line"></div><div class="line"><span class="comment"># 测试ping通信</span></div><div class="line">ansible windows -m win_ping </div><div class="line"><span class="comment"># 查看ip地址 </span></div><div class="line">ansible windows -m win_command -a <span class="string">"ipconfig"</span></div></pre></td></tr></table></figure>
+<h2 id="网盘下载"><a href="#网盘下载" class="headerlink" title="网盘下载"></a>网盘下载</h2><blockquote>
+<p>Windows作为客户端所需的软件包我上传到百度网盘，.Net Framework安装失败提示证书错误记得手动导入MicrosoftRootCertificateAuthority2011.cer</p>
+</blockquote>
+<p><a href="https://pan.baidu.com/s/1JNV2pXjwUn14ojAtdEH_Sg" target="_blank" rel="external">https://pan.baidu.com/s/1JNV2pXjwUn14ojAtdEH_Sg</a></p>
+<ol>
+<li>安装 .Net Framework 4.6.2（NDP462-KB3151800-x86-x64-AllOS-ENU.exe）</li>
+<li>升级 Windows 7 SP1 和 Windows 2008 R2 SP1 的 PowerShell版本从2.0至3.0（Windows6.1-KB2506143-x64.msu）</li>
+<li><p>执行.\ConfigureRemotingForAnsible.ps1脚本开启WinRM远程管理服务</p>
+<p> powershell -ExecutionPolicy RemoteSigned .\ConfigureRemotingForAnsible.ps1 -SkipNetworkProfileCheck</p>
+</li>
+</ol>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -144,7 +171,7 @@
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/Hexo/">Hexo</a>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
 </div>
 
 
@@ -154,7 +181,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://wsgzao.github.io/post/markdown/" data-title="Markdown学习路径 | HelloDog" data-tsina="" class="share clearfix">
+	  <div data-url="https://wsgzao.github.io/post/ansible-windows/" data-title="在Windows下部署Ansible客户端 | HelloDog" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -168,18 +195,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/post/bonding/" title="Linux双网卡绑定实践">
+ <a href="/post/docker/" title="Docker 使用指北">
   <strong>上一篇：</strong><br/>
   <span>
-  Linux双网卡绑定实践</span>
+  Docker 使用指北</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/post/hexo-scroll-to-top/"  title="Hexo添加返回顶部按钮">
+<a href="/post/centos/"  title="CentOS通用优化和配置">
  <strong>下一篇：</strong><br/> 
- <span>Hexo添加返回顶部按钮
+ <span>CentOS通用优化和配置
 </span>
 </a>
 </div>
@@ -202,7 +229,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#学习路径"><span class="toc-number">3.</span> <span class="toc-text">学习路径</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#理解Markdown语法"><span class="toc-number">3.1.</span> <span class="toc-text">理解Markdown语法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实践Markdown"><span class="toc-number">3.2.</span> <span class="toc-text">实践Markdown</span></a></li></ol></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Windows部署"><span class="toc-number">3.</span> <span class="toc-text">Windows部署</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#客户端"><span class="toc-number">4.</span> <span class="toc-text">客户端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务端"><span class="toc-number">5.</span> <span class="toc-text">服务端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#网盘下载"><span class="toc-number">6.</span> <span class="toc-text">网盘下载</span></a></li></ol>
  
   </div>
 

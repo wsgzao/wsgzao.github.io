@@ -1,0 +1,564 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+  
+    <title>Docker 使用指北 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="3proxy tiny free proxy server">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker 使用指北">
+<meta property="og:url" content="https://wsgzao.github.io/post/docker/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="3proxy tiny free proxy server">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-05-21T03:06:44.538Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Docker 使用指北">
+<meta name="twitter:description" content="3proxy tiny free proxy server">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/docker/" title="Docker 使用指北" itemprop="url">Docker 使用指北</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2018-05-21T06:59:49.000Z" itemprop="datePublished"> 发表于 2018-05-21</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#环境说明"><span class="toc-number">3.</span> <span class="toc-text">环境说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#部署Docker"><span class="toc-number">4.</span> <span class="toc-text">部署Docker</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用阿里云加速器加快获取docker官方的镜像"><span class="toc-number">4.1.</span> <span class="toc-text">使用阿里云加速器加快获取docker官方的镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装／升级你的Docker客户端"><span class="toc-number">4.2.</span> <span class="toc-text">安装／升级你的Docker客户端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#如何配置镜像加速器"><span class="toc-number">4.3.</span> <span class="toc-text">如何配置镜像加速器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装Docker"><span class="toc-number">4.4.</span> <span class="toc-text">安装Docker</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试Docker服务正常"><span class="toc-number">4.5.</span> <span class="toc-text">测试Docker服务正常</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装docker-compose"><span class="toc-number">4.6.</span> <span class="toc-text">安装docker-compose</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#离线安装Docker"><span class="toc-number">5.</span> <span class="toc-text">离线安装Docker</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#下载离线安装包"><span class="toc-number">5.1.</span> <span class="toc-text">下载离线安装包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构建本地yum源"><span class="toc-number">5.2.</span> <span class="toc-text">构建本地yum源</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker入门教程"><span class="toc-number">6.</span> <span class="toc-text">Docker入门教程</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>把docker-ce安装和使用部分先独立抽取出来，关于使用可以参考阮一峰写的《Docker入门教程》</p>
+<blockquote>
+<p>基于docker-ce的部署和使用手册</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018年05月21日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/docker/">https://wsgzao.github.io/post/docker/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>Docker - <a href="https://www.docker.com/" target="_blank" rel="external">https://www.docker.com/</a></p>
+<hr>
+<h2 id="环境说明"><a href="#环境说明" class="headerlink" title="环境说明"></a>环境说明</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 操作系统版本</span></div><div class="line">cat /etc/redhat-release</div><div class="line">CentOS Linux release 7.4.1708 (Core)</div><div class="line"><span class="comment"># 操作系统内核</span></div><div class="line">uname -r</div><div class="line">3.10.0-693.21.1.el7.x86_64</div><div class="line"><span class="comment"># 硬件架构</span></div><div class="line">uname -m</div><div class="line">x86_64</div><div class="line"><span class="comment"># docker版本</span></div><div class="line">docker version</div><div class="line">Client:</div><div class="line"> Version:	18.03.0-ce</div><div class="line"> API version:	1.37</div><div class="line"> Go version:	go1.9.4</div><div class="line"> Git commit:	0520e24</div><div class="line"> Built:	Wed Mar 21 23:09:15 2018</div><div class="line"> OS/Arch:	linux/amd64</div><div class="line"> Experimental:	<span class="literal">false</span></div><div class="line"> Orchestrator:	swarm</div><div class="line"></div><div class="line">Server:</div><div class="line"> Engine:</div><div class="line">  Version:	18.03.0-ce</div><div class="line">  API version:	1.37 (minimum version 1.12)</div><div class="line">  Go version:	go1.9.4</div><div class="line">  Git commit:	0520e24</div><div class="line">  Built:	Wed Mar 21 23:13:03 2018</div><div class="line">  OS/Arch:	linux/amd64</div><div class="line">  Experimental:	<span class="literal">false</span></div></pre></td></tr></table></figure>
+<h2 id="部署Docker"><a href="#部署Docker" class="headerlink" title="部署Docker"></a>部署Docker</h2><h3 id="使用阿里云加速器加快获取docker官方的镜像"><a href="#使用阿里云加速器加快获取docker官方的镜像" class="headerlink" title="使用阿里云加速器加快获取docker官方的镜像"></a>使用阿里云加速器加快获取docker官方的镜像</h3><p>步骤一：如果没有阿里云账号，需要注册阿里云开发账号</p>
+<p><a href="https://dev.aliyun.com/" target="_blank" rel="external">https://dev.aliyun.com/</a></p>
+<p>步骤二：进入加速器页面获取加速信息</p>
+<p><a href="https://cr.console.aliyun.com/#/accelerator" target="_blank" rel="external">https://cr.console.aliyun.com/#/accelerator</a></p>
+<h3 id="安装／升级你的Docker客户端"><a href="#安装／升级你的Docker客户端" class="headerlink" title="安装／升级你的Docker客户端"></a>安装／升级你的Docker客户端</h3><p>推荐安装1.10.0以上版本的Docker客户端，参考文档 docker-ce<br><a href="https://yq.aliyun.com/articles/110806?spm=5176.8351553.0.0.6a721991ZTvV8S" target="_blank" rel="external">https://yq.aliyun.com/articles/110806?spm=5176.8351553.0.0.6a721991ZTvV8S</a></p>
+<blockquote>
+<p>Docker CE 镜像源站</p>
+</blockquote>
+<p>使用官方安装脚本自动安装</p>
+<pre><code>curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+</code></pre><p>CentOS 7 (使用yum进行安装)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># step 1: 安装必要的一些系统工具</span></div><div class="line">sudo yum install -y yum-utils device-mapper-persistent-data lvm2</div><div class="line"><span class="comment"># Step 2: 添加软件源信息</span></div><div class="line">sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</div><div class="line"><span class="comment"># Step 3: 更新并安装 Docker-CE</span></div><div class="line">sudo yum makecache fast</div><div class="line">sudo yum -y install docker-ce</div><div class="line"><span class="comment"># Step 4: 开启Docker服务</span></div><div class="line">sudo service docker start</div><div class="line"></div><div class="line"><span class="comment"># 注意：</span></div><div class="line"><span class="comment"># 官方软件源默认启用了最新的软件，您可以通过编辑软件源的方式获取各个版本的软件包。例如官方并没有将测试版本的软件源置为可用，你可以通过以下方式开启。同理可以开启各种测试版本等。</span></div><div class="line"><span class="comment"># vim /etc/yum.repos.d/docker-ce.repo</span></div><div class="line"><span class="comment">#   将 [docker-ce-test] 下方的 enabled=0 修改为 enabled=1</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment"># 安装指定版本的Docker-CE:</span></div><div class="line"><span class="comment"># Step 1: 查找Docker-CE的版本:</span></div><div class="line"><span class="comment"># yum list docker-ce.x86_64 --showduplicates | sort -r</span></div><div class="line"><span class="comment">#   Loading mirror speeds from cached hostfile</span></div><div class="line"><span class="comment">#   Loaded plugins: branch, fastestmirror, langpacks</span></div><div class="line"><span class="comment">#   docker-ce.x86_64            17.03.1.ce-1.el7.centos            docker-ce-stable</span></div><div class="line"><span class="comment">#   docker-ce.x86_64            17.03.1.ce-1.el7.centos            @docker-ce-stable</span></div><div class="line"><span class="comment">#   docker-ce.x86_64            17.03.0.ce-1.el7.centos            docker-ce-stable</span></div><div class="line"><span class="comment">#   Available Packages</span></div><div class="line"><span class="comment"># Step2 : 安装指定版本的Docker-CE: (VERSION 例如上面的 17.03.0.ce.1-1.el7.centos)</span></div><div class="line"><span class="comment"># sudo yum -y install docker-ce-[VERSION]</span></div></pre></td></tr></table></figure>
+<h3 id="如何配置镜像加速器"><a href="#如何配置镜像加速器" class="headerlink" title="如何配置镜像加速器"></a>如何配置镜像加速器</h3><p>针对Docker客户端版本大于1.10.0的用户</p>
+<p>您可以通过修改daemon配置文件/etc/docker/daemon.json来使用加速器：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">sudo mkdir -p /etc/docker</div><div class="line">sudo tee /etc/docker/daemon.json &lt;&lt;-<span class="string">'EOF'</span></div><div class="line">&#123;</div><div class="line">  <span class="string">"registry-mirrors"</span>: [<span class="string">"https://ffia7t7n.mirror.aliyuncs.com"</span>]</div><div class="line">&#125;</div><div class="line">EOF</div><div class="line">sudo systemctl daemon-reload</div><div class="line">sudo systemctl restart docker</div></pre></td></tr></table></figure></p>
+<h3 id="安装Docker"><a href="#安装Docker" class="headerlink" title="安装Docker"></a>安装Docker</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 使用阿里云作加速</span></div><div class="line"><span class="built_in">cd</span> /etc/yum.repos.d/ &amp;&amp; rm -f *.repo</div><div class="line">wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo</div><div class="line">wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo</div><div class="line">yum remove -y docker docker-common docker-selinux docker-engine</div><div class="line"></div><div class="line"><span class="comment"># 安装docker官方源，国内下载较慢建议切换为阿里云加速</span></div><div class="line">yum install -y yum-utils device-mapper-persistent-data lvm2</div><div class="line">yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</div><div class="line">yum-config-manager --<span class="built_in">enable</span> docker-ce-edge</div><div class="line">yum list docker-ce --showduplicates | sort -r |grep stable</div><div class="line"></div><div class="line"><span class="comment"># 安装docker，可以选择制定版本</span></div><div class="line">yum install -y docker-ce</div><div class="line">systemctl start docker</div><div class="line">systemctl <span class="built_in">enable</span> docker</div><div class="line">mkdir -p /etc/docker</div><div class="line">tee /etc/docker/daemon.json &lt;&lt;-<span class="string">'EOF'</span></div><div class="line">&#123;</div><div class="line">  <span class="string">"registry-mirrors"</span>: [<span class="string">"https://ffia7t7n.mirror.aliyuncs.com"</span>]                <span class="comment"># 为了后期方便添加阿里云的加速镜像站</span></div><div class="line">&#125;</div><div class="line">EOF</div><div class="line">systemctl daemon-reload</div><div class="line">systemctl restart docker</div></pre></td></tr></table></figure>
+<h3 id="测试Docker服务正常"><a href="#测试Docker服务正常" class="headerlink" title="测试Docker服务正常"></a>测试Docker服务正常</h3><p>例行跑个hello world测试下Docker服务是否正常</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 测试docker</span></div><div class="line">docker run hello-world</div><div class="line">Unable to find image <span class="string">'hello-world:latest'</span> locally</div><div class="line">latest: Pulling from library/hello-world</div><div class="line">ca4f61b1923c: Pull complete </div><div class="line">Digest: sha256:97ce6fa4b6cdc0790cda65fe7290b74cfebd9fa0c9b8c38e979330d547d22ce1</div><div class="line">Status: Downloaded newer image <span class="keyword">for</span> hello-world:latest</div><div class="line"></div><div class="line">Hello from Docker!</div><div class="line">This message shows that your installation appears to be working correctly.</div><div class="line"></div><div class="line">To generate this message, Docker took the following steps:</div><div class="line"> 1. The Docker client contacted the Docker daemon.</div><div class="line"> 2. The Docker daemon pulled the <span class="string">"hello-world"</span> image from the Docker Hub.</div><div class="line">    (amd64)</div><div class="line"> 3. The Docker daemon created a new container from that image <span class="built_in">which</span> runs the</div><div class="line">    executable that produces the output you are currently reading.</div><div class="line"> 4. The Docker daemon streamed that output to the Docker client, <span class="built_in">which</span> sent it</div><div class="line">    to your terminal.</div><div class="line"></div><div class="line">To try something more ambitious, you can run an Ubuntu container with:</div><div class="line"> $ docker run -it ubuntu bash</div><div class="line"></div><div class="line">Share images, automate workflows, and more with a free Docker ID:</div><div class="line"> https://cloud.docker.com/</div><div class="line"></div><div class="line">For more examples and ideas, visit:</div><div class="line"> https://docs.docker.com/engine/userguide/</div></pre></td></tr></table></figure>
+<h3 id="安装docker-compose"><a href="#安装docker-compose" class="headerlink" title="安装docker-compose"></a>安装docker-compose</h3><pre><code>yum install -y docker-compose
+</code></pre><h2 id="离线安装Docker"><a href="#离线安装Docker" class="headerlink" title="离线安装Docker"></a>离线安装Docker</h2><p>先在一台可以联网的相同操作系统环境下下载离线安装包，然后内网服务器构建本地yum源，最后安装docker</p>
+<h3 id="下载离线安装包"><a href="#下载离线安装包" class="headerlink" title="下载离线安装包"></a>下载离线安装包</h3><blockquote>
+<p>在可以联网的机器上下载rpm包</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#安装yum-plugin-downloadonly插件</span></div><div class="line">yum install -y yum-plugin-downloadonly</div><div class="line"></div><div class="line"><span class="comment"># 下载createrepo相关rpm到指定目录，构建本地源之前需要在本地安装createrepo，用于构建本地源</span></div><div class="line">mkdir -p /tmp/repo/createrepo/</div><div class="line">yum install --downloadonly --downloaddir=/tmp/repo/createrepo/ createrepo</div><div class="line"></div><div class="line"><span class="comment"># 下载docker相关rpm到指定目录</span></div><div class="line">mkdir -p /tmp/repo/docker-ce/</div><div class="line">yum install --downloadonly --downloaddir=/tmp/repo/docker-ce/ docker-ce</div><div class="line"></div><div class="line"><span class="comment"># 下载docker-compose相关rpm到指定目录</span></div><div class="line">mkdir -p /tmp/repo/docker-compose/</div><div class="line">yum install --downloadonly --downloaddir=/tmp/repo/docker-compose/ docker-compose</div></pre></td></tr></table></figure>
+<h3 id="构建本地yum源"><a href="#构建本地yum源" class="headerlink" title="构建本地yum源"></a>构建本地yum源</h3><p>将docker的rpm包拷贝到需要安装docker的局域网集群上面，例如：<br>/tmp/repo/docker-ce/</p>
+<p>将docker的rpm包拷贝到需要安装docker的局域网集群上面，例如：<br>/tmp/repo/createrepo/</p>
+<p>构建本地yum源</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 安装createrepo</span></div><div class="line">rpm -ivh /tmp/repo/createrepo/*.rpm</div><div class="line"><span class="comment"># 备份/etc/yum.repos.d目录下文件</span></div><div class="line">ls /etc/yum.repos.d | xargs -I&#123;&#125; mv /etc/yum.repos.d/&#123;&#125; /etc/yum.repos.d/&#123;&#125;.bk</div><div class="line"><span class="comment"># 创建新的*.repo文件，如：docker.repo，进行配置</span></div><div class="line">vim docker.repo</div><div class="line">[<span class="built_in">local</span>-yum]</div><div class="line">name=<span class="built_in">local</span>-yum</div><div class="line">baseurl=file:////tmp/repo/docker-ce/</div><div class="line">enabled=1</div><div class="line">gpgcheck=0</div><div class="line"><span class="comment"># 设置本地源</span></div><div class="line">createrepo -d /tmp/repo/docker-ce/</div><div class="line"><span class="comment"># 查看看是否能看到自己构建的本地源</span></div><div class="line">yum repolist</div><div class="line"><span class="comment"># 清除缓存</span></div><div class="line">yum clean all</div><div class="line"><span class="comment"># 创建缓存</span></div><div class="line">yum makecache</div><div class="line"><span class="comment"># 看本地源是否配置成功，通过yum list看是否输出了新的rpm包，如果能查询到，证明配置成功</span></div><div class="line">yum list | grep docker</div><div class="line"><span class="comment"># 离线安装docker</span></div><div class="line">yum install docker -y</div></pre></td></tr></table></figure>
+<h2 id="Docker入门教程"><a href="#Docker入门教程" class="headerlink" title="Docker入门教程"></a>Docker入门教程</h2><p><a href="http://www.ruanyifeng.com/blog/2018/02/docker-tutorial.html" target="_blank" rel="external">http://www.ruanyifeng.com/blog/2018/02/docker-tutorial.html</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/docker/" data-title="Docker 使用指北 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/post/ansible-windows/"  title="在Windows下部署Ansible客户端">
+ <strong>下一篇：</strong><br/> 
+ <span>在Windows下部署Ansible客户端
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#环境说明"><span class="toc-number">3.</span> <span class="toc-text">环境说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#部署Docker"><span class="toc-number">4.</span> <span class="toc-text">部署Docker</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用阿里云加速器加快获取docker官方的镜像"><span class="toc-number">4.1.</span> <span class="toc-text">使用阿里云加速器加快获取docker官方的镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装／升级你的Docker客户端"><span class="toc-number">4.2.</span> <span class="toc-text">安装／升级你的Docker客户端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#如何配置镜像加速器"><span class="toc-number">4.3.</span> <span class="toc-text">如何配置镜像加速器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装Docker"><span class="toc-number">4.4.</span> <span class="toc-text">安装Docker</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试Docker服务正常"><span class="toc-number">4.5.</span> <span class="toc-text">测试Docker服务正常</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装docker-compose"><span class="toc-number">4.6.</span> <span class="toc-text">安装docker-compose</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#离线安装Docker"><span class="toc-number">5.</span> <span class="toc-text">离线安装Docker</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#下载离线安装包"><span class="toc-number">5.1.</span> <span class="toc-text">下载离线安装包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构建本地yum源"><span class="toc-number">5.2.</span> <span class="toc-text">构建本地yum源</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker入门教程"><span class="toc-number">6.</span> <span class="toc-text">Docker入门教程</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>73</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+  <script>
+    var xlm_wid='12835';
+    var xlm_url='https://www.xianliao.me/';
+  </script>
+  <script type='text/javascript' charset='UTF-8' src='https://www.xianliao.me/embed.js'></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>
