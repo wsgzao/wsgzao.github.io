@@ -116,12 +116,12 @@
 <p>阅读原文 - <a href="https://wsgzao.github.io/post/cciss/">https://wsgzao.github.io/post/cciss/</a></p>
 <p>扩展阅读</p>
 <ul>
-<li>HP Smart Array CCISS driver - <a href="http://cciss.sourceforge.net/" target="_blank" rel="external">http://cciss.sourceforge.net/</a></li>
-<li>HP Proliant DL580 G5安装centos7 x64无法识别阵列卡问题 - <a href="http://blog.csdn.net/ztsinghua/article/details/48825013" target="_blank" rel="external">http://blog.csdn.net/ztsinghua/article/details/48825013</a></li>
+<li>HP Smart Array CCISS driver - <a href="http://cciss.sourceforge.net/" target="_blank" rel="noopener">http://cciss.sourceforge.net/</a></li>
+<li>HP Proliant DL580 G5安装centos7 x64无法识别阵列卡问题 - <a href="http://blog.csdn.net/ztsinghua/article/details/48825013" target="_blank" rel="noopener">http://blog.csdn.net/ztsinghua/article/details/48825013</a></li>
 </ul>
 <hr>
 <h2 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h2><p>A quick google brought up this StackOverflow article.</p>
-<p>CentOS 7 x64 and HP Proliant DL360 G5 SCSI Controller compatibility - <a href="http://serverfault.com/questions/611182/centos-7-x64-and-hp-proliant-dl360-g5-scsi-controller-compatibility" target="_blank" rel="external">http://serverfault.com/questions/611182/centos-7-x64-and-hp-proliant-dl360-g5-scsi-controller-compatibility</a></p>
+<p>CentOS 7 x64 and HP Proliant DL360 G5 SCSI Controller compatibility - <a href="http://serverfault.com/questions/611182/centos-7-x64-and-hp-proliant-dl360-g5-scsi-controller-compatibility" target="_blank" rel="noopener">http://serverfault.com/questions/611182/centos-7-x64-and-hp-proliant-dl360-g5-scsi-controller-compatibility</a></p>
 <blockquote>
 <p>PROBLEM: RHEL7 removes the the the CCSIS driver and you need to load the kernel component correctly before it can see any drives.</p>
 </blockquote>
@@ -143,8 +143,8 @@
 <li>按步骤一路执行，识别硬盘挂载系统分区至<code>/mnt/sysimage</code></li>
 <li>手动修改<code>/boot/grub2/grub.cfg</code>，重启后进入系统</li>
 </ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">chroot /mnt/sysimage</div><div class="line"><span class="built_in">cd</span> /boot/grub2/</div><div class="line">cp grub.cfg grub.cfg.bak</div><div class="line"></div><div class="line">vi grub.cfg</div><div class="line"><span class="comment">#在启动菜单处quiet空格加入参数，注意有两处请仔细甄别</span></div><div class="line">quiet hpsa.hpsa_simple_mode=1 hpsa.hpsa_allow_any=1</div><div class="line"></div><div class="line"><span class="comment">#保存退出重启</span></div><div class="line">:x</div><div class="line"><span class="built_in">exit</span></div><div class="line">init 6</div><div class="line"></div><div class="line"><span class="comment">#重启后卡住</span></div><div class="line">可以尝试第二个rescue启动项试试</div></pre></td></tr></table></figure>
-<h2 id="CentOS-7"><a href="#CentOS-7" class="headerlink" title="CentOS 7"></a>CentOS 7</h2><p>CentOS 7 and older HP RAID controllers - <a href="http://jordanappleson.co.uk/linux/2014/09/18/centos-7-and-hp-raid-drivers/" target="_blank" rel="external">http://jordanappleson.co.uk/linux/2014/09/18/centos-7-and-hp-raid-drivers/</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">chroot /mnt/sysimage</span><br><span class="line"><span class="built_in">cd</span> /boot/grub2/</span><br><span class="line">cp grub.cfg grub.cfg.bak</span><br><span class="line"></span><br><span class="line">vi grub.cfg</span><br><span class="line"><span class="comment">#在启动菜单处quiet空格加入参数，注意有两处请仔细甄别</span></span><br><span class="line">quiet hpsa.hpsa_simple_mode=1 hpsa.hpsa_allow_any=1</span><br><span class="line"></span><br><span class="line"><span class="comment">#保存退出重启</span></span><br><span class="line">:x</span><br><span class="line"><span class="built_in">exit</span></span><br><span class="line">init 6</span><br><span class="line"></span><br><span class="line"><span class="comment">#重启后卡住</span></span><br><span class="line">可以尝试第二个rescue启动项试试</span><br></pre></td></tr></table></figure>
+<h2 id="CentOS-7"><a href="#CentOS-7" class="headerlink" title="CentOS 7"></a>CentOS 7</h2><p>CentOS 7 and older HP RAID controllers - <a href="http://jordanappleson.co.uk/linux/2014/09/18/centos-7-and-hp-raid-drivers/" target="_blank" rel="noopener">http://jordanappleson.co.uk/linux/2014/09/18/centos-7-and-hp-raid-drivers/</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
