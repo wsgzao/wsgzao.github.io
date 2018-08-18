@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://wsgzao.github.io/"/>
-  <updated>2018-08-07T11:16:01.465Z</updated>
+  <updated>2018-08-18T08:57:03.500Z</updated>
   <id>https://wsgzao.github.io/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>htop使用介绍</title>
+    <link href="https://wsgzao.github.io/post/htop/"/>
+    <id>https://wsgzao.github.io/post/htop/</id>
+    <published>2018-08-18T06:59:49.000Z</published>
+    <updated>2018-08-18T08:57:03.500Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>top作为日常管理工作中最常用也是最重要的Linux系统监控工具之一，可以动态观察系统进程状况。但其缺点就是只支持键盘操作，显示也单调。现在我们有了一个更好的选择那就是htop。</p><blockquote><p>推荐使用htop代替top</p></blockquote><h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018年08月18日 - 初稿</p><p>阅读原文 - <a href="https://wsgzao.github.io/post/htop/">https://wsgzao.github.io/post/htop/</a></p><p><strong>扩展阅读</strong></p><p>htop - <a href="http://hisham.hm/htop/" target="_blank" rel="noopener">http://hisham.hm/htop/</a></p><hr><p><img src="http://ws3.sinaimg.cn/large/7207510dgy1fudxbg90cfg20n40h3wlk.gif" alt="image"></p><h2 id="htop简介"><a href="#htop简介" class="headerlink" title="htop简介"></a>htop简介</h2><blockquote><p>htop - an interactive process viewer for Unix</p></blockquote><p>This is htop, an interactive process viewer for Unix systems. It is a text-mode application (for console or X terminals) and requires ncurses.</p><p>htop is an interactive text-mode process viewer for Unix systems. It aims to be a better ‘top’.</p><p>Comparison between <code>htop</code> and classic <code>top</code></p><ul><li>In <code>htop</code> you can scroll the list vertically and horizontally<br>to see all processes and full command lines.</li><li>In <code>top</code> you are subject to a delay for each unassigned<br>key you press (especially annoying when multi-key escape<br>sequences are triggered by accident).</li><li><code>htop</code> starts faster (<code>top</code> seems to collect data for a while<br>before displaying anything).</li><li>In <code>htop</code> you don’t need to type the process number to<br>kill a process, in <code>top</code> you do.</li><li>In <code>htop</code> you don’t need to type the process number or<br>the priority value to renice a process, in <code>top</code> you do.</li><li>In <code>htop</code> you can kill multiple processes at once.</li><li><code>top</code> is older, hence, more tested.</li></ul><p>htop命令 是Linux系统中的一个互动的进程查看器，一个文本模式的应用程序(在控制台或者X终端中)，需要ncurses。</p><p>与Linux传统的top相比，htop更加人性化。它可让用户交互式操作，支持颜色主题，可横向或纵向滚动浏览进程列表，并支持鼠标操作。</p><p>与top相比，htop有以下优点：</p><ul><li>可以横向或纵向滚动浏览进程列表，以便看到所有的进程和完整的命令行</li><li>在启动上，比top 更快</li><li>杀进程时不需要输入进程号</li><li>htop 支持鼠标操作</li><li>两者相比起来，top比较繁琐</li></ul><p>top缺点：</p><ul><li>只支持键盘操作</li><li>显示也单调</li></ul><h2 id="htop安装"><a href="#htop安装" class="headerlink" title="htop安装"></a>htop安装</h2><p>htop目前已经支持非常多的平台，常用的安装方式如下<br><a href="http://hisham.hm/htop/index.php?page=downloads" target="_blank" rel="noopener">http://hisham.hm/htop/index.php?page=downloads</a></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Centos/RHEL</span></span><br><span class="line">yum install htop</span><br><span class="line"><span class="comment"># Ubuntu</span></span><br><span class="line">sudo apt-get install htop</span><br><span class="line"><span class="comment"># Mac</span></span><br><span class="line">brew install htop</span><br></pre></td></tr></table></figure><h2 id="htop常用功能"><a href="#htop常用功能" class="headerlink" title="htop常用功能"></a>htop常用功能</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 语法</span></span><br><span class="line">htop</span><br><span class="line"></span><br><span class="line"><span class="comment"># 参数</span></span><br><span class="line">-C --no-color               使用单色配色方案</span><br><span class="line">-d --delay=DELAY            设置更新之间的延迟，在十秒</span><br><span class="line">-s --sort-key=COLUMN        纵列排序(try --sort-key=<span class="built_in">help</span> <span class="keyword">for</span> a list)</span><br><span class="line">-u --user=USERNAME          只显示一个指定用户的进程</span><br><span class="line">-p --pid=PID,[,PID,PID...]  只显示给用户</span><br><span class="line">-h --<span class="built_in">help</span>                   打印此命令帮助</span><br><span class="line">-v --version                打印版本信息</span><br><span class="line"></span><br><span class="line"><span class="comment"># 选项</span></span><br><span class="line">h,?     F1: 查看htop使用说明</span><br><span class="line">S       F2: 设置</span><br><span class="line">/       F3: 搜索进程</span><br><span class="line">\       F4: 过滤器，按关键字搜索</span><br><span class="line">t       F5: 显示树形结构</span><br><span class="line">&lt;,&gt;     F6: 选择排序方式</span><br><span class="line">[       F7: 减少nice值，这样就可以提高对应进程的优先级</span><br><span class="line">]       F8: 增加nice值，这样可以降低对应进程的优先级</span><br><span class="line">k       F9: 杀掉选中的进程</span><br><span class="line">q       F10: 退出htop</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">/: 搜索字符</span><br><span class="line">h: 显示帮助</span><br><span class="line">l: 显示进程打开的文件: 如果安装了lsof，按此键可以显示进程所打开的文件</span><br><span class="line">u: 显示所有用户，并可以选择某一特定用户的进程</span><br><span class="line">U: 取消标记所有的进程</span><br><span class="line">s: 将调用strace追踪进程的系统调用</span><br><span class="line">t: 显示树形结构</span><br><span class="line"></span><br><span class="line">H: 显示/隐藏用户线程</span><br><span class="line">I: 倒转排序顺序</span><br><span class="line">K: 显示/隐藏内核线程    </span><br><span class="line">M: 按内存占用排序</span><br><span class="line">P: 按CPU排序    </span><br><span class="line">T: 按运行时间排序</span><br><span class="line"></span><br><span class="line">上下键或PgUP， PgDn : 移动选中进程  </span><br><span class="line">左右键或Home， End : 移动列表  </span><br><span class="line">Space(空格) : 标记/取消标记一个进程。命令可以作用于多个进程，例如 <span class="string">"kill"</span>，将应用于所有已标记的进程</span><br></pre></td></tr></table></figure><h2 id="htop使用"><a href="#htop使用" class="headerlink" title="htop使用"></a>htop使用</h2><p>鼠标点击Setup或者按下F2 之后进入htop 设定的页面</p><ol><li>Meters</li></ol><p>设定顶端的 显示信息，分为左右两侧，Left column 表示左侧的显示的信息，Right column表示右侧显示的信息，如果要新加选项，可以选择Available meters添加，F5新增到上方左侧，F6新增到上方右侧。Left column和Right column下面的选项，可以选定信息的显示方式，有LED、Bar(进度条)、Text(文本模式)，可以根据个人喜好进行设置</p><ol start="2"><li>Display options</li></ol><p>选择要显示的内容，按空格 x表示显示，选择完后，按F10保存</p><ol start="3"><li>Colors</li></ol><p>设定界面以什么颜色来显示，个人认为用处不大，各人喜好不同</p><ol start="4"><li>Colums</li></ol><p>作用是增加或取消要显示的各项内容，选择后F7(向上移动)、F8(向下移动)、F9(取消显示、F10(保存更改))此处增加了PPID、PGRP，根据各人需求，显示那些信息。</p><p>F3 搜索进程</p><p>在界面下按F3或直接输入”/”就可以直接进入搜索模式，是按照进程名进行搜索的，搜索到的进程会用设定的颜色标记出来，方便查看。</p><p>F4：过滤器</p><p>相当于模糊查找，不区分大小写，下方输入要搜索的内容后，则界面只显示搜索到的内容，更加方便查看</p><p>F5:以树形方式显示</p><p>F6：排序方式</p><p>按下F6后会跳转至以树形方式显示界面，让您选择以什么方式进行排序，在Sort by下选择您要以什么来排序</p><p>F7，F8：调整进程nice值</p><p>F7表示减小nice值(增大优先级)，F8增大nice值(减小优先级)，选择某一进程，按F7或F8来增大或减小nice值，nice值范围为-20-19</p><p>F9：杀死进程</p><p>选择某一进程按F9即可杀死此进程，很方便</p><p>F10:退出htop</p><blockquote><p>更多图文详细教程可以参考以下链接</p></blockquote><p>htop使用详解–史上最强（没有之一）<br><a href="https://cloud.tencent.com/developer/article/1115041" target="_blank" rel="noopener">https://cloud.tencent.com/developer/article/1115041</a></p><p>Linux htop命令使用详解<br><a href="https://www.linuxidc.com/Linux/2018-03/151428.htm" target="_blank" rel="noopener">https://www.linuxidc.com/Linux/2018-03/151428.htm</a></p><p>Install HTop on Ubuntu<br><a href="https://linuxhint.com/install-htop-ubuntu/" target="_blank" rel="noopener">https://linuxhint.com/install-htop-ubuntu/</a></p>]]></content>
+    
+    <summary type="html">
+    
+      推荐使用htop代替top
+    
+    </summary>
+    
+      <category term="学习 | Study" scheme="https://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>香港和新加坡保险快速入门</title>
@@ -388,26 +408,6 @@
     <summary type="html">
     
       轻轻松松解决pip离线安装，配置pypi国内加速镜像
-    
-    </summary>
-    
-      <category term="学习 | Study" scheme="https://wsgzao.github.io/categories/%E5%AD%A6%E4%B9%A0-Study/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>通过关闭Windows Update更新解决服务主机本地系统CPU使用率高问题</title>
-    <link href="https://wsgzao.github.io/post/windows-update/"/>
-    <id>https://wsgzao.github.io/post/windows-update/</id>
-    <published>2018-05-02T06:59:49.000Z</published>
-    <updated>2018-05-02T09:04:21.000Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近经常发现Windows10系统卡顿，笔记本风扇声音特别响，本地系统的CPU占用就一直维持在100%左右，程序响应慢严重影响效率。不同的Windows版本情况可能不同，但通过任务管理器查看CPU较高的进程发现集中在Windows Update，而CPU高的问题也正是来源于此。然而回顾此前一路从Windows XP/Vista/7/8.1/10的自动更新经历来看其实微软一直再向前走，至少我的x230换上SSD和大内存后使用Windows10 Pro初版一路升级到现在1803，没有遇到太大的问题，也再也没因为垃圾数据太多或者系统响应慢而隔三差五重装电脑，你们的故事呢？</p><blockquote><p>CPU使用率高居然是Windows Update更新进程惹的祸</p></blockquote><h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018年05月02日 - 初稿</p><p>阅读原文 - <a href="https://wsgzao.github.io/post/windows-update/">https://wsgzao.github.io/post/windows-update/</a></p><p><strong>扩展阅读</strong></p><p>Win10关闭自动更新,windows10怎么关闭自动更新 - <a href="http://jingyan.baidu.com/article/f71d6037702c7c1ab641d194.html" target="_blank" rel="noopener">http://jingyan.baidu.com/article/f71d6037702c7c1ab641d194.html</a></p><hr><h2 id="禁用-Windows-10-更新"><a href="#禁用-Windows-10-更新" class="headerlink" title="禁用 Windows 10 更新"></a>禁用 Windows 10 更新</h2><blockquote><p>如不想禁用Windows 10 更新，手动停止Windows Update服务观察是否可以解决即可</p></blockquote><ol><li>找到任务管理器中的“ 服务主机：本地系统”-&gt;“Windows Update”，右键，进入“服务”</li><li>在服务列表中找到“Windows Update”，右键，停止</li><li>在服务列表中找到“Windows Update”，右键，属性，启动类型选择“禁用”</li><li>打开C:\Windows\SoftwareDistribution，删除里面所有文件，如果可以删除所有文件，那么CPU应该已经恢复正常了，如果有些文件不能删除，则可能是“Windows Update”没有完全关闭，继续下面步骤</li><li>按Win键+R键调出运行，输入“gpedit.msc”点击“确定”，调出“本地组策略编辑器”</li><li>依次展开”计算机配置”，”管理模板” ，”windows组件” ，”windows更新 “，在右面找到“配置自动更新”，并双击</li><li>在配置窗口上按1-3的顺序选择“已禁用”，点击“应用”，“确定”，重启电脑</li><li>打开C:\Windows\SoftwareDistribution，删除里面所有文件</li></ol><p>至此，应该CPU会恢复正常，如果还没有，那就具体问题具体分析吧</p><h2 id="启用-Windows-10-更新"><a href="#启用-Windows-10-更新" class="headerlink" title="启用 Windows 10 更新"></a>启用 Windows 10 更新</h2><ol><li>先打开服务，把Windows Update停止并禁用</li><li>然后打开设置里的更新和安全，此时Windows更新会显示不可用</li><li>这时去服务里启用Windows Update</li><li>然后去更新里点重试</li><li>最后就等吧</li></ol>]]></content>
-    
-    <summary type="html">
-    
-      CPU使用率高居然是Windows Update更新进程惹的祸
     
     </summary>
     
