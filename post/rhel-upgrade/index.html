@@ -107,13 +107,13 @@
 		
 		</div>
 		
-		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>因为交易系统部的同事提出了一个新的需求要将现有的RHEL6.7升级至RHEL7.1(最好保留数据升级)，之前对于小版本的升级无论是CentOS还是Redhat都可以直接通过yum update的方式实现软件包和内核的迭代更新，但是这次的需求经过Redhat知识库的研究发现这几乎是一个不可能轻松实现的任务，原因就是Redhat压根不支持大版本之间的升级，考虑到跨版本兼容性问题和原厂不做技术支持这两点，通过和Redhat二线电话沟通也确认了最终的实现方案，就是先备份相关重要配置和数据格式化/分区保留其它文件系统，重装后在把数据迁移回来。整个过程虽然提不上什么惊心动魄，但至少翻阅了大量材料，官方虽然给出了跨版本升级的步骤，但实现的代价和要求真的太高，这里一并分享出来方便大家学习和思考。</p>
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>因为交易系统部的同事提出了一个新的需求要将现有的 RHEL6.7 升级至 RHEL7.1(最好保留数据升级)，之前对于小版本的升级无论是 CentOS 还是 Redhat 都可以直接通过 yum update 的方式实现软件包和内核的迭代更新，但是这次的需求经过 Redhat 知识库的研究发现这几乎是一个不可能轻松实现的任务，原因就是 Redhat 压根不支持大版本之间的升级，考虑到跨版本兼容性问题和原厂不做技术支持这两点，通过和 Redhat 二线电话沟通也确认了最终的实现方案，就是先备份相关重要配置和数据格式化 / 分区保留其它文件系统，重装后在把数据迁移回来。整个过程虽然提不上什么惊心动魄，但至少翻阅了大量材料，官方虽然给出了跨版本升级的步骤，但实现的代价和要求真的太高，这里一并分享出来方便大家学习和思考。</p>
 <blockquote>
 <p>How do I upgrade from RHEL 6 to RHEL 7? Reinstall</p>
 </blockquote>
-<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2016年10月13日 - 初稿</p>
+<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2016 年 10 月 13 日 - 初稿</p>
 <p>阅读原文 - <a href="https://wsgzao.github.io/post/rhel-upgrade/">https://wsgzao.github.io/post/rhel-upgrade/</a></p>
-<p><strong>扩展阅读</strong></p>
+<p><strong> 扩展阅读 </strong></p>
 <p>红帽支持 RHEL 主版本之间的升级吗？- <a href="https://access.redhat.com/zh_CN/solutions/1388653" target="_blank" rel="noopener">https://access.redhat.com/zh_CN/solutions/1388653</a><br>How do I upgrade from RHEL 6 to RHEL 7? - <a href="https://access.redhat.com/solutions/637583" target="_blank" rel="noopener">https://access.redhat.com/solutions/637583</a></p>
 <hr>
 <h2 id="红帽支持-RHEL-主版本之间的升级吗？"><a href="#红帽支持-RHEL-主版本之间的升级吗？" class="headerlink" title="红帽支持 RHEL 主版本之间的升级吗？"></a>红帽支持 RHEL 主版本之间的升级吗？</h2><h3 id="Environment"><a href="#Environment" class="headerlink" title="Environment"></a>Environment</h3><ul>
@@ -125,7 +125,7 @@
 <h3 id="Issue"><a href="#Issue" class="headerlink" title="Issue"></a>Issue</h3><ul>
 <li>如何从红帽企业版 Linux 的一个版本升级到另一个版本？</li>
 <li>可以从 RHEL 的不同主版本之间移植吗？</li>
-<li>红帽支持 RHEL 主版本之间的升级吗（比如从5升级到6）？</li>
+<li>红帽支持 RHEL 主版本之间的升级吗（比如从 5 升级到 6）？</li>
 <li>可以在 RHEL 5 上安装 RHEL 6 吗？</li>
 <li>安装介质没有包含升级选项；</li>
 <li>如何从 <code>RHEL 5</code> 升级到 <code>RHEL 6</code> ？</li>
@@ -133,8 +133,8 @@
 <h3 id="Resolution"><a href="#Resolution" class="headerlink" title="Resolution"></a>Resolution</h3><blockquote>
 <p>Red Hat Enterprise Linux 4, 5, 6</p>
 </blockquote>
-<p>红帽 <strong>不支持</strong> RHEL 主版本之间的跨大版本升级。（主版本以整数表示。比如，RHEL 5 和 RHEL 6 都是不同的主版本。）</p>
-<p>不同主版本之间的跨大版本升级，不会保留所有系统设置、服务配置和自定义设置。因此， <strong>红帽强烈建议重新安装系统，以进行主版本之间的升级</strong> 。建议在运行着的服务器旁，使用新的服务器安装一个全新的RHEL，然后把原有的设 置、软件和数据迁移到新服务器上，以确保系统和软件能在新服务器上正确运行。 这还有助于确保数据安全地从备份转移到新的系统。</p>
+<p>红帽 <strong> 不支持 </strong> RHEL 主版本之间的跨大版本升级。（主版本以整数表示。比如，RHEL 5 和 RHEL 6 都是不同的主版本。）</p>
+<p>不同主版本之间的跨大版本升级，不会保留所有系统设置、服务配置和自定义设置。因此， <strong> 红帽强烈建议重新安装系统，以进行主版本之间的升级 </strong> 。建议在运行着的服务器旁，使用新的服务器安装一个全新的 RHEL，然后把原有的设 置、软件和数据迁移到新服务器上，以确保系统和软件能在新服务器上正确运行。 这还有助于确保数据安全地从备份转移到新的系统。</p>
 <p>还有方法可以不进行全新安装，来进行升级。要实现这个功能，插入新版本的安装光盘，然后在 boot 命令行中输入：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># linux upgradeany</span><br></pre></td></tr></table></figure>
 <p>这将引导您进行与 普通的安装过程很相近的升级步骤。再次说明，这个过程红帽是不予支持的。进行完这个升级操作后，如果您联系红帽技术支持，红帽只会当作全新的安装来提供支持。升级过程中产生的问题是不予支持的。任何时候出现的问题如果疑似与升级过程有关，红帽将要求您重新安装系统。</p>
@@ -186,27 +186,27 @@
 <li>Provide Feedback: Create a debug log to send to Red Hat in case there are problems.</li>
 </ol>
 <h2 id="实践步骤"><a href="#实践步骤" class="headerlink" title="实践步骤"></a>实践步骤</h2><blockquote>
-<p>核心目标为格式化/分区，保留其它文件系统，做好相应备份重装RHEL7</p>
+<p>核心目标为格式化 / 分区，保留其它文件系统，做好相应备份重装 RHEL7</p>
 </blockquote>
-<p>生产环境当前系统版本为RHEL6.7，推荐升级至RHEL7.1或者更新的版本</p>
+<p>生产环境当前系统版本为 RHEL6.7，推荐升级至 RHEL7.1 或者更新的版本</p>
 <blockquote>
-<p>通过RHEL7.1的ISO引导至INSTALLATION SUMMARY</p>
+<p>通过 RHEL7.1 的 ISO 引导至 INSTALLATION SUMMARY</p>
 </blockquote>
 <ul>
-<li>DATE &amp; TIME设置为Asia/Shanghai timezone</li>
-<li>LANGUAGE SUPPORT添加English(United States),简体中文(中国)</li>
-<li>SOFTWARE SELECTION设置为Server with GUI</li>
-<li>UBSTAKKATUIB DESTINATION分区选择I will configure partioning，点击DONE</li>
-<li>找到现有系统中的/分区，选中后在右侧勾选Reformat，Mount Point设置为/，SYSTEM其它分区SWAP,/boot,/usr,/tmp,/var参照同样操作，DATA数据分区不动，点击DONE</li>
+<li>DATE &amp; TIME 设置为 Asia/Shanghai timezone</li>
+<li>LANGUAGE SUPPORT 添加 English(United States), 简体中文 (中国)</li>
+<li>SOFTWARE SELECTION 设置为 Server with GUI</li>
+<li>UBSTAKKATUIB DESTINATION 分区选择 I will configure partioning，点击 DONE</li>
+<li>找到现有系统中的 / 分区，选中后在右侧勾选 Reformat，Mount Point 设置为 /，SYSTEM 其它分区 SWAP,/boot,/usr,/tmp,/var 参照同样操作，DATA 数据分区不动，点击 DONE</li>
 <li>Begin Install</li>
 </ul>
 <blockquote>
 <p>安装结束后恢复备份数据</p>
 </blockquote>
 <ul>
-<li>恢复原有网卡配置项和IP地址</li>
-<li>恢复主机名/Hosts/Profile</li>
-<li>恢复fstab分区检查数据一致性</li>
+<li>恢复原有网卡配置项和 IP 地址</li>
+<li>恢复主机名 / Hosts/Profile</li>
+<li>恢复 fstab 分区检查数据一致性</li>
 </ul>
   
 	</div>
@@ -239,18 +239,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/post/solarflare/" title="Solarflare低延迟万兆网卡配置和性能调优实践">
+ <a href="/post/solarflare/" title="Solarflare 低延迟万兆网卡配置和性能调优实践">
   <strong>上一篇：</strong><br/>
   <span>
-  Solarflare低延迟万兆网卡配置和性能调优实践</span>
+  Solarflare 低延迟万兆网卡配置和性能调优实践</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/post/ntfs-3g/"  title="Linux使用ntfs-3g挂载NTFS最佳实践">
+<a href="/post/ntfs-3g/"  title="Linux 使用 ntfs-3g 挂载 NTFS 最佳实践">
  <strong>下一篇：</strong><br/> 
- <span>Linux使用ntfs-3g挂载NTFS最佳实践
+ <span>Linux 使用 ntfs-3g 挂载 NTFS 最佳实践
 </span>
 </a>
 </div>

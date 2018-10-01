@@ -9,7 +9,7 @@
         window.location.protocol = "https";
   </script> 
   
-    <title>Solarflare低延迟万兆网卡配置和性能调优实践 | HelloDog</title>
+    <title>Solarflare 低延迟万兆网卡配置和性能调优实践 | HelloDog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wsgzao">
@@ -18,14 +18,14 @@
     
     <meta name="description" content="Solarflare make servers faster and more secure.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Solarflare低延迟万兆网卡配置和性能调优实践">
+<meta property="og:title" content="Solarflare 低延迟万兆网卡配置和性能调优实践">
 <meta property="og:url" content="https://wsgzao.github.io/post/solarflare/index.html">
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="Solarflare make servers faster and more secure.">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2016-11-25T06:43:13.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Solarflare低延迟万兆网卡配置和性能调优实践">
+<meta name="twitter:title" content="Solarflare 低延迟万兆网卡配置和性能调优实践">
 <meta name="twitter:description" content="Solarflare make servers faster and more secure.">
 
     
@@ -87,7 +87,7 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/post/solarflare/" title="Solarflare低延迟万兆网卡配置和性能调优实践" itemprop="url">Solarflare低延迟万兆网卡配置和性能调优实践</a>
+      <a href="/post/solarflare/" title="Solarflare 低延迟万兆网卡配置和性能调优实践" itemprop="url">Solarflare 低延迟万兆网卡配置和性能调优实践</a>
   </h1>
   <p class="article-author">By
        
@@ -107,20 +107,20 @@
 		
 		</div>
 		
-		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>因为交易系统部的同事在测试研究Intel DPDK和Solarflare的低延迟性能，硬件是Dell R730，OS为RHEL7.2，之前也对DPDK有所了解借这个机会再多接触一些，前者是开源方案但需要强大的技术团队支撑，而后者却是小众但几乎垄断全球交易所的商业方案，随着PCIe SSD，分布式存储，万兆交换机的崛起，这个市场也变得越来越活跃了。</p>
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>因为交易系统部的同事在测试研究 Intel DPDK 和 Solarflare 的低延迟性能，硬件是 Dell R730，OS 为 RHEL7.2，之前也对 DPDK 有所了解借这个机会再多接触一些，前者是开源方案但需要强大的技术团队支撑，而后者却是小众但几乎垄断全球交易所的商业方案，随着 PCIe SSD，分布式存储，万兆交换机的崛起，这个市场也变得越来越活跃了。</p>
 <blockquote>
 <p>Solarflare make servers faster and more secure.</p>
 </blockquote>
-<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2016年11月25日 - 初稿</p>
+<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2016 年 11 月 25 日 - 初稿</p>
 <p>阅读原文 - <a href="https://wsgzao.github.io/post/solarflare/">https://wsgzao.github.io/post/solarflare/</a></p>
-<p><strong>扩展阅读</strong></p>
+<p><strong> 扩展阅读 </strong></p>
 <p>Solarflare - <a href="https://support.solarflare.com/index.php/component/cognidox/?view=categories&amp;id=1945" target="_blank" rel="noopener">https://support.solarflare.com/index.php/component/cognidox/?view=categories&amp;id=1945</a><br>OpenOnload - <a href="http://www.openonload.org/download.html" target="_blank" rel="noopener">http://www.openonload.org/download.html</a></p>
-<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><p>Solarflare网卡安装与测试<br><a href="http://wenku.baidu.com/view/31652e7204a1b0717ed5dd13" target="_blank" rel="noopener">http://wenku.baidu.com/view/31652e7204a1b0717ed5dd13</a></p>
+<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><p>Solarflare 网卡安装与测试<br><a href="http://wenku.baidu.com/view/31652e7204a1b0717ed5dd13" target="_blank" rel="noopener">http://wenku.baidu.com/view/31652e7204a1b0717ed5dd13</a></p>
 <p>Solarflare Quick SetupGuide_cn_1.3<br><a href="http://wenku.baidu.com/view/3d2f7c7a30b765ce0508763231126edb6f1a7610" target="_blank" rel="noopener">http://wenku.baidu.com/view/3d2f7c7a30b765ce0508763231126edb6f1a7610</a></p>
-<h2 id="测试过程"><a href="#测试过程" class="headerlink" title="测试过程"></a>测试过程</h2><h3 id="install-sfc"><a href="#install-sfc" class="headerlink" title="install sfc"></a>install sfc</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#yum install packages</span></span><br><span class="line">yum install gcc make kernel-devel perl autoconf automake libtool pciutils net-tools -y</span><br><span class="line"><span class="comment">#解压执行安装</span></span><br><span class="line"><span class="built_in">cd</span> openonload-201606/scripts</span><br><span class="line">./onload_install</span><br><span class="line"><span class="comment">#reload onload</span></span><br><span class="line">onload_tool reload</span><br></pre></td></tr></table></figure>
+<h2 id="测试过程"><a href="#测试过程" class="headerlink" title="测试过程"></a>测试过程</h2><h3 id="install-sfc"><a href="#install-sfc" class="headerlink" title="install sfc"></a>install sfc</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#yum install packages</span></span><br><span class="line">yum install gcc make kernel-devel perl autoconf automake libtool pciutils net-tools -y</span><br><span class="line"><span class="comment"># 解压执行安装 </span></span><br><span class="line"><span class="built_in">cd</span> openonload-201606/scripts</span><br><span class="line">./onload_install</span><br><span class="line"><span class="comment">#reload onload</span></span><br><span class="line">onload_tool reload</span><br></pre></td></tr></table></figure>
 <h3 id="remove-sfc"><a href="#remove-sfc" class="headerlink" title="remove sfc"></a>remove sfc</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#unload onload</span></span><br><span class="line">onload_tool unload</span><br><span class="line"><span class="comment">#remove sfc</span></span><br><span class="line">modprobe –r sfc</span><br><span class="line"><span class="comment">#if found any sfc rpm, then remove them</span></span><br><span class="line">rpm -qa | grep sfc</span><br><span class="line">rpm -e *sfc*.rpm</span><br><span class="line"><span class="comment">#unintall onload</span></span><br><span class="line">onload_uninstall</span><br></pre></td></tr></table></figure>
 <h3 id="tuning"><a href="#tuning" class="headerlink" title="tuning"></a>tuning</h3><blockquote>
-<p>测试低延迟有条件建议先host直连再选择交换机，简单的ping无法验证具体数据，可以采用sfnettest来评估</p>
+<p>测试低延迟有条件建议先 host 直连再选择交换机，简单的 ping 无法验证具体数据，可以采用 sfnettest 来评估</p>
 </blockquote>
 <p>UDP - 1700ns<br>TCP - 1900ns </p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#collect sfreport</span></span><br><span class="line">./sfreport.pl</span><br><span class="line"></span><br><span class="line"><span class="comment">#update firmware</span></span><br><span class="line">sfupdate --write</span><br><span class="line">dracut -f</span><br><span class="line"><span class="comment">#if reboot not work, you need cut power and startup after one minute</span></span><br><span class="line">init 6</span><br><span class="line"></span><br><span class="line"><span class="comment">#tuned-adm</span></span><br><span class="line">tuned-adm list</span><br><span class="line">tuned-adm profile latency-performance</span><br><span class="line"></span><br><span class="line"><span class="comment">#sfnettest</span></span><br><span class="line">onload -p latency ./sfnt-pingpong udp 10.0.21.10</span><br><span class="line">onload -p latency ./sfnt-pingpong tcp 10.0.21.10</span><br></pre></td></tr></table></figure>  
@@ -140,7 +140,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://wsgzao.github.io/post/solarflare/" data-title="Solarflare低延迟万兆网卡配置和性能调优实践 | HelloDog" data-tsina="" class="share clearfix">
+	  <div data-url="https://wsgzao.github.io/post/solarflare/" data-title="Solarflare 低延迟万兆网卡配置和性能调优实践 | HelloDog" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -154,10 +154,10 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/post/jbod/" title="JBOD磁盘配置和StorCLI命令使用小结">
+ <a href="/post/jbod/" title="JBOD 磁盘配置和 StorCLI 命令使用小结">
   <strong>上一篇：</strong><br/>
   <span>
-  JBOD磁盘配置和StorCLI命令使用小结</span>
+  JBOD 磁盘配置和 StorCLI 命令使用小结</span>
 </a>
 </div>
 

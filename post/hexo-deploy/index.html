@@ -9,7 +9,7 @@
         window.location.protocol = "https";
   </script> 
   
-    <title>在Windows和Macbook上自动更新和推送Hexo至GitHub | HelloDog</title>
+    <title>在 Windows 和 Macbook 上自动更新和推送 Hexo 至 GitHub | HelloDog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wsgzao">
@@ -18,14 +18,14 @@
     
     <meta name="description" content="使用Powershell和Python自动化更新和推送Hexo静态Blog">
 <meta property="og:type" content="article">
-<meta property="og:title" content="在Windows和Macbook上自动更新和推送Hexo至GitHub">
+<meta property="og:title" content="在 Windows 和 Macbook 上自动更新和推送 Hexo 至 GitHub">
 <meta property="og:url" content="https://wsgzao.github.io/post/hexo-deploy/index.html">
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="使用Powershell和Python自动化更新和推送Hexo静态Blog">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2018-08-01T09:37:18.410Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="在Windows和Macbook上自动更新和推送Hexo至GitHub">
+<meta name="twitter:title" content="在 Windows 和 Macbook 上自动更新和推送 Hexo 至 GitHub">
 <meta name="twitter:description" content="使用Powershell和Python自动化更新和推送Hexo静态Blog">
 
     
@@ -87,7 +87,7 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/post/hexo-deploy/" title="在Windows和Macbook上自动更新和推送Hexo至GitHub" itemprop="url">在Windows和Macbook上自动更新和推送Hexo至GitHub</a>
+      <a href="/post/hexo-deploy/" title="在 Windows 和 Macbook 上自动更新和推送 Hexo 至 GitHub" itemprop="url">在 Windows 和 Macbook 上自动更新和推送 Hexo 至 GitHub</a>
   </h1>
   <p class="article-author">By
        
@@ -107,12 +107,12 @@
 		
 		</div>
 		
-		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Hexo自带deploy模块，网上也有很多大神分享各种各样的CI/CD方案，我没有想过写Blog需要这么复杂，而且Hexo已经很稳定了。我因为开始学习使用MacBook，所以逼着自己把之前用在Windows上的脚本用Python重新写了下，很简陋但也很好用，相信大家可以写出更加通用和优美的代码。</p>
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Hexo 自带 deploy 模块，网上也有很多大神分享各种各样的 CI/CD 方案，我没有想过写 Blog 需要这么复杂，而且 Hexo 已经很稳定了。我因为开始学习使用 MacBook，所以逼着自己把之前用在 Windows 上的脚本用 Python 重新写了下，很简陋但也很好用，相信大家可以写出更加通用和优美的代码。</p>
 <blockquote>
-<p>使用Powershell和Python自动化更新和推送Hexo静态Blog</p>
+<p>使用 Powershell 和 Python 自动化更新和推送 Hexo 静态 Blog</p>
 </blockquote>
 <hr>
-<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018年07月31日 - 初稿</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018 年 07 月 31 日 - 初稿</p>
 <p>阅读原文 - <a href="https://wsgzao.github.io/post/hexo-deploy/">https://wsgzao.github.io/post/hexo-deploy/</a></p>
 <hr>
 <h2 id="Windows"><a href="#Windows" class="headerlink" title="Windows"></a>Windows</h2><blockquote>
@@ -122,7 +122,7 @@
 <h2 id="MacBook"><a href="#MacBook" class="headerlink" title="MacBook"></a>MacBook</h2><blockquote>
 <p>python3 deploy_hexo.py</p>
 </blockquote>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> subprocess</span><br><span class="line"></span><br><span class="line">hexo = os.path.join(os.getcwd(), <span class="string">"hexo"</span>)</span><br><span class="line">wsgzao = os.path.join(os.getcwd(), <span class="string">"wsgzao.github.io"</span>)</span><br><span class="line"></span><br><span class="line">home = os.getcwd()</span><br><span class="line"><span class="keyword">print</span> (<span class="string">"current directory %s"</span> % home)</span><br><span class="line"></span><br><span class="line">os.chdir(hexo)</span><br><span class="line">retval = os.getcwd()</span><br><span class="line"><span class="keyword">print</span> (<span class="string">"chdir to hexo %s"</span> % retval)</span><br><span class="line"></span><br><span class="line">subprocess.call([<span class="string">'hexo clean'</span>], shell=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line">subprocess.call([<span class="string">'hexo g'</span>], shell=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line">os.chdir(wsgzao)</span><br><span class="line">retval = os.getcwd()</span><br><span class="line"><span class="keyword">print</span> (<span class="string">"chdir to wsgzao %s"</span> % retval)</span><br><span class="line"></span><br><span class="line">subprocess.call([<span class="string">'rm -rf about archives categories css fancybox font img index js page post'</span>], shell=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line">subprocess.call([<span class="string">'cp -rf ../hexo/public/* ./'</span>], shell=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line">subprocess.call([<span class="string">'git add *'</span>], shell=<span class="keyword">True</span>)</span><br><span class="line">subprocess.call([<span class="string">'git commit -m "mod"'</span>], shell=<span class="keyword">True</span>)</span><br><span class="line">subprocess.call([<span class="string">'git push'</span>], shell=<span class="keyword">True</span>)</span><br></pre></td></tr></table></figure>  
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> subprocess</span><br><span class="line"></span><br><span class="line">hexo = os.path.join(os.getcwd(), <span class="string">"hexo"</span>)</span><br><span class="line">wsgzao = os.path.join(os.getcwd(), <span class="string">"wsgzao.github.io"</span>)</span><br><span class="line"></span><br><span class="line">home = os.getcwd()</span><br><span class="line"><span class="keyword">print</span> (<span class="string">"current directory %s"</span> % home)</span><br><span class="line"></span><br><span class="line">os.chdir(hexo)</span><br><span class="line">retval = os.getcwd()</span><br><span class="line"><span class="keyword">print</span> (<span class="string">"chdir to hexo %s"</span> % retval)</span><br><span class="line"></span><br><span class="line">subprocess.call([<span class="string">'hexo clean'</span>], shell=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line">subprocess.call([<span class="string">'hexo g'</span>], shell=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line">os.chdir(wsgzao)</span><br><span class="line">retval = os.getcwd()</span><br><span class="line"><span class="keyword">print</span> (<span class="string">"chdir to wsgzao %s"</span> % retval)</span><br><span class="line"></span><br><span class="line">subprocess.call([<span class="string">'rm -rf about archives categories css fancybox font img index js page post'</span>], shell=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line">subprocess.call([<span class="string">'cp -rf ../hexo/public/* ./'</span>], shell=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line">subprocess.call([<span class="string">'git add *'</span>], shell=<span class="keyword">True</span>)</span><br><span class="line">subprocess.call([<span class="string">'git commit -m"mod"'</span>], shell=<span class="keyword">True</span>)</span><br><span class="line">subprocess.call([<span class="string">'git push'</span>], shell=<span class="keyword">True</span>)</span><br></pre></td></tr></table></figure>  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -139,7 +139,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://wsgzao.github.io/post/hexo-deploy/" data-title="在Windows和Macbook上自动更新和推送Hexo至GitHub | HelloDog" data-tsina="" class="share clearfix">
+	  <div data-url="https://wsgzao.github.io/post/hexo-deploy/" data-title="在 Windows 和 Macbook 上自动更新和推送 Hexo 至 GitHub | HelloDog" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -153,10 +153,10 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/post/zabbix/" title="Zabbix使用指北">
+ <a href="/post/zabbix/" title="Zabbix 使用指北">
   <strong>上一篇：</strong><br/>
   <span>
-  Zabbix使用指北</span>
+  Zabbix 使用指北</span>
 </a>
 </div>
 

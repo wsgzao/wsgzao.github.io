@@ -9,7 +9,7 @@
         window.location.protocol = "https";
   </script> 
   
-    <title>Hexo添加返回顶部按钮 | HelloDog</title>
+    <title>Hexo 添加返回顶部按钮 | HelloDog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wsgzao">
@@ -18,7 +18,7 @@
     
     <meta name="description" content="方便返回顶部导航栏">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hexo添加返回顶部按钮">
+<meta property="og:title" content="Hexo 添加返回顶部按钮">
 <meta property="og:url" content="https://wsgzao.github.io/post/hexo-scroll-to-top/index.html">
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="方便返回顶部导航栏">
@@ -26,7 +26,7 @@
 <meta property="og:image" content="https://wsgzao.github.io/img/scrollup.png">
 <meta property="og:updated_time" content="2017-02-10T02:00:57.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo添加返回顶部按钮">
+<meta name="twitter:title" content="Hexo 添加返回顶部按钮">
 <meta name="twitter:description" content="方便返回顶部导航栏">
 <meta name="twitter:image" content="https://wsgzao.github.io/img/scrollup.png">
 
@@ -89,7 +89,7 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/post/hexo-scroll-to-top/" title="Hexo添加返回顶部按钮" itemprop="url">Hexo添加返回顶部按钮</a>
+      <a href="/post/hexo-scroll-to-top/" title="Hexo 添加返回顶部按钮" itemprop="url">Hexo 添加返回顶部按钮</a>
   </h1>
   <p class="article-author">By
        
@@ -109,26 +109,36 @@
 		
 		</div>
 		
-		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Hexo已经为用户实现了清晰的模块化设计，我们只需要根据规范编写合适的EJS和JS文件放入指定目录并在所需位置进行引用即可，这里给大家分享如何为Hexo增加返回顶部功能。</p>
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Hexo 已经为用户实现了清晰的模块化设计，我们只需要根据规范编写合适的 EJS 和 JS 文件放入指定目录并在所需位置进行引用即可，这里给大家分享如何为 Hexo 增加返回顶部功能。</p>
 <blockquote>
 <p>返回顶部按钮已经成为一种习惯</p>
 </blockquote>
 <hr>
-<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2014年11月29日 - 初稿</p>
+<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2014 年 11 月 29 日 - 初稿</p>
 <p>阅读原文 - <a href="https://wsgzao.github.io/post/hexo-scroll-to-top">https://wsgzao.github.io/post/hexo-scroll-to-top</a></p>
 <hr>
-<h2 id="修改步骤"><a href="#修改步骤" class="headerlink" title="修改步骤"></a>修改步骤</h2><p>1.添加EJS代码，新建文件<code>/themes/pacman/layout/_partial/totop.ejs</code>，添加如下代码</p>
+<h2 id="修改步骤"><a href="#修改步骤" class="headerlink" title="修改步骤"></a>修改步骤</h2><ol>
+<li>添加 EJS 代码，新建文件 <code>/themes/pacman/layout/_partial/totop.ejs</code>，添加如下代码</li>
+</ol>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"totop"</span> <span class="attr">style</span>=<span class="string">"position:fixed;bottom:150px;right:50px;cursor: pointer;"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">title</span>=<span class="string">"返回顶部"</span>&gt;</span><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"/imgs/scrollup.png"</span>/&gt;</span><span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>2.添加JS代码，新建文件<code>/themes/pacman/source/js/totop.js</code>，添加如下代码</p>
+<ol start="2">
+<li>添加 JS 代码，新建文件 <code>/themes/pacman/source/js/totop.js</code>，添加如下代码</li>
+</ol>
 <blockquote>
-<p>如果对显示位置和回滚速度不太满意，可以修改代码中的<code>upperLimit</code>和<code>scrollSpeed</code>参数</p>
+<p>如果对显示位置和回滚速度不太满意，可以修改代码中的 <code>upperLimit</code> 和 <code>scrollSpeed</code> 参数</p>
 </blockquote>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params">$</span>) </span>&#123; </span><br><span class="line">	<span class="comment">// When to show the scroll link</span></span><br><span class="line">	<span class="comment">// higher number = scroll link appears further down the page   </span></span><br><span class="line">	<span class="keyword">var</span> upperLimit = <span class="number">150</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// Our scroll link element</span></span><br><span class="line">	<span class="keyword">var</span> scrollElem = $(<span class="string">'#totop'</span>);</span><br><span class="line">   </span><br><span class="line">	<span class="comment">// Scroll to top speed</span></span><br><span class="line">	<span class="keyword">var</span> scrollSpeed = <span class="number">500</span>;</span><br><span class="line">   </span><br><span class="line">	<span class="comment">// Show and hide the scroll to top link based on scroll position   </span></span><br><span class="line">	scrollElem.hide();</span><br><span class="line">	$(<span class="built_in">window</span>).scroll(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;            </span><br><span class="line">		<span class="keyword">var</span> scrollTop = $(<span class="built_in">document</span>).scrollTop();       </span><br><span class="line">		<span class="keyword">if</span> ( scrollTop &gt; upperLimit ) &#123;</span><br><span class="line">			$(scrollElem).stop().fadeTo(<span class="number">300</span>, <span class="number">1</span>); <span class="comment">// fade back in           </span></span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;       </span><br><span class="line">			$(scrollElem).stop().fadeTo(<span class="number">300</span>, <span class="number">0</span>); <span class="comment">// fade out</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;);</span><br><span class="line">	<span class="comment">// Scroll to top animation on click</span></span><br><span class="line">	$(scrollElem).click(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		$(<span class="string">'html, body'</span>).animate(&#123;<span class="attr">scrollTop</span>:<span class="number">0</span>&#125;, scrollSpeed); <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;);</span><br><span class="line">&#125;)(jQuery);</span><br></pre></td></tr></table></figure>
-<p>3.添加引用，修改<code>/themes/pacman/layout/_partial/after_footer.ejs</code>，在末尾添加以下代码</p>
+<ol start="3">
+<li>添加引用，修改 <code>/themes/pacman/layout/_partial/after_footer.ejs</code>，在末尾添加以下代码</li>
+</ol>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;%- partial(<span class="string">'totop'</span>) %&gt;</span><br><span class="line">&lt;script src=<span class="string">"&lt;%- config.root %&gt;js/totop.js"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
-<p>4.添加按钮图片，复制下图到<code>/themes/pacman/source/imgs</code>目录下，文件名为<code>scrollup.png</code></p>
+<ol start="4">
+<li>添加按钮图片，复制下图到 <code>/themes/pacman/source/imgs</code> 目录下，文件名为 <code>scrollup.png</code></li>
+</ol>
 <p><img src="https://wsgzao.github.io/img/scrollup.png" alt=""></p>
-<p>5.赶紧<code>hexo s</code>本地刷新观察效果吧</p>
+<ol start="5">
+<li>赶紧 <code>hexo s</code> 本地刷新观察效果吧</li>
+</ol>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -146,7 +156,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://wsgzao.github.io/post/hexo-scroll-to-top/" data-title="Hexo添加返回顶部按钮 | HelloDog" data-tsina="" class="share clearfix">
+	  <div data-url="https://wsgzao.github.io/post/hexo-scroll-to-top/" data-title="Hexo 添加返回顶部按钮 | HelloDog" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -160,18 +170,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/post/markdown/" title="Markdown学习路径">
+ <a href="/post/markdown/" title="Markdown 学习路径">
   <strong>上一篇：</strong><br/>
   <span>
-  Markdown学习路径</span>
+  Markdown 学习路径</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/post/bong/"  title="我的第一款智能穿戴设备Bong2">
+<a href="/post/bong/"  title="我的第一款智能穿戴设备 Bong2">
  <strong>下一篇：</strong><br/> 
- <span>我的第一款智能穿戴设备Bong2
+ <span>我的第一款智能穿戴设备 Bong2
 </span>
 </a>
 </div>

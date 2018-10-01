@@ -9,7 +9,7 @@
         window.location.protocol = "https";
   </script> 
   
-    <title>Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选 | HelloDog</title>
+    <title>Dokan+SSHFS 文件系统共享心得，代替 Samba 的理想之选 | HelloDog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wsgzao">
@@ -18,7 +18,7 @@
     
     <meta name="description" content="使用Dokan+SSHFS实现Linux与Windows文件系统共享，解决Samba 445端口被禁的矛盾">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选">
+<meta property="og:title" content="Dokan+SSHFS 文件系统共享心得，代替 Samba 的理想之选">
 <meta property="og:url" content="https://wsgzao.github.io/post/winsshfs/index.html">
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="使用Dokan+SSHFS实现Linux与Windows文件系统共享，解决Samba 445端口被禁的矛盾">
@@ -26,7 +26,7 @@
 <meta property="og:image" content="https://ooo.0o0.ooo/2017/05/16/591ab60fd5298.png">
 <meta property="og:updated_time" content="2018-04-13T07:38:16.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选">
+<meta name="twitter:title" content="Dokan+SSHFS 文件系统共享心得，代替 Samba 的理想之选">
 <meta name="twitter:description" content="使用Dokan+SSHFS实现Linux与Windows文件系统共享，解决Samba 445端口被禁的矛盾">
 <meta name="twitter:image" content="https://ooo.0o0.ooo/2017/05/16/591ab60fd5298.png">
 
@@ -89,7 +89,7 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/post/winsshfs/" title="Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选" itemprop="url">Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选</a>
+      <a href="/post/winsshfs/" title="Dokan+SSHFS 文件系统共享心得，代替 Samba 的理想之选" itemprop="url">Dokan+SSHFS 文件系统共享心得，代替 Samba 的理想之选</a>
   </h1>
   <p class="article-author">By
        
@@ -105,23 +105,23 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dokan和SSHFS"><span class="toc-number">3.</span> <span class="toc-text">Dokan和SSHFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WinSSHFS"><span class="toc-number">4.</span> <span class="toc-text">WinSSHFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他代替方案"><span class="toc-number">5.</span> <span class="toc-text">其他代替方案</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dokan-和-SSHFS"><span class="toc-number">3.</span> <span class="toc-text">Dokan 和 SSHFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WinSSHFS"><span class="toc-number">4.</span> <span class="toc-text">WinSSHFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他代替方案"><span class="toc-number">5.</span> <span class="toc-text">其他代替方案</span></a></li></ol>
 		
 		</div>
 		
-		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>2017年5月12日国内校园网络遭受勒索病毒蠕虫入侵损失惨重，国内的安全厂商也在第一时间发布安全告警和预防方案，可是通过防火墙直接禁用445端口来解决安全隐患的方式似乎也带来了其他问题，而Samba文件系统共享正是使用了该端口，由于安全的权重大于一切，在研究过CIFS/NFS共享协议以及GoodSync等数据同步软件后发现Dokan+SSHFS可以作为目前比较理想的解决方案。</p>
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>2017 年 5 月 12 日国内校园网络遭受勒索病毒蠕虫入侵损失惨重，国内的安全厂商也在第一时间发布安全告警和预防方案，可是通过防火墙直接禁用 445 端口来解决安全隐患的方式似乎也带来了其他问题，而 Samba 文件系统共享正是使用了该端口，由于安全的权重大于一切，在研究过 CIFS/NFS 共享协议以及 GoodSync 等数据同步软件后发现 Dokan+SSHFS 可以作为目前比较理想的解决方案。</p>
 <blockquote>
-<p>使用Dokan+SSHFS实现Linux与Windows文件系统共享，解决Samba 445端口被禁的矛盾</p>
+<p>使用 Dokan+SSHFS 实现 Linux 与 Windows 文件系统共享，解决 Samba 445 端口被禁的矛盾</p>
 </blockquote>
-<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018年04月12日 - 增加方案NetDrive<br>2017年07月11日 - 补充ExpanDrive和SFTP Net Drive<br>2017年05月16日 - 初稿</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018 年 04 月 12 日 - 增加方案 NetDrive<br>2017 年 07 月 11 日 - 补充 ExpanDrive 和 SFTP Net Drive<br>2017 年 05 月 16 日 - 初稿</p>
 <p>阅读原文 - <a href="https://wsgzao.github.io/post/winsshfs/">https://wsgzao.github.io/post/winsshfs/</a></p>
-<p><strong>扩展阅读</strong></p>
+<p><strong> 扩展阅读 </strong></p>
 <p>Dokan -  <a href="http://dokan-dev.github.io" target="_blank" rel="noopener">http://dokan-dev.github.io</a><br>WinSSHFS - <a href="https://github.com/Foreveryone-cz/win-sshfs" target="_blank" rel="noopener">https://github.com/Foreveryone-cz/win-sshfs</a></p>
 <hr>
-<h2 id="Dokan和SSHFS"><a href="#Dokan和SSHFS" class="headerlink" title="Dokan和SSHFS"></a>Dokan和SSHFS</h2><blockquote>
+<h2 id="Dokan-和-SSHFS"><a href="#Dokan-和-SSHFS" class="headerlink" title="Dokan 和 SSHFS"></a>Dokan 和 SSHFS</h2><blockquote>
 <p>User mode file system library for windows with FUSE Wrapper</p>
 </blockquote>
-<p>Dokan是用户态的文件系统驱动，可以称之为fuse for windows。可以用来开发虚拟磁盘，即在“我的电脑”中虚拟出一个硬盘来，可以是硬盘，也可以是可移动磁盘或者网络硬盘。</p>
+<p>Dokan 是用户态的文件系统驱动，可以称之为 fuse for windows。可以用来开发虚拟磁盘，即在 “我的电脑” 中虚拟出一个硬盘来，可以是硬盘，也可以是可移动磁盘或者网络硬盘。</p>
 <p><a href="http://dokan-dev.github.io" target="_blank" rel="noopener">http://dokan-dev.github.io</a></p>
 <blockquote>
 <p>SSH(SFTP) filesystem for Windows</p>
@@ -132,9 +132,9 @@
 <h2 id="WinSSHFS"><a href="#WinSSHFS" class="headerlink" title="WinSSHFS"></a>WinSSHFS</h2><p>使用方法很简单，这里有一篇国外的文章写得非常清晰，大家遇到问题可以参考下<br><a href="https://igikorn.com/sshfs-windows-10/" target="_blank" rel="noopener">https://igikorn.com/sshfs-windows-10/</a></p>
 <p><img src="https://ooo.0o0.ooo/2017/05/16/591ab60fd5298.png" alt=""></p>
 <ol>
-<li>安装Dokan</li>
-<li>安装WinSSHFS</li>
-<li>配置WinSSHFS然后Mount远端文件夹</li>
+<li>安装 Dokan</li>
+<li>安装 WinSSHFS</li>
+<li>配置 WinSSHFS 然后 Mount 远端文件夹</li>
 </ol>
 <p>Get Dokan here: <a href="https://github.com/dokan-dev/dokany/releases" target="_blank" rel="noopener">https://github.com/dokan-dev/dokany/releases</a><br>Get WinSSHFS here: <a href="https://github.com/Foreveryone-cz/win-sshfs/releases" target="_blank" rel="noopener">https://github.com/Foreveryone-cz/win-sshfs/releases</a><br>百度网盘：<a href="http://pan.baidu.com/s/1dEPrPfF" target="_blank" rel="noopener">http://pan.baidu.com/s/1dEPrPfF</a></p>
 <h2 id="其他代替方案"><a href="#其他代替方案" class="headerlink" title="其他代替方案"></a>其他代替方案</h2><ol>
@@ -143,7 +143,7 @@
 <li>SFTP Net Drive - <a href="http://www.sftpnetdrive.com/" target="_blank" rel="noopener">http://www.sftpnetdrive.com/</a></li>
 </ol>
 <blockquote>
-<p>这里推荐方案3，主要是因为免费但在离线环境下安装不友好，需要设置key</p>
+<p>这里推荐方案 3，主要是因为免费但在离线环境下安装不友好，需要设置 key</p>
 </blockquote>
 <p>Sorry for the trouble here. The reason this happens is because the free version does technically have a product key, it is just a “special” product key that we use for all free users. Usually, you never notice, because an online machine will activate this special product key without you doing anything. But since your machine is offline, you have to activate it manually. Here are the steps to do that:</p>
 <ol>
@@ -156,7 +156,7 @@
 </ol>
 <p>If you have any trouble, let me know and I’ll be happy to assist you.</p>
 <p>Regards,<br>Brenden Kromhout<br>/n software, inc.</p>
-<p>如果需要学习Samba可以参考之前的一篇文章<br><a href="https://wsgzao.github.io/post/samba/">https://wsgzao.github.io/post/samba/</a></p>
+<p>如果需要学习 Samba 可以参考之前的一篇文章<br><a href="https://wsgzao.github.io/post/samba/">https://wsgzao.github.io/post/samba/</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -174,7 +174,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://wsgzao.github.io/post/winsshfs/" data-title="Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选 | HelloDog" data-tsina="" class="share clearfix">
+	  <div data-url="https://wsgzao.github.io/post/winsshfs/" data-title="Dokan+SSHFS 文件系统共享心得，代替 Samba 的理想之选 | HelloDog" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -188,18 +188,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/post/pypiserver/" title="使用pypiserver快速搭建内网离线pypi仓库实践">
+ <a href="/post/python-2-6-update-to-2-7/" title="Python 2.6 升级至 Python 2.7 的实践心得">
   <strong>上一篇：</strong><br/>
   <span>
-  使用pypiserver快速搭建内网离线pypi仓库实践</span>
+  Python 2.6 升级至 Python 2.7 的实践心得</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/post/python-2-6-update-to-2-7/"  title="Python 2.6 升级至 Python 2.7 的实践心得">
+<a href="/post/virtualenv/"  title="使用 virtualenv 和 virtualenvwrapper 管理多版本 Python 开发环境">
  <strong>下一篇：</strong><br/> 
- <span>Python 2.6 升级至 Python 2.7 的实践心得
+ <span>使用 virtualenv 和 virtualenvwrapper 管理多版本 Python 开发环境
 </span>
 </a>
 </div>
@@ -222,7 +222,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dokan和SSHFS"><span class="toc-number">3.</span> <span class="toc-text">Dokan和SSHFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WinSSHFS"><span class="toc-number">4.</span> <span class="toc-text">WinSSHFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他代替方案"><span class="toc-number">5.</span> <span class="toc-text">其他代替方案</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dokan-和-SSHFS"><span class="toc-number">3.</span> <span class="toc-text">Dokan 和 SSHFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WinSSHFS"><span class="toc-number">4.</span> <span class="toc-text">WinSSHFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他代替方案"><span class="toc-number">5.</span> <span class="toc-text">其他代替方案</span></a></li></ol>
  
   </div>
 

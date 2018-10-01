@@ -9,7 +9,7 @@
         window.location.protocol = "https";
   </script> 
   
-    <title>RAID磁盘阵列配置和调优小结 | HelloDog</title>
+    <title>RAID 磁盘阵列配置和调优小结 | HelloDog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wsgzao">
@@ -18,7 +18,7 @@
     
     <meta name="description" content="RAID的本质是平衡可用性与成本">
 <meta property="og:type" content="article">
-<meta property="og:title" content="RAID磁盘阵列配置和调优小结">
+<meta property="og:title" content="RAID 磁盘阵列配置和调优小结">
 <meta property="og:url" content="https://wsgzao.github.io/post/raid/index.html">
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="RAID的本质是平衡可用性与成本">
@@ -37,7 +37,7 @@
 <meta property="og:image" content="http://noops.me/wp-content/uploads/2015/03/ssd_r50_r10_05.png">
 <meta property="og:updated_time" content="2017-02-10T02:00:57.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="RAID磁盘阵列配置和调优小结">
+<meta name="twitter:title" content="RAID 磁盘阵列配置和调优小结">
 <meta name="twitter:description" content="RAID的本质是平衡可用性与成本">
 <meta name="twitter:image" content="https://i.v2ex.co/Ko2l48uT.png">
 
@@ -100,7 +100,7 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/post/raid/" title="RAID磁盘阵列配置和调优小结" itemprop="url">RAID磁盘阵列配置和调优小结</a>
+      <a href="/post/raid/" title="RAID 磁盘阵列配置和调优小结" itemprop="url">RAID 磁盘阵列配置和调优小结</a>
   </h1>
   <p class="article-author">By
        
@@ -116,23 +116,23 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RAID基础知识"><span class="toc-number">3.</span> <span class="toc-text">RAID基础知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基本原理"><span class="toc-number">3.1.</span> <span class="toc-text">基本原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关键技术"><span class="toc-number">3.2.</span> <span class="toc-text">关键技术</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见RAID类型"><span class="toc-number">4.</span> <span class="toc-text">常见RAID类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RAID-等级"><span class="toc-number">5.</span> <span class="toc-text">RAID 等级</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#标准-RAID-等级"><span class="toc-number">5.1.</span> <span class="toc-text">标准 RAID 等级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JBOD"><span class="toc-number">5.2.</span> <span class="toc-text">JBOD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID0"><span class="toc-number">5.3.</span> <span class="toc-text">RAID0</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID1"><span class="toc-number">5.4.</span> <span class="toc-text">RAID1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID5"><span class="toc-number">5.5.</span> <span class="toc-text">RAID5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID6"><span class="toc-number">5.6.</span> <span class="toc-text">RAID6</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID-组合等级"><span class="toc-number">5.7.</span> <span class="toc-text">RAID 组合等级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID10-和-RAID01"><span class="toc-number">5.8.</span> <span class="toc-text">RAID10 和 RAID01</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID-50"><span class="toc-number">5.9.</span> <span class="toc-text">RAID 50</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID-60"><span class="toc-number">5.10.</span> <span class="toc-text">RAID 60</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关于RAID参数调优"><span class="toc-number">6.</span> <span class="toc-text">关于RAID参数调优</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSD阵列卡方案优化"><span class="toc-number">7.</span> <span class="toc-text">SSD阵列卡方案优化</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RAID-基础知识"><span class="toc-number">3.</span> <span class="toc-text">RAID 基础知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基本原理"><span class="toc-number">3.1.</span> <span class="toc-text">基本原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关键技术"><span class="toc-number">3.2.</span> <span class="toc-text">关键技术</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见-RAID-类型"><span class="toc-number">4.</span> <span class="toc-text">常见 RAID 类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RAID-等级"><span class="toc-number">5.</span> <span class="toc-text">RAID 等级</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#标准-RAID-等级"><span class="toc-number">5.1.</span> <span class="toc-text">标准 RAID 等级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JBOD"><span class="toc-number">5.2.</span> <span class="toc-text">JBOD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID0"><span class="toc-number">5.3.</span> <span class="toc-text">RAID0</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID1"><span class="toc-number">5.4.</span> <span class="toc-text">RAID1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID5"><span class="toc-number">5.5.</span> <span class="toc-text">RAID5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID6"><span class="toc-number">5.6.</span> <span class="toc-text">RAID6</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID-组合等级"><span class="toc-number">5.7.</span> <span class="toc-text">RAID 组合等级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID10-和-RAID01"><span class="toc-number">5.8.</span> <span class="toc-text">RAID10 和 RAID01</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID-50"><span class="toc-number">5.9.</span> <span class="toc-text">RAID 50</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID-60"><span class="toc-number">5.10.</span> <span class="toc-text">RAID 60</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关于-RAID-参数调优"><span class="toc-number">6.</span> <span class="toc-text">关于 RAID 参数调优</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSD-阵列卡方案优化"><span class="toc-number">7.</span> <span class="toc-text">SSD 阵列卡方案优化</span></a></li></ol>
 		
 		</div>
 		
 		<p><img src="//i.v2ex.co/Ko2l48uT.png" alt=""></p>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>RAID解释我偷个小懒引用WikipediA，独立硬盘冗余阵列（RAID, Redundant Array of Independent Disks），旧称廉价磁盘冗余阵列（Redundant Array of Inexpensive Disks），简称磁盘阵列。其基本思想就是把多个相对便宜的硬盘组合起来，成为一个硬盘阵列组，使性能达到甚至超过一个价格昂贵、容量巨大的硬盘。根据选择的版本不同，RAID比单颗硬盘有以下一个或多个方面的好处：增强数据集成度，增强容错功能，增加处理量或容量。另外，磁盘阵列对于电脑来说，看起来就像一个单独的硬盘或逻辑存储单元。写这篇文章当然不是单纯的介绍概念和使用方法，更重要的是如何针对不同的业务场景做合理的RAID配置和参数优化，对于SSD固态硬盘的加入我引入小米运维团队的实验数据，同时我也相信分布式存储会逐步走向成熟，以OpenStack，VSAN，Nutanix为代表头顶软件定义和超融合概念的技术也已经开始了暗战。</p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>RAID 解释我偷个小懒引用 WikipediA，独立硬盘冗余阵列（RAID, Redundant Array of Independent Disks），旧称廉价磁盘冗余阵列（Redundant Array of Inexpensive Disks），简称磁盘阵列。其基本思想就是把多个相对便宜的硬盘组合起来，成为一个硬盘阵列组，使性能达到甚至超过一个价格昂贵、容量巨大的硬盘。根据选择的版本不同，RAID 比单颗硬盘有以下一个或多个方面的好处：增强数据集成度，增强容错功能，增加处理量或容量。另外，磁盘阵列对于电脑来说，看起来就像一个单独的硬盘或逻辑存储单元。写这篇文章当然不是单纯的介绍概念和使用方法，更重要的是如何针对不同的业务场景做合理的 RAID 配置和参数优化，对于 SSD 固态硬盘的加入我引入小米运维团队的实验数据，同时我也相信分布式存储会逐步走向成熟，以 OpenStack，VSAN，Nutanix 为代表头顶软件定义和超融合概念的技术也已经开始了暗战。</p>
 <blockquote>
-<p>RAID的本质是平衡可用性与成本  </p>
+<p>RAID 的本质是平衡可用性与成本  </p>
 </blockquote>
 <hr>
-<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2016年03月11日 - 初稿</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2016 年 03 月 11 日 - 初稿</p>
 <p>阅读原文 - <a href="https://wsgzao.github.io/post/raid/">https://wsgzao.github.io/post/raid/</a></p>
-<p><strong>扩展阅读</strong></p>
-<p>RAID - <a href="https://zh.wikipedia.org/wiki/RAID" target="_blank" rel="noopener">https://zh.wikipedia.org/wiki/RAID</a><br>RAID技术发展综述 - <a href="http://blog.csdn.net/liuaigui/article/details/4581970" target="_blank" rel="noopener">http://blog.csdn.net/liuaigui/article/details/4581970</a><br>SSD阵列卡方案优化：考虑使用RAID 50替代RAID 10 - <a href="http://noops.me/?p=1805" target="_blank" rel="noopener">http://noops.me/?p=1805</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<p>RAID - <a href="https://zh.wikipedia.org/wiki/RAID" target="_blank" rel="noopener">https://zh.wikipedia.org/wiki/RAID</a><br>RAID 技术发展综述 - <a href="http://blog.csdn.net/liuaigui/article/details/4581970" target="_blank" rel="noopener">http://blog.csdn.net/liuaigui/article/details/4581970</a><br>SSD 阵列卡方案优化：考虑使用 RAID 50 替代 RAID 10 - <a href="http://noops.me/?p=1805" target="_blank" rel="noopener">http://noops.me/?p=1805</a></p>
 <hr>
-<h2 id="RAID基础知识"><a href="#RAID基础知识" class="headerlink" title="RAID基础知识"></a>RAID基础知识</h2><blockquote>
-<p>感谢@刘爱贵，详细知识点可参考扩展阅读</p>
+<h2 id="RAID-基础知识"><a href="#RAID-基础知识" class="headerlink" title="RAID 基础知识"></a>RAID 基础知识</h2><blockquote>
+<p>感谢 @刘爱贵，详细知识点可参考扩展阅读</p>
 </blockquote>
 <h3 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h3><p>RAID （ Redundant Array of Independent Disks ）即独立磁盘冗余阵列，通常简称为磁盘阵列。简单地说， RAID 是由多个独立的高性能磁盘驱动器组成的磁盘子系统，从而提供比单个磁盘更高的存储性能和数据冗余的技术。 RAID 是一类多磁盘管理技术，其向主机环境提供了成本适中、数据可靠性高的高性能存储。 SNIA 对 RAID 的定义是 ：一种磁盘阵列，部分物理存储空间用来记录保存在剩余空间上的用户数据的冗余信息。当其中某一个磁盘或访问路径发生故障时，冗余信息可用来重建用户数据。磁盘条带化虽然与 RAID 定义不符，通常还是称为 RAID （即 RAID0 ）。</p>
 <p>RAID 的初衷是为大型服务器提供高端的存储功能和冗余的数据安全。在整个系统中， RAID 被看作是由两个或更多磁盘组成的存储空间，通过并发地在多个磁盘上读写数据来提高存储系统的 I/O 性能。大多数 RAID 等级具有完备的数据校验、纠正措施，从而提高系统的容错性，甚至镜像方式，大大增强系统的可靠性， Redundant 也由此而来。</p>
@@ -158,8 +158,8 @@
 <p>镜像具有高安全性、高读性能，但冗余开销太昂贵。数据条带通过并发性来大幅提高性能，然而对数据安全性、可靠性未作考虑。数据校验是一种冗余技术，它用校验数据来提供数据的安全，可以检测数据错误，并在能力允许的前提下进行数据重构。相对镜像，数据校验大幅缩减了冗余开销，用较小的代价换取了极佳的数据完整性和可靠性。数据条带技术提供高性能，数据校验提供数据安全性， RAID 不同等级往往同时结合使用这两种技术。</p>
 <p>采用数据校验时， RAID 要在写入数据同时进行校验计算，并将得到的校验数据存储在 RAID 成员磁盘中。校验数据可以集中保存在某个磁盘或分散存储在多个不同磁盘中，甚至校验数据也可以分块，不同 RAID 等级实现各不相同。当其中一部分数据出错时，就可以对剩余数据和校验数据进行反校验计算重建丢失的数据。校验技术相对于镜像技术的优势在于节省大量开销，但由于每次数据读写都要进行大量的校验运算，对计算机的运算速度要求很高，必须使用硬件 RAID 控制器。在数据重建恢复方面，检验技术比镜像技术复杂得多且慢得多。</p>
 <p>海明校验码和 异或校验是两种最为常用的 数据校验算法。海明校验码是由理查德 · 海明提出的，不仅能检测错误，还能给出错误位置并自动纠正。海明校验的基本思想是：将有效信息按照某种规律分成若干组，对每一个组作奇偶测试并安排一个校验位，从而能提供多位检错信息，以定位错误点并纠正。可见海明校验实质上是一种多重奇偶校验。异或校验通过异或逻辑运算产生，将一个有效信息与一个给定的初始值进行异或运算，会得到校验信息。如果有效信息出现错误，通过校验信息与初始值的异或运算能还原正确的有效信息。</p>
-<h2 id="常见RAID类型"><a href="#常见RAID类型" class="headerlink" title="常见RAID类型"></a>常见RAID类型</h2><blockquote>
-<p>常见5种RAID类型对比，n位磁盘数量，详细介绍可参考扩展阅读</p>
+<h2 id="常见-RAID-类型"><a href="#常见-RAID-类型" class="headerlink" title="常见 RAID 类型"></a>常见 RAID 类型</h2><blockquote>
+<p>常见 5 种 RAID 类型对比，n 位磁盘数量，详细介绍可参考扩展阅读</p>
 </blockquote>
 <table>
 <thead>
@@ -268,34 +268,34 @@
 <h3 id="RAID10-和-RAID01"><a href="#RAID10-和-RAID01" class="headerlink" title="RAID10 和 RAID01"></a>RAID10 和 RAID01</h3><p>一些文献把这两种 RAID 等级看作是等同的，本文认为是不同的。 RAID01 是先做条带化再作镜像，本质是对物理磁盘实现镜像；而 RAID10 是先做镜像再作条带化，是对虚拟磁盘实现镜像。相同的配置下，通常 RAID01 比 RAID10 具有更好的容错能力。</p>
 <p>RAID01 兼备了 RAID0 和 RAID1 的优点，它先用两块磁盘建立镜像，然后再在镜像内部做条带化。 RAID01 的数据将同时写入到两个磁盘阵列中，如果其中一个阵列损坏，仍可继续工作，保证数据安全性的同时又提高了性能。 RAID01 和 RAID10 内部都含有 RAID1 模式，因此整体磁盘利用率均仅为 50% 。</p>
 <p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/RAID_10.svg/800px-RAID_10.svg.png" alt=""><br><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/RAID_01.svg/800px-RAID_01.svg.png" alt=""></p>
-<h3 id="RAID-50"><a href="#RAID-50" class="headerlink" title="RAID 50"></a>RAID 50</h3><p>RAID 5与RAID 0的组合，先作RAID 5，再作RAID 0，也就是对多组RAID 5彼此构成Stripe访问。由于RAID 50是以RAID 5为基础，而RAID 5至少需要3颗硬盘，因此要以多组RAID 5构成RAID 50，至少需要6颗硬盘。以RAID 50最小的6颗硬盘配置为例，先把6颗硬盘分为2组，每组3颗构成RAID 5，如此就得到两组RAID 5，然后再把两组RAID 5构成RAID 0。</p>
-<p>RAID 50在底层的任一组或多组RAID 5中出现1颗硬盘损坏时，仍能维持运作，不过如果任一组RAID 5中出现2颗或2颗以上硬盘损毁，整组RAID 50就会失效。</p>
-<p>RAID 50由于在上层把多组RAID 5构成Stripe，性能比起单纯的RAID 5高，容量利用率比RAID5要低。比如同样使用9颗硬盘，由各3颗RAID 5再组成RAID 0的RAID 50，每组RAID 5浪费一颗硬盘，利用率为(1-3/9)，RAID 5则为(1-1/9)。</p>
+<h3 id="RAID-50"><a href="#RAID-50" class="headerlink" title="RAID 50"></a>RAID 50</h3><p>RAID 5 与 RAID 0 的组合，先作 RAID 5，再作 RAID 0，也就是对多组 RAID 5 彼此构成 Stripe 访问。由于 RAID 50 是以 RAID 5 为基础，而 RAID 5 至少需要 3 颗硬盘，因此要以多组 RAID 5 构成 RAID 50，至少需要 6 颗硬盘。以 RAID 50 最小的 6 颗硬盘配置为例，先把 6 颗硬盘分为 2 组，每组 3 颗构成 RAID 5，如此就得到两组 RAID 5，然后再把两组 RAID 5 构成 RAID 0。</p>
+<p>RAID 50 在底层的任一组或多组 RAID 5 中出现 1 颗硬盘损坏时，仍能维持运作，不过如果任一组 RAID 5 中出现 2 颗或 2 颗以上硬盘损毁，整组 RAID 50 就会失效。</p>
+<p>RAID 50 由于在上层把多组 RAID 5 构成 Stripe，性能比起单纯的 RAID 5 高，容量利用率比 RAID5 要低。比如同样使用 9 颗硬盘，由各 3 颗 RAID 5 再组成 RAID 0 的 RAID 50，每组 RAID 5 浪费一颗硬盘，利用率为(1-3/9)，RAID 5 则为(1-1/9)。</p>
 <p><img src="https://upload.wikimedia.org/wikipedia/commons/9/9d/RAID_50.png" alt=""></p>
-<h3 id="RAID-60"><a href="#RAID-60" class="headerlink" title="RAID 60"></a>RAID 60</h3><p>RAID 6与RAID 0的组合：先作RAID 6，再作RAID 0。换句话说，就是对两组以上的RAID 6作Stripe访问。RAID 6至少需具备4颗硬盘，所以RAID 60的最小需求是8颗硬盘。</p>
-<p>由于底层是以RAID 6组成，所以RAID 60可以容许任一组RAID 6中损毁最多2颗硬盘，而系统仍能维持运作；不过只要底层任一组RAID 6中损毁3颗硬盘，整组RAID 60就会失效，当然这种情况的概率相当低。</p>
-<p>比起单纯的RAID 6，RAID 60的上层通过结合多组RAID 6构成Stripe访问，因此性能较高。不过使用门槛高，而且容量利用率低是较大的问题。</p>
+<h3 id="RAID-60"><a href="#RAID-60" class="headerlink" title="RAID 60"></a>RAID 60</h3><p>RAID 6 与 RAID 0 的组合：先作 RAID 6，再作 RAID 0。换句话说，就是对两组以上的 RAID 6 作 Stripe 访问。RAID 6 至少需具备 4 颗硬盘，所以 RAID 60 的最小需求是 8 颗硬盘。</p>
+<p>由于底层是以 RAID 6 组成，所以 RAID 60 可以容许任一组 RAID 6 中损毁最多 2 颗硬盘，而系统仍能维持运作；不过只要底层任一组 RAID 6 中损毁 3 颗硬盘，整组 RAID 60 就会失效，当然这种情况的概率相当低。</p>
+<p>比起单纯的 RAID 6，RAID 60 的上层通过结合多组 RAID 6 构成 Stripe 访问，因此性能较高。不过使用门槛高，而且容量利用率低是较大的问题。</p>
 <p><img src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Raid_60.jpg" alt=""></p>
-<h2 id="关于RAID参数调优"><a href="#关于RAID参数调优" class="headerlink" title="关于RAID参数调优"></a>关于RAID参数调优</h2><blockquote>
-<p>通常情况下建议系统(RAID1)与数据(RAID[5|10])分离，这里引用@叶金荣老师的一段话</p>
+<h2 id="关于-RAID-参数调优"><a href="#关于-RAID-参数调优" class="headerlink" title="关于 RAID 参数调优"></a>关于 RAID 参数调优</h2><blockquote>
+<p>通常情况下建议系统 (RAID1) 与数据 (RAID[5|10]) 分离，这里引用 @叶金荣老师的一段话</p>
 </blockquote>
 <ol>
-<li>使用SSD或者PCIe SSD设备，至少获得数百倍甚至万倍的IOPS提升</li>
-<li>购置阵列卡同时配备CACHE及BBU模块，可明显提升IOPS（主要是指机械盘，SSD或PCIe SSD除外。同时需要定期检查CACHE及BBU模块的健康状况，确保意外时不至于丢失数据）</li>
-<li>有阵列卡时，设置阵列写策略为WB，甚至FORCE WB（若有双电保护，或对数据安全性要求不是特别高的话），严禁使用WT策略。并且闭阵列预读策略</li>
-<li>尽可能选用RAID-10，而非RAID-5(<code>这句话有待商榷</code>)</li>
-<li>使用机械盘的话，尽可能选择高转速的，例如选用15KRPM，而不是7.2KRPM的盘，不差几个钱的；</li>
+<li>使用 SSD 或者 PCIe SSD 设备，至少获得数百倍甚至万倍的 IOPS 提升</li>
+<li>购置阵列卡同时配备 CACHE 及 BBU 模块，可明显提升 IOPS（主要是指机械盘，SSD 或 PCIe SSD 除外。同时需要定期检查 CACHE 及 BBU 模块的健康状况，确保意外时不至于丢失数据）</li>
+<li>有阵列卡时，设置阵列写策略为 WB，甚至 FORCE WB（若有双电保护，或对数据安全性要求不是特别高的话），严禁使用 WT 策略。并且闭阵列预读策略</li>
+<li>尽可能选用 RAID-10，而非 RAID-5(<code>这句话有待商榷</code>)</li>
+<li>使用机械盘的话，尽可能选择高转速的，例如选用 15KRPM，而不是 7.2KRPM 的盘，不差几个钱的；</li>
 </ol>
-<h2 id="SSD阵列卡方案优化"><a href="#SSD阵列卡方案优化" class="headerlink" title="SSD阵列卡方案优化"></a>SSD阵列卡方案优化</h2><blockquote>
-<p>感谢@小米noops运维团队，详细实验数据请参考扩展阅读</p>
+<h2 id="SSD-阵列卡方案优化"><a href="#SSD-阵列卡方案优化" class="headerlink" title="SSD 阵列卡方案优化"></a>SSD 阵列卡方案优化</h2><blockquote>
+<p>感谢 @小米 noops 运维团队，详细实验数据请参考扩展阅读</p>
 </blockquote>
 <p><img src="http://noops.me/wp-content/uploads/2015/03/ssd_r50_r10_04.png" alt=""><br><img src="http://noops.me/wp-content/uploads/2015/03/ssd_r50_r10_05.png" alt=""></p>
-<p><strong>性能测试结论</strong></p>
-<p>性能测试显示，相同容量的R50和R10性能接近：其中小块文件的随机读R50要全面好于R10，随机写4K虽然R50和R10差距在28%，但是块增大后R50要全面优于R10。顺序读写方面，R50和R10十分接近。</p>
-<p>容错方面，R50接近R10：第二块盘容错率R50十分接近R10，两者相差30%。R10的优势主要是在有一定的概率提供第三、甚至第四块磁盘的容错率，但是考虑到并非100%容错，因此从容错角度来看R50虽然和R10有一些差距，但也已体现出较好的容错率，至少优于R5。而且R50搭配灵活，甚至可以指定3组R5以达到最大3块磁盘的容错；</p>
-<p>成本方面，R50有很大优势：按这个配置计算R50只有R10的3/4。</p>
-<p><strong>总结</strong></p>
-<p>RAID 50提供了接近RAID 10性能、可用性以及接近RAID 5成本的特性，具有较好的整体性价比优势，所以考虑使用RAID 50替换RAID 10吧</p>
+<p><strong> 性能测试结论 </strong></p>
+<p>性能测试显示，相同容量的 R50 和 R10 性能接近：其中小块文件的随机读 R50 要全面好于 R10，随机写 4K 虽然 R50 和 R10 差距在 28%，但是块增大后 R50 要全面优于 R10。顺序读写方面，R50 和 R10 十分接近。</p>
+<p>容错方面，R50 接近 R10：第二块盘容错率 R50 十分接近 R10，两者相差 30%。R10 的优势主要是在有一定的概率提供第三、甚至第四块磁盘的容错率，但是考虑到并非 100% 容错，因此从容错角度来看 R50 虽然和 R10 有一些差距，但也已体现出较好的容错率，至少优于 R5。而且 R50 搭配灵活，甚至可以指定 3 组 R5 以达到最大 3 块磁盘的容错；</p>
+<p>成本方面，R50 有很大优势：按这个配置计算 R50 只有 R10 的 3/4。</p>
+<p><strong> 总结 </strong></p>
+<p>RAID 50 提供了接近 RAID 10 性能、可用性以及接近 RAID 5 成本的特性，具有较好的整体性价比优势，所以考虑使用 RAID 50 替换 RAID 10 吧</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -313,7 +313,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://wsgzao.github.io/post/raid/" data-title="RAID磁盘阵列配置和调优小结 | HelloDog" data-tsina="" class="share clearfix">
+	  <div data-url="https://wsgzao.github.io/post/raid/" data-title="RAID 磁盘阵列配置和调优小结 | HelloDog" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -327,18 +327,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/post/ntp/" title="NTP配置实践">
+ <a href="/post/ntp/" title="NTP 配置实践">
   <strong>上一篇：</strong><br/>
   <span>
-  NTP配置实践</span>
+  NTP 配置实践</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/post/openstack/"  title="Red Hat OpenStack官方培训笔记">
+<a href="/post/openstack/"  title="Red Hat OpenStack 官方培训笔记">
  <strong>下一篇：</strong><br/> 
- <span>Red Hat OpenStack官方培训笔记
+ <span>Red Hat OpenStack 官方培训笔记
 </span>
 </a>
 </div>
@@ -361,7 +361,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RAID基础知识"><span class="toc-number">3.</span> <span class="toc-text">RAID基础知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基本原理"><span class="toc-number">3.1.</span> <span class="toc-text">基本原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关键技术"><span class="toc-number">3.2.</span> <span class="toc-text">关键技术</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见RAID类型"><span class="toc-number">4.</span> <span class="toc-text">常见RAID类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RAID-等级"><span class="toc-number">5.</span> <span class="toc-text">RAID 等级</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#标准-RAID-等级"><span class="toc-number">5.1.</span> <span class="toc-text">标准 RAID 等级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JBOD"><span class="toc-number">5.2.</span> <span class="toc-text">JBOD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID0"><span class="toc-number">5.3.</span> <span class="toc-text">RAID0</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID1"><span class="toc-number">5.4.</span> <span class="toc-text">RAID1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID5"><span class="toc-number">5.5.</span> <span class="toc-text">RAID5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID6"><span class="toc-number">5.6.</span> <span class="toc-text">RAID6</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID-组合等级"><span class="toc-number">5.7.</span> <span class="toc-text">RAID 组合等级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID10-和-RAID01"><span class="toc-number">5.8.</span> <span class="toc-text">RAID10 和 RAID01</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID-50"><span class="toc-number">5.9.</span> <span class="toc-text">RAID 50</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID-60"><span class="toc-number">5.10.</span> <span class="toc-text">RAID 60</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关于RAID参数调优"><span class="toc-number">6.</span> <span class="toc-text">关于RAID参数调优</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSD阵列卡方案优化"><span class="toc-number">7.</span> <span class="toc-text">SSD阵列卡方案优化</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RAID-基础知识"><span class="toc-number">3.</span> <span class="toc-text">RAID 基础知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基本原理"><span class="toc-number">3.1.</span> <span class="toc-text">基本原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关键技术"><span class="toc-number">3.2.</span> <span class="toc-text">关键技术</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见-RAID-类型"><span class="toc-number">4.</span> <span class="toc-text">常见 RAID 类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RAID-等级"><span class="toc-number">5.</span> <span class="toc-text">RAID 等级</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#标准-RAID-等级"><span class="toc-number">5.1.</span> <span class="toc-text">标准 RAID 等级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JBOD"><span class="toc-number">5.2.</span> <span class="toc-text">JBOD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID0"><span class="toc-number">5.3.</span> <span class="toc-text">RAID0</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID1"><span class="toc-number">5.4.</span> <span class="toc-text">RAID1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID5"><span class="toc-number">5.5.</span> <span class="toc-text">RAID5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID6"><span class="toc-number">5.6.</span> <span class="toc-text">RAID6</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID-组合等级"><span class="toc-number">5.7.</span> <span class="toc-text">RAID 组合等级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID10-和-RAID01"><span class="toc-number">5.8.</span> <span class="toc-text">RAID10 和 RAID01</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID-50"><span class="toc-number">5.9.</span> <span class="toc-text">RAID 50</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID-60"><span class="toc-number">5.10.</span> <span class="toc-text">RAID 60</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关于-RAID-参数调优"><span class="toc-number">6.</span> <span class="toc-text">关于 RAID 参数调优</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSD-阵列卡方案优化"><span class="toc-number">7.</span> <span class="toc-text">SSD 阵列卡方案优化</span></a></li></ol>
  
   </div>
 

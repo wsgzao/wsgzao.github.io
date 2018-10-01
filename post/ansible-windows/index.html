@@ -9,7 +9,7 @@
         window.location.protocol = "https";
   </script> 
   
-    <title>使用Ansible管理Windows | HelloDog</title>
+    <title>使用 Ansible 管理 Windows | HelloDog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wsgzao">
@@ -18,7 +18,7 @@
     
     <meta name="description" content="轻轻松松使用Ansible管理Windows客户端">
 <meta property="og:type" content="article">
-<meta property="og:title" content="使用Ansible管理Windows">
+<meta property="og:title" content="使用 Ansible 管理 Windows">
 <meta property="og:url" content="https://wsgzao.github.io/post/ansible-windows/index.html">
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="轻轻松松使用Ansible管理Windows客户端">
@@ -27,7 +27,7 @@
 <meta property="og:image" content="http://ws4.sinaimg.cn/large/7207510dgy1frizys458dj20b109k3yq.jpg">
 <meta property="og:updated_time" content="2018-05-21T07:34:21.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="使用Ansible管理Windows">
+<meta name="twitter:title" content="使用 Ansible 管理 Windows">
 <meta name="twitter:description" content="轻轻松松使用Ansible管理Windows客户端">
 <meta name="twitter:image" content="http://ws1.sinaimg.cn/large/7207510dgy1frixssianuj20w30ecwfi.jpg">
 
@@ -90,7 +90,7 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/post/ansible-windows/" title="使用Ansible管理Windows" itemprop="url">使用Ansible管理Windows</a>
+      <a href="/post/ansible-windows/" title="使用 Ansible 管理 Windows" itemprop="url">使用 Ansible 管理 Windows</a>
   </h1>
   <p class="article-author">By
        
@@ -110,17 +110,17 @@
 		
 		</div>
 		
-		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文主要介绍在如何使用Ansible管理Windows客户端，Ansible官方提供了一个很方便的安装脚本，对于外网用户来说安装真的很轻松，可惜我遇到的问题是如何在内网部署，有相同烦恼的小伙伴不妨参考下</p>
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文主要介绍在如何使用 Ansible 管理 Windows 客户端，Ansible 官方提供了一个很方便的安装脚本，对于外网用户来说安装真的很轻松，可惜我遇到的问题是如何在内网部署，有相同烦恼的小伙伴不妨参考下</p>
 <blockquote>
-<p>轻轻松松使用Ansible管理Windows客户端</p>
+<p>轻轻松松使用 Ansible 管理 Windows 客户端</p>
 </blockquote>
-<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018年05月21日 - 初稿</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018 年 05 月 21 日 - 初稿</p>
 <p>阅读原文 - <a href="https://wsgzao.github.io/post/ansible-windows/">https://wsgzao.github.io/post/ansible-windows/</a></p>
-<p><strong>扩展阅读</strong></p>
+<p><strong> 扩展阅读 </strong></p>
 <p>Ansible Windows Guides - <a href="http://docs.ansible.com/ansible/latest/user_guide/windows.html" target="_blank" rel="noopener">http://docs.ansible.com/ansible/latest/user_guide/windows.html</a></p>
 <hr>
 <h2 id="Ansible-Windows-Support"><a href="#Ansible-Windows-Support" class="headerlink" title="Ansible Windows Support"></a>Ansible Windows Support</h2><blockquote>
-<p>Ansible在2.3版本之前对于Windows支持的并不算很友好，从2.4版本开始已经可以使用原生模块实现很多需求</p>
+<p>Ansible 在 2.3 版本之前对于 Windows 支持的并不算很友好，从 2.4 版本开始已经可以使用原生模块实现很多需求</p>
 </blockquote>
 <p>Because Windows is a non-POSIX-compliant operating system, there are differences between how Ansible interacts with them and the way Windows works. These guides will highlight some of the differences between Linux/Unix hosts and hosts running Windows.</p>
 <ul>
@@ -134,10 +134,10 @@
 </blockquote>
 <p>Windows Server 2008<br>Windows Server 2008 R2<br>Windows Server 2012<br>Windows Server 2012 R2<br>Windows Server 2016<br>Windows 7<br>Windows 8.1<br>Windows 10</p>
 <ol>
-<li>在官方文档中已经提到了在Windows中使用Ansible的最要前提，WinRM</li>
-<li>WinRM依赖Powershell 3.0以上版本的支持，牵扯出PowerShell 2.0 to PowerShell 3.0/5.0的问题</li>
-<li>而Powershell升级则带来.Net Framework是否跟随升级至4.6.2/4.7.2的选择</li>
-<li>关于WinRM的参数配置可以参考下面的链接Setting up a Windows Host</li>
+<li>在官方文档中已经提到了在 Windows 中使用 Ansible 的最要前提，WinRM</li>
+<li>WinRM 依赖 Powershell 3.0 以上版本的支持，牵扯出 PowerShell 2.0 to PowerShell 3.0/5.0 的问题</li>
+<li>而 Powershell 升级则带来. Net Framework 是否跟随升级至 4.6.2/4.7.2 的选择</li>
+<li>关于 WinRM 的参数配置可以参考下面的链接 Setting up a Windows Host</li>
 </ol>
 <p><a href="https://github.com/ansible/ansible/blob/devel/examples/scripts/upgrade_to_ps3.ps1" target="_blank" rel="noopener">https://github.com/ansible/ansible/blob/devel/examples/scripts/upgrade_to_ps3.ps1</a><br><a href="https://github.com/ansible/ansible/blob/devel/examples/scripts/ConfigureRemotingForAnsible.ps1" target="_blank" rel="noopener">https://github.com/ansible/ansible/blob/devel/examples/scripts/ConfigureRemotingForAnsible.ps1</a></p>
 <p>Setting up a Windows Host<br><a href="http://docs.ansible.com/ansible/latest/user_guide/windows_setup.html" target="_blank" rel="noopener">http://docs.ansible.com/ansible/latest/user_guide/windows_setup.html</a></p>
@@ -145,22 +145,26 @@
 <p>Powershell 3.0<br><a href="https://www.microsoft.com/en-us/download/details.aspx?id=34595" target="_blank" rel="noopener">https://www.microsoft.com/en-us/download/details.aspx?id=34595</a></p>
 <p>Powershell 5.1<br><a href="https://www.microsoft.com/en-us/download/details.aspx?id=54616" target="_blank" rel="noopener">https://www.microsoft.com/en-us/download/details.aspx?id=54616</a></p>
 <blockquote>
-<p>我个人目前的建议是Win7/2008升级至Powershell 3.0，.Net Framework升级至4.6.2，其他情况需要可以参考官方文档后做决定</p>
+<p>我个人目前的建议是 Win7/2008 升级至 Powershell 3.0，.Net Framework 升级至 4.6.2，其他情况需要可以参考官方文档后做决定</p>
 </blockquote>
 <p>Ansible Windows Guides - <a href="http://docs.ansible.com/ansible/latest/user_guide/windows.html" target="_blank" rel="noopener">http://docs.ansible.com/ansible/latest/user_guide/windows.html</a></p>
-<h2 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h2><p>1.客户端配置windows主机,以管理员身份打开powershell, 并查看当前ps版本<br>get-host<br>2.系统自带的powershell版本是2.0，需要更新至powershell 3 以上版本<br><a href="https://www.microsoft.com/net/download/dotnet-framework-runtime" target="_blank" rel="noopener">https://www.microsoft.com/net/download/dotnet-framework-runtime</a><br><a href="https://www.microsoft.com/en-us/download/details.aspx?id=34595" target="_blank" rel="noopener">https://www.microsoft.com/en-us/download/details.aspx?id=34595</a><br>3.安装完重启服务器查看powershell版本</p>
-<p>.NET Framework 4.6以上版本无法建立到信任根颁发机构的证书链<br>原因：系统缺少信任 Microsoft Root Certificate Authority 2011 根证书<br>下载：MicrosoftRootCertificateAuthority2011.cer<br><a href="http://go.microsoft.com/fwlink/?LinkID=747875&amp;clcid=0x409" target="_blank" rel="noopener">http://go.microsoft.com/fwlink/?LinkID=747875&amp;clcid=0x409</a><br>运行 certmgr.msc<br>导入证书到“受信任的根证书颁发机构”</p>
+<h2 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h2><ol>
+<li>客户端配置 windows 主机, 以管理员身份打开 powershell, 并查看当前 ps 版本<br>get-host</li>
+<li>系统自带的 powershell 版本是 2.0，需要更新至 powershell 3 以上版本<br><a href="https://www.microsoft.com/net/download/dotnet-framework-runtime" target="_blank" rel="noopener">https://www.microsoft.com/net/download/dotnet-framework-runtime</a><br><a href="https://www.microsoft.com/en-us/download/details.aspx?id=34595" target="_blank" rel="noopener">https://www.microsoft.com/en-us/download/details.aspx?id=34595</a></li>
+<li>安装完重启服务器查看 powershell 版本</li>
+</ol>
+<p>.NET Framework 4.6 以上版本无法建立到信任根颁发机构的证书链<br>原因：系统缺少信任 Microsoft Root Certificate Authority 2011 根证书<br>下载：MicrosoftRootCertificateAuthority2011.cer<br><a href="http://go.microsoft.com/fwlink/?LinkID=747875&amp;clcid=0x409" target="_blank" rel="noopener">http://go.microsoft.com/fwlink/?LinkID=747875&amp;clcid=0x409</a><br>运行 certmgr.msc<br>导入证书到 “受信任的根证书颁发机构”</p>
 <p><img src="http://ws4.sinaimg.cn/large/7207510dgy1frizys458dj20b109k3yq.jpg" alt="image"></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 配置winrm</span></span><br><span class="line">mkdir C:\temp</span><br><span class="line"><span class="built_in">cd</span> C:\temp</span><br><span class="line"><span class="comment"># 下载ConfigureRemotingForAnsible.ps1</span></span><br><span class="line">https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1</span><br><span class="line"><span class="comment"># 开启WinRM服务</span></span><br><span class="line">powershell -ExecutionPolicy RemoteSigned .\ConfigureRemotingForAnsible.ps1 -SkipNetworkProfileCheck</span><br></pre></td></tr></table></figure>
-<h2 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 服务端使用pip安装pywinrm</span></span><br><span class="line">pip install pywinrm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 功能测试，配置ansible控制机</span></span><br><span class="line">vi /etc/ansible/hosts</span><br><span class="line"></span><br><span class="line">[windows]</span><br><span class="line">192.168.67.139</span><br><span class="line">[windows:vars]</span><br><span class="line">ansible_user=Administrator</span><br><span class="line">ansible_password=Admin123</span><br><span class="line">ansible_port=5986</span><br><span class="line">ansible_connection=winrm</span><br><span class="line">ansible_winrm_server_cert_validation=ignore  </span><br><span class="line"></span><br><span class="line"><span class="comment"># 要注意的是端口方面ssl即https方式的使用5986，http使用5985</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试ping通信</span></span><br><span class="line">ansible windows -m win_ping </span><br><span class="line"><span class="comment"># 查看ip地址 </span></span><br><span class="line">ansible windows -m win_command -a <span class="string">"ipconfig"</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 配置 winrm</span></span><br><span class="line">mkdir C:\temp</span><br><span class="line"><span class="built_in">cd</span> C:\temp</span><br><span class="line"><span class="comment"># 下载 ConfigureRemotingForAnsible.ps1</span></span><br><span class="line">https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1</span><br><span class="line"><span class="comment"># 开启 WinRM 服务 </span></span><br><span class="line">powershell -ExecutionPolicy RemoteSigned .\ConfigureRemotingForAnsible.ps1 -SkipNetworkProfileCheck</span><br></pre></td></tr></table></figure>
+<h2 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 服务端使用 pip 安装 pywinrm</span></span><br><span class="line">pip install pywinrm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 功能测试，配置 ansible 控制机 </span></span><br><span class="line">vi /etc/ansible/hosts</span><br><span class="line"></span><br><span class="line">[windows]</span><br><span class="line">192.168.67.139</span><br><span class="line">[windows:vars]</span><br><span class="line">ansible_user=Administrator</span><br><span class="line">ansible_password=Admin123</span><br><span class="line">ansible_port=5986</span><br><span class="line">ansible_connection=winrm</span><br><span class="line">ansible_winrm_server_cert_validation=ignore  </span><br><span class="line"></span><br><span class="line"><span class="comment"># 要注意的是端口方面 ssl 即 https 方式的使用 5986，http 使用 5985</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试 ping 通信 </span></span><br><span class="line">ansible windows -m win_ping </span><br><span class="line"><span class="comment"># 查看 ip 地址 </span></span><br><span class="line">ansible windows -m win_command -a <span class="string">"ipconfig"</span></span><br></pre></td></tr></table></figure>
 <h2 id="网盘下载"><a href="#网盘下载" class="headerlink" title="网盘下载"></a>网盘下载</h2><blockquote>
-<p>Windows作为客户端所需的软件包我上传到百度网盘，.Net Framework安装失败提示证书错误记得手动导入MicrosoftRootCertificateAuthority2011.cer</p>
+<p>Windows 作为客户端所需的软件包我上传到百度网盘，.Net Framework 安装失败提示证书错误记得手动导入 MicrosoftRootCertificateAuthority2011.cer</p>
 </blockquote>
 <p><a href="https://pan.baidu.com/s/1JNV2pXjwUn14ojAtdEH_Sg" target="_blank" rel="noopener">https://pan.baidu.com/s/1JNV2pXjwUn14ojAtdEH_Sg</a></p>
 <ol>
 <li>安装 .Net Framework 4.6.2（NDP462-KB3151800-x86-x64-AllOS-ENU.exe）</li>
-<li>升级 Windows 7 SP1 和 Windows 2008 R2 SP1 的 PowerShell版本从2.0至3.0（Windows6.1-KB2506143-x64.msu）</li>
-<li><p>执行.\ConfigureRemotingForAnsible.ps1脚本开启WinRM远程管理服务</p>
+<li>升级 Windows 7 SP1 和 Windows 2008 R2 SP1 的 PowerShell 版本从 2.0 至 3.0（Windows6.1-KB2506143-x64.msu）</li>
+<li><p>执行.\ConfigureRemotingForAnsible.ps1 脚本开启 WinRM 远程管理服务</p>
 <p> powershell -ExecutionPolicy RemoteSigned .\ConfigureRemotingForAnsible.ps1 -SkipNetworkProfileCheck</p>
 </li>
 </ol>
@@ -181,7 +185,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://wsgzao.github.io/post/ansible-windows/" data-title="使用Ansible管理Windows | HelloDog" data-tsina="" class="share clearfix">
+	  <div data-url="https://wsgzao.github.io/post/ansible-windows/" data-title="使用 Ansible 管理 Windows | HelloDog" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -204,9 +208,9 @@
 
 
 <div class="next">
-<a href="/post/centos/"  title="CentOS通用优化和配置">
+<a href="/post/centos/"  title="CentOS 通用优化和配置">
  <strong>下一篇：</strong><br/> 
- <span>CentOS通用优化和配置
+ <span>CentOS 通用优化和配置
 </span>
 </a>
 </div>

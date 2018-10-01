@@ -9,7 +9,7 @@
         window.location.protocol = "https";
   </script> 
   
-    <title>Windows下使用EasyBCD安装Linux双系统实践 | HelloDog</title>
+    <title>Windows 下使用 EasyBCD 安装 Linux 双系统实践 | HelloDog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wsgzao">
@@ -18,7 +18,7 @@
     
     <meta name="description" content="轻轻松松实现Windows和Linux双系统">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Windows下使用EasyBCD安装Linux双系统实践">
+<meta property="og:title" content="Windows 下使用 EasyBCD 安装 Linux 双系统实践">
 <meta property="og:url" content="https://wsgzao.github.io/post/easybcd/index.html">
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="轻轻松松实现Windows和Linux双系统">
@@ -26,7 +26,7 @@
 <meta property="og:image" content="https://i.v2ex.co/9RYxcYnL.png">
 <meta property="og:updated_time" content="2017-02-10T02:00:57.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Windows下使用EasyBCD安装Linux双系统实践">
+<meta name="twitter:title" content="Windows 下使用 EasyBCD 安装 Linux 双系统实践">
 <meta name="twitter:description" content="轻轻松松实现Windows和Linux双系统">
 <meta name="twitter:image" content="https://i.v2ex.co/9RYxcYnL.png">
 
@@ -89,7 +89,7 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/post/easybcd/" title="Windows下使用EasyBCD安装Linux双系统实践" itemprop="url">Windows下使用EasyBCD安装Linux双系统实践</a>
+      <a href="/post/easybcd/" title="Windows 下使用 EasyBCD 安装 Linux 双系统实践" itemprop="url">Windows 下使用 EasyBCD 安装 Linux 双系统实践</a>
   </h1>
   <p class="article-author">By
        
@@ -110,34 +110,34 @@
 		</div>
 		
 		<p><img src="//i.v2ex.co/9RYxcYnL.png" alt=""></p>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>记得大学的时候折腾黑苹果实现Windows+Mac+Linux的时候很开心，虽然牺牲了不少时间但学习的过程仍然值得回味。现在自己基本以VMware虚拟化为主很少再使用物理机，这次因为其它工作原因帮助同事做了小小的实践，主要是通过EasyBCD硬盘安装Linux实现双系统独立共存，该方法也适用于RedHat/CentOS/Ubuntu等。</p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>记得大学的时候折腾黑苹果实现 Windows+Mac+Linux 的时候很开心，虽然牺牲了不少时间但学习的过程仍然值得回味。现在自己基本以 VMware 虚拟化为主很少再使用物理机，这次因为其它工作原因帮助同事做了小小的实践，主要是通过 EasyBCD 硬盘安装 Linux 实现双系统独立共存，该方法也适用于 RedHat/CentOS/Ubuntu 等。</p>
 <blockquote>
-<p>轻轻松松实现Windows和Linux双系统</p>
+<p>轻轻松松实现 Windows 和 Linux 双系统</p>
 </blockquote>
 <hr>
-<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2015年11月27日 - 初稿</p>
+<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2015 年 11 月 27 日 - 初稿</p>
 <p>阅读原文 - <a href="https://wsgzao.github.io/post/easybcd/">https://wsgzao.github.io/post/easybcd/</a></p>
 <p>扩展阅读</p>
 <ul>
-<li>Win7下硬盘安装 Redhat Linux 6.0 ES - <a href="http://blog.csdn.net/shenkxiao/article/details/6747592" target="_blank" rel="noopener">http://blog.csdn.net/shenkxiao/article/details/6747592</a></li>
+<li>Win7 下硬盘安装 Redhat Linux 6.0 ES - <a href="http://blog.csdn.net/shenkxiao/article/details/6747592" target="_blank" rel="noopener">http://blog.csdn.net/shenkxiao/article/details/6747592</a></li>
 </ul>
 <hr>
 <h2 id="基础信息"><a href="#基础信息" class="headerlink" title="基础信息"></a>基础信息</h2><ol>
-<li>笔记本型号为4G内存的<code>ThinkPad x230</code></li>
-<li>部署的操作系统版本为<code>rhel-server-6.3-x86_64-dvd.iso</code></li>
-<li>EasyBCD版本为<code>EasyBCD 2.3</code></li>
+<li>笔记本型号为 4G 内存的 <code>ThinkPad x230</code></li>
+<li>部署的操作系统版本为 <code>rhel-server-6.3-x86_64-dvd.iso</code></li>
+<li>EasyBCD 版本为 <code>EasyBCD 2.3</code></li>
 </ol>
 <ul>
 <li>EasyBCD - <a href="https://neosmart.net/EasyBCD/" target="_blank" rel="noopener">https://neosmart.net/EasyBCD/</a></li>
 <li>RHEL - <a href="http://www.redhat.com/rhel/server/" target="_blank" rel="noopener">http://www.redhat.com/rhel/server/</a></li>
 </ul>
 <h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><blockquote>
-<p>RedHat由于版权原因只能识别FAT32</p>
+<p>RedHat 由于版权原因只能识别 FAT32</p>
 </blockquote>
 <ol>
-<li>建议分配3个FAT32逻辑分区，大小可根据实际情况调整</li>
-<li>将ISO镜像复制到存放系统镜像的分区并解压</li>
-<li>运行EasyBCD选择<code>添加新条目→Linux/BSD→选择ISO→添加镜像文件</code></li>
+<li>建议分配 3 个 FAT32 逻辑分区，大小可根据实际情况调整</li>
+<li>将 ISO 镜像复制到存放系统镜像的分区并解压</li>
+<li>运行 EasyBCD 选择 <code>添加新条目→Linux/BSD→选择 ISO→添加镜像文件</code></li>
 </ol>
 <blockquote>
 <p>我的分区如下，仅供参考切勿照搬</p>
@@ -156,63 +156,63 @@
 <td>引导分区</td>
 <td>sda1</td>
 <td>NTFS</td>
-<td>Windows隐藏分区</td>
+<td>Windows 隐藏分区</td>
 </tr>
 <tr>
-<td>C盘</td>
+<td>C 盘</td>
 <td>sda2</td>
 <td>NTFS</td>
-<td>Windows系统分区</td>
+<td>Windows 系统分区</td>
 </tr>
 <tr>
-<td>D盘</td>
+<td>D 盘</td>
 <td>sda3</td>
 <td>NTFS</td>
 <td>数据盘</td>
 </tr>
 <tr>
-<td>E盘</td>
+<td>E 盘</td>
 <td>sda4</td>
 <td>NTFS</td>
 <td>数据盘</td>
 </tr>
 <tr>
-<td>F盘</td>
+<td>F 盘</td>
 <td>sda5</td>
 <td>FAT32</td>
-<td>部署Linux系统，/根分区存放点，20G</td>
+<td>部署 Linux 系统，/ 根分区存放点，20G</td>
 </tr>
 <tr>
-<td>G盘</td>
+<td>G 盘</td>
 <td>sda6</td>
 <td>FAT32</td>
-<td>存放ISO镜像和解压文件，10G</td>
+<td>存放 ISO 镜像和解压文件，10G</td>
 </tr>
 <tr>
-<td>H盘</td>
+<td>H 盘</td>
 <td>sda7</td>
 <td>FAT32</td>
-<td>作为SWAP交换分区，4G</td>
+<td>作为 SWAP 交换分区，4G</td>
 </tr>
 </tbody>
 </table>
 <h2 id="系统安装"><a href="#系统安装" class="headerlink" title="系统安装"></a>系统安装</h2><blockquote>
-<p>过程较为简单但一定注意boot loader的选择</p>
+<p>过程较为简单但一定注意 boot loader 的选择</p>
 </blockquote>
 <ol>
-<li>硬盘/光盘/U盘重启后引导进入安装过程</li>
+<li>硬盘 / 光盘 / U 盘重启后引导进入安装过程</li>
 <li>操作系统安装步骤按照自己需求正常调整和执行</li>
-<li>分区时选择sda5作为/, sda7作为SWAP（<code>仅供参考切勿照搬</code>）</li>
-<li>查看<code>Change device</code>修改<code>boot loader</code>为你安装系统的分区如<code>/dev/sda5</code></li>
+<li>分区时选择 sda5 作为 /, sda7 作为 SWAP（<code>仅供参考切勿照搬</code>）</li>
+<li>查看 <code>Change device</code> 修改 <code>boot loader</code> 为你安装系统的分区如 <code>/dev/sda5</code></li>
 <li>完成安装后重启设备</li>
 </ol>
 <h2 id="引导修复"><a href="#引导修复" class="headerlink" title="引导修复"></a>引导修复</h2><blockquote>
-<p>轻松实现Windows和Linux双系统引导切换</p>
+<p>轻松实现 Windows 和 Linux 双系统引导切换</p>
 </blockquote>
 <ol>
-<li>安装重启后回到Windows运行EasyBCD</li>
-<li>选择<code>编辑引导菜单</code>，删除ISO条目，选择<code>添加新条目→Linux/BSD→选择驱动器→添加条目</code></li>
-<li>重启后进入Linux完成收尾工作测试效果</li>
+<li>安装重启后回到 Windows 运行 EasyBCD</li>
+<li>选择 <code>编辑引导菜单</code>，删除 ISO 条目，选择 <code>添加新条目→Linux/BSD→选择驱动器→添加条目</code></li>
+<li>重启后进入 Linux 完成收尾工作测试效果</li>
 </ol>
   
 	</div>
@@ -231,7 +231,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://wsgzao.github.io/post/easybcd/" data-title="Windows下使用EasyBCD安装Linux双系统实践 | HelloDog" data-tsina="" class="share clearfix">
+	  <div data-url="https://wsgzao.github.io/post/easybcd/" data-title="Windows 下使用 EasyBCD 安装 Linux 双系统实践 | HelloDog" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -245,18 +245,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/post/teaming/" title="RHEL7 Teaming网卡绑定实践">
+ <a href="/post/teaming/" title="RHEL7 Teaming 网卡绑定实践">
   <strong>上一篇：</strong><br/>
   <span>
-  RHEL7 Teaming网卡绑定实践</span>
+  RHEL7 Teaming 网卡绑定实践</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/post/thinkpad/"  title="ThinkPad X1 Carbon使用经验分享(解决Windows 10高分屏模糊)">
+<a href="/post/thinkpad/"  title="ThinkPad X1 Carbon 使用经验分享 (解决 Windows 10 高分屏模糊)">
  <strong>下一篇：</strong><br/> 
- <span>ThinkPad X1 Carbon使用经验分享(解决Windows 10高分屏模糊)
+ <span>ThinkPad X1 Carbon 使用经验分享 (解决 Windows 10 高分屏模糊)
 </span>
 </a>
 </div>

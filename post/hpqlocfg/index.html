@@ -107,40 +107,40 @@
 		
 		</div>
 		
-		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>HP iLO, Dell iDRAC, IBM/Lenovo IMM 等这些名字对于服务器硬件工程师来说应该不会陌生，当然在服务器采购回来大规模上架的时刻很多小伙伴估计就要崩溃了，OOB带外管理的IP需要手动配置，NTP和License也需要记得配置，万一忘记了，咳咳，那可就惨喽。这次我们就碰上了NTP时间同步没有配置，导致时区和时间的显示直接影响硬件故障时收集日志判断，为了避免人力资源浪费，网上搜索了一圈发现HP iLO有自己的批量化管理客户端程序，希望大家举一反三提升运维的效率。</p>
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>HP iLO, Dell iDRAC, IBM/Lenovo IMM 等这些名字对于服务器硬件工程师来说应该不会陌生，当然在服务器采购回来大规模上架的时刻很多小伙伴估计就要崩溃了，OOB 带外管理的 IP 需要手动配置，NTP 和 License 也需要记得配置，万一忘记了，咳咳，那可就惨喽。这次我们就碰上了 NTP 时间同步没有配置，导致时区和时间的显示直接影响硬件故障时收集日志判断，为了避免人力资源浪费，网上搜索了一圈发现 HP iLO 有自己的批量化管理客户端程序，希望大家举一反三提升运维的效率。</p>
 <blockquote>
 <p>HP Lights-Out Configuration Utility 批量管理 HP iLO 2/3/4</p>
 </blockquote>
-<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2018年05月06日 - 补充GitHub开源的代码<br>2018年04月01日 - 初稿</p>
+<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2018 年 05 月 06 日 - 补充 GitHub 开源的代码<br>2018 年 04 月 01 日 - 初稿</p>
 <p>阅读原文 - <a href="https://wsgzao.github.io/post/hpqlocfg/">https://wsgzao.github.io/post/hpqlocfg/</a></p>
-<p><strong>扩展阅读</strong></p>
+<p><strong> 扩展阅读 </strong></p>
 <p>HP ilo4 批量管理 - <a href="http://blog.51cto.com/gregdefanhua/2089408" target="_blank" rel="noopener">http://blog.51cto.com/gregdefanhua/2089408</a></p>
 <h2 id="下载-HP-iLO-管理软件和模板"><a href="#下载-HP-iLO-管理软件和模板" class="headerlink" title="下载 HP iLO 管理软件和模板"></a>下载 HP iLO 管理软件和模板</h2><blockquote>
-<p>扩展阅读中的信息已过期，cpqlocfg现在更名为hpqlocfg，沿用了作者的思路在此表示感谢</p>
+<p>扩展阅读中的信息已过期，cpqlocfg 现在更名为 hpqlocfg，沿用了作者的思路在此表示感谢</p>
 </blockquote>
 <p>RECOMMENDED * HP Lights-Out Configuration Utility<br><a href="https://support.hpe.com/hpsc/swd/public/detail?swItemId=MTX_d7e7146b56324eb0879f0a98e2#tab1" target="_blank" rel="noopener">https://support.hpe.com/hpsc/swd/public/detail?swItemId=MTX_d7e7146b56324eb0879f0a98e2#tab1</a></p>
 <p>用于 Windows 的 HP Lights-Out XML Scripting Sample<br><a href="https://support.hpe.com/hpsc/swd/public/detail?swItemId=MTX_f045db3f567040f291bf645684#tab1" target="_blank" rel="noopener">https://support.hpe.com/hpsc/swd/public/detail?swItemId=MTX_f045db3f567040f291bf645684#tab1</a></p>
 <h2 id="实践方法"><a href="#实践方法" class="headerlink" title="实践方法"></a>实践方法</h2><blockquote>
-<p>拷贝HPQLOCFG.exe和相关dll文件至脚本当前路径</p>
+<p>拷贝 HPQLOCFG.exe 和相关 dll 文件至脚本当前路径</p>
 </blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">file://C:\Users\wsgzao\Desktop\ilo_ntp	(1 folders, 12 files, 211.96 KB, 3.70 MB <span class="keyword">in</span> total.)</span><br><span class="line">│  172.25.240.45	266 bytes</span><br><span class="line">│  HPQLOCFG.exe	59.00 KB</span><br><span class="line">│  HPQLOCFG.exe.config	712 bytes</span><br><span class="line">│  HPSSLConnection.dll	13.50 KB</span><br><span class="line">│  ilo_ntp.log	0 bytes</span><br><span class="line">│  ip.txt	150 bytes</span><br><span class="line">│  log.txt	2.24 KB</span><br><span class="line">│  Parser.dll	133.00 KB</span><br><span class="line">│  README.txt	2.03 KB</span><br><span class="line">│  SetNTP.bat	181 bytes</span><br><span class="line">│  SetNTP.xml	555 bytes</span><br><span class="line">│  操作步骤.txt	381 bytes</span><br><span class="line">└─HP官方文件	(0 folders, 3 files, 3.50 MB, 3.50 MB <span class="keyword">in</span> total.)</span><br><span class="line">        HPE iLO 4 脚本和命令行指南.pdf	2.95 MB</span><br><span class="line">        SP58155.exe	392.67 KB</span><br><span class="line">        windows-LOsamplescripts4.80.0.zip	168.34 KB</span><br></pre></td></tr></table></figure>
-<p>编写XML文件 SetNTP.xml</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">file://C:\Users\wsgzao\Desktop\ilo_ntp	(1 folders, 12 files, 211.96 KB, 3.70 MB <span class="keyword">in</span> total.)</span><br><span class="line">│  172.25.240.45	266 bytes</span><br><span class="line">│  HPQLOCFG.exe	59.00 KB</span><br><span class="line">│  HPQLOCFG.exe.config	712 bytes</span><br><span class="line">│  HPSSLConnection.dll	13.50 KB</span><br><span class="line">│  ilo_ntp.log	0 bytes</span><br><span class="line">│  ip.txt	150 bytes</span><br><span class="line">│  log.txt	2.24 KB</span><br><span class="line">│  Parser.dll	133.00 KB</span><br><span class="line">│  README.txt	2.03 KB</span><br><span class="line">│  SetNTP.bat	181 bytes</span><br><span class="line">│  SetNTP.xml	555 bytes</span><br><span class="line">│  操作步骤. txt	381 bytes</span><br><span class="line">└─HP 官方文件	(0 folders, 3 files, 3.50 MB, 3.50 MB <span class="keyword">in</span> total.)</span><br><span class="line">        HPE iLO 4 脚本和命令行指南. pdf	2.95 MB</span><br><span class="line">        SP58155.exe	392.67 KB</span><br><span class="line">        windows-LOsamplescripts4.80.0.zip	168.34 KB</span><br></pre></td></tr></table></figure>
+<p>编写 XML 文件 SetNTP.xml</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">RIBCL</span> <span class="attr">VERSION</span>=<span class="string">"2.0"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">LOGIN</span> <span class="attr">USER_LOGIN</span>=<span class="string">"iloadmin"</span> <span class="attr">PASSWORD</span>=<span class="string">"iloadmin"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">RIB_INFO</span> <span class="attr">MODE</span>=<span class="string">"write"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">MOD_NETWORK_SETTINGS</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">DHCP_SNTP_SETTINGS</span> <span class="attr">value</span>=<span class="string">"No"</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">DHCPV6_SNTP_SETTINGS</span> <span class="attr">value</span>=<span class="string">"No"</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">SNTP_SERVER1</span> <span class="attr">value</span>=<span class="string">"%ntp1%"</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">TIMEZONE</span> <span class="attr">value</span>=<span class="string">"Asia/Shanghai"</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">MOD_NETWORK_SETTINGS</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">MOD_GLOBAL_SETTINGS</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">PROPAGATE_TIME_TO_HOST</span> <span class="attr">VALUE</span>=<span class="string">"No"</span> /&gt;</span> </span><br><span class="line">            <span class="tag">&lt;/<span class="name">MOD_GLOBAL_SETTINGS</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">RIB_INFO</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">LOGIN</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">RIBCL</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>编写批处理  SetNTP.bat</p>
 <figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@<span class="built_in">echo</span> off</span><br><span class="line"><span class="keyword">for</span> /f <span class="variable">%%a</span> <span class="keyword">in</span> (ip.txt) <span class="keyword">do</span> (</span><br><span class="line">    <span class="built_in">set</span> ip=<span class="variable">%%a</span></span><br><span class="line">    <span class="built_in">set</span> ntp="<span class="number">172</span>.<span class="number">25</span>.<span class="number">240</span>.<span class="number">254</span>"</span><br><span class="line">    <span class="keyword">call</span> hpqlocfg -s <span class="variable">%%i</span>p%% -l log.txt -f SetNTP.xml -u iloadmin -p iloadmin -t ntp1=<span class="variable">%%n</span>tp%%</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>修改2处内容</p>
+<p>修改 2 处内容</p>
 </blockquote>
 <ol>
-<li>修改ip.txt，添加信息</li>
-<li>修改SetNTP.bat中set ntp=”172.28.70.254”</li>
+<li>修改 ip.txt，添加信息</li>
+<li>修改 SetNTP.bat 中 set ntp=”172.28.70.254”</li>
 </ol>
 <blockquote>
 <p>执行方法</p>
 </blockquote>
 <pre><code>SetNTP.bat
 </code></pre><blockquote>
-<p>文章中所有提到的代码和HP官方文件都放在GitHub中</p>
+<p>文章中所有提到的代码和 HP 官方文件都放在 GitHub 中</p>
 </blockquote>
 <p><a href="https://github.com/wsgzao/hpqlocfg/" target="_blank" rel="noopener">https://github.com/wsgzao/hpqlocfg/</a></p>
   
@@ -183,9 +183,9 @@
 
 
 <div class="next">
-<a href="/post/anaconda/"  title="使用Anaconda实现Python2和Python3共存及相互转换">
+<a href="/post/anaconda/"  title="使用 Anaconda 实现 Python2 和 Python3 共存及相互转换">
  <strong>下一篇：</strong><br/> 
- <span>使用Anaconda实现Python2和Python3共存及相互转换
+ <span>使用 Anaconda 实现 Python2 和 Python3 共存及相互转换
 </span>
 </a>
 </div>
