@@ -27,7 +27,10 @@
 <meta property="og:image" content="https://wx2.sinaimg.cn/large/7207510dgy1fwcf1qxxgxj20h108at9c.jpg">
 <meta property="og:image" content="https://ws1.sinaimg.cn/large/7207510dgy1fwcex9ke1pj20uk0bt0uc.jpg">
 <meta property="og:image" content="https://wx4.sinaimg.cn/large/7207510dgy1fwcexrrpxtj20lt0b6mxz.jpg">
-<meta property="og:updated_time" content="2018-10-18T09:55:40.609Z">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/7207510dgy1fwdcyast9fj20na0ehdh7.jpg">
+<meta property="og:image" content="https://wx3.sinaimg.cn/large/7207510dgy1fwdcyprfv9j21030hjac0.jpg">
+<meta property="og:image" content="https://wx2.sinaimg.cn/large/7207510dgy1fwdczf20yyj20oy0ro77l.jpg">
+<meta property="og:updated_time" content="2018-10-19T03:15:02.300Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Zabbix 使用企业微信报警配置小结">
 <meta name="twitter:description" content="用企业微信配置Zabbix报警">
@@ -143,8 +146,11 @@
 <li>Secret（获取方法：同 Agentid）</li>
 </ol>
 <p><img src="//ws3.sinaimg.cn/large/7207510dgy1fwcf1dmj23j20u70mkq5m.jpg" alt=""><br><img src="//wx2.sinaimg.cn/large/7207510dgy1fwcf1qxxgxj20h108at9c.jpg" alt=""><br><img src="//ws1.sinaimg.cn/large/7207510dgy1fwcex9ke1pj20uk0bt0uc.jpg" alt=""><br><img src="//wx4.sinaimg.cn/large/7207510dgy1fwcexrrpxtj20lt0b6mxz.jpg" alt=""></p>
-<h2 id="配置-Zabbix-发送微信消息的脚本并测试"><a href="#配置-Zabbix-发送微信消息的脚本并测试" class="headerlink" title="配置 Zabbix 发送微信消息的脚本并测试"></a>配置 Zabbix 发送微信消息的脚本并测试</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改 zabbix-server 配置文件，查看 zabbix 默认脚本路径配置是否打开 </span></span><br><span class="line">egrep -v <span class="string">'^$|^#'</span> /etc/zabbix/zabbix_server.conf  </span><br><span class="line"></span><br><span class="line">AlertScriptsPath=/usr/lib/zabbix/alertscripts  </span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装必要的软件包 </span></span><br><span class="line">yum install -y epel-release </span><br><span class="line">yum install -y gcc telnet wget git vim python-pip</span><br><span class="line"><span class="comment"># update pip</span></span><br><span class="line">pip install --upgrade pip</span><br><span class="line"><span class="comment"># install requests</span></span><br><span class="line">pip install requests</span><br><span class="line">pip install --upgrade requests</span><br><span class="line"></span><br><span class="line"><span class="comment"># 上传脚本至 server 配置文件中 AlertScriptsPath 所对应的路径下：</span></span><br><span class="line"><span class="built_in">cd</span> /usr/lib/zabbix/alertscripts/</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/X-Mars/Zabbix-Alert-WeChat.git</span><br><span class="line">cp Zabbix-Alert-WeChat/wechat.py .</span><br><span class="line"><span class="comment"># 增加可执行权限 </span></span><br><span class="line">chmod +x wechat.py</span><br><span class="line"></span><br><span class="line"><span class="comment"># 上传好该脚本后对脚本进行测试 </span></span><br><span class="line">python wechat.py wangao <span class="built_in">test</span> helloworld</span><br><span class="line">&#123;u<span class="string">'invaliduser'</span>: u<span class="string">''</span>, u<span class="string">'errcode'</span>: 0, u<span class="string">'errmsg'</span>: u<span class="string">'ok'</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 企业号中的用户帐号，在 zabbix 用户 Media 中配置，如果配置不正常，将按部门发送 </span></span><br><span class="line">python wechat.py wangao1 <span class="built_in">test</span> wangao</span><br><span class="line">&#123;u<span class="string">'invaliduser'</span>: u<span class="string">'wangao1'</span>, u<span class="string">'errcode'</span>: 0, u<span class="string">'errmsg'</span>: u<span class="string">'ok'</span>&#125;</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 参数说明，这里使用企业号中的部门 ID 作群发使用 </span></span><br><span class="line">Corpid = <span class="string">"xxx"</span> <span class="comment"># CorpID 是企业号的标识 </span></span><br><span class="line">Secret = <span class="string">"xxx"</span> <span class="comment"># Secret 是管理组凭证密钥 </span></span><br><span class="line">Agentid = <span class="string">"1000002"</span> <span class="comment"># 应用 ID</span></span><br><span class="line">Partyid = <span class="string">"2"</span> <span class="comment"># 部门 ID</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看企业微信测试告警通知 </span></span><br></pre></td></tr></table></figure>
-<h2 id="Zabbix-界面配置"><a href="#Zabbix-界面配置" class="headerlink" title="Zabbix 界面配置"></a>Zabbix 界面配置</h2><ol>
+<h2 id="配置-Zabbix-发送微信消息的脚本并测试"><a href="#配置-Zabbix-发送微信消息的脚本并测试" class="headerlink" title="配置 Zabbix 发送微信消息的脚本并测试"></a>配置 Zabbix 发送微信消息的脚本并测试</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改 zabbix-server 配置文件，查看 zabbix 默认脚本路径配置是否打开 </span></span><br><span class="line">egrep -v <span class="string">'^$|^#'</span> /etc/zabbix/zabbix_server.conf  </span><br><span class="line"></span><br><span class="line">AlertScriptsPath=/usr/lib/zabbix/alertscripts  </span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装必要的软件包 </span></span><br><span class="line">yum install -y epel-release </span><br><span class="line">yum install -y gcc telnet wget git vim python-pip</span><br><span class="line"><span class="comment"># update pip</span></span><br><span class="line">pip install --upgrade pip</span><br><span class="line"><span class="comment"># install requests</span></span><br><span class="line">pip install requests</span><br><span class="line">pip install --upgrade requests</span><br><span class="line"></span><br><span class="line"><span class="comment"># 上传脚本至 server 配置文件中 AlertScriptsPath 所对应的路径下：</span></span><br><span class="line"><span class="built_in">cd</span> /usr/lib/zabbix/alertscripts/</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/X-Mars/Zabbix-Alert-WeChat.git</span><br><span class="line">cp Zabbix-Alert-WeChat/wechat.py .</span><br><span class="line">chmod +x wechat.py</span><br><span class="line"></span><br><span class="line"><span class="comment"># 上传好该脚本后对脚本进行测试 </span></span><br><span class="line">python wechat.py wangao <span class="built_in">test</span> helloworld</span><br><span class="line">&#123;u<span class="string">'invaliduser'</span>: u<span class="string">''</span>, u<span class="string">'errcode'</span>: 0, u<span class="string">'errmsg'</span>: u<span class="string">'ok'</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 企业号中的用户帐号，在 zabbix 用户 Media 中配置，如果配置不正常，将按部门发送 </span></span><br><span class="line">python wechat.py wangao1 <span class="built_in">test</span> wangao</span><br><span class="line">&#123;u<span class="string">'invaliduser'</span>: u<span class="string">'wangao1'</span>, u<span class="string">'errcode'</span>: 0, u<span class="string">'errmsg'</span>: u<span class="string">'ok'</span>&#125;</span><br><span class="line">  </span><br><span class="line"><span class="comment"># 参数说明，这里使用企业号中的部门 ID 作群发使用 </span></span><br><span class="line">Corpid = <span class="string">"xxx"</span> <span class="comment"># CorpID 是企业号的标识 </span></span><br><span class="line">Secret = <span class="string">"xxx"</span> <span class="comment"># Secret 是管理组凭证密钥 </span></span><br><span class="line">Agentid = <span class="string">"1000002"</span> <span class="comment"># 应用 ID</span></span><br><span class="line">Partyid = <span class="string">"2"</span> <span class="comment"># 部门 ID</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看企业微信测试告警通知 </span></span><br></pre></td></tr></table></figure>
+<h2 id="Zabbix-界面配置"><a href="#Zabbix-界面配置" class="headerlink" title="Zabbix 界面配置"></a>Zabbix 界面配置</h2><blockquote>
+<p>Zabbix 4.0 和老版本在界面显示上有略微差异</p>
+</blockquote>
+<ol>
 <li>创建报警媒介</li>
 </ol>
 <p>Administration - Media types - Create media type</p>
@@ -154,6 +160,7 @@
 <li>{ALERT.SUBJECT}</li>
 <li>{ALERT.MESSAGE}</li>
 </ul>
+<p><img src="//ws1.sinaimg.cn/large/7207510dgy1fwdcyast9fj20na0ehdh7.jpg" alt=""></p>
 <ol start="2">
 <li>创建 wechat 专用账户</li>
 </ol>
@@ -163,7 +170,8 @@
 <li>为专用账户添加 Media</li>
 </ol>
 <p>Users - Media - Add</p>
-<p>Type: wechat<br>Send to: 2 # 因为我配置的是群发所以按照部门 ID 填写区分不同项目监控</p>
+<p>Type: wechat<br>Send to: 2 # 因为我配置的是群发所以按照部门 ID 填写区分不同项目监控，也可以按照用户名独立发送</p>
+<p><img src="//wx3.sinaimg.cn/large/7207510dgy1fwdcyprfv9j21030hjac0.jpg" alt=""></p>
 <ol start="4">
 <li>设置报警动作</li>
 </ol>
@@ -179,6 +187,8 @@
 <p>[Recovery operations]<br>Default subject:<br>Resolved: {EVENT.NAME}</p>
 <p>Default message:<br>Time: {EVENT.DATE} {EVENT.TIME}<br>Host: {HOST.NAME}<br>Level: {TRIGGER.SEVERITY}<br>ItemValue: {ITEM.VALUE}</p>
 <p>Operations:<br>Send to Uers: wechat<br>Send only to: wechat</p>
+<p><img src="//wx2.sinaimg.cn/large/7207510dgy1fwdczf20yyj20oy0ro77l.jpg" alt=""></p>
+<p>更多有关 Zabbix Supported macros 的定义请参考官方解释</p>
 <p><a href="https://www.zabbix.com/documentation/current/manual/appendix/macros/supported_by_location" target="_blank" rel="noopener">Zabbix Supported macros</a></p>
   
 	</div>
@@ -212,9 +222,9 @@
  
 
 <div class="next">
-<a href="/post/zookeeper/"  title="ZooKeeper 安装使用">
+<a href="/post/zabbix/"  title="Zabbix 使用指北">
  <strong>下一篇：</strong><br/> 
- <span>ZooKeeper 安装使用
+ <span>Zabbix 使用指北
 </span>
 </a>
 </div>
