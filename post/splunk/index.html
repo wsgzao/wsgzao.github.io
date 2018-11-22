@@ -24,7 +24,7 @@
 <meta property="og:description" content="Splunk智能运维，挖掘数据的价值">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://i.v2ex.co/0kvIE02gl.jpeg">
-<meta property="og:updated_time" content="2017-09-04T02:35:47.000Z">
+<meta property="og:updated_time" content="2018-11-21T09:05:20.030Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Splunk 官方培训笔记">
 <meta name="twitter:description" content="Splunk智能运维，挖掘数据的价值">
@@ -96,7 +96,7 @@
 		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
 		
   <p class="article-time">
-    <time datetime="2016-03-22T08:22:32.000Z" itemprop="datePublished"> 发表于 2016-03-22</time>
+    <time datetime="2018-11-21T08:22:32.000Z" itemprop="datePublished"> 发表于 2018-11-21</time>
     
   </p>
 </header>
@@ -105,7 +105,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#机器数据"><span class="toc-number">3.</span> <span class="toc-text">机器数据</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#机器数据源"><span class="toc-number">3.1.</span> <span class="toc-text">机器数据源</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实验准备"><span class="toc-number">4.</span> <span class="toc-text">实验准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#动手实验"><span class="toc-number">5.</span> <span class="toc-text">动手实验</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#机器数据"><span class="toc-number">3.</span> <span class="toc-text">机器数据</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#机器数据源"><span class="toc-number">3.1.</span> <span class="toc-text">机器数据源</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实验准备"><span class="toc-number">4.</span> <span class="toc-text">实验准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#动手实验"><span class="toc-number">5.</span> <span class="toc-text">动手实验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#高级参数"><span class="toc-number">6.</span> <span class="toc-text">高级参数</span></a></li></ol>
 		
 		</div>
 		
@@ -114,7 +114,7 @@
 <blockquote>
 <p>Splunk 智能运维，挖掘数据的价值</p>
 </blockquote>
-<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2016 年 03 月 22 日 - 初稿</p>
+<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2018 年 11 月 21 日 - 增加与 Ansible 结合的用法<br>2016 年 03 月 22 日 - 初稿</p>
 <p>阅读原文 - <a href="https://wsgzao.github.io/post/splunk/">https://wsgzao.github.io/post/splunk/</a></p>
 <p><strong> 扩展阅读 </strong></p>
 <p>Splunk - <a href="http://www.splunk.com/" target="_blank" rel="noopener">http://www.splunk.com/</a><br>正则表达式 30 分钟入门教程 - <a href="http://deerchao.net/tutorials/regex/regex.htm" target="_blank" rel="noopener">http://deerchao.net/tutorials/regex/regex.htm</a></p>
@@ -255,6 +255,14 @@
 <p>我觉得操作都很简单，大家可以多参考官方的 Splunk Documentation</p>
 <p><a href="http://docs.splunk.com/Documentation" target="_blank" rel="noopener">http://docs.splunk.com/Documentation</a><br><a href="http://docs.splunk.com/Documentation/Splunk/latest/Translated/SimplifiedChinesemanuals" target="_blank" rel="noopener">http://docs.splunk.com/Documentation/Splunk/latest/Translated/SimplifiedChinesemanuals</a></p>
 <p>正则表达式 30 分钟入门教程 - <a href="http://deerchao.net/tutorials/regex/regex.htm" target="_blank" rel="noopener">http://deerchao.net/tutorials/regex/regex.htm</a></p>
+<h2 id="高级参数"><a href="#高级参数" class="headerlink" title="高级参数"></a>高级参数</h2><blockquote>
+<p>举个栗子</p>
+</blockquote>
+<p>编辑来源类型： _json</p>
+<ul>
+<li>MAX_ EVENTS: 99999</li>
+<li>TRUNCATE: 99999999</li>
+</ul>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -285,19 +293,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/post/puppet/" title="Puppet 安装配置小结">
-  <strong>上一篇：</strong><br/>
-  <span>
-  Puppet 安装配置小结</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/post/lvm/"  title="LVM 逻辑卷管理配置小结">
+<a href="/post/myip/"  title="在命令行内获取公网 IP 的几种简单方法">
  <strong>下一篇：</strong><br/> 
- <span>LVM 逻辑卷管理配置小结
+ <span>在命令行内获取公网 IP 的几种简单方法
 </span>
 </a>
 </div>
@@ -320,7 +320,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#机器数据"><span class="toc-number">3.</span> <span class="toc-text">机器数据</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#机器数据源"><span class="toc-number">3.1.</span> <span class="toc-text">机器数据源</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实验准备"><span class="toc-number">4.</span> <span class="toc-text">实验准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#动手实验"><span class="toc-number">5.</span> <span class="toc-text">动手实验</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#机器数据"><span class="toc-number">3.</span> <span class="toc-text">机器数据</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#机器数据源"><span class="toc-number">3.1.</span> <span class="toc-text">机器数据源</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实验准备"><span class="toc-number">4.</span> <span class="toc-text">实验准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#动手实验"><span class="toc-number">5.</span> <span class="toc-text">动手实验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#高级参数"><span class="toc-number">6.</span> <span class="toc-text">高级参数</span></a></li></ol>
  
   </div>
 
