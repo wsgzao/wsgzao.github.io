@@ -9,26 +9,24 @@
         window.location.protocol = "https";
   </script> 
   
-    <title>SSH 使用密钥登录并禁止口令登录实践 | HelloDog</title>
+    <title>使用 csshX 同步管理多个 SSH 会话 | HelloDog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wsgzao">
     
 
     
-    <meta name="description" content="这是最相对安全的登录管理方式">
+    <meta name="description" content="使用csshX同步管理多个SSH会话">
 <meta property="og:type" content="article">
-<meta property="og:title" content="SSH 使用密钥登录并禁止口令登录实践">
-<meta property="og:url" content="https://wsgzao.github.io/post/ssh/index.html">
+<meta property="og:title" content="使用 csshX 同步管理多个 SSH 会话">
+<meta property="og:url" content="https://wsgzao.github.io/post/csshx/index.html">
 <meta property="og:site_name" content="HelloDog">
-<meta property="og:description" content="这是最相对安全的登录管理方式">
+<meta property="og:description" content="使用csshX同步管理多个SSH会话">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://i.v2ex.co/zv9SM4PO.png">
-<meta property="og:updated_time" content="2017-02-10T02:00:57.000Z">
+<meta property="og:updated_time" content="2018-11-26T11:04:41.714Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="SSH 使用密钥登录并禁止口令登录实践">
-<meta name="twitter:description" content="这是最相对安全的登录管理方式">
-<meta name="twitter:image" content="http://i.v2ex.co/zv9SM4PO.png">
+<meta name="twitter:title" content="使用 csshX 同步管理多个 SSH 会话">
+<meta name="twitter:description" content="使用csshX同步管理多个SSH会话">
 
     
     <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
@@ -89,14 +87,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/post/ssh/" title="SSH 使用密钥登录并禁止口令登录实践" itemprop="url">SSH 使用密钥登录并禁止口令登录实践</a>
+      <a href="/post/csshx/" title="使用 csshX 同步管理多个 SSH 会话" itemprop="url">使用 csshX 同步管理多个 SSH 会话</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
 		
   <p class="article-time">
-    <time datetime="2015-08-13T04:18:44.000Z" itemprop="datePublished"> 发表于 2015-08-13</time>
+    <time datetime="2018-11-26T06:59:49.000Z" itemprop="datePublished"> 发表于 2018-11-26</time>
     
   </p>
 </header>
@@ -105,42 +103,28 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#生成-PublicKey"><span class="toc-number">3.</span> <span class="toc-text">生成 PublicKey</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#复制密钥对"><span class="toc-number">4.</span> <span class="toc-text">复制密钥对</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#修改-SSH-配置文件"><span class="toc-number">5.</span> <span class="toc-text">修改 SSH 配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#手动增加管理用户"><span class="toc-number">6.</span> <span class="toc-text">手动增加管理用户</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#csshx-简介"><span class="toc-number">3.</span> <span class="toc-text">csshx 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-brew-安装-csshx"><span class="toc-number">4.</span> <span class="toc-text">使用 brew 安装 csshx</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#csshx-使用"><span class="toc-number">5.</span> <span class="toc-text">csshx 使用</span></a></li></ol>
 		
 		</div>
 		
-		<p><img src="http://i.v2ex.co/zv9SM4PO.png" alt=""></p>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>无论是个人的 VPS 还是企业允许公网访问的服务器，如果开放 22 端口的 SSH 密码登录验证方式，被众多黑客暴力猜解捅破菊花也可能是经常发生的惨剧。企业可以通过防火墙来做限制，普通用户也可能借助修改 22 端口和强化弱口令等方式防护，但目前相对安全和简单的方案则是让 SSH 使用密钥登录并禁止口令登录。</p>
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>终端登录管理方案非常成熟除了耳熟能详的跨平台付费方案 SeureCRT，Windows 有 Xshell，macOS 有 iTerm2，不过在 macOS 下想用到类似 SecureCRT 和 Xshell 一样的 Send to all 功能可能就没有这么方便了，而 csshX 正好可以满足批量管理操作的需求</p>
 <blockquote>
-<p>这是最相对安全的登录管理方式</p>
+<p>使用 csshX 同步管理多个 SSH 会话</p>
 </blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018 年 11 月 26 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/csshx/">https://wsgzao.github.io/post/csshx/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<p>csshx - <a href="https://github.com/brockgr/csshx" target="_blank" rel="noopener">https://github.com/brockgr/csshx</a></p>
 <hr>
-<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2015 年 08 月 13 日 - 增加 Bash Shell 自动修改脚本<br>2015 年 07 月 07 日 - 初稿</p>
-<p>阅读原文 - <a href="https://wsgzao.github.io/post/ssh/">https://wsgzao.github.io/post/ssh/</a></p>
-<p>扩展阅读</p>
-<ul>
-<li>SSH 原理与运用 -  <a href="http://www.ruanyifeng.com/blog/2011/12/ssh_remote_login.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2011/12/ssh_remote_login.html</a></li>
-<li>Linode - <a href="https://www.linode.com/docs/networking/ssh/use-public-key-authentication-with-ssh" target="_blank" rel="noopener">https://www.linode.com/docs/networking/ssh/use-public-key-authentication-with-ssh</a></li>
-</ul>
-<hr>
-<h2 id="生成-PublicKey"><a href="#生成-PublicKey" class="headerlink" title="生成 PublicKey"></a>生成 PublicKey</h2><blockquote>
-<p>建议设置并牢记 passphrase 密码短语，以 Linux 生成为例</p>
-</blockquote>
-<p>Linux：ssh-keygen -t rsa<br>[私钥 (id_rsa) 与公钥 (id_rsa.pub)]<br>Windows：SecurCRT/Xshell/PuTTY<br>[SSH-2 RSA 2048]</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># 生成 SSH 密钥对 </span></span><br><span class="line">ssh-keygen -t rsa</span><br><span class="line"></span><br><span class="line">Generating public/private rsa key pair.</span><br><span class="line"><span class="comment"># 建议直接回车使用默认路径 </span></span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/root/.ssh/id_rsa): </span><br><span class="line"><span class="comment"># 输入密码短语（留空则直接回车）</span></span><br><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase): </span><br><span class="line"><span class="comment"># 重复密码短语 </span></span><br><span class="line">Enter same passphrase again: </span><br><span class="line">Your identification has been saved <span class="keyword">in</span> /root/.ssh/id_rsa.</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> /root/.ssh/id_rsa.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">aa:8b:61:13:38:ad:b5:49:ca:51:45:b9:77:e1:97:e1 root@localhost.localdomain</span><br><span class="line">The key<span class="string">'s randomart image is:</span></span><br><span class="line"><span class="string">+--[ RSA 2048]----+</span></span><br><span class="line"><span class="string">|    .o.          |</span></span><br><span class="line"><span class="string">|    ..   . .     |</span></span><br><span class="line"><span class="string">|   .  . . o o    |</span></span><br><span class="line"><span class="string">| o.  . . o E     |</span></span><br><span class="line"><span class="string">|o.=   . S .      |</span></span><br><span class="line"><span class="string">|.*.+   .         |</span></span><br><span class="line"><span class="string">|o.*   .          |</span></span><br><span class="line"><span class="string">| . + .           |</span></span><br><span class="line"><span class="string">|  . o.           |</span></span><br><span class="line"><span class="string">+-----------------+</span></span><br></pre></td></tr></table></figure>
-<h2 id="复制密钥对"><a href="#复制密钥对" class="headerlink" title="复制密钥对"></a>复制密钥对</h2><blockquote>
-<p>也可以手动在客户端建立目录和 authorized_keys，注意修改权限</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># 复制公钥到无密码登录的服务器上, 22 端口改变可以使用下面的命令 </span></span><br><span class="line"><span class="comment">#ssh-copy-id -i ~/.ssh/id_rsa.pub "-p 10022 user@server"</span></span><br><span class="line">ssh-copy-id -i ~/.ssh/id_rsa.pub root@192.168.15.241</span><br></pre></td></tr></table></figure>
-<h2 id="修改-SSH-配置文件"><a href="#修改-SSH-配置文件" class="headerlink" title="修改 SSH 配置文件"></a>修改 SSH 配置文件</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编辑 sshd_config 文件 </span></span><br><span class="line">vi /etc/ssh/sshd_config</span><br><span class="line"></span><br><span class="line"><span class="comment"># 禁用密码验证 </span></span><br><span class="line">PasswordAuthentication no</span><br><span class="line"><span class="comment"># 启用密钥验证 </span></span><br><span class="line">RSAAuthentication yes</span><br><span class="line">PubkeyAuthentication yes</span><br><span class="line"><span class="comment"># 指定公钥数据库文件 </span></span><br><span class="line">AuthorsizedKeysFile .ssh/authorized_keys</span><br><span class="line"></span><br><span class="line">sed -i <span class="string">"s/^PasswordAuthentication.*/PasswordAuthentication no/g"</span> /etc/ssh/sshd_config</span><br><span class="line">sed -i <span class="string">"s/^#RSAAuthentication.*/RSAAuthentication yes/g"</span> /etc/ssh/sshd_config</span><br><span class="line">sed -i <span class="string">"s/^#PubkeyAuthentication.*/PubkeyAuthentication yes/g"</span> /etc/ssh/sshd_config</span><br><span class="line">sed -i <span class="string">"s/^#AuthorizedKeysFile.*/AuthorizedKeysFile .ssh\/authorized_keys/g"</span> /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>重启 SSH 服务前建议多保留一个会话以防不测</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#RHEL/CentOS 系统 </span></span><br><span class="line">service sshd restart</span><br><span class="line"><span class="comment">#ubuntu 系统 </span></span><br><span class="line">service ssh restart</span><br><span class="line"><span class="comment">#debian 系统 </span></span><br><span class="line">/etc/init.d/ssh restart</span><br></pre></td></tr></table></figure>
-<h2 id="手动增加管理用户"><a href="#手动增加管理用户" class="headerlink" title="手动增加管理用户"></a>手动增加管理用户</h2><blockquote>
-<p>可以在 == 后加入用户注释标识方便管理</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">'ssh-rsa XXXX'</span> &gt;&gt;/root/.ssh/authorized_keys</span><br><span class="line"></span><br><span class="line"><span class="comment"># 复查 </span></span><br><span class="line">cat /root/.ssh/authorized_keys</span><br></pre></td></tr></table></figure>
+<h2 id="csshx-简介"><a href="#csshx-简介" class="headerlink" title="csshx 简介"></a>csshx 简介</h2><p>As csshX is a command line tool, no special installation is needed. It may<br>be copied into a directory in your path, (e.g. /usr/local/bin) for your<br>convenience.</p>
+<p>The software has been tested on Mac OS X 10.5, 10.6 and 10.7 with the default<br>Perl installation - no additional Perl modules are required.</p>
+<p>DOCUMENTATION:</p>
+<p>The documentation for csshX is self contained. Please run:</p>
+<pre><code>csshX --man
+</code></pre><h2 id="使用-brew-安装-csshx"><a href="#使用-brew-安装-csshx" class="headerlink" title="使用 brew 安装 csshx"></a>使用 brew 安装 csshx</h2><p>Name: csshx<br>Use: Cluster ssh tool for Terminal.app<br>URL: <a href="https://github.com/brockgr/csshx" target="_blank" rel="noopener">https://github.com/brockgr/csshx</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 homebrew</span></span><br><span class="line">ruby -e <span class="string">"<span class="variable">$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)</span>"</span> &lt; /dev/null 2&gt; /dev/null</span><br><span class="line"><span class="comment"># 安装 csshx</span></span><br><span class="line">brew install csshx</span><br></pre></td></tr></table></figure>
+<h2 id="csshx-使用"><a href="#csshx-使用" class="headerlink" title="csshx 使用"></a>csshx 使用</h2><p>当我们管理数十台或更多 Linux 服务器的时候，往往需要在每台服务器上执行同样的命令，比如我们想一次查看 10 台 Xen 服务器（node）上系统负载情况，或者想知道哪台 Xen 服务器有剩余内存可以分给新客户，又或者想执行 df 命令看看哪个服务器上还有多的硬盘空间等等，除了可以用脚本或工具统一收集这些信息外，我们还可以考虑使用一些同步管理多个 SSH 会话的小工具来帮助管理多台服务器，节省时间提高管理效率。在 Linux 上可以用 pdsh、ClusterSSH 和 mussh；在 Mac 上可以用 csshX.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用 csshX 很简单，如果要同时 ssh 到 4 个服务器可以直接传递 IP</span></span><br><span class="line">csshX 192.168.0.1 192.168.0.2 192.168.0.3 192.168.0.4</span><br><span class="line"></span><br><span class="line"><span class="comment"># 也可以把这些要 ssh 管理的 IP 写到一个文件里，然后加载这个文件 </span></span><br><span class="line">vi hosts</span><br><span class="line">192.168.0.1</span><br><span class="line">192.168.0.2</span><br><span class="line">192.168.0.3</span><br><span class="line">192.168.0.4</span><br><span class="line"></span><br><span class="line">csshX --hosts hosts</span><br></pre></td></tr></table></figure>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -158,7 +142,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://wsgzao.github.io/post/ssh/" data-title="SSH 使用密钥登录并禁止口令登录实践 | HelloDog" data-tsina="" class="share clearfix">
+	  <div data-url="https://wsgzao.github.io/post/csshx/" data-title="使用 csshX 同步管理多个 SSH 会话 | HelloDog" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -171,19 +155,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/post/sersync/" title="sersync 基于 rsync+inotify 实现数据实时同步">
-  <strong>上一篇：</strong><br/>
-  <span>
-  sersync 基于 rsync+inotify 实现数据实时同步</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/post/sysctl/"  title="sysctl.conf 学习和调优">
+<a href="/post/splunk/"  title="Splunk 官方培训笔记">
  <strong>下一篇：</strong><br/> 
- <span>sysctl.conf 学习和调优
+ <span>Splunk 官方培训笔记
 </span>
 </a>
 </div>
@@ -206,7 +182,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#生成-PublicKey"><span class="toc-number">3.</span> <span class="toc-text">生成 PublicKey</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#复制密钥对"><span class="toc-number">4.</span> <span class="toc-text">复制密钥对</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#修改-SSH-配置文件"><span class="toc-number">5.</span> <span class="toc-text">修改 SSH 配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#手动增加管理用户"><span class="toc-number">6.</span> <span class="toc-text">手动增加管理用户</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#csshx-简介"><span class="toc-number">3.</span> <span class="toc-text">csshx 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-brew-安装-csshx"><span class="toc-number">4.</span> <span class="toc-text">使用 brew 安装 csshx</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#csshx-使用"><span class="toc-number">5.</span> <span class="toc-text">csshx 使用</span></a></li></ol>
  
   </div>
 
