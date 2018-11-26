@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="使用csshX同步管理多个SSH会话">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-11-26T11:04:41.714Z">
+<meta property="og:updated_time" content="2018-11-26T11:13:35.451Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用 csshX 同步管理多个 SSH 会话">
 <meta name="twitter:description" content="使用csshX同步管理多个SSH会话">
@@ -123,7 +123,7 @@
 <pre><code>csshX --man
 </code></pre><h2 id="使用-brew-安装-csshx"><a href="#使用-brew-安装-csshx" class="headerlink" title="使用 brew 安装 csshx"></a>使用 brew 安装 csshx</h2><p>Name: csshx<br>Use: Cluster ssh tool for Terminal.app<br>URL: <a href="https://github.com/brockgr/csshx" target="_blank" rel="noopener">https://github.com/brockgr/csshx</a></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 homebrew</span></span><br><span class="line">ruby -e <span class="string">"<span class="variable">$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)</span>"</span> &lt; /dev/null 2&gt; /dev/null</span><br><span class="line"><span class="comment"># 安装 csshx</span></span><br><span class="line">brew install csshx</span><br></pre></td></tr></table></figure>
-<h2 id="csshx-使用"><a href="#csshx-使用" class="headerlink" title="csshx 使用"></a>csshx 使用</h2><p>当我们管理数十台或更多 Linux 服务器的时候，往往需要在每台服务器上执行同样的命令，比如我们想一次查看 10 台 Xen 服务器（node）上系统负载情况，或者想知道哪台 Xen 服务器有剩余内存可以分给新客户，又或者想执行 df 命令看看哪个服务器上还有多的硬盘空间等等，除了可以用脚本或工具统一收集这些信息外，我们还可以考虑使用一些同步管理多个 SSH 会话的小工具来帮助管理多台服务器，节省时间提高管理效率。在 Linux 上可以用 pdsh、ClusterSSH 和 mussh；在 Mac 上可以用 csshX.</p>
+<h2 id="csshx-使用"><a href="#csshx-使用" class="headerlink" title="csshx 使用"></a>csshx 使用</h2><p>当我们管理数十台或更多 Linux 服务器的时候，往往需要在每台服务器上执行同样的命令，比如我们想一次查看 10 台服务器（node）上系统负载情况，或者想知道哪台服务器有剩余内存可以分给新客户，又或者想执行 df 命令看看哪个服务器上还有多的硬盘空间等等，除了可以用脚本或工具统一收集这些信息外，我们还可以考虑使用一些同步管理多个 SSH 会话的小工具来帮助管理多台服务器，节省时间提高管理效率。在 Linux 上可以用 pdsh、ClusterSSH 和 mussh；在 Mac 上可以用 csshX.</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用 csshX 很简单，如果要同时 ssh 到 4 个服务器可以直接传递 IP</span></span><br><span class="line">csshX 192.168.0.1 192.168.0.2 192.168.0.3 192.168.0.4</span><br><span class="line"></span><br><span class="line"><span class="comment"># 也可以把这些要 ssh 管理的 IP 写到一个文件里，然后加载这个文件 </span></span><br><span class="line">vi hosts</span><br><span class="line">192.168.0.1</span><br><span class="line">192.168.0.2</span><br><span class="line">192.168.0.3</span><br><span class="line">192.168.0.4</span><br><span class="line"></span><br><span class="line">csshX --hosts hosts</span><br></pre></td></tr></table></figure>
   
 	</div>
