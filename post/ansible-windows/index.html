@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://ws1.sinaimg.cn/large/7207510dgy1frixssianuj20w30ecwfi.jpg">
 <meta property="og:image" content="http://ws4.sinaimg.cn/large/7207510dgy1frizys458dj20b109k3yq.jpg">
-<meta property="og:updated_time" content="2018-05-21T07:34:21.000Z">
+<meta property="og:updated_time" content="2018-11-27T10:41:58.405Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用 Ansible 管理 Windows">
 <meta name="twitter:description" content="轻轻松松使用Ansible管理Windows客户端">
@@ -97,7 +97,7 @@
 		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
 		
   <p class="article-time">
-    <time datetime="2018-05-21T02:59:49.000Z" itemprop="datePublished"> 发表于 2018-05-21</time>
+    <time datetime="2018-11-27T02:59:49.000Z" itemprop="datePublished"> 发表于 2018-11-27</time>
     
   </p>
 </header>
@@ -106,7 +106,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ansible-Windows-Support"><span class="toc-number">3.</span> <span class="toc-text">Ansible Windows Support</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#客户端"><span class="toc-number">4.</span> <span class="toc-text">客户端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务端"><span class="toc-number">5.</span> <span class="toc-text">服务端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#网盘下载"><span class="toc-number">6.</span> <span class="toc-text">网盘下载</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ansible-Windows-Support"><span class="toc-number">3.</span> <span class="toc-text">Ansible Windows Support</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#客户端"><span class="toc-number">4.</span> <span class="toc-text">客户端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务端"><span class="toc-number">5.</span> <span class="toc-text">服务端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#网盘下载"><span class="toc-number">6.</span> <span class="toc-text">网盘下载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#macOS-配置"><span class="toc-number">7.</span> <span class="toc-text">macOS 配置</span></a></li></ol>
 		
 		</div>
 		
@@ -114,7 +114,7 @@
 <blockquote>
 <p>轻轻松松使用 Ansible 管理 Windows 客户端</p>
 </blockquote>
-<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018 年 05 月 21 日 - 初稿</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018 年 11 月 27 日 - 更新 macOS 使用 ansible 管理 windows<br>2018 年 05 月 21 日 - 初稿</p>
 <p>阅读原文 - <a href="https://wsgzao.github.io/post/ansible-windows/">https://wsgzao.github.io/post/ansible-windows/</a></p>
 <p><strong> 扩展阅读 </strong></p>
 <p>Ansible Windows Guides - <a href="http://docs.ansible.com/ansible/latest/user_guide/windows.html" target="_blank" rel="noopener">http://docs.ansible.com/ansible/latest/user_guide/windows.html</a></p>
@@ -168,7 +168,14 @@
 <p> powershell -ExecutionPolicy RemoteSigned .\ConfigureRemotingForAnsible.ps1 -SkipNetworkProfileCheck</p>
 </li>
 </ol>
-  
+<h2 id="macOS-配置"><a href="#macOS-配置" class="headerlink" title="macOS 配置"></a>macOS 配置</h2><blockquote>
+<p>macOS 使用 ansible 管理 windows 里有一个小坑</p>
+</blockquote>
+<p>Ansible Error – “NSPlaceholderDate initialize may have been in progress in another thread when fork() was called”</p>
+<p>If you have came across the same error as I did  (error below) then solving this might be easier than you think</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">objc[6763]: +[__NSPlaceholderDate initialize] may have been <span class="keyword">in</span> progress <span class="keyword">in</span> another thread when fork() was called.</span><br><span class="line">objc[6763]: +[__NSPlaceholderDate initialize] may have been <span class="keyword">in</span> progress <span class="keyword">in</span> another thread when fork() was called. We cannot safely call it or ignore it <span class="keyword">in</span> the fork() child process. Crashing instead. Set a breakpoint on objc_initializeAfterForkError to debug.</span><br><span class="line"></span><br><span class="line"><span class="comment"># run this export</span></span><br><span class="line"><span class="built_in">export</span> OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES</span><br></pre></td></tr></table></figure>
+<p>You just need to run the following ( <a href="https://github.com/ansible/ansible/issues/31869" target="_blank" rel="noopener">https://github.com/ansible/ansible/issues/31869</a> )</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># download the script</span></span><br><span class="line">(New-Object System.Net.WebClient).DownloadFile(<span class="string">'https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1'</span>, <span class="string">'./ConfigureRemotingForAnsible.ps1'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># execute the script</span></span><br><span class="line">./ConfigureRemotingForAnsible.ps1</span><br><span class="line"></span><br><span class="line"><span class="comment"># macOS ansible</span></span><br><span class="line">python3 -m venv ansible</span><br><span class="line">pip install ansible pywinrm</span><br><span class="line"></span><br><span class="line"><span class="comment"># config win_hosts file</span></span><br><span class="line">vi win_hosts</span><br><span class="line"></span><br><span class="line">[windows:vars]</span><br><span class="line">ansible_user=ox</span><br><span class="line">ansible_password=ox</span><br><span class="line">ansible_port=5986</span><br><span class="line">ansible_connection=winrm</span><br><span class="line">ansible_winrm_server_cert_validation=ignore</span><br><span class="line"></span><br><span class="line">[windows]</span><br><span class="line">192.168.56.101</span><br><span class="line"></span><br><span class="line"><span class="comment"># run test</span></span><br><span class="line">ansible -i win_hosts windows -m win_ping -vvv</span><br><span class="line"></span><br><span class="line">ansible 2.7.0</span><br><span class="line">  config file = /Users/wangao/Documents/git/wangao/ansible/ansible.cfg</span><br><span class="line">  configured module search path = [u<span class="string">'/Users/wangao/.ansible/plugins/modules'</span>, u<span class="string">'/usr/share/ansible/plugins/modules'</span>]</span><br><span class="line">  ansible python module location = /usr/<span class="built_in">local</span>/lib/python2.7/site-packages/ansible</span><br><span class="line">  executable location = /usr/<span class="built_in">local</span>/bin/ansible</span><br><span class="line">  python version = 2.7.15 (default, Jul 23 2018, 21:27:06) [GCC 4.2.1 Compatible Apple LLVM 9.1.0 (clang-902.0.39.2)]</span><br><span class="line">Using /Users/wangao/Documents/git/wangao/ansible/ansible.cfg as config file</span><br><span class="line">Parsed /Users/wangao/Documents/git/wangao/ansible/win_hosts inventory <span class="built_in">source</span> with ini plugin</span><br><span class="line">META: ran handlers</span><br><span class="line">Using module file /usr/<span class="built_in">local</span>/lib/python2.7/site-packages/ansible/modules/windows/win_ping.ps1</span><br><span class="line">&lt;192.168.56.101&gt; ESTABLISH WINRM CONNECTION FOR USER: ox on PORT 5986 TO 192.168.56.101</span><br><span class="line">objc[63337]: +[__NSPlaceholderDate initialize] may have been <span class="keyword">in</span> progress <span class="keyword">in</span> another thread when fork() was called.</span><br><span class="line">objc[63337]: +[__NSPlaceholderDate initialize] may have been <span class="keyword">in</span> progress <span class="keyword">in</span> another thread when fork() was called. We cannot safely call it or ignore it <span class="keyword">in</span> the fork() child process. Crashing instead. Set a breakpoint on objc_initializeAfterForkError to debug.</span><br><span class="line"></span><br><span class="line"><span class="comment"># Fixed this on High Sierra and Mojave.</span></span><br><span class="line"><span class="built_in">export</span> OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES</span><br><span class="line"></span><br><span class="line">ansible -i win_hosts windows -m win_ping -vvv</span><br><span class="line"></span><br><span class="line">ansible 2.7.0</span><br><span class="line">  config file = /Users/wangao/Documents/git/wangao/ansible/ansible.cfg</span><br><span class="line">  configured module search path = [u<span class="string">'/Users/wangao/.ansible/plugins/modules'</span>, u<span class="string">'/usr/share/ansible/plugins/modules'</span>]</span><br><span class="line">  ansible python module location = /usr/<span class="built_in">local</span>/lib/python2.7/site-packages/ansible</span><br><span class="line">  executable location = /usr/<span class="built_in">local</span>/bin/ansible</span><br><span class="line">  python version = 2.7.15 (default, Jul 23 2018, 21:27:06) [GCC 4.2.1 Compatible Apple LLVM 9.1.0 (clang-902.0.39.2)]</span><br><span class="line">Using /Users/wangao/Documents/git/wangao/ansible/ansible.cfg as config file</span><br><span class="line">Parsed /Users/wangao/Documents/git/wangao/ansible/win_hosts inventory <span class="built_in">source</span> with ini plugin</span><br><span class="line">META: ran handlers</span><br><span class="line">Using module file /usr/<span class="built_in">local</span>/lib/python2.7/site-packages/ansible/modules/windows/win_ping.ps1</span><br><span class="line">&lt;192.168.56.101&gt; ESTABLISH WINRM CONNECTION FOR USER: ox on PORT 5986 TO 192.168.56.101</span><br><span class="line">EXEC (via pipeline wrapper)</span><br><span class="line">192.168.56.101 | SUCCESS =&gt; &#123;</span><br><span class="line">    <span class="string">"changed"</span>: <span class="literal">false</span>,</span><br><span class="line">    <span class="string">"ping"</span>: <span class="string">"pong"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -198,19 +205,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/post/buy/" title="我的线上线下购物变迁史">
-  <strong>上一篇：</strong><br/>
-  <span>
-  我的线上线下购物变迁史</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/post/centos/"  title="CentOS 通用优化和配置">
+<a href="/post/csshx/"  title="使用 csshX 同步管理多个 SSH 会话">
  <strong>下一篇：</strong><br/> 
- <span>CentOS 通用优化和配置
+ <span>使用 csshX 同步管理多个 SSH 会话
 </span>
 </a>
 </div>
@@ -233,7 +232,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ansible-Windows-Support"><span class="toc-number">3.</span> <span class="toc-text">Ansible Windows Support</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#客户端"><span class="toc-number">4.</span> <span class="toc-text">客户端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务端"><span class="toc-number">5.</span> <span class="toc-text">服务端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#网盘下载"><span class="toc-number">6.</span> <span class="toc-text">网盘下载</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ansible-Windows-Support"><span class="toc-number">3.</span> <span class="toc-text">Ansible Windows Support</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#客户端"><span class="toc-number">4.</span> <span class="toc-text">客户端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务端"><span class="toc-number">5.</span> <span class="toc-text">服务端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#网盘下载"><span class="toc-number">6.</span> <span class="toc-text">网盘下载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#macOS-配置"><span class="toc-number">7.</span> <span class="toc-text">macOS 配置</span></a></li></ol>
  
   </div>
 
