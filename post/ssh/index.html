@@ -16,18 +16,18 @@
     
 
     
-    <meta name="description" content="这是最相对安全的登录管理方式">
+    <meta name="description" content="ssh密钥登录是相对安全的登录管理方式">
 <meta property="og:type" content="article">
 <meta property="og:title" content="SSH 使用密钥登录并禁止口令登录实践">
 <meta property="og:url" content="https://wsgzao.github.io/post/ssh/index.html">
 <meta property="og:site_name" content="HelloDog">
-<meta property="og:description" content="这是最相对安全的登录管理方式">
+<meta property="og:description" content="ssh密钥登录是相对安全的登录管理方式">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://i.v2ex.co/zv9SM4PO.png">
-<meta property="og:updated_time" content="2017-02-10T02:00:57.000Z">
+<meta property="og:updated_time" content="2019-02-01T03:32:50.192Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="SSH 使用密钥登录并禁止口令登录实践">
-<meta name="twitter:description" content="这是最相对安全的登录管理方式">
+<meta name="twitter:description" content="ssh密钥登录是相对安全的登录管理方式">
 <meta name="twitter:image" content="http://i.v2ex.co/zv9SM4PO.png">
 
     
@@ -96,7 +96,7 @@
 		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
 		
   <p class="article-time">
-    <time datetime="2015-08-13T04:18:44.000Z" itemprop="datePublished"> 发表于 2015-08-13</time>
+    <time datetime="2019-01-31T02:18:44.000Z" itemprop="datePublished"> 发表于 2019-01-31</time>
     
   </p>
 </header>
@@ -105,42 +105,64 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#生成-PublicKey"><span class="toc-number">3.</span> <span class="toc-text">生成 PublicKey</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#复制密钥对"><span class="toc-number">4.</span> <span class="toc-text">复制密钥对</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#修改-SSH-配置文件"><span class="toc-number">5.</span> <span class="toc-text">修改 SSH 配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#手动增加管理用户"><span class="toc-number">6.</span> <span class="toc-text">手动增加管理用户</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh-登录服务器的两种方式"><span class="toc-number">3.</span> <span class="toc-text">ssh 登录服务器的两种方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#用户名密码登录"><span class="toc-number">3.1.</span> <span class="toc-text">用户名密码登录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ssh-免密登录"><span class="toc-number">3.2.</span> <span class="toc-text">ssh 免密登录</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh-免密码登录一般流程"><span class="toc-number">4.</span> <span class="toc-text">ssh 免密码登录一般流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#生成-PublicKey"><span class="toc-number">4.1.</span> <span class="toc-text">生成 PublicKey</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#复制密钥对"><span class="toc-number">4.2.</span> <span class="toc-text">复制密钥对</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改-SSH-配置文件"><span class="toc-number">4.3.</span> <span class="toc-text">修改 SSH 配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#手动增加管理用户"><span class="toc-number">4.4.</span> <span class="toc-text">手动增加管理用户</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-Ansible-添加-ssh-信任关系"><span class="toc-number">5.</span> <span class="toc-text">使用 Ansible 添加 ssh 信任关系</span></a></li></ol>
 		
 		</div>
 		
 		<p><img src="http://i.v2ex.co/zv9SM4PO.png" alt=""></p>
 <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>无论是个人的 VPS 还是企业允许公网访问的服务器，如果开放 22 端口的 SSH 密码登录验证方式，被众多黑客暴力猜解捅破菊花也可能是经常发生的惨剧。企业可以通过防火墙来做限制，普通用户也可能借助修改 22 端口和强化弱口令等方式防护，但目前相对安全和简单的方案则是让 SSH 使用密钥登录并禁止口令登录。</p>
 <blockquote>
-<p>这是最相对安全的登录管理方式</p>
+<p>ssh 密钥登录是相对安全的登录管理方式</p>
 </blockquote>
 <hr>
-<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2015 年 08 月 13 日 - 增加 Bash Shell 自动修改脚本<br>2015 年 07 月 07 日 - 初稿</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019 年 01 月 31 日 - 更新 ssh 基础知识讲解和 ansible authorized_key 示例<br>2015 年 08 月 13 日 - 增加 Bash Shell 自动修改脚本<br>2015 年 07 月 07 日 - 初稿</p>
 <p>阅读原文 - <a href="https://wsgzao.github.io/post/ssh/">https://wsgzao.github.io/post/ssh/</a></p>
-<p>扩展阅读</p>
-<ul>
-<li>SSH 原理与运用 -  <a href="http://www.ruanyifeng.com/blog/2011/12/ssh_remote_login.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2011/12/ssh_remote_login.html</a></li>
-<li>Linode - <a href="https://www.linode.com/docs/networking/ssh/use-public-key-authentication-with-ssh" target="_blank" rel="noopener">https://www.linode.com/docs/networking/ssh/use-public-key-authentication-with-ssh</a></li>
-</ul>
+<p><strong> 扩展阅读 </strong></p>
+<p>SSH 原理与运用 -  <a href="http://www.ruanyifeng.com/blog/2011/12/ssh_remote_login.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2011/12/ssh_remote_login.html</a><br>Linode - <a href="https://www.linode.com/docs/networking/ssh/use-public-key-authentication-with-ssh" target="_blank" rel="noopener">https://www.linode.com/docs/networking/ssh/use-public-key-authentication-with-ssh</a></p>
 <hr>
-<h2 id="生成-PublicKey"><a href="#生成-PublicKey" class="headerlink" title="生成 PublicKey"></a>生成 PublicKey</h2><blockquote>
+<h2 id="ssh-登录服务器的两种方式"><a href="#ssh-登录服务器的两种方式" class="headerlink" title="ssh 登录服务器的两种方式"></a>ssh 登录服务器的两种方式</h2><p>如果是一个比较喜欢折腾的人，在某个云平台购买了一台云主机，除了通过云平台提供的 web 页面上的命令行工具，其实也可以在本地电脑上面通过 ssh 进行登录。具体地又可以分成两种：</p>
+<ol>
+<li>ssh 用户名密码登录</li>
+<li>ssh 证书（免密码）登录</li>
+</ol>
+<p>需要说明一下，后者的安全性高于前者，因此一般会默认不启用第一种登录方式，只允许第二种登录方式。</p>
+<p>SSH 为 Secure Shell 的缩写，是建立在应用层基础上的安全协议，利用 SSH 协议可以有效防止远程管理过程中的信息泄露问题。ssh 分成服务端与客户端，其中服务端运行在被登录的机器上面，客户端运行在操作的机器上面。</p>
+<h3 id="用户名密码登录"><a href="#用户名密码登录" class="headerlink" title="用户名密码登录"></a>用户名密码登录</h3><p>通常 openssh-server 默认允许用户名密码登录，但是不排除为了安全考虑云上的服务器上禁止开启 ssh 的这种登录方式，毕竟用户名加密码的方式很容易被爆力破解。如果大家理解其中的厉害关系，可以检查修改 /etc/ssh/sshd_config（sshd 的配置文件）中 PasswordAuthentication 这一项配置为 yes（一般默认是 yes ）。修改完配置重启 sshd 服务就可以使用用户名和密码登录了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -l 指定用户名为 wangao</span></span><br><span class="line"><span class="comment"># -p 指定端口为 2222，默认为 22</span></span><br><span class="line"><span class="comment"># 输入下面的命令后根据提示输入密码就可以登录到对应的服务器了 </span></span><br><span class="line">ssh -l wangao -p 2222 192.168.56.101</span><br></pre></td></tr></table></figure>
+<h3 id="ssh-免密登录"><a href="#ssh-免密登录" class="headerlink" title="ssh 免密登录"></a>ssh 免密登录</h3><p>所谓免密登录，也就是说不需要人工再输入用户名和密码了，但这并不意味着没有了鉴权的动作，服务器毕竟是自己的，不能随便允许别人登录到上面去搞破坏。ssh 免密登录通过证书进行鉴权。</p>
+<p>这里的证书分为公钥与私钥，我们可以简单地理解为：公钥 = 锁；私钥 = 钥匙。</p>
+<p>流程基本是这样的：如果我们想要从 A 免密登录到 B，就需要把公钥（锁）放到 B 的特定位置，而 A 拥有私钥（钥匙）的完整副本。当 A 拿着私钥去访问 B 的时候，B 发现自己身上有一把锁（B 可能有很多公钥）可以被 A 的私钥打开，于是给 A 放行，A 就成功登录到 B 了。</p>
+<blockquote>
+<p>如何得到证书（公钥与私钥）<br>上面提到的证书可以通过两种方式获取得到。<br>第一种是向服务器管理员索取，一般索取得到的是私钥，这样就可以免密登录到任何存放了公钥的服务器了。<br>第二种是自己生成证书（比如使用 ssh-keygen），然后把公钥放到对应的服务器的特定位置，就可以免密登录到对应的服务器了。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 通过 ssh-keygen 可以生成需要的证书 </span></span><br><span class="line"><span class="comment"># 根据提示一路按 RETURN(ENTER) 即可 </span></span><br><span class="line"><span class="comment"># 默认情况下会生成 id_rsa 和 id_rsa.pub </span></span><br><span class="line"><span class="comment"># id_rsa 为私钥，id_rsa.pub 为公钥 </span></span><br><span class="line">ssh-keygen</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>公钥放置位置</p>
+</blockquote>
+<p>linux 系统允许多用户登录同一台服务器，一般情况下 /home 目录会有非常多的用户目录。可以把公钥放置在任何一个用户目录的 $HOME/.ssh/authorized_keys 文件中，比如 cat id_rsa.pub &gt;&gt; /home/wangao/.ssh/authorized_keys ，这样就可以使用私钥以 wangao 的名义登录对应的服务器了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -i 指定私钥，默认条件下使用 ~/.ssh/id_rsa</span></span><br><span class="line"><span class="comment"># -l 指定用户名 </span></span><br><span class="line"><span class="comment"># -p 指定端口，默认为 22</span></span><br><span class="line">ssh -i ~/.ssh/id_rsa -p 2222 -l wangao 192.168.56.101</span><br><span class="line"></span><br><span class="line"><span class="comment"># 上面的命令等同于 </span></span><br><span class="line">ssh -p 2222 wangao@192.168.56.101</span><br></pre></td></tr></table></figure>
+<h2 id="ssh-免密码登录一般流程"><a href="#ssh-免密码登录一般流程" class="headerlink" title="ssh 免密码登录一般流程"></a>ssh 免密码登录一般流程</h2><h3 id="生成-PublicKey"><a href="#生成-PublicKey" class="headerlink" title="生成 PublicKey"></a>生成 PublicKey</h3><blockquote>
 <p>建议设置并牢记 passphrase 密码短语，以 Linux 生成为例</p>
 </blockquote>
 <p>Linux：ssh-keygen -t rsa<br>[私钥 (id_rsa) 与公钥 (id_rsa.pub)]<br>Windows：SecurCRT/Xshell/PuTTY<br>[SSH-2 RSA 2048]</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># 生成 SSH 密钥对 </span></span><br><span class="line">ssh-keygen -t rsa</span><br><span class="line"></span><br><span class="line">Generating public/private rsa key pair.</span><br><span class="line"><span class="comment"># 建议直接回车使用默认路径 </span></span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/root/.ssh/id_rsa): </span><br><span class="line"><span class="comment"># 输入密码短语（留空则直接回车）</span></span><br><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase): </span><br><span class="line"><span class="comment"># 重复密码短语 </span></span><br><span class="line">Enter same passphrase again: </span><br><span class="line">Your identification has been saved <span class="keyword">in</span> /root/.ssh/id_rsa.</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> /root/.ssh/id_rsa.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">aa:8b:61:13:38:ad:b5:49:ca:51:45:b9:77:e1:97:e1 root@localhost.localdomain</span><br><span class="line">The key<span class="string">'s randomart image is:</span></span><br><span class="line"><span class="string">+--[ RSA 2048]----+</span></span><br><span class="line"><span class="string">|    .o.          |</span></span><br><span class="line"><span class="string">|    ..   . .     |</span></span><br><span class="line"><span class="string">|   .  . . o o    |</span></span><br><span class="line"><span class="string">| o.  . . o E     |</span></span><br><span class="line"><span class="string">|o.=   . S .      |</span></span><br><span class="line"><span class="string">|.*.+   .         |</span></span><br><span class="line"><span class="string">|o.*   .          |</span></span><br><span class="line"><span class="string">| . + .           |</span></span><br><span class="line"><span class="string">|  . o.           |</span></span><br><span class="line"><span class="string">+-----------------+</span></span><br></pre></td></tr></table></figure>
-<h2 id="复制密钥对"><a href="#复制密钥对" class="headerlink" title="复制密钥对"></a>复制密钥对</h2><blockquote>
+<h3 id="复制密钥对"><a href="#复制密钥对" class="headerlink" title="复制密钥对"></a>复制密钥对</h3><blockquote>
 <p>也可以手动在客户端建立目录和 authorized_keys，注意修改权限</p>
 </blockquote>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># 复制公钥到无密码登录的服务器上, 22 端口改变可以使用下面的命令 </span></span><br><span class="line"><span class="comment">#ssh-copy-id -i ~/.ssh/id_rsa.pub "-p 10022 user@server"</span></span><br><span class="line">ssh-copy-id -i ~/.ssh/id_rsa.pub root@192.168.15.241</span><br></pre></td></tr></table></figure>
-<h2 id="修改-SSH-配置文件"><a href="#修改-SSH-配置文件" class="headerlink" title="修改 SSH 配置文件"></a>修改 SSH 配置文件</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编辑 sshd_config 文件 </span></span><br><span class="line">vi /etc/ssh/sshd_config</span><br><span class="line"></span><br><span class="line"><span class="comment"># 禁用密码验证 </span></span><br><span class="line">PasswordAuthentication no</span><br><span class="line"><span class="comment"># 启用密钥验证 </span></span><br><span class="line">RSAAuthentication yes</span><br><span class="line">PubkeyAuthentication yes</span><br><span class="line"><span class="comment"># 指定公钥数据库文件 </span></span><br><span class="line">AuthorsizedKeysFile .ssh/authorized_keys</span><br><span class="line"></span><br><span class="line">sed -i <span class="string">"s/^PasswordAuthentication.*/PasswordAuthentication no/g"</span> /etc/ssh/sshd_config</span><br><span class="line">sed -i <span class="string">"s/^#RSAAuthentication.*/RSAAuthentication yes/g"</span> /etc/ssh/sshd_config</span><br><span class="line">sed -i <span class="string">"s/^#PubkeyAuthentication.*/PubkeyAuthentication yes/g"</span> /etc/ssh/sshd_config</span><br><span class="line">sed -i <span class="string">"s/^#AuthorizedKeysFile.*/AuthorizedKeysFile .ssh\/authorized_keys/g"</span> /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
+<h3 id="修改-SSH-配置文件"><a href="#修改-SSH-配置文件" class="headerlink" title="修改 SSH 配置文件"></a>修改 SSH 配置文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编辑 sshd_config 文件 </span></span><br><span class="line">vi /etc/ssh/sshd_config</span><br><span class="line"></span><br><span class="line"><span class="comment"># 禁用密码验证 </span></span><br><span class="line">PasswordAuthentication no</span><br><span class="line"><span class="comment"># 启用密钥验证 </span></span><br><span class="line">RSAAuthentication yes</span><br><span class="line">PubkeyAuthentication yes</span><br><span class="line"><span class="comment"># 指定公钥数据库文件 </span></span><br><span class="line">AuthorsizedKeysFile .ssh/authorized_keys</span><br><span class="line"></span><br><span class="line">sed -i <span class="string">"s/^PasswordAuthentication.*/PasswordAuthentication no/g"</span> /etc/ssh/sshd_config</span><br><span class="line">sed -i <span class="string">"s/^#RSAAuthentication.*/RSAAuthentication yes/g"</span> /etc/ssh/sshd_config</span><br><span class="line">sed -i <span class="string">"s/^#PubkeyAuthentication.*/PubkeyAuthentication yes/g"</span> /etc/ssh/sshd_config</span><br><span class="line">sed -i <span class="string">"s/^#AuthorizedKeysFile.*/AuthorizedKeysFile .ssh\/authorized_keys/g"</span> /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>重启 SSH 服务前建议多保留一个会话以防不测</p>
 </blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#RHEL/CentOS 系统 </span></span><br><span class="line">service sshd restart</span><br><span class="line"><span class="comment">#ubuntu 系统 </span></span><br><span class="line">service ssh restart</span><br><span class="line"><span class="comment">#debian 系统 </span></span><br><span class="line">/etc/init.d/ssh restart</span><br></pre></td></tr></table></figure>
-<h2 id="手动增加管理用户"><a href="#手动增加管理用户" class="headerlink" title="手动增加管理用户"></a>手动增加管理用户</h2><blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># RHEL/CentOS 系统 </span></span><br><span class="line">service sshd restart</span><br><span class="line"><span class="comment"># Ubuntu 系统 </span></span><br><span class="line">service ssh restart</span><br><span class="line"><span class="comment"># Debian 系统 </span></span><br><span class="line">/etc/init.d/ssh restart</span><br></pre></td></tr></table></figure>
+<h3 id="手动增加管理用户"><a href="#手动增加管理用户" class="headerlink" title="手动增加管理用户"></a>手动增加管理用户</h3><blockquote>
 <p>可以在 == 后加入用户注释标识方便管理</p>
 </blockquote>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">'ssh-rsa XXXX'</span> &gt;&gt;/root/.ssh/authorized_keys</span><br><span class="line"></span><br><span class="line"><span class="comment"># 复查 </span></span><br><span class="line">cat /root/.ssh/authorized_keys</span><br></pre></td></tr></table></figure>
+<h2 id="使用-Ansible-添加-ssh-信任关系"><a href="#使用-Ansible-添加-ssh-信任关系" class="headerlink" title="使用 Ansible 添加 ssh 信任关系"></a>使用 Ansible 添加 ssh 信任关系</h2><blockquote>
+<p>使用 ansible authorized_key module 即可</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">- hosts: all</span><br><span class="line">  remote_user: root</span><br><span class="line">  gather_facts: <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">  tasks:</span><br><span class="line">    - name: authadd root</span><br><span class="line">      authorized_key:</span><br><span class="line">        user: root</span><br><span class="line">        state: present</span><br><span class="line">        key: <span class="string">"&#123;&#123; lookup('file','/root/.ssh/id_rsa.pub') &#125;&#125;"</span></span><br><span class="line">        path: /root/.ssh/authorized_keys</span><br><span class="line">        manage_dir: no</span><br><span class="line">      tags:</span><br><span class="line">        - root</span><br></pre></td></tr></table></figure>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -172,18 +194,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/post/sersync/" title="sersync 基于 rsync+inotify 实现数据实时同步">
+ <a href="/post/ssh-config/" title="使用 ssh config 作为 ssh 代理轻松管理内网服务器">
   <strong>上一篇：</strong><br/>
   <span>
-  sersync 基于 rsync+inotify 实现数据实时同步</span>
+  使用 ssh config 作为 ssh 代理轻松管理内网服务器</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/post/sysctl/"  title="sysctl.conf 学习和调优">
+<a href="/post/macos/"  title="macOS Mojave 升级后开机卡在进度条和唤醒时黑屏的解决方法">
  <strong>下一篇：</strong><br/> 
- <span>sysctl.conf 学习和调优
+ <span>macOS Mojave 升级后开机卡在进度条和唤醒时黑屏的解决方法
 </span>
 </a>
 </div>
@@ -206,7 +228,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#生成-PublicKey"><span class="toc-number">3.</span> <span class="toc-text">生成 PublicKey</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#复制密钥对"><span class="toc-number">4.</span> <span class="toc-text">复制密钥对</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#修改-SSH-配置文件"><span class="toc-number">5.</span> <span class="toc-text">修改 SSH 配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#手动增加管理用户"><span class="toc-number">6.</span> <span class="toc-text">手动增加管理用户</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh-登录服务器的两种方式"><span class="toc-number">3.</span> <span class="toc-text">ssh 登录服务器的两种方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#用户名密码登录"><span class="toc-number">3.1.</span> <span class="toc-text">用户名密码登录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ssh-免密登录"><span class="toc-number">3.2.</span> <span class="toc-text">ssh 免密登录</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh-免密码登录一般流程"><span class="toc-number">4.</span> <span class="toc-text">ssh 免密码登录一般流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#生成-PublicKey"><span class="toc-number">4.1.</span> <span class="toc-text">生成 PublicKey</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#复制密钥对"><span class="toc-number">4.2.</span> <span class="toc-text">复制密钥对</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改-SSH-配置文件"><span class="toc-number">4.3.</span> <span class="toc-text">修改 SSH 配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#手动增加管理用户"><span class="toc-number">4.4.</span> <span class="toc-text">手动增加管理用户</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-Ansible-添加-ssh-信任关系"><span class="toc-number">5.</span> <span class="toc-text">使用 Ansible 添加 ssh 信任关系</span></a></li></ol>
  
   </div>
 
@@ -233,7 +255,7 @@
 		  
 		
 		  
-			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>106</sup></a></li>
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>107</sup></a></li>
 		  
 		
 		  

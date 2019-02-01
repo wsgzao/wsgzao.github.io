@@ -9,24 +9,24 @@
         window.location.protocol = "https";
   </script> 
   
-    <title>Django 1.11 和 Django 2.0 学习笔记 | HelloDog</title>
+    <title>使用 ssh config 作为 ssh 代理轻松管理内网服务器 | HelloDog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wsgzao">
     
 
     
-    <meta name="description" content="Django 1.x 和 Django2.x 学习笔记">
+    <meta name="description" content="使用ssh config作为ssh代理轻松管理内网服务器">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Django 1.11 和 Django 2.0 学习笔记">
-<meta property="og:url" content="https://wsgzao.github.io/post/django/index.html">
+<meta property="og:title" content="使用 ssh config 作为 ssh 代理轻松管理内网服务器">
+<meta property="og:url" content="https://wsgzao.github.io/post/ssh-config/index.html">
 <meta property="og:site_name" content="HelloDog">
-<meta property="og:description" content="Django 1.x 和 Django2.x 学习笔记">
+<meta property="og:description" content="使用ssh config作为ssh代理轻松管理内网服务器">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-05-16T07:11:45.000Z">
+<meta property="og:updated_time" content="2019-02-01T07:41:28.294Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Django 1.11 和 Django 2.0 学习笔记">
-<meta name="twitter:description" content="Django 1.x 和 Django2.x 学习笔记">
+<meta name="twitter:title" content="使用 ssh config 作为 ssh 代理轻松管理内网服务器">
+<meta name="twitter:description" content="使用ssh config作为ssh代理轻松管理内网服务器">
 
     
     <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
@@ -87,14 +87,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/post/django/" title="Django 1.11 和 Django 2.0 学习笔记" itemprop="url">Django 1.11 和 Django 2.0 学习笔记</a>
+      <a href="/post/ssh-config/" title="使用 ssh config 作为 ssh 代理轻松管理内网服务器" itemprop="url">使用 ssh config 作为 ssh 代理轻松管理内网服务器</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
 		
   <p class="article-time">
-    <time datetime="2018-05-10T06:59:49.000Z" itemprop="datePublished"> 发表于 2018-05-10</time>
+    <time datetime="2019-01-31T03:18:44.000Z" itemprop="datePublished"> 发表于 2019-01-31</time>
     
   </p>
 </header>
@@ -103,45 +103,46 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Django-简介"><span class="toc-number">3.</span> <span class="toc-text">Django 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Django-1-11"><span class="toc-number">4.</span> <span class="toc-text">Django 1.11</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Django-2-0"><span class="toc-number">5.</span> <span class="toc-text">Django 2.0</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh-config-的配置文件来源"><span class="toc-number">3.</span> <span class="toc-text">ssh_config 的配置文件来源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh-config-配置文件实例"><span class="toc-number">4.</span> <span class="toc-text">ssh_config 配置文件实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol>
 		
 		</div>
 		
-		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Django 1.11<br>Django 2.0</p>
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>企业内部大部分服务器都只有内网，一般可以使用 NAT 方式正向代理访问公网资源。对于 Linux 来说一般通过 ssh 登录服务器，在没有公网 IP 的情况下可以修改 ssh config 配置文件，利用一台可以接入内网并具有公网 IP 的服务器作为代理或者称为 Tunnel 跳板机来管理，可以灵活定制访问规则并优化 ssh 参数让管理更加轻松。</p>
 <blockquote>
-<p>Django 1.x 和 Django2.x 学习笔记</p>
+<p>使用 ssh config 作为 ssh 代理轻松管理内网服务器</p>
 </blockquote>
-<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018 年 05 月 04 日 - 初稿</p>
-<p>阅读原文 - <a href="https://wsgzao.github.io/post/django/">https://wsgzao.github.io/post/django/</a></p>
-<p><strong> 扩展阅读 </strong></p>
-<p>Django - <a href="https://www.djangoproject.com/" target="_blank" rel="noopener">https://www.djangoproject.com/</a></p>
 <hr>
-<h2 id="Django-简介"><a href="#Django-简介" class="headerlink" title="Django 简介"></a>Django 简介</h2><p>Django 文档 - <a href="https://docs.djangoproject.com/zh-hans/2.0/" target="_blank" rel="noopener">https://docs.djangoproject.com/zh-hans/2.0/</a></p>
-<p>使用 Anaconda 实现 Python2 和 Python3 共存及相互转换 - <a href="https://wsgzao.github.io/post/anaconda/">https://wsgzao.github.io/post/anaconda/</a></p>
-<h2 id="Django-1-11"><a href="#Django-1-11" class="headerlink" title="Django 1.11"></a>Django 1.11</h2><blockquote>
-<p>以下操作为 anaconda python3.6 环境下进入 Anaconda Prompt 安装 django 1.11 的实践过程</p>
-</blockquote>
-<p><a href="https://docs.djangoproject.com/en/1.11/intro/tutorial01/" target="_blank" rel="noopener">https://docs.djangoproject.com/en/1.11/intro/tutorial01/</a></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在 python3.6 环境下进入 Anaconda Prompt 创建 django1.x 专用虚拟环境 </span></span><br><span class="line">conda create -n django1.x</span><br><span class="line"><span class="comment"># 激活专用虚拟环境 </span></span><br><span class="line">conda activate django1.x</span><br><span class="line"><span class="comment"># 查看 conda 当前 django 可用版本 </span></span><br><span class="line">conda search django</span><br><span class="line">conda install django==1.11.10</span><br><span class="line"><span class="comment"># 切换到虚拟环境家目录 </span></span><br><span class="line"><span class="built_in">cd</span> C:\Users\wsgzao\AppData\Local\conda\conda\envs\django1.x</span><br><span class="line"><span class="comment"># 创建项目 </span></span><br><span class="line">django-admin startproject mysite</span><br><span class="line"><span class="comment"># 启动 Django 中的开发服务器 </span></span><br><span class="line"><span class="built_in">cd</span> mysite</span><br><span class="line">python manage.py runserver</span><br><span class="line"><span class="comment"># 创建 app</span></span><br><span class="line">python manage.py startapp myapp</span><br><span class="line"><span class="comment"># 帮助文档 </span></span><br><span class="line">python manage.py -h</span><br><span class="line"><span class="comment"># Django 命令 </span></span><br><span class="line">python manage.py &lt;<span class="built_in">command</span>&gt; [options]</span><br></pre></td></tr></table></figure>
-<h2 id="Django-2-0"><a href="#Django-2-0" class="headerlink" title="Django 2.0"></a>Django 2.0</h2><blockquote>
-<p>以下操作为 anaconda python3.6 环境下进入 Anaconda Prompt 安装 django 2.0 的实践过程</p>
-</blockquote>
-<p><a href="https://docs.djangoproject.com/zh-hans/2.0/intro/tutorial01/" target="_blank" rel="noopener">https://docs.djangoproject.com/zh-hans/2.0/intro/tutorial01/</a></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在 python3.6 环境下进入 Anaconda Prompt 创建 django2.x 专用虚拟环境 </span></span><br><span class="line">conda create -n django2.x</span><br><span class="line"><span class="comment"># 激活专用虚拟环境 </span></span><br><span class="line">conda activate djangox.x</span><br><span class="line"><span class="comment"># 查看 conda 当前 django 可用版本 </span></span><br><span class="line">conda search django</span><br><span class="line">conda install django</span><br><span class="line"><span class="comment"># 切换到虚拟环境家目录 </span></span><br><span class="line"><span class="built_in">cd</span> C:\Users\wsgzao\AppData\Local\conda\conda\envs\django2.x</span><br><span class="line"><span class="comment"># 创建项目 </span></span><br><span class="line">django-admin startproject mysite</span><br><span class="line"><span class="comment"># 启动 Django 中的开发服务器，万不要将这个服务器用于和生产环境相关的任何地方，这个服务器只是为了开发而设计的 </span></span><br><span class="line"><span class="built_in">cd</span> mysite</span><br><span class="line">python manage.py runserver</span><br><span class="line"><span class="comment"># 默认情况下，runserver 命令会将服务器设置为监听本机内部 IP 的 8000 端口，如果你想更换服务器的监听端口，请使用命令行参数 </span></span><br><span class="line">python manage.py runserver 8080</span><br><span class="line"><span class="comment"># 0 是 0.0.0.0 的简写 </span></span><br><span class="line">python manage.py runserver 0:8000</span><br><span class="line"><span class="comment"># 帮助文档 </span></span><br><span class="line">python manage.py -h</span><br><span class="line"><span class="comment"># Django 命令 </span></span><br><span class="line">python manage.py &lt;<span class="built_in">command</span>&gt; [options]</span><br><span class="line"></span><br><span class="line"><span class="comment"># mysite 目录结构 </span></span><br><span class="line">mysite/</span><br><span class="line">    manage.py</span><br><span class="line">    mysite/</span><br><span class="line">        __init__.py</span><br><span class="line">        settings.py</span><br><span class="line">        urls.py</span><br><span class="line">        wsgi.py</span><br></pre></td></tr></table></figure>
-<p>这些目录和文件的用处是：</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019 年 01 月 31 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/ssh-config/">https://wsgzao.github.io/post/ssh-config/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<p>SSH CONFIG FILE -  <a href="https://www.ssh.com/ssh/config/" target="_blank" rel="noopener">https://www.ssh.com/ssh/config/</a></p>
+<hr>
+<h2 id="ssh-config-的配置文件来源"><a href="#ssh-config-的配置文件来源" class="headerlink" title="ssh_config 的配置文件来源"></a>ssh_config 的配置文件来源</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">man ssh_config</span><br><span class="line"></span><br><span class="line">NAME</span><br><span class="line">     ssh_config -- OpenSSH SSH client configuration files</span><br><span class="line"></span><br><span class="line">DESCRIPTION</span><br><span class="line">     ssh(1) obtains configuration data from the following sources <span class="keyword">in</span> the following order:</span><br><span class="line"></span><br><span class="line">           1.   <span class="built_in">command</span>-line options</span><br><span class="line">           2.   user<span class="string">'s configuration file (~/.ssh/config)</span></span><br><span class="line"><span class="string">           3.   system-wide configuration file (/etc/ssh/ssh_config)</span></span><br></pre></td></tr></table></figure>
+<p>ssh 程序可以从三个途径获取配置参数：</p>
+<ol>
+<li>命令行选型，比如 -F configfile</li>
+<li>用户配置文件，放置在 ~/.ssh/config</li>
+<li>系统配置文件，放置在 /etc/ssh/ssh_config（区别于 /etc/ssh/sshd_config）</li>
+</ol>
+<p>上面三个途径，前面的途径传入的参数可以覆盖后面的途径传入的参数（与 linux 里的大部分应用类似）。因为 / etc/ssh/ssh_config 会影响 ssh 全局的配置，因此如果想对多主机进行管理（不影响别人的情况下），可以考虑修改自己家目录下的~/.ssh/config 文件（~ 字符表示当前登录用户的家目录）。</p>
+<h2 id="ssh-config-配置文件实例"><a href="#ssh-config-配置文件实例" class="headerlink" title="ssh_config 配置文件实例"></a>ssh_config 配置文件实例</h2><p>首先看一个配置文件的 demo</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># cat ~/.ssh/config</span></span><br><span class="line"></span><br><span class="line">StrictHostKeyChecking no</span><br><span class="line">CheckHostIP no</span><br><span class="line"></span><br><span class="line">Host 10.65.32.*</span><br><span class="line">  HostName %h</span><br><span class="line">  ProxyCommand ssh bastion_GOP_SG_NC_MAIN -W %h:%p</span><br><span class="line">Host bastion_GOP_SG_NC_MAIN</span><br><span class="line">  HostName 8.8.8.8</span><br><span class="line">  port 22</span><br><span class="line">  User wangao</span><br><span class="line"></span><br><span class="line">Host 10.65.200.*</span><br><span class="line">  HostName %h</span><br><span class="line">  ProxyCommand ssh bastion_GOP_SG_MH_MAIN -W %h:%p</span><br><span class="line">Host bastion_GOP_SG_MH_MAIN</span><br><span class="line">  HostName 8.8.8.8</span><br><span class="line">  port 22</span><br><span class="line">  User wangao</span><br></pre></td></tr></table></figure>
+<p>CheckHostIP no<br>Directs ssh to additionally check the host IP address in the known_hosts file.</p>
+<p>StrictHostKeyChecking no<br>Specifies if ssh should never automatically add host keys to the ~/.ssh/known_hosts file, and refuses to connect to hosts whose host key has changed.</p>
+<p>Host 字段<br>Host 字段配置了登录别名，比如 ssh 10.65.32.1 表示使用别名为 10.65.32.1 的配置登录远端的服务器。这里需要注意的是，Host 是支持通配符的， * 代表 0～n 个非空白字符，? 代表一个非空白字符，! 表示例外通配</p>
+<p>HostName 字段<br>指定远程主机名，可以直接使用 IP 地址。如果这个字段中包含 ‘%h’ ，则实际使用时会被命令行中的主机名替换。比如 demo 中如果设置 HostName %h，在运行 ssh 10.65.32.1 后，会把主机名解析为 10.65.32.1</p>
+<p>User 字段<br>指定登录用户名</p>
+<p>IdentityFile 字段<br>指定密钥认证使用的私钥文件路径。默认为 ~/.ssh/id_rsa。这个字段可以指定多个密钥文件（以 , 分开），在连接的过程中会依次尝试这些密钥文件。和 HostName 字段一样，值也可以直接指定参数代替：</p>
+<p>Port 字段<br>指定远程主机端口号，默认为 22 。</p>
 <ul>
-<li>最外层的: file: mysite/ 根目录只是你项目的容器， Django 不关心它的名字，你可以将它重命名为任何你喜欢的名字。</li>
-<li>manage.py: 一个让你用各种方式管理 Django 项目的命令行工具。你可以阅读 django-admin and manage.py 获取所有 manage.py 的细节。</li>
-<li>里面一层的 mysite/ 目录包含你的项目，它是一个纯 Python 包。它的名字就是当你引用它内部任何东西时需要用到的 Python 包名。 (比如 mysite.urls).</li>
-<li>mysite/<strong>init</strong>.py：一个空文件，告诉 Python 这个目录应该被认为是一个 Python 包。如果你是 Python 初学者，阅读官方文档中的 更多关于包的知识。</li>
-<li>mysite/settings.py：Django 项目的配置文件。如果你想知道这个文件是如何工作的，请查看 Django settings 了解细节。</li>
-<li>mysite/urls.py：Django 项目的 URL 声明，就像你网站的 “目录”。阅读 URL 调度器 文档来获取更多关于 URL 的内容。</li>
-<li>mysite/wsgi.py：作为你的项目的运行在 WSGI 兼容的 Web 服务器上的入口。阅读 如何使用 WSGI 进行部署 了解更多细节。</li>
+<li>%h，远程主机名</li>
+<li>%p，远程端口</li>
 </ul>
-<blockquote>
-<p>会自动重新加载的服务器 runserver</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><blockquote>
+<p>如果你还不了解 ssh 或者对 ssh 端口转发感兴趣，可以参考以下内容</p>
 </blockquote>
-<p>用于开发的服务器在需要的情况下会对每一次的访问请求重新载入一遍 Python 代码。所以你不需要为了让修改的代码生效而频繁的重新启动服务器。然而，一些动作，比如添加新文件，将不会触发自动重新加载，这时你得自己手动重启服务器。</p>
+<p>SSH 使用密钥登录并禁止口令登录实践 - <a href="https://wsgzao.github.io/post/ssh/">https://wsgzao.github.io/post/ssh/</a></p>
+<p>玩转 SSH 端口转发 - <a href="https://blog.fundebug.com/2017/04/24/ssh-port-forwarding/" target="_blank" rel="noopener">https://blog.fundebug.com/2017/04/24/ssh-port-forwarding/</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -159,7 +160,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://wsgzao.github.io/post/django/" data-title="Django 1.11 和 Django 2.0 学习笔记 | HelloDog" data-tsina="" class="share clearfix">
+	  <div data-url="https://wsgzao.github.io/post/ssh-config/" data-title="使用 ssh config 作为 ssh 代理轻松管理内网服务器 | HelloDog" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -172,19 +173,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/post/ansible/" title="Ansible 学习指北">
-  <strong>上一篇：</strong><br/>
-  <span>
-  Ansible 学习指北</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/post/hpqlocfg/"  title="HPQLOCFG 批量管理 HP iLO 实践">
+<a href="/post/ssh/"  title="SSH 使用密钥登录并禁止口令登录实践">
  <strong>下一篇：</strong><br/> 
- <span>HPQLOCFG 批量管理 HP iLO 实践
+ <span>SSH 使用密钥登录并禁止口令登录实践
 </span>
 </a>
 </div>
@@ -207,7 +200,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Django-简介"><span class="toc-number">3.</span> <span class="toc-text">Django 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Django-1-11"><span class="toc-number">4.</span> <span class="toc-text">Django 1.11</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Django-2-0"><span class="toc-number">5.</span> <span class="toc-text">Django 2.0</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh-config-的配置文件来源"><span class="toc-number">3.</span> <span class="toc-text">ssh_config 的配置文件来源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh-config-配置文件实例"><span class="toc-number">4.</span> <span class="toc-text">ssh_config 配置文件实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol>
  
   </div>
 
