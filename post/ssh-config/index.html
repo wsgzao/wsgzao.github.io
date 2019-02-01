@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="使用ssh config作为ssh代理轻松管理内网服务器">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-02-01T07:47:10.682Z">
+<meta property="og:updated_time" content="2019-02-01T08:06:37.742Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用 ssh config 作为 ssh 代理轻松管理内网服务器">
 <meta name="twitter:description" content="使用ssh config作为ssh代理轻松管理内网服务器">
@@ -125,12 +125,12 @@
 <li>系统配置文件，放置在 /etc/ssh/ssh_config（区别于 /etc/ssh/sshd_config）</li>
 </ol>
 <p>上面三个途径，前面的途径传入的参数可以覆盖后面的途径传入的参数（与 linux 里的大部分应用类似）。因为 / etc/ssh/ssh_config 会影响 ssh 全局的配置，因此如果想对多主机进行管理（不影响别人的情况下），可以考虑修改自己家目录下的~/.ssh/config 文件（~ 字符表示当前登录用户的家目录）。</p>
-<h2 id="ssh-config-配置文件实例"><a href="#ssh-config-配置文件实例" class="headerlink" title="ssh_config 配置文件实例"></a>ssh_config 配置文件实例</h2><p>首先看一个配置文件的 demo，假设 8.8.8.8 是你可以直接登录的 Tunnel 公网跳板机，10.65.32.0 是需要管理的内网地址段</p>
+<h2 id="ssh-config-配置文件实例"><a href="#ssh-config-配置文件实例" class="headerlink" title="ssh_config 配置文件实例"></a>ssh_config 配置文件实例</h2><p>首先看一个配置文件的 demo，假设 8.8.8.8 是你可以直接登录的 Tunnel 公网跳板机，10.65.32.0 是需要管理的内网地址段，前提是 8.8.8.8 和内网服务器的防火墙策略均已配置正确，这里就不再赘述。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># cat ~/.ssh/config</span></span><br><span class="line"></span><br><span class="line">StrictHostKeyChecking no</span><br><span class="line">CheckHostIP no</span><br><span class="line"></span><br><span class="line">Host 10.65.32.*</span><br><span class="line">  HostName %h</span><br><span class="line">  ProxyCommand ssh bastion_GOP_SG_NC_MAIN -W %h:%p</span><br><span class="line">Host bastion_GOP_SG_NC_MAIN</span><br><span class="line">  HostName 8.8.8.8</span><br><span class="line">  port 22</span><br><span class="line">  User wangao</span><br><span class="line"></span><br><span class="line">Host 10.65.200.*</span><br><span class="line">  HostName %h</span><br><span class="line">  ProxyCommand ssh bastion_GOP_SG_MH_MAIN -W %h:%p</span><br><span class="line">Host bastion_GOP_SG_MH_MAIN</span><br><span class="line">  HostName 9.9.9.9</span><br><span class="line">  port 22</span><br><span class="line">  User wangao</span><br></pre></td></tr></table></figure>
-<p>CheckHostIP no<br>Directs ssh to additionally check the host IP address in the known_hosts file.</p>
-<p>StrictHostKeyChecking no<br>Specifies if ssh should never automatically add host keys to the ~/.ssh/known_hosts file, and refuses to connect to hosts whose host key has changed.</p>
-<p>Host 字段<br>Host 字段配置了登录别名，比如 ssh 10.65.32.1 表示使用别名为 10.65.32.1 的配置登录远端的服务器。这里需要注意的是，Host 是支持通配符的， * 代表 0～n 个非空白字符，? 代表一个非空白字符，! 表示例外通配</p>
-<p>HostName 字段<br>指定远程主机名，可以直接使用 IP 地址。如果这个字段中包含 ‘%h’ ，则实际使用时会被命令行中的主机名替换。比如 demo 中如果设置 HostName %h，在运行 ssh 10.65.32.1 后，会把主机名解析为 10.65.32.1</p>
+<p>CheckHostIP no，禁用 known_hosts 检查<br>Directs ssh to additionally check the host IP address in the known_hosts file.</p>
+<p>StrictHostKeyChecking no，跳过 known_hosts 写入<br>Specifies if ssh should never automatically add host keys to the ~/.ssh/known_hosts file, and refuses to connect to hosts whose host key has changed.</p>
+<p>Host 字段<br>Host 字段配置了登录别名，这里需要注意的是，Host 是支持通配符的， * 代表 0～n 个非空白字符，? 代表一个非空白字符，! 表示例外通配</p>
+<p>HostName 字段<br>指定远程主机名，可以直接使用 IP 地址。如果这个字段中包含 ‘%h’ ，则实际使用时会被命令行中的主机名替换</p>
 <p>User 字段<br>指定登录用户名</p>
 <p>IdentityFile 字段<br>指定密钥认证使用的私钥文件路径。默认为 ~/.ssh/id_rsa。这个字段可以指定多个密钥文件（以 , 分开），在连接的过程中会依次尝试这些密钥文件。和 HostName 字段一样，值也可以直接指定参数代替：</p>
 <p>Port 字段<br>指定远程主机端口号，默认为 22 。</p>
