@@ -9,24 +9,24 @@
         window.location.protocol = "https";
   </script> 
   
-    <title>rsync 安装使用实践 | HelloDog</title>
+    <title>rsync 安装配置实践 | HelloDog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wsgzao">
     
 
     
-    <meta name="description" content="rsync安装使用实践">
+    <meta name="description" content="rsync安装配置实践">
 <meta property="og:type" content="article">
-<meta property="og:title" content="rsync 安装使用实践">
+<meta property="og:title" content="rsync 安装配置实践">
 <meta property="og:url" content="https://wsgzao.github.io/post/rsync/index.html">
 <meta property="og:site_name" content="HelloDog">
-<meta property="og:description" content="rsync安装使用实践">
+<meta property="og:description" content="rsync安装配置实践">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-03-01T10:54:07.486Z">
+<meta property="og:updated_time" content="2019-03-01T11:07:54.022Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="rsync 安装使用实践">
-<meta name="twitter:description" content="rsync安装使用实践">
+<meta name="twitter:title" content="rsync 安装配置实践">
+<meta name="twitter:description" content="rsync安装配置实践">
 
     
     <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
@@ -87,7 +87,7 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/post/rsync/" title="rsync 安装使用实践" itemprop="url">rsync 安装使用实践</a>
+      <a href="/post/rsync/" title="rsync 安装配置实践" itemprop="url">rsync 安装配置实践</a>
   </h1>
   <p class="article-author">By
        
@@ -103,13 +103,13 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-简介"><span class="toc-number">3.</span> <span class="toc-text">rsync 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-配置文件"><span class="toc-number">4.</span> <span class="toc-text">rsync 配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-常用参数"><span class="toc-number">5.</span> <span class="toc-text">rsync 常用参数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-同步方式"><span class="toc-number">6.</span> <span class="toc-text">rsync 同步方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#本地文件同步"><span class="toc-number">6.1.</span> <span class="toc-text">本地文件同步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#远程文件同步-–shell-方式"><span class="toc-number">6.2.</span> <span class="toc-text">远程文件同步 –shell 方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#远程文件同步-–daemon-方式"><span class="toc-number">6.3.</span> <span class="toc-text">远程文件同步 –daemon 方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-简化配置实践"><span class="toc-number">7.</span> <span class="toc-text">rsync 简化配置实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-有用的选项"><span class="toc-number">8.</span> <span class="toc-text">rsync 有用的选项</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-简介"><span class="toc-number">3.</span> <span class="toc-text">rsync 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-源配置文件示例"><span class="toc-number">4.</span> <span class="toc-text">rsync 源配置文件示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-常用参数"><span class="toc-number">5.</span> <span class="toc-text">rsync 常用参数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-同步方式"><span class="toc-number">6.</span> <span class="toc-text">rsync 同步方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#本地文件同步"><span class="toc-number">6.1.</span> <span class="toc-text">本地文件同步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#远程文件同步-–shell-方式"><span class="toc-number">6.2.</span> <span class="toc-text">远程文件同步 –shell 方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#远程文件同步-–daemon-方式"><span class="toc-number">6.3.</span> <span class="toc-text">远程文件同步 –daemon 方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-简化配置实践"><span class="toc-number">7.</span> <span class="toc-text">rsync 简化配置实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-有用的选项"><span class="toc-number">8.</span> <span class="toc-text">rsync 有用的选项</span></a></li></ol>
 		
 		</div>
 		
 		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Rsync 代表 “remote sync”，它是本地和远程主机文件同步工具。它只同步更改的文件，以此实现最小化传输数据。rsync 的使用场景非常丰富，相信大家会经常使用，这里做下简单的总结。</p>
 <blockquote>
-<p>rsync 安装使用实践</p>
+<p>rsync 安装配置实践</p>
 </blockquote>
 <h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019 年 03 月 01 日 - 初稿</p>
 <p>阅读原文 - <a href="https://wsgzao.github.io/post/rsync/">https://wsgzao.github.io/post/rsync/</a></p>
@@ -120,7 +120,7 @@
 <p>rsync 是类 unix 系统下的数据镜像备份工具，从软件的命名上就可以看出来了 ——remote sync。它的特性如下：</p>
 <p>1、可以镜像保存整个目录树和文件系统<br>2、可以很容易做到保持原来文件的权限、时间、软硬链接等等<br>3、无须特殊权限即可安装<br>4、优化的流程，文件传输效率高<br>5、可以使用 rsh、ssh 等方式来传输文件，当然也可以通过直接的 socket 连接<br>6、支持匿名传输<br>在使用 rsync 进行远程同步时，可以使用两种方式：远程 Shell 方式（用户验证由 ssh 负责）和 C/S 方式（即客户连接远程 rsync 服务器，用户验证由 rsync 服务器负责）。</p>
 <p>无论本地同步目录还是远程同步数据，首次运行时将会把全部文件拷贝一次，以后再运行时将只拷贝有变化的文件（对于新文件）或文件的变化部分（对于原有文件）。</p>
-<h2 id="rsync-配置文件"><a href="#rsync-配置文件" class="headerlink" title="rsync 配置文件"></a>rsync 配置文件</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编辑 rsync 配置文件</span></span><br><span class="line">vim /etc/rsync.conf</span><br><span class="line"></span><br><span class="line"><span class="comment"># /etc/rsyncd: configuration file for rsync daemon mode</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># See rsyncd.conf man page for more options.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># configuration example:</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># uid = nobody</span></span><br><span class="line"><span class="comment"># gid = nobody</span></span><br><span class="line"><span class="comment"># use chroot = yes</span></span><br><span class="line"><span class="comment"># max connections = 4</span></span><br><span class="line"><span class="comment"># pid file = /var/run/rsyncd.pid</span></span><br><span class="line"><span class="comment"># exclude = lost+found/</span></span><br><span class="line"><span class="comment"># transfer logging = yes</span></span><br><span class="line"><span class="comment"># timeout = 900</span></span><br><span class="line"><span class="comment"># ignore nonreadable = yes</span></span><br><span class="line"><span class="comment"># dont compress   = *.gz *.tgz *.zip *.z *.Z *.rpm *.deb *.bz2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># [ftp]</span></span><br><span class="line"><span class="comment">#        path = /home/ftp</span></span><br><span class="line"><span class="comment">#        comment = ftp export area</span></span><br></pre></td></tr></table></figure>
+<h2 id="rsync-源配置文件示例"><a href="#rsync-源配置文件示例" class="headerlink" title="rsync 源配置文件示例"></a>rsync 源配置文件示例</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编辑 rsync 配置文件</span></span><br><span class="line">vim /etc/rsync.conf</span><br><span class="line"></span><br><span class="line"><span class="comment"># /etc/rsyncd: configuration file for rsync daemon mode</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># See rsyncd.conf man page for more options.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># configuration example:</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># uid = nobody</span></span><br><span class="line"><span class="comment"># gid = nobody</span></span><br><span class="line"><span class="comment"># use chroot = yes</span></span><br><span class="line"><span class="comment"># max connections = 4</span></span><br><span class="line"><span class="comment"># pid file = /var/run/rsyncd.pid</span></span><br><span class="line"><span class="comment"># exclude = lost+found/</span></span><br><span class="line"><span class="comment"># transfer logging = yes</span></span><br><span class="line"><span class="comment"># timeout = 900</span></span><br><span class="line"><span class="comment"># ignore nonreadable = yes</span></span><br><span class="line"><span class="comment"># dont compress   = *.gz *.tgz *.zip *.z *.Z *.rpm *.deb *.bz2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># [ftp]</span></span><br><span class="line"><span class="comment">#        path = /home/ftp</span></span><br><span class="line"><span class="comment">#        comment = ftp export area</span></span><br></pre></td></tr></table></figure>
 <p>rsyncd.conf 官方文档请参考<br><a href="https://www.samba.org/ftp/rsync/rsyncd.conf.html" target="_blank" rel="noopener">https://www.samba.org/ftp/rsync/rsyncd.conf.html</a></p>
 <h2 id="rsync-常用参数"><a href="#rsync-常用参数" class="headerlink" title="rsync 常用参数"></a>rsync 常用参数</h2><p>注: 在指定复制源时，路径是否有最后的 “/” 有不同的含义，例如：</p>
 <p>/data  表示将整个 /data 目录复制到目标目录<br>/data/ 表示将 /data/ 目录中的所有内容复制到目标目录</p>
@@ -163,7 +163,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://wsgzao.github.io/post/rsync/" data-title="rsync 安装使用实践 | HelloDog" data-tsina="" class="share clearfix">
+	  <div data-url="https://wsgzao.github.io/post/rsync/" data-title="rsync 安装配置实践 | HelloDog" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -203,7 +203,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-简介"><span class="toc-number">3.</span> <span class="toc-text">rsync 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-配置文件"><span class="toc-number">4.</span> <span class="toc-text">rsync 配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-常用参数"><span class="toc-number">5.</span> <span class="toc-text">rsync 常用参数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-同步方式"><span class="toc-number">6.</span> <span class="toc-text">rsync 同步方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#本地文件同步"><span class="toc-number">6.1.</span> <span class="toc-text">本地文件同步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#远程文件同步-–shell-方式"><span class="toc-number">6.2.</span> <span class="toc-text">远程文件同步 –shell 方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#远程文件同步-–daemon-方式"><span class="toc-number">6.3.</span> <span class="toc-text">远程文件同步 –daemon 方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-简化配置实践"><span class="toc-number">7.</span> <span class="toc-text">rsync 简化配置实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-有用的选项"><span class="toc-number">8.</span> <span class="toc-text">rsync 有用的选项</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-简介"><span class="toc-number">3.</span> <span class="toc-text">rsync 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-源配置文件示例"><span class="toc-number">4.</span> <span class="toc-text">rsync 源配置文件示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-常用参数"><span class="toc-number">5.</span> <span class="toc-text">rsync 常用参数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-同步方式"><span class="toc-number">6.</span> <span class="toc-text">rsync 同步方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#本地文件同步"><span class="toc-number">6.1.</span> <span class="toc-text">本地文件同步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#远程文件同步-–shell-方式"><span class="toc-number">6.2.</span> <span class="toc-text">远程文件同步 –shell 方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#远程文件同步-–daemon-方式"><span class="toc-number">6.3.</span> <span class="toc-text">远程文件同步 –daemon 方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-简化配置实践"><span class="toc-number">7.</span> <span class="toc-text">rsync 简化配置实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-有用的选项"><span class="toc-number">8.</span> <span class="toc-text">rsync 有用的选项</span></a></li></ol>
  
   </div>
 
