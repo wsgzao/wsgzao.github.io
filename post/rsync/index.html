@@ -1,0 +1,557 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+  
+    <title>rsync 安装使用实践 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="rsync安装使用实践">
+<meta property="og:type" content="article">
+<meta property="og:title" content="rsync 安装使用实践">
+<meta property="og:url" content="https://wsgzao.github.io/post/rsync/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="rsync安装使用实践">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-03-01T10:54:07.486Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="rsync 安装使用实践">
+<meta name="twitter:description" content="rsync安装使用实践">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/rsync/" title="rsync 安装使用实践" itemprop="url">rsync 安装使用实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2019-03-02T06:59:49.000Z" itemprop="datePublished"> 发表于 2019-03-02</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-简介"><span class="toc-number">3.</span> <span class="toc-text">rsync 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-配置文件"><span class="toc-number">4.</span> <span class="toc-text">rsync 配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-常用参数"><span class="toc-number">5.</span> <span class="toc-text">rsync 常用参数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-同步方式"><span class="toc-number">6.</span> <span class="toc-text">rsync 同步方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#本地文件同步"><span class="toc-number">6.1.</span> <span class="toc-text">本地文件同步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#远程文件同步-–shell-方式"><span class="toc-number">6.2.</span> <span class="toc-text">远程文件同步 –shell 方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#远程文件同步-–daemon-方式"><span class="toc-number">6.3.</span> <span class="toc-text">远程文件同步 –daemon 方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-简化配置实践"><span class="toc-number">7.</span> <span class="toc-text">rsync 简化配置实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-有用的选项"><span class="toc-number">8.</span> <span class="toc-text">rsync 有用的选项</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Rsync 代表 “remote sync”，它是本地和远程主机文件同步工具。它只同步更改的文件，以此实现最小化传输数据。rsync 的使用场景非常丰富，相信大家会经常使用，这里做下简单的总结。</p>
+<blockquote>
+<p>rsync 安装使用实践</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019 年 03 月 01 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/rsync/">https://wsgzao.github.io/post/rsync/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<p>rsync - <a href="https://www.samba.org/rsync/" target="_blank" rel="noopener">https://www.samba.org/rsync/</a></p>
+<hr>
+<h2 id="rsync-简介"><a href="#rsync-简介" class="headerlink" title="rsync 简介"></a>rsync 简介</h2><p>rsync is a file transfer program capable of efficient remote update via a fast differencing algorithm.</p>
+<p>rsync 是类 unix 系统下的数据镜像备份工具，从软件的命名上就可以看出来了 ——remote sync。它的特性如下：</p>
+<p>1、可以镜像保存整个目录树和文件系统<br>2、可以很容易做到保持原来文件的权限、时间、软硬链接等等<br>3、无须特殊权限即可安装<br>4、优化的流程，文件传输效率高<br>5、可以使用 rsh、ssh 等方式来传输文件，当然也可以通过直接的 socket 连接<br>6、支持匿名传输<br>在使用 rsync 进行远程同步时，可以使用两种方式：远程 Shell 方式（用户验证由 ssh 负责）和 C/S 方式（即客户连接远程 rsync 服务器，用户验证由 rsync 服务器负责）。</p>
+<p>无论本地同步目录还是远程同步数据，首次运行时将会把全部文件拷贝一次，以后再运行时将只拷贝有变化的文件（对于新文件）或文件的变化部分（对于原有文件）。</p>
+<h2 id="rsync-配置文件"><a href="#rsync-配置文件" class="headerlink" title="rsync 配置文件"></a>rsync 配置文件</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编辑 rsync 配置文件</span></span><br><span class="line">vim /etc/rsync.conf</span><br><span class="line"></span><br><span class="line"><span class="comment"># /etc/rsyncd: configuration file for rsync daemon mode</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># See rsyncd.conf man page for more options.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># configuration example:</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># uid = nobody</span></span><br><span class="line"><span class="comment"># gid = nobody</span></span><br><span class="line"><span class="comment"># use chroot = yes</span></span><br><span class="line"><span class="comment"># max connections = 4</span></span><br><span class="line"><span class="comment"># pid file = /var/run/rsyncd.pid</span></span><br><span class="line"><span class="comment"># exclude = lost+found/</span></span><br><span class="line"><span class="comment"># transfer logging = yes</span></span><br><span class="line"><span class="comment"># timeout = 900</span></span><br><span class="line"><span class="comment"># ignore nonreadable = yes</span></span><br><span class="line"><span class="comment"># dont compress   = *.gz *.tgz *.zip *.z *.Z *.rpm *.deb *.bz2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># [ftp]</span></span><br><span class="line"><span class="comment">#        path = /home/ftp</span></span><br><span class="line"><span class="comment">#        comment = ftp export area</span></span><br></pre></td></tr></table></figure>
+<p>rsyncd.conf 官方文档请参考<br><a href="https://www.samba.org/ftp/rsync/rsyncd.conf.html" target="_blank" rel="noopener">https://www.samba.org/ftp/rsync/rsyncd.conf.html</a></p>
+<h2 id="rsync-常用参数"><a href="#rsync-常用参数" class="headerlink" title="rsync 常用参数"></a>rsync 常用参数</h2><p>注: 在指定复制源时，路径是否有最后的 “/” 有不同的含义，例如：</p>
+<p>/data  表示将整个 /data 目录复制到目标目录<br>/data/ 表示将 /data/ 目录中的所有内容复制到目标目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br></pre></td><td class="code"><pre><span class="line">rsync is a file transfer program capable of efficient remote update via a fast differencing algorithm.</span><br><span class="line"></span><br><span class="line">Usage: rsync [OPTION]... SRC [SRC]... DEST</span><br><span class="line">  or   rsync [OPTION]... SRC [SRC]... [USER@]HOST:DEST</span><br><span class="line">  or   rsync [OPTION]... SRC [SRC]... [USER@]HOST::DEST</span><br><span class="line">  or   rsync [OPTION]... SRC [SRC]... rsync://[USER@]HOST[:PORT]/DEST</span><br><span class="line">  or   rsync [OPTION]... [USER@]HOST:SRC [DEST]</span><br><span class="line">  or   rsync [OPTION]... [USER@]HOST::SRC [DEST]</span><br><span class="line">  or   rsync [OPTION]... rsync://[USER@]HOST[:PORT]/SRC [DEST]</span><br><span class="line">The <span class="string">':'</span> usages connect via remote shell, <span class="keyword">while</span> <span class="string">'::'</span> &amp; <span class="string">'rsync://'</span> usages connect</span><br><span class="line">to an rsync daemon, and require SRC or DEST to start with a module name.</span><br><span class="line"></span><br><span class="line">Options</span><br><span class="line"> -v, --verbose               increase verbosity</span><br><span class="line">     --info=FLAGS            fine-grained informational verbosity</span><br><span class="line">     --debug=FLAGS           fine-grained debug verbosity</span><br><span class="line">     --msgs2stderr           special output handling <span class="keyword">for</span> debugging</span><br><span class="line"> -q, --quiet                 suppress non-error messages</span><br><span class="line">     --no-motd               suppress daemon-mode MOTD (see manpage caveat)</span><br><span class="line"> -c, --checksum              skip based on checksum, not mod-time &amp; size</span><br><span class="line"> -a, --archive               archive mode; equals -rlptgoD (no -H,-A,-X)</span><br><span class="line">     --no-OPTION             turn off an implied OPTION (e.g. --no-D)</span><br><span class="line"> -r, --recursive             recurse into directories</span><br><span class="line"> -R, --relative              use relative path names</span><br><span class="line">     --no-implied-dirs       don<span class="string">'t send implied dirs with --relative</span></span><br><span class="line"><span class="string"> -b, --backup                make backups (see --suffix &amp; --backup-dir)</span></span><br><span class="line"><span class="string">     --backup-dir=DIR        make backups into hierarchy based in DIR</span></span><br><span class="line"><span class="string">     --suffix=SUFFIX         set backup suffix (default ~ w/o --backup-dir)</span></span><br><span class="line"><span class="string"> -u, --update                skip files that are newer on the receiver</span></span><br><span class="line"><span class="string">     --inplace               update destination files in-place (SEE MAN PAGE)</span></span><br><span class="line"><span class="string">     --append                append data onto shorter files</span></span><br><span class="line"><span class="string">     --append-verify         like --append, but with old data in file checksum</span></span><br><span class="line"><span class="string"> -d, --dirs                  transfer directories without recursing</span></span><br><span class="line"><span class="string"> -l, --links                 copy symlinks as symlinks</span></span><br><span class="line"><span class="string"> -L, --copy-links            transform symlink into referent file/dir</span></span><br><span class="line"><span class="string">     --copy-unsafe-links     only"unsafe"symlinks are transformed</span></span><br><span class="line"><span class="string">     --safe-links            ignore symlinks that point outside the source tree</span></span><br><span class="line"><span class="string">     --munge-links           munge symlinks to make them safer (but unusable)</span></span><br><span class="line"><span class="string"> -k, --copy-dirlinks         transform symlink to a dir into referent dir</span></span><br><span class="line"><span class="string"> -K, --keep-dirlinks         treat symlinked dir on receiver as dir</span></span><br><span class="line"><span class="string"> -H, --hard-links            preserve hard links</span></span><br><span class="line"><span class="string"> -p, --perms                 preserve permissions</span></span><br><span class="line"><span class="string"> -E, --executability         preserve the file'</span>s executability</span><br><span class="line">     --chmod=CHMOD           affect file and/or directory permissions</span><br><span class="line"> -A, --acls                  preserve ACLs (implies --perms)</span><br><span class="line"> -X, --xattrs                preserve extended attributes</span><br><span class="line"> -o, --owner                 preserve owner (super-user only)</span><br><span class="line"> -g, --group                 preserve group</span><br><span class="line">     --devices               preserve device files (super-user only)</span><br><span class="line">     --copy-devices          copy device contents as regular file</span><br><span class="line">     --specials              preserve special files</span><br><span class="line"> -D                          same as --devices --specials</span><br><span class="line"> -t, --<span class="built_in">times</span>                 preserve modification <span class="built_in">times</span></span><br><span class="line"> -O, --omit-dir-times        omit directories from --<span class="built_in">times</span></span><br><span class="line"> -J, --omit-link-times       omit symlinks from --<span class="built_in">times</span></span><br><span class="line">     --super                 receiver attempts super-user activities</span><br><span class="line">     --fake-super            store/recover privileged attrs using xattrs</span><br><span class="line"> -S, --sparse                handle sparse files efficiently</span><br><span class="line">     --preallocate           allocate dest files before writing them</span><br><span class="line"> -n, --dry-run               perform a trial run with no changes made</span><br><span class="line"> -W, --whole-file            copy files whole (without delta-xfer algorithm)</span><br><span class="line"> -x, --one-file-system       don<span class="string">'t cross filesystem boundaries</span></span><br><span class="line"><span class="string"> -B, --block-size=SIZE       force a fixed checksum block-size</span></span><br><span class="line"><span class="string"> -e, --rsh=COMMAND           specify the remote shell to use</span></span><br><span class="line"><span class="string">     --rsync-path=PROGRAM    specify the rsync to run on the remote machine</span></span><br><span class="line"><span class="string">     --existing              skip creating new files on receiver</span></span><br><span class="line"><span class="string">     --ignore-existing       skip updating files that already exist on receiver</span></span><br><span class="line"><span class="string">     --remove-source-files   sender removes synchronized files (non-dirs)</span></span><br><span class="line"><span class="string">     --del                   an alias for --delete-during</span></span><br><span class="line"><span class="string">     --delete                delete extraneous files from destination dirs</span></span><br><span class="line"><span class="string">     --delete-before         receiver deletes before transfer, not during</span></span><br><span class="line"><span class="string">     --delete-during         receiver deletes during the transfer</span></span><br><span class="line"><span class="string">     --delete-delay          find deletions during, delete after</span></span><br><span class="line"><span class="string">     --delete-after          receiver deletes after transfer, not during</span></span><br><span class="line"><span class="string">     --delete-excluded       also delete excluded files from destination dirs</span></span><br><span class="line"><span class="string">     --ignore-missing-args   ignore missing source args without error</span></span><br><span class="line"><span class="string">     --delete-missing-args   delete missing source args from destination</span></span><br><span class="line"><span class="string">     --ignore-errors         delete even if there are I/O errors</span></span><br><span class="line"><span class="string">     --force                 force deletion of directories even if not empty</span></span><br><span class="line"><span class="string">     --max-delete=NUM        don'</span>t delete more than NUM files</span><br><span class="line">     --max-size=SIZE         don<span class="string">'t transfer any file larger than SIZE</span></span><br><span class="line"><span class="string">     --min-size=SIZE         don'</span>t transfer any file smaller than SIZE</span><br><span class="line">     --partial               keep partially transferred files</span><br><span class="line">     --partial-dir=DIR       put a partially transferred file into DIR</span><br><span class="line">     --delay-updates         put all updated files into place at transfer<span class="string">'s end</span></span><br><span class="line"><span class="string"> -m, --prune-empty-dirs      prune empty directory chains from the file-list</span></span><br><span class="line"><span class="string">     --numeric-ids           don'</span>t map uid/gid values by user/group name</span><br><span class="line">     --usermap=STRING        custom username mapping</span><br><span class="line">     --groupmap=STRING       custom groupname mapping</span><br><span class="line">     --chown=USER:GROUP      simple username/groupname mapping</span><br><span class="line">     --timeout=SECONDS       <span class="built_in">set</span> I/O timeout <span class="keyword">in</span> seconds</span><br><span class="line">     --contimeout=SECONDS    <span class="built_in">set</span> daemon connection timeout <span class="keyword">in</span> seconds</span><br><span class="line"> -I, --ignore-times          don<span class="string">'t skip files that match in size and mod-time</span></span><br><span class="line"><span class="string"> -M, --remote-option=OPTION  send OPTION to the remote side only</span></span><br><span class="line"><span class="string">     --size-only             skip files that match in size</span></span><br><span class="line"><span class="string">     --modify-window=NUM     compare mod-times with reduced accuracy</span></span><br><span class="line"><span class="string"> -T, --temp-dir=DIR          create temporary files in directory DIR</span></span><br><span class="line"><span class="string"> -y, --fuzzy                 find similar file for basis if no dest file</span></span><br><span class="line"><span class="string">     --compare-dest=DIR      also compare destination files relative to DIR</span></span><br><span class="line"><span class="string">     --copy-dest=DIR         ... and include copies of unchanged files</span></span><br><span class="line"><span class="string">     --link-dest=DIR         hardlink to files in DIR when unchanged</span></span><br><span class="line"><span class="string"> -z, --compress              compress file data during the transfer</span></span><br><span class="line"><span class="string">     --compress-level=NUM    explicitly set compression level</span></span><br><span class="line"><span class="string">     --skip-compress=LIST    skip compressing files with a suffix in LIST</span></span><br><span class="line"><span class="string"> -C, --cvs-exclude           auto-ignore files the same way CVS does</span></span><br><span class="line"><span class="string"> -f, --filter=RULE           add a file-filtering RULE</span></span><br><span class="line"><span class="string"> -F                          same as --filter='</span>dir-merge /.rsync-filter<span class="string">'</span></span><br><span class="line"><span class="string">                             repeated: --filter='</span>- .rsync-filter<span class="string">'</span></span><br><span class="line"><span class="string">     --exclude=PATTERN       exclude files matching PATTERN</span></span><br><span class="line"><span class="string">     --exclude-from=FILE     read exclude patterns from FILE</span></span><br><span class="line"><span class="string">     --include=PATTERN       don'</span>t exclude files matching PATTERN</span><br><span class="line">     --include-from=FILE     <span class="built_in">read</span> include patterns from FILE</span><br><span class="line">     --files-from=FILE       <span class="built_in">read</span> list of <span class="built_in">source</span>-file names from FILE</span><br><span class="line"> -0, --from0                 all *-from/filter files are delimited by 0s</span><br><span class="line"> -s, --protect-args          no space-splitting; only wildcard special-chars</span><br><span class="line">     --address=ADDRESS       <span class="built_in">bind</span> address <span class="keyword">for</span> outgoing socket to daemon</span><br><span class="line">     --port=PORT             specify double-colon alternate port number</span><br><span class="line">     --sockopts=OPTIONS      specify custom TCP options</span><br><span class="line">     --blocking-io           use blocking I/O <span class="keyword">for</span> the remote shell</span><br><span class="line">     --stats                 give some file-transfer stats</span><br><span class="line"> -8, --8-bit-output          leave high-bit chars unescaped <span class="keyword">in</span> output</span><br><span class="line"> -h, --human-readable        output numbers <span class="keyword">in</span> a human-readable format</span><br><span class="line">     --progress              show progress during transfer</span><br><span class="line"> -P                          same as --partial --progress</span><br><span class="line"> -i, --itemize-changes       output a change-summary <span class="keyword">for</span> all updates</span><br><span class="line">     --out-format=FORMAT     output updates using the specified FORMAT</span><br><span class="line">     --<span class="built_in">log</span>-file=FILE         <span class="built_in">log</span> what we<span class="string">'re doing to the specified FILE</span></span><br><span class="line"><span class="string">     --log-file-format=FMT   log updates using the specified FMT</span></span><br><span class="line"><span class="string">     --password-file=FILE    read daemon-access password from FILE</span></span><br><span class="line"><span class="string">     --list-only             list the files instead of copying them</span></span><br><span class="line"><span class="string">     --bwlimit=RATE          limit socket I/O bandwidth</span></span><br><span class="line"><span class="string">     --outbuf=N|L|B          set output buffering to None, Line, or Block</span></span><br><span class="line"><span class="string">     --write-batch=FILE      write a batched update to FILE</span></span><br><span class="line"><span class="string">     --only-write-batch=FILE like --write-batch but w/o updating destination</span></span><br><span class="line"><span class="string">     --read-batch=FILE       read a batched update from FILE</span></span><br><span class="line"><span class="string">     --protocol=NUM          force an older protocol version to be used</span></span><br><span class="line"><span class="string">     --iconv=CONVERT_SPEC    request charset conversion of filenames</span></span><br><span class="line"><span class="string">     --checksum-seed=NUM     set block/file checksum seed (advanced)</span></span><br><span class="line"><span class="string"> -4, --ipv4                  prefer IPv4</span></span><br><span class="line"><span class="string"> -6, --ipv6                  prefer IPv6</span></span><br><span class="line"><span class="string">     --version               print version number</span></span><br><span class="line"><span class="string">(-h) --help                  show this help (-h is --help only if used alone)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Use"rsync --daemon --help"to see the daemon-mode command-line options.</span></span><br><span class="line"><span class="string">Please see the rsync(1) and rsyncd.conf(5) man pages for full documentation.</span></span><br><span class="line"><span class="string">See http://rsync.samba.org/ for updates, bug reports, and answers</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># rsync 常用参数 </span></span><br><span class="line"><span class="string">-v : 展示详细的同步信息</span></span><br><span class="line"><span class="string">-a : 归档模式，相当于 -rlptgoD</span></span><br><span class="line"><span class="string">    -r : 递归目录</span></span><br><span class="line"><span class="string">    -l : 同步软连接文件</span></span><br><span class="line"><span class="string">    -p : 保留权限</span></span><br><span class="line"><span class="string">    -t : 将源文件的"modify time"同步到目标机器</span></span><br><span class="line"><span class="string">    -g : 保持文件属组</span></span><br><span class="line"><span class="string">    -o : 保持文件属主</span></span><br><span class="line"><span class="string">    -D : 和 --devices --specials 一样，保持设备文件和特殊文件</span></span><br><span class="line"><span class="string">-z : 发送数据前，先压缩再传输</span></span><br><span class="line"><span class="string">-H : 保持硬链接</span></span><br><span class="line"><span class="string">-n : 进行试运行，不作任何更改</span></span><br><span class="line"><span class="string">-P same as --partial --progress</span></span><br><span class="line"><span class="string">    --partial : 支持断点续传</span></span><br><span class="line"><span class="string">    --progress : 展示传输的进度</span></span><br><span class="line"><span class="string">--delete : 如果源文件消失，目标文件也会被删除</span></span><br><span class="line"><span class="string">--delete-excluded : 指定要在目的端删除的文件</span></span><br><span class="line"><span class="string">--delete-after : 默认情况下，rsync 是先清理目的端的文件再开始数据同步；如果使用此选项，则 rsync 会先进行数据同步，都完成后再删除那些需要清理的文件。</span></span><br><span class="line"><span class="string">--exclude=PATTERN : 排除匹配 PATTERN 的文件</span></span><br><span class="line"><span class="string">--exclude-from=FILE : 如果要排除的文件很多，可以统一写在某一文件中</span></span><br><span class="line"><span class="string">-e ssh : 使用 SSH 加密隧道传输</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># 远程 Shell 方式</span></span><br><span class="line"><span class="string">rsync [OPTION]... SRC [SRC]... [USER@]HOST:DEST # 执行“推” 操作 </span></span><br><span class="line"><span class="string">or   rsync [OPTION]... [USER@]HOST:SRC [DEST]   # 执行“拉” 操作 </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># 远程 C/S 方式</span></span><br><span class="line"><span class="string">rsync [OPTION]... SRC [SRC]... [USER@]HOST::DEST                    # 执行“推” 操作 </span></span><br><span class="line"><span class="string">or   rsync [OPTION]... SRC [SRC]... rsync://[USER@]HOST[:PORT]/DEST # 执行“推” 操作 </span></span><br><span class="line"><span class="string">or   rsync [OPTION]... [USER@]HOST::SRC [DEST]                      # 执行“拉” 操作 </span></span><br><span class="line"><span class="string">or   rsync [OPTION]... rsync://[USER@]HOST[:PORT]/SRC [DEST]        # 执行“拉” 操作</span></span><br></pre></td></tr></table></figure>
+<h2 id="rsync-同步方式"><a href="#rsync-同步方式" class="headerlink" title="rsync 同步方式"></a>rsync 同步方式</h2><p>Rsync 远程同步主要有两种方式：使用远程 shell（ssh 或 rsh） 或使用 rsync 的 daemon 方式</p>
+<p>rsync 命令和 ssh，scp 命令有点相似。</p>
+<p>我们创建两个测试目录和一些文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">mkdir dir1</span><br><span class="line">mkdir dir2</span><br><span class="line">touch dir1/somefile&#123;1..100&#125;</span><br><span class="line"><span class="comment"># dir1 中有 100 文件，dir2 中为空。使用 rsync 把 dir1 内容同步到 dir2，-r 选项代表递归，在同步目录时使用。</span></span><br><span class="line">rsync -r dir1/ dir2</span><br><span class="line"><span class="comment"># 你也可以使用 -a 选项，代表同步所有，包括修改时间、群组、权限、特殊文件、也包括递归。</span></span><br><span class="line">rsync -anv dir1/ dir2</span><br><span class="line"><span class="comment"># 注意上面的 dir1 / 中的 “/” 不能少，它代表同步目录下文件， 如果没有 “/” 代表同步这个目录。</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 和远程主机进行同步目录首先，你要确保有远程主机的 SSH 访问权限</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 把本地目录同步到远程主机：</span></span><br><span class="line">rsync -a dir1/ root@linux:~/dir2</span><br><span class="line"><span class="comment"># 把远程主机目录同步到本地：</span></span><br><span class="line">rsync -a root@linux:~/dir2/ dir1</span><br></pre></td></tr></table></figure>
+<h3 id="本地文件同步"><a href="#本地文件同步" class="headerlink" title="本地文件同步"></a>本地文件同步</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果没有 desc 目录，会自动创建</span></span><br><span class="line">rsync -avH /opt/resource/ /tmp/desc/</span><br></pre></td></tr></table></figure>
+<h3 id="远程文件同步-–shell-方式"><a href="#远程文件同步-–shell-方式" class="headerlink" title="远程文件同步 –shell 方式"></a>远程文件同步 –shell 方式</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 从本地传到远端，目标文件会被写成 ssh 登录用户的属组和属主（如下 www）</span></span><br><span class="line">rsync -avH /opt/nginx-1.12.1/ www@172.18.50.125:/tmp/nginx/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 ssh 加密隧道方式传输，保障数据的安全性</span></span><br><span class="line">rsync -avHe ssh /opt/nginx-1.12.1/ www@172.18.50.125:/tmp/nginx/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从远端传到本地，只要对目标文件有读的权限，就可以同步到本地</span></span><br><span class="line">rsync -avH www@172.18.50.125:/tmp/nginx/ /tmp/nginx/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果远程服务器 ssh 端口不是默认的 22</span></span><br><span class="line">rsync -avHe <span class="string">"ssh -p 11222"</span> /opt/nginx-1.12.1/ www@172.18.50.125:/tmp/nginx/</span><br></pre></td></tr></table></figure>
+<h3 id="远程文件同步-–daemon-方式"><a href="#远程文件同步-–daemon-方式" class="headerlink" title="远程文件同步 –daemon 方式"></a>远程文件同步 –daemon 方式</h3><blockquote>
+<p>rsync 服务端配置</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建 rsync 服务的目录和配置文件 (可选)</span></span><br><span class="line">mkdir /etc/rsync </span><br><span class="line"><span class="built_in">cd</span> /etc/rsync</span><br><span class="line">touch rsyncd.conf</span><br><span class="line">touch rsyncd.secrets</span><br><span class="line">touch rsyncd.motd</span><br><span class="line">chmod 600 rsyncd.secrets</span><br><span class="line"></span><br><span class="line"><span class="comment">### rsyncd.conf 文件的配置</span></span><br><span class="line">vim /etc/rsync/rsyncd.conf</span><br><span class="line"><span class="comment"># /etc/rsyncd: configuration file for rsync daemon mode</span></span><br><span class="line"><span class="comment"># See rsyncd.conf man page for more options.</span></span><br><span class="line"><span class="comment"># 传输文件使用的用户和用户组，如果是从服务器 =&gt; 客户端，要保证 www 用户对文件有读取的权限；如果是从客户端 =&gt; 服务端，要保证 www 对文件有写权限。</span></span><br><span class="line">uid = www</span><br><span class="line">gid = www</span><br><span class="line"><span class="comment"># 允许 chroot，提升安全性，客户端连接模块，首先 chroot 到模块 path 参数指定的目录下，chroot 为 yes 时必须使用 root 权限，且不能备份 path 路径外的链接文件</span></span><br><span class="line">use chroot = yes</span><br><span class="line"><span class="comment"># 只读</span></span><br><span class="line"><span class="built_in">read</span> only = no</span><br><span class="line"><span class="comment"># 只写</span></span><br><span class="line">write only = no</span><br><span class="line"><span class="comment"># 设定白名单，可以指定 IP 段（172.18.50.1/255.255.255.0）, 各个 Ip 段用空格分开</span></span><br><span class="line">hosts allow = 172.18.50.110 172.18.50.111</span><br><span class="line">hosts deny = *</span><br><span class="line"><span class="comment"># 允许的客户端最大连接数</span></span><br><span class="line">max connections = 4</span><br><span class="line"><span class="comment"># 欢迎文件的路径，非必须</span></span><br><span class="line">motd file = /etc/rsync/rsyncd.motd</span><br><span class="line"><span class="comment"># pid 文件路径</span></span><br><span class="line">pid file = /var/run/rsyncd.pid</span><br><span class="line"><span class="comment"># 记录传输文件日志</span></span><br><span class="line">transfer logging = yes</span><br><span class="line"><span class="comment"># 日志文件格式</span></span><br><span class="line"><span class="built_in">log</span> format = %t %a %m %f %b</span><br><span class="line"><span class="comment"># 指定日志文件</span></span><br><span class="line"><span class="built_in">log</span> file = /var/<span class="built_in">log</span>/rsync.log</span><br><span class="line"><span class="comment"># 剔除某些文件或目录，不同步</span></span><br><span class="line">exclude = lost+found/</span><br><span class="line"><span class="comment"># 设置超时时间</span></span><br><span class="line">timeout = 900</span><br><span class="line">ignore nonreadable = yes</span><br><span class="line"><span class="comment"># 设置不需要压缩的文件</span></span><br><span class="line">dont compress   = *.gz *.tgz *.zip *.z *.Z *.rpm *.deb *.bz2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 模块，可以配置多个，使用如: sate@172.18.50.125::125to110</span></span><br><span class="line">[125to110]</span><br><span class="line"><span class="comment"># 模块的根目录，同步目录，要注意权限</span></span><br><span class="line">path = /tmp/nginx</span><br><span class="line"><span class="comment"># 是否允许列出模块内容</span></span><br><span class="line">list = no</span><br><span class="line"><span class="comment"># 忽略错误</span></span><br><span class="line">ignore errors</span><br><span class="line"><span class="comment"># 添加注释</span></span><br><span class="line">comment = ftp <span class="built_in">export</span> area</span><br><span class="line"><span class="comment"># 模块验证的用户名称，可使用空格或者逗号隔开多个用户名</span></span><br><span class="line">auth users = sate</span><br><span class="line"><span class="comment"># 模块验证密码文件 可放在全局配置里</span></span><br><span class="line">secrets file = /etc/rsync/rsyncd.secrets</span><br><span class="line"><span class="comment"># 剔除某些文件或目录，不同步</span></span><br><span class="line">exclude = lost+found/ conf/ man/</span><br><span class="line"></span><br><span class="line"><span class="comment">### rsyncd.secrets 文件的配置</span></span><br><span class="line">cat rsyncd.secrets </span><br><span class="line"><span class="comment"># 用户名: 密码</span></span><br><span class="line">sate:111111</span><br><span class="line"></span><br><span class="line"><span class="comment">### rsync 启动</span></span><br><span class="line">rsync --daemon --config=/etc/rsync/rsyncd.conf</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>rsync 客户端配置</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 从 服务端 =&gt; 客户端 同步数据，会提示输入密码</span></span><br><span class="line">rsync -avzP --delete sate@172.18.50.125::125to110 /tmp/sync/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从 客户端 =&gt; 服务端 同步数据，会提示输入密码</span></span><br><span class="line">rsync -avzP --delete /tmp/sync/ sate@172.18.50.125::125to110</span><br><span class="line"></span><br><span class="line"><span class="comment"># 注: 如果是 /tmp/sync，则同步 sync 目录；如果 /tmp/sync/，则同步 sync 目录下的文件</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 免密码同步，将密码写到文件，再通过 --password-file 指定该文件，注：该文件的权限必须是 600</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"111111"</span> &gt; /tmp/secrets.file</span><br><span class="line">chmod 600 /tmp/secrets.file</span><br><span class="line">rsync -avzP --delete --password-file=/tmp/secrets.file sate@172.18.50.125::125to110 /tmp/sync/</span><br><span class="line"></span><br><span class="line"><span class="comment"># --exclude 排除文件目录时，如果有多个同名目录的情况</span></span><br><span class="line"><span class="comment"># 目录结构</span></span><br><span class="line">tree</span><br><span class="line">.</span><br><span class="line">├── dir1</span><br><span class="line">│   └── <span class="built_in">test</span></span><br><span class="line">│       ├── 3.file</span><br><span class="line">│       ├── 4.file</span><br><span class="line">│       └── 5.file</span><br><span class="line">├── dir2</span><br><span class="line">└── <span class="built_in">test</span></span><br><span class="line">    ├── 1.file</span><br><span class="line">    ├── 2.file</span><br><span class="line">    └── 3.file</span><br><span class="line"></span><br><span class="line"><span class="comment"># 情况一 ： 排除 /test 目录，同步其他目录（同步的是 / tmp/sync/ 下边的文件）</span></span><br><span class="line">rsync -avP --delete --password-file=/tmp/secrets.file --exclude=<span class="built_in">test</span>  /tmp/sync/ sate@172.18.50.125::125to110 </span><br><span class="line"></span><br><span class="line"><span class="comment"># 会发现，该目录下所有 test 目录都被排除了，如果想只排除第一层目录的 test，可以如下（/ 代表所同步目录第一层）：</span></span><br><span class="line">rsync -avP --delete --password-file=/tmp/secrets.file --exclude=/<span class="built_in">test</span>/  /tmp/sync/ sate@172.18.50.125::125to110 </span><br><span class="line"></span><br><span class="line"><span class="comment"># 情况二 ： 和情况一不同的是 同步的 /tmp/sync 这个目录（同步的是 / tmp/sync 目录本身，导致 exclude 后边的参数也会变化）</span></span><br><span class="line">rsync -avP --delete --password-file=/tmp/secrets.file --exclude=/sync/<span class="built_in">test</span>/  /tmp/sync sate@172.18.50.125::125to110</span><br></pre></td></tr></table></figure>
+<h2 id="rsync-简化配置实践"><a href="#rsync-简化配置实践" class="headerlink" title="rsync 简化配置实践"></a>rsync 简化配置实践</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 配置服务端 rsyncd.conf</span></span><br><span class="line">vim /etc/rsyncd.conf</span><br><span class="line"></span><br><span class="line"><span class="built_in">read</span> only = no</span><br><span class="line">list = yes</span><br><span class="line">uid = root</span><br><span class="line">gid = root</span><br><span class="line"></span><br><span class="line">[backup]</span><br><span class="line">path= /data/</span><br><span class="line">hosts allow = 10.71.12.0/23</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置服务</span></span><br><span class="line">systemctl start rsyncd</span><br><span class="line">systemctl <span class="built_in">enable</span> rsyncd</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置 rsync 客户端</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 编辑 backup.sh 同步脚本</span></span><br><span class="line">vim backup.sh</span><br><span class="line"></span><br><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line">SOURCE=<span class="variable">$1</span></span><br><span class="line">DEST=<span class="variable">$2</span></span><br><span class="line"></span><br><span class="line">CMD=<span class="string">"rsync -ravz --bwlimit=2000 <span class="variable">$1</span> rsync://&#123;&#123;log_server_ip&#125;&#125;:873/backup/<span class="variable">$2</span>"</span></span><br><span class="line"></span><br><span class="line">PROCS=$(pgrep -f <span class="string">"&#123;&#123;log_server_ip&#125;&#125;:873/backup/<span class="variable">$2</span>"</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">"x"</span> != <span class="string">"x<span class="variable">$PROCS</span>"</span> ]; <span class="keyword">then</span></span><br><span class="line">       <span class="built_in">echo</span> <span class="string">"not finished"</span></span><br><span class="line">       <span class="built_in">exit</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$CMD</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改 crontab</span></span><br><span class="line">vim /etc/crontab</span><br><span class="line">15 * * * * root <span class="built_in">cd</span> /opt/sa_scripts/ &amp;&amp; ./backup.sh /var/<span class="built_in">log</span>/ocha/pos_python_server/  10.71.12.89/$(date +\%Y-\%m)</span><br></pre></td></tr></table></figure>
+<h2 id="rsync-有用的选项"><a href="#rsync-有用的选项" class="headerlink" title="rsync 有用的选项"></a>rsync 有用的选项</h2><p>-z 选项，压缩传输的文件</p>
+<p>rsync -az source dest</p>
+<p>-P 选项非常有用，它是 -progress 和 -partial 的组合。第一个选项是用来显示传输进度条，第二个选项允许断点续传和增量传输：</p>
+<p>rsync -azP source dest</p>
+<p>–bwlimit 选项，限制传输带宽，参数值的默认单位是 KBPS，也就是每秒多少 KB</p>
+<p>rsync -avzP–bwlimit=100</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/rsync/" data-title="rsync 安装使用实践 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/post/macbook/"  title="MacBook 使用指北">
+ <strong>下一篇：</strong><br/> 
+ <span>MacBook 使用指北
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-简介"><span class="toc-number">3.</span> <span class="toc-text">rsync 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-配置文件"><span class="toc-number">4.</span> <span class="toc-text">rsync 配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-常用参数"><span class="toc-number">5.</span> <span class="toc-text">rsync 常用参数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-同步方式"><span class="toc-number">6.</span> <span class="toc-text">rsync 同步方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#本地文件同步"><span class="toc-number">6.1.</span> <span class="toc-text">本地文件同步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#远程文件同步-–shell-方式"><span class="toc-number">6.2.</span> <span class="toc-text">远程文件同步 –shell 方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#远程文件同步-–daemon-方式"><span class="toc-number">6.3.</span> <span class="toc-text">远程文件同步 –daemon 方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-简化配置实践"><span class="toc-number">7.</span> <span class="toc-text">rsync 简化配置实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rsync-有用的选项"><span class="toc-number">8.</span> <span class="toc-text">rsync 有用的选项</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>109</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>6</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>
