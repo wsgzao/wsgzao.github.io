@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="rsync安装配置实践">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-03-02T07:58:09.608Z">
+<meta property="og:updated_time" content="2019-03-05T14:07:30.755Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="rsync 安装配置实践">
 <meta name="twitter:description" content="rsync安装配置实践">
@@ -118,7 +118,15 @@
 <hr>
 <h2 id="rsync-简介"><a href="#rsync-简介" class="headerlink" title="rsync 简介"></a>rsync 简介</h2><p>rsync is a file transfer program capable of efficient remote update via a fast differencing algorithm.</p>
 <p>rsync 是类 unix 系统下的数据镜像备份工具，从软件的命名上就可以看出来了 ——remote sync。它的特性如下：</p>
-<p>1、可以镜像保存整个目录树和文件系统<br>2、可以很容易做到保持原来文件的权限、时间、软硬链接等等<br>3、无须特殊权限即可安装<br>4、优化的流程，文件传输效率高<br>5、可以使用 rsh、ssh 等方式来传输文件，当然也可以通过直接的 socket 连接<br>6、支持匿名传输<br>在使用 rsync 进行远程同步时，可以使用两种方式：远程 Shell 方式（用户验证由 ssh 负责）和 C/S 方式（即客户连接远程 rsync 服务器，用户验证由 rsync 服务器负责）。</p>
+<ol>
+<li>可以镜像保存整个目录树和文件系统</li>
+<li>可以很容易做到保持原来文件的权限、时间、软硬链接等等</li>
+<li>无须特殊权限即可安装</li>
+<li>优化的流程，文件传输效率高</li>
+<li>可以使用 rsh、ssh 等方式来传输文件，当然也可以通过直接的 socket 连接</li>
+<li>支持匿名传输</li>
+</ol>
+<p>在使用 rsync 进行远程同步时，可以使用两种方式：远程 Shell 方式（用户验证由 ssh 负责）和 C/S 方式（即客户连接远程 rsync 服务器，用户验证由 rsync 服务器负责）。</p>
 <p>无论本地同步目录还是远程同步数据，首次运行时将会把全部文件拷贝一次，以后再运行时将只拷贝有变化的文件（对于新文件）或文件的变化部分（对于原有文件）。</p>
 <h2 id="rsync-源配置文件示例"><a href="#rsync-源配置文件示例" class="headerlink" title="rsync 源配置文件示例"></a>rsync 源配置文件示例</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编辑 rsync 配置文件</span></span><br><span class="line">vim /etc/rsync.conf</span><br><span class="line"></span><br><span class="line"><span class="comment"># /etc/rsyncd: configuration file for rsync daemon mode</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># See rsyncd.conf man page for more options.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># configuration example:</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># uid = nobody</span></span><br><span class="line"><span class="comment"># gid = nobody</span></span><br><span class="line"><span class="comment"># use chroot = yes</span></span><br><span class="line"><span class="comment"># max connections = 4</span></span><br><span class="line"><span class="comment"># pid file = /var/run/rsyncd.pid</span></span><br><span class="line"><span class="comment"># exclude = lost+found/</span></span><br><span class="line"><span class="comment"># transfer logging = yes</span></span><br><span class="line"><span class="comment"># timeout = 900</span></span><br><span class="line"><span class="comment"># ignore nonreadable = yes</span></span><br><span class="line"><span class="comment"># dont compress   = *.gz *.tgz *.zip *.z *.Z *.rpm *.deb *.bz2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># [ftp]</span></span><br><span class="line"><span class="comment">#        path = /home/ftp</span></span><br><span class="line"><span class="comment">#        comment = ftp export area</span></span><br></pre></td></tr></table></figure>
 <p>rsyncd.conf 官方文档请参考<br><a href="https://www.samba.org/ftp/rsync/rsyncd.conf.html" target="_blank" rel="noopener">https://www.samba.org/ftp/rsync/rsyncd.conf.html</a></p>
@@ -177,10 +185,10 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/post/scrapy/" title="Python 爬虫框架 Scrapy 入门与实践之爬取豆瓣电影 Top250 榜单">
+ <a href="/post/zabbix-ha/" title="基于 Keepalived 搭建 Zabbix Server HA 双机高可用">
   <strong>上一篇：</strong><br/>
   <span>
-  Python 爬虫框架 Scrapy 入门与实践之爬取豆瓣电影 Top250 榜单</span>
+  基于 Keepalived 搭建 Zabbix Server HA 双机高可用</span>
 </a>
 </div>
 
@@ -238,7 +246,7 @@
 		  
 		
 		  
-			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>110</sup></a></li>
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>111</sup></a></li>
 		  
 		
 		  

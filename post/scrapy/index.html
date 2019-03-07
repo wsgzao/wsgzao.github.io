@@ -24,7 +24,7 @@
 <meta property="og:description" content="Python爬虫框架Scrapy入门与实践之爬取豆瓣电影Top250榜单">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/7207510dgy1g0oavg4q11j20jg0dqdi2.jpg">
-<meta property="og:updated_time" content="2019-03-02T07:56:36.643Z">
+<meta property="og:updated_time" content="2019-03-07T08:01:23.740Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Python 爬虫框架 Scrapy 入门与实践之爬取豆瓣电影 Top250 榜单">
 <meta name="twitter:description" content="Python爬虫框架Scrapy入门与实践之爬取豆瓣电影Top250榜单">
@@ -155,7 +155,8 @@
 <p>所有 HTTP 响应的第一行都是状态行，依次是当前 HTTP 版本号，3 位数字组成的状态代码，以及描述状态的短语，彼此由空格分隔。</p>
 <p><strong> 响应状态 </strong></p>
 <p>有多种响应状态，如：200 代表成功，301 跳转，404 找不到页面，502 服务器错误</p>
-<p>1xx 消息 —— 请求已被服务器接收，继续处理<br>2xx 成功 —— 请求已成功被服务器接收、理解、并接受<br>3xx 重定向 —— 需要后续操作才能完成这一请求<br>4xx 请求错误 —— 请求含有词法错误或者无法被执行<br>5xx 服务器错误 —— 服务器在处理某个正确请求时发生错误 常见代码： 200 OK 请求成功 400 Bad Request 客户端请求有语法错误，不能被服务器所理解 401 Unauthorized 请求未经授权，这个状态代码必须和 WWW-Authenticate 报头域一起使用 403 Forbidden 服务器收到请求，但是拒绝提供服务 404 Not Found 请求资源不存在，eg：输入了错误的 URL 500 Internal Server Error 服务器发生不可预期的错误 503 Server Unavailable 服务器当前不能处理客户端的请求，一段时间后可能恢复正常 301 目标永久性转移 302 目标暂时性转移</p>
+<p>1xx 消息 —— 请求已被服务器接收，继续处理<br>2xx 成功 —— 请求已成功被服务器接收、理解、并接受<br>3xx 重定向 —— 需要后续操作才能完成这一请求<br>4xx 请求错误 —— 请求含有词法错误或者无法被执行<br>5xx 服务器错误 —— 服务器在处理某个正确请求时发生错误 </p>
+<p>常见代码：<br>200 OK 请求成功<br>301 目标永久性转移<br>302 目标暂时性转移<br>400 Bad Request 客户端请求有语法错误，不能被服务器所理解<br>401 Unauthorized 请求未经授权，这个状态代码必须和 WWW-Authenticate 报头域一起使用<br>403 Forbidden 服务器收到请求，但是拒绝提供服务<br>404 Not Found 请求资源不存在，eg：输入了错误的 URL<br>500 Internal Server Error 服务器发生不可预期的错误<br>503 Server Unavailable 服务器当前不能处理客户端的请求，一段时间后可能恢复正常 </p>
 <p><strong> 响应头 </strong></p>
 <p>如内容类型，类型的长度，服务器信息，设置 Cookie</p>
 <p><strong> 响应体 </strong></p>
@@ -232,6 +233,7 @@
 <p>在我们编写爬虫之前，先了解一下 scrapy 的爬取机制，scrapy 提取数据有自己的一套机制。它们被称作选择器 (seletors)，因为他们通过特定的 XPath 或者 CSS 表达式来 “选择” HTML 文件中的某个部分。</p>
 <p>Xpath 学习教程<br><a href="http://www.w3school.com.cn/xpath/index.asp" target="_blank" rel="noopener">http://www.w3school.com.cn/xpath/index.asp</a></p>
 <p>XPath Helper<br><a href="https://chrome.google.com/webstore/detail/xpath-helper/hgimnogjllphhhkhlmebbmlgjoejdpjl" target="_blank" rel="noopener">https://chrome.google.com/webstore/detail/xpath-helper/hgimnogjllphhhkhlmebbmlgjoejdpjl</a></p>
+<p>Scrapy xpath-tutorial<br><a href="https://doc.scrapy.org/en/xpath-tutorial/topics/xpath-tutorial.html" target="_blank" rel="noopener">https://doc.scrapy.org/en/xpath-tutorial/topics/xpath-tutorial.html</a></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> scrapy</span><br><span class="line"><span class="keyword">from</span> douban.items <span class="keyword">import</span> DoubanItem</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DoubanSpiderSpider</span><span class="params">(scrapy.Spider)</span>:</span></span><br><span class="line">    name = <span class="string">'douban_spider'</span></span><br><span class="line">    allowed_domains = [<span class="string">'movie.douban.com'</span>]</span><br><span class="line">    start_urls = [<span class="string">'https://movie.douban.com/top250'</span>]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">parse</span><span class="params">(self, response)</span>:</span></span><br><span class="line">        movie_list = response.xpath(<span class="string">"//div[@class='article']//ol[@class='grid_view']/li"</span>)</span><br><span class="line">        <span class="keyword">for</span> i_item <span class="keyword">in</span> movie_list:</span><br><span class="line">            douban_item = DoubanItem()</span><br><span class="line">            douban_item[<span class="string">'serial_number'</span>] = i_item.xpath(<span class="string">".//div[@class='item']//em/text()"</span>).extract_first()</span><br><span class="line">            douban_item[<span class="string">'movie_name'</span>] = i_item.xpath(<span class="string">".//div[@class='info']/div[@class='hd']/a/span[1]/text()"</span>).extract_first()</span><br><span class="line">            content = i_item.xpath(<span class="string">".//div[@class='info']//div[@class='bd']/p[1]/text()"</span>).extract()</span><br><span class="line">            <span class="keyword">for</span> i_content <span class="keyword">in</span> content:</span><br><span class="line">                content_s = <span class="string">""</span>.join(i_content.split())</span><br><span class="line">                douban_item[<span class="string">'introduce'</span>] = content_s</span><br><span class="line">            douban_item[<span class="string">'star'</span>] =  i_item.xpath(<span class="string">".//span[@class='rating_num']/text()"</span>).extract_first()</span><br><span class="line">            douban_item[<span class="string">'evaluate'</span>] = i_item.xpath(<span class="string">".//div[@class='star']//span[4]/text()"</span>).extract_first()</span><br><span class="line">            douban_item[<span class="string">'describe'</span>] = i_item.xpath(<span class="string">".//p[@class='quote']//span/text()"</span>).extract_first()</span><br><span class="line">            <span class="keyword">yield</span> douban_item</span><br><span class="line">        next_link = response.xpath(<span class="string">"//span[@class='next']/link/@href"</span>).extract()</span><br><span class="line">        <span class="keyword">if</span> next_link:</span><br><span class="line">            next_link = next_link[<span class="number">0</span>]</span><br><span class="line">            <span class="keyword">yield</span> scrapy.Request(<span class="string">"https://movie.douban.com/top250"</span>+next_link,callback=self.parse)</span><br></pre></td></tr></table></figure>
 <p>自动翻页<br>先别急着高兴，你难道没有发现一个问题吗？这样的话我们还是只能爬到当前页的 25 个电影的内容。怎么样才能把剩下的也一起爬下来呢？</p>
 <p>实现自动翻页一般有两种方法：</p>
@@ -276,11 +278,19 @@
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/post/zabbix-faq/" title="Zabbix 常见问题整理">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Zabbix 常见问题整理</span>
+</a>
+</div>
+
 
 <div class="next">
-<a href="/post/rsync/"  title="rsync 安装配置实践">
+<a href="/post/zabbix-ha/"  title="基于 Keepalived 搭建 Zabbix Server HA 双机高可用">
  <strong>下一篇：</strong><br/> 
- <span>rsync 安装配置实践
+ <span>基于 Keepalived 搭建 Zabbix Server HA 双机高可用
 </span>
 </a>
 </div>
@@ -330,7 +340,7 @@
 		  
 		
 		  
-			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>110</sup></a></li>
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>111</sup></a></li>
 		  
 		
 		  
