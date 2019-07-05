@@ -23,12 +23,12 @@
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="CPU优化建议使用cpupower设置CPU Performance模式">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://wx3.sinaimg.cn/large/7207510dgy1fzat998mmvj21dc0ggdqx.jpg">
-<meta property="og:updated_time" content="2019-01-21T11:22:07.404Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190702190945.png">
+<meta property="og:updated_time" content="2019-07-02T11:09:57.948Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CPU 优化建议使用 cpupower 设置 CPU Performance 模式">
 <meta name="twitter:description" content="CPU优化建议使用cpupower设置CPU Performance模式">
-<meta name="twitter:image" content="https://wx3.sinaimg.cn/large/7207510dgy1fzat998mmvj21dc0ggdqx.jpg">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190702190945.png">
 
     
     <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
@@ -101,14 +101,14 @@
   </p>
 </header>
 	<div class="article-content">
-		
+<!-- 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
 			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cpufreq-的五种模式"><span class="toc-number">3.</span> <span class="toc-text">cpufreq 的五种模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cpupower-设置-performance"><span class="toc-number">4.</span> <span class="toc-text">cpupower 设置 performance</span></a></li></ol>
 		
 		</div>
-		
+		 -->
 		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>CPU 动态节能技术用于降低服务器功耗，通过选择系统空闲状态不同的电源管理策 略，可以实现不同程度降低服务器功耗，更低的功耗策略意味着 CPU 唤醒更慢对性能 影响更大。对于对时延和性能要求高的应用，建议关闭 CPU 的动态调节功能，禁止 CPU 休眠，并把 CPU 频率固定到最高。通常建议在服务器 BIOS 中修改电源管理为 Performance，如果发现 CPU 模式为 conservative 或者 powersave，可以使用 cpupower 设置 CPU Performance 模式，效果也是相当显著的。</p>
 <blockquote>
 <p>CPU 优化建议使用 cpupower 设置 CPU Performance 模式</p>
@@ -131,7 +131,7 @@
 <p>从 conservative 或者 powersave 切换到 performance 的效果还是杠杠的</p>
 </blockquote>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># CentOS 安装 kernel-tools</span></span><br><span class="line">yum install kernel-tools</span><br><span class="line"></span><br><span class="line"><span class="comment"># Ubuntu 安装 CPU 模式无图形化切换器</span></span><br><span class="line">apt install cpufrequtils</span><br><span class="line"></span><br><span class="line"><span class="comment"># cpupower 设置 performance</span></span><br><span class="line">cpupower frequency-set -g performance</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前的调节器</span></span><br><span class="line">cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor</span><br><span class="line">performance</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建自启动服务</span></span><br><span class="line">cat &lt;&lt; EOF | sudo tee /etc/systemd/system/cpupower.service</span><br><span class="line">[Unit]</span><br><span class="line">Description=CPU powersave</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=oneshot</span><br><span class="line">ExecStart=/usr/bin/cpupower -c all frequency-set -g powersave</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl <span class="built_in">enable</span> cpupower.service</span><br><span class="line"></span><br><span class="line"><span class="comment"># systemd.service — Service unit configuration</span></span><br><span class="line">https://www.freedesktop.org/software/systemd/man/systemd.service.html</span><br></pre></td></tr></table></figure>
-<p><img src="https://wx3.sinaimg.cn/large/7207510dgy1fzat998mmvj21dc0ggdqx.jpg" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190702190945.png" alt=""></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -224,7 +224,7 @@
 		  
 		
 		  
-			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>119</sup></a></li>
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>121</sup></a></li>
 		  
 		
 		  
