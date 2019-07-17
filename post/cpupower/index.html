@@ -24,7 +24,7 @@
 <meta property="og:description" content="CPU优化建议使用cpupower设置CPU Performance模式">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190702190945.png">
-<meta property="og:updated_time" content="2019-07-02T11:09:57.948Z">
+<meta property="og:updated_time" content="2019-07-17T09:38:37.846Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CPU 优化建议使用 cpupower 设置 CPU Performance 模式">
 <meta name="twitter:description" content="CPU优化建议使用cpupower设置CPU Performance模式">
@@ -96,7 +96,7 @@
 		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
 		
   <p class="article-time">
-    <time datetime="2019-01-18T06:59:49.000Z" itemprop="datePublished"> 发表于 2019-01-18</time>
+    <time datetime="2019-07-17T05:59:49.000Z" itemprop="datePublished"> 发表于 2019-07-17</time>
     
   </p>
 </header>
@@ -105,7 +105,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cpufreq-的五种模式"><span class="toc-number">3.</span> <span class="toc-text">cpufreq 的五种模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cpupower-设置-performance"><span class="toc-number">4.</span> <span class="toc-text">cpupower 设置 performance</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cpufreq-的五种模式"><span class="toc-number">3.</span> <span class="toc-text">cpufreq 的五种模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cpupower-设置-performance"><span class="toc-number">4.</span> <span class="toc-text">cpupower 设置 performance</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#无法使用-cpupower-调整-performance"><span class="toc-number">5.</span> <span class="toc-text">无法使用 cpupower 调整 performance</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">6.</span> <span class="toc-text">参考文章</span></a></li></ol>
 		
 		</div>
 		 -->
@@ -113,7 +113,7 @@
 <blockquote>
 <p>CPU 优化建议使用 cpupower 设置 CPU Performance 模式</p>
 </blockquote>
-<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019 年 01 月 18 日 - 初稿</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019 年 07 月 17 日 - 更新 cpupower 自启动设置脚本<br>2019 年 01 月 18 日 - 初稿</p>
 <p>阅读原文 - <a href="https://wsgzao.github.io/post/cpupower/">https://wsgzao.github.io/post/cpupower/</a></p>
 <p><strong> 扩展阅读 </strong></p>
 <p>CPU frequency scaling - <a href="https://wiki.archlinux.org/index.php/CPU_frequency_scaling" target="_blank" rel="noopener">https://wiki.archlinux.org/index.php/CPU_frequency_scaling</a></p>
@@ -130,8 +130,16 @@
 <h2 id="cpupower-设置-performance"><a href="#cpupower-设置-performance" class="headerlink" title="cpupower 设置 performance"></a>cpupower 设置 performance</h2><blockquote>
 <p>从 conservative 或者 powersave 切换到 performance 的效果还是杠杠的</p>
 </blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># CentOS 安装 kernel-tools</span></span><br><span class="line">yum install kernel-tools</span><br><span class="line"></span><br><span class="line"><span class="comment"># Ubuntu 安装 CPU 模式无图形化切换器</span></span><br><span class="line">apt install cpufrequtils</span><br><span class="line"></span><br><span class="line"><span class="comment"># cpupower 设置 performance</span></span><br><span class="line">cpupower frequency-set -g performance</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前的调节器</span></span><br><span class="line">cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor</span><br><span class="line">performance</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建自启动服务</span></span><br><span class="line">cat &lt;&lt; EOF | sudo tee /etc/systemd/system/cpupower.service</span><br><span class="line">[Unit]</span><br><span class="line">Description=CPU powersave</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=oneshot</span><br><span class="line">ExecStart=/usr/bin/cpupower -c all frequency-set -g powersave</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl <span class="built_in">enable</span> cpupower.service</span><br><span class="line"></span><br><span class="line"><span class="comment"># systemd.service — Service unit configuration</span></span><br><span class="line">https://www.freedesktop.org/software/systemd/man/systemd.service.html</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># CentOS 安装 kernel-tools</span></span><br><span class="line">yum install kernel-tools</span><br><span class="line"></span><br><span class="line"><span class="comment"># Ubuntu 安装 CPU 模式无图形化切换器</span></span><br><span class="line">apt install cpufrequtils</span><br><span class="line"></span><br><span class="line"><span class="comment"># cpupower 设置 performance</span></span><br><span class="line">cpupower frequency-set -g performance</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前的调节器</span></span><br><span class="line">cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor</span><br><span class="line">performance</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 cpupower 配置文件</span></span><br><span class="line">cat &lt;&lt; EOF | sudo tee /etc/sysconfig/cpupower</span><br><span class="line"><span class="comment"># See 'cpupower help' and cpupower(1) for more info</span></span><br><span class="line">CPUPOWER_START_OPTS=<span class="string">"frequency-set -g performance"</span></span><br><span class="line">CPUPOWER_STOP_OPTS=<span class="string">"frequency-set -g ondemand"</span></span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建自启动服务</span></span><br><span class="line">cat &lt;&lt; EOF | sudo tee /usr/lib/systemd/system/cpupower.service</span><br><span class="line">[Unit]</span><br><span class="line">Description=Configure CPU power related settings</span><br><span class="line">After=syslog.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=oneshot</span><br><span class="line">RemainAfterExit=yes</span><br><span class="line">EnvironmentFile=/etc/sysconfig/cpupower</span><br><span class="line">ExecStart=/usr/bin/cpupower <span class="variable">$CPUPOWER_START_OPTS</span></span><br><span class="line">ExecStop=/usr/bin/cpupower <span class="variable">$CPUPOWER_STOP_OPTS</span></span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment"># 刷新 system 服务</span></span><br><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl <span class="built_in">enable</span> cpupower.service</span><br><span class="line"></span><br><span class="line"><span class="comment"># systemd.service — Service unit configuration</span></span><br><span class="line">https://www.freedesktop.org/software/systemd/man/systemd.service.html</span><br></pre></td></tr></table></figure>
 <p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190702190945.png" alt=""></p>
+<h2 id="无法使用-cpupower-调整-performance"><a href="#无法使用-cpupower-调整-performance" class="headerlink" title="无法使用 cpupower 调整 performance"></a>无法使用 cpupower 调整 performance</h2><blockquote>
+<p>比如我们遇到相同类型 CPU 硬件和操作系统版本，但不同厂商会出现无法使用 cpupower 调整 performance 的情况</p>
+</blockquote>
+<p>Dell R440 CPU: Intel(R) Xeon(R) Silver 4116 CPU @ 2.10GHz <code>Failed</code></p>
+<p>Dell R430 CPU: Intel(R) Xeon(R) CPU E5-2640 v4 @ 2.40GHz <code>Success</code></p>
+<p>Huawei 1288H V5 CPU: Intel(R) Xeon(R) Silver 4116 CPU @ 2.10GHz <code>Success</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果遇到以下报错请确认硬件厂商是否做了限制，只能通过 BIOS 调节</span></span><br><span class="line">[root@sg-gop-10-71-14-91 wangao]<span class="comment"># cpupower frequency-set -g performance</span></span><br><span class="line">Setting cpu: 0</span><br><span class="line">Error setting new values. Common errors:</span><br><span class="line">- Do you have proper administration rights? (super-user?)</span><br><span class="line">- Is the governor you requested available and modprobed?</span><br><span class="line">- Trying to <span class="built_in">set</span> an invalid policy?</span><br><span class="line">- Trying to <span class="built_in">set</span> a specific frequency, but userspace governor is not available,</span><br><span class="line">   <span class="keyword">for</span> example because of hardware <span class="built_in">which</span> cannot be <span class="built_in">set</span> to a specific frequency</span><br><span class="line">   or because the userspace governor isn<span class="string">'t loaded?</span></span><br></pre></td></tr></table></figure>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://www.kernel.org/doc/Documentation/cpu-freq/governors.txt" target="_blank" rel="noopener">CPU frequency and voltage scaling code in the Linux(TM) kernel</a><br><a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html-single/power_management_guide/index" target="_blank" rel="noopener">POWER MANAGEMENT GUIDE</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -162,19 +170,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/post/thailand/" title="泰国普吉岛和甲米的旅游经历分享">
-  <strong>上一篇：</strong><br/>
-  <span>
-  泰国普吉岛和甲米的旅游经历分享</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/post/rpmbuild/"  title="使用 rpmbuild 制作 Nginx 的 RPM 包">
+<a href="/post/okr/"  title="OKR 和 KPI">
  <strong>下一篇：</strong><br/> 
- <span>使用 rpmbuild 制作 Nginx 的 RPM 包
+ <span>OKR 和 KPI
 </span>
 </a>
 </div>
@@ -197,7 +197,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cpufreq-的五种模式"><span class="toc-number">3.</span> <span class="toc-text">cpufreq 的五种模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cpupower-设置-performance"><span class="toc-number">4.</span> <span class="toc-text">cpupower 设置 performance</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cpufreq-的五种模式"><span class="toc-number">3.</span> <span class="toc-text">cpufreq 的五种模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cpupower-设置-performance"><span class="toc-number">4.</span> <span class="toc-text">cpupower 设置 performance</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#无法使用-cpupower-调整-performance"><span class="toc-number">5.</span> <span class="toc-text">无法使用 cpupower 调整 performance</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">6.</span> <span class="toc-text">参考文章</span></a></li></ol>
  
   </div>
 
