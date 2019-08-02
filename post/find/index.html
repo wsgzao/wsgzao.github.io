@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="基于bash find命令执行log日志备份和清理日志简单实践">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-08-02T07:51:22.832Z">
+<meta property="og:updated_time" content="2019-08-02T11:28:45.878Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="基于 bash find 命令执行 log 日志备份和清理的一次简单实践">
 <meta name="twitter:description" content="基于bash find命令执行log日志备份和清理日志简单实践">
@@ -107,7 +107,7 @@
 		
 		</div>
 		 -->
-		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>find 作为最基础的 bash shell 命令之一我就不多做介绍了，由于每月压缩后的日志增长量已经超过 20TB，选择的日志归档同步方案是 <a href="https://github.com/facebookarchive/scribe" target="_blank" rel="noopener">Facebook Scribe</a>，之后或许会基于<a href="https://www.elastic.co/cn/what-is/elk-stack" target="_blank" rel="noopener">ELK</a> 或<a href="https://grafana.com/oss/loki" target="_blank" rel="noopener">Grafana Loki</a>搭建日志实时分析平台，不过眼下的问题还是想办法在没有商业化集中式存储和软件定义分布式存储的支持下，用比较简单粗暴的方法苦苦支撑，本文分享了一些简答的小技巧方便回顾和二次利用。</p>
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>find 作为最基础的 bash shell 命令之一我就不多做介绍了，由于每月压缩后的日志增长量已经超过 20TB，和 PB 相比应该还不算很大，选择的日志归档同步方案是 <a href="https://github.com/facebookarchive/scribe" target="_blank" rel="noopener">Facebook Scribe</a>，之后或许会基于<a href="https://www.elastic.co/cn/what-is/elk-stack" target="_blank" rel="noopener">ELK</a> 或<a href="https://grafana.com/oss/loki" target="_blank" rel="noopener">Grafana Loki</a>搭建日志实时分析平台，不过眼下的问题还是想办法在没有商业化集中式存储和软件定义分布式存储的支持下，用比较简单粗暴的方法苦苦支撑，本文分享了一些简单的小技巧方便回顾和二次利用。</p>
 <blockquote>
 <p>基于 bash find 命令执行 log 日志备份和清理日志简单实践</p>
 </blockquote>
@@ -155,7 +155,7 @@
 <h2 id="backup-and-rsync-scripts"><a href="#backup-and-rsync-scripts" class="headerlink" title="backup and rsync scripts"></a>backup and rsync scripts</h2><blockquote>
 <p>check_original_log.sh</p>
 </blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">var_date=<span class="variable">$1</span></span><br><span class="line">var_src=<span class="string">"/data/gop/live/primary/gop"</span></span><br><span class="line">find <span class="variable">$&#123;var_src&#125;</span> | grep -i <span class="variable">$&#123;var_date&#125;</span></span><br><span class="line"></span><br><span class="line">`</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">var_date=<span class="variable">$1</span></span><br><span class="line">var_src=<span class="string">"/data/gop/live/primary/gop"</span></span><br><span class="line">find <span class="variable">$&#123;var_src&#125;</span> | grep -i <span class="variable">$&#123;var_date&#125;</span></span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>check_backup_log.sh</p>
 </blockquote>
