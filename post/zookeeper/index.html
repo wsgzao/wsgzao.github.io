@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="ZooKeeper分布式环境的协调利器">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-10-01T08:12:42.713Z">
+<meta property="og:updated_time" content="2019-07-24T08:35:21.145Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ZooKeeper 安装使用">
 <meta name="twitter:description" content="ZooKeeper分布式环境的协调利器">
@@ -119,7 +119,8 @@
 <h2 id="ZooKeeper-简介"><a href="#ZooKeeper-简介" class="headerlink" title="ZooKeeper 简介"></a>ZooKeeper 简介</h2><p>ZooKeeper is a centralized service for maintaining configuration information, naming, providing distributed synchronization, and providing group services. All of these kinds of services are used in some form or another by distributed applications. Each time they are implemented there is a lot of work that goes into fixing the bugs and race conditions that are inevitable. Because of the difficulty of implementing these kinds of services, applications initially usually skimp on them ,which make them brittle in the presence of change and difficult to manage. Even when done correctly, different implementations of these services lead to management complexity when the applications are deployed.</p>
 <p>ZooKeeper 是一个开源的为分布式应用提供分布式协调的服务。它公开了一组简单的原语，分布式应用程序可以基于这些原语实现更高级别的服务，包括同步、维护配置、组和命名。它的设计易于编程，它使用一个遵循文件系统中常见的目录树结构的数据模型。它在 Java 环境中运行，对 Java 和 C 都有绑定。<br>协调服务是出了名的难。它们特别容易出错，如竞态条件和死锁。ZooKeeper 背后的动机是让分布式应用从零开始实现一站式协调服务。</p>
 <p>翻译：ZooKeeper OverView<br><a href="https://www.cnblogs.com/f-ck-need-u/p/9231153.html" target="_blank" rel="noopener">https://www.cnblogs.com/f-ck-need-u/p/9231153.html</a></p>
-<p>可能是全网把 ZooKeeper 概念讲的最清楚的一篇文章<br><a href="https://github.com/Snailclimb/JavaGuide/blob/master/%E4%B8%BB%E6%B5%81%E6%A1%86%E6%9E%B6/ZooKeeper.md" target="_blank" rel="noopener">https://github.com/Snailclimb/JavaGuide/blob/master/%E4%B8%BB%E6%B5%81%E6%A1%86%E6%9E%B6/ZooKeeper.md</a></p>
+<p>可能是全网把 ZooKeeper 概念讲的最清楚的一篇文章<br><a href="https://github.com/Snailclimb/JavaGuide/blob/master/docs/system-design/framework/ZooKeeper.md" target="_blank" rel="noopener">https://github.com/Snailclimb/JavaGuide/blob/master/docs/system-design/framework/ZooKeeper.md</a></p>
+<p><a href="https://github.com/Snailclimb/JavaGuide/blob/master/docs/system-design/framework/ZooKeeper.md" target="_blank" rel="noopener">ZooKeeper 相关概念总结</a><br><a href="https://github.com/Snailclimb/JavaGuide/blob/master/docs/system-design/framework/ZooKeeper%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%B8%B8%E8%A7%81%E5%91%BD%E4%BB%A4.md" target="_blank" rel="noopener">ZooKeeper 数据模型和常见命令</a></p>
 <h2 id="jdk"><a href="#jdk" class="headerlink" title="jdk"></a>jdk</h2><h3 id="install-jdk-by-ansible"><a href="#install-jdk-by-ansible" class="headerlink" title="install jdk by ansible"></a>install jdk by ansible</h3><p><a href="https://galaxy.ansible.com/geerlingguy/java" target="_blank" rel="noopener">https://galaxy.ansible.com/geerlingguy/java</a></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># download</span></span><br><span class="line">ansible-galaxy install geerlingguy.java</span><br><span class="line"><span class="comment"># create yaml file and config java version</span></span><br><span class="line">vi install_jdk.yml</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">- hosts: all</span><br><span class="line">  roles:</span><br><span class="line">    - role: geerlingguy.java</span><br><span class="line">      when: <span class="string">"ansible_os_family =='RedHat'"</span></span><br><span class="line">      java_packages:</span><br><span class="line">        - java-1.8.0-openjdk</span><br></pre></td></tr></table></figure>
 <h3 id="install-jdk-manually"><a href="#install-jdk-manually" class="headerlink" title="install jdk manually"></a>install jdk manually</h3><p><a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html" target="_blank" rel="noopener">http://www.oracle.com/technetwork/java/javase/downloads/index.html</a></p>
@@ -263,7 +264,7 @@
 		  
 		
 		  
-			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>123</sup></a></li>
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>126</sup></a></li>
 		  
 		
 		  
