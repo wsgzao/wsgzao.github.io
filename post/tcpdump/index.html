@@ -23,10 +23,12 @@
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="tcpdump 是一款灵活、功能强大的抓包工具，能有效地帮助排查网络故障问题。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-03-01T04:04:41.337Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190813152622.png">
+<meta property="og:updated_time" content="2019-08-13T07:29:00.787Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="tcpdump 抓包使用小结">
 <meta name="twitter:description" content="tcpdump 是一款灵活、功能强大的抓包工具，能有效地帮助排查网络故障问题。">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190813152622.png">
 
     
     <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
@@ -114,7 +116,7 @@
 <h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019 年 02 月 27 日 - 更新 tcpdump 抓包规则常用命令<br>2018 年 12 月 11 日 - 初稿</p>
 <p>阅读原文 - <a href="https://wsgzao.github.io/post/tcpdump/">https://wsgzao.github.io/post/tcpdump/</a></p>
 <p><strong> 扩展阅读 </strong></p>
-<p>Wireshark - <a href="https://www.wireshark.org/#download" target="_blank" rel="noopener">https://www.wireshark.org/#download</a><br>tcpdump - <a href="http://www.tcpdump.org/" target="_blank" rel="noopener">http://www.tcpdump.org/</a><br>在 Linux 命令行中使用 tcpdump 抓包 - <a href="https://linux.cn/article-10191-1.html" target="_blank" rel="noopener">https://linux.cn/article-10191-1.html</a></p>
+<p>Wireshark - <a href="https://www.wireshark.org/#download" target="_blank" rel="noopener">https://www.wireshark.org/#download</a><br>tcpdump - <a href="http://www.tcpdump.org/" target="_blank" rel="noopener">http://www.tcpdump.org/</a><br>在 Linux 命令行中使用 tcpdump 抓包 - <a href="https://linux.cn/article-10191-1.html" target="_blank" rel="noopener">https://linux.cn/article-10191-1.html</a><br>抓包工具 tcpdump 用法说明 - <a href="https://www.cnblogs.com/f-ck-need-u/p/7064286.html" target="_blank" rel="noopener">https://www.cnblogs.com/f-ck-need-u/p/7064286.html</a></p>
 <hr>
 <h2 id="tcpdump-简介"><a href="#tcpdump-简介" class="headerlink" title="tcpdump 简介"></a>tcpdump 简介</h2><blockquote>
 <p>tcpdump, a powerful command-line packet analyzer; and libpcap, a portable C/C++ library for network traffic capture.</p>
@@ -130,7 +132,8 @@
 <pre><code>dnf install tcpdump
 </code></pre><p>Ubuntu/Debian/Linux Mint<br>在 Ubuntu/Debain/Linux Mint 上使用下面命令安装 tcpdump：</p>
 <pre><code>apt-get install tcpdump
-</code></pre><h2 id="tcpdump-常用命令解释"><a href="#tcpdump-常用命令解释" class="headerlink" title="tcpdump 常用命令解释"></a>tcpdump 常用命令解释</h2><p>tcpdump [ 选项 ] [ -c 数量 ] [ -i 网络接口 ] [ -w 文件名 ] [ 表达式 ]</p>
+</code></pre><h2 id="tcpdump-常用命令解释"><a href="#tcpdump-常用命令解释" class="headerlink" title="tcpdump 常用命令解释"></a>tcpdump 常用命令解释</h2><p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190813152622.png" alt=""></p>
+<p>tcpdump [ 选项 ] [ -c 数量 ] [ -i 网络接口 ] [ -w 文件名 ] [ 表达式 ]</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">man tcpdump</span><br><span class="line">...</span><br><span class="line">tcpdump [ -AbdDefhHIJKlLnNOpqStuUvxX<span class="comment"># ] [ -B buffer_size ]</span></span><br><span class="line">        [ -c count ]</span><br><span class="line">        [ -C file_size ] [ -G rotate_seconds ] [ -F file ]</span><br><span class="line">        [ -i interface ] [ -j tstamp_type ] [ -m module ] [ -M secret ]</span><br><span class="line">        [ --number ] [ -Q <span class="keyword">in</span>|out|inout ]</span><br><span class="line">        [ -r file ] [ -V file ] [ -s snaplen ] [ -T <span class="built_in">type</span> ] [ -w file ]</span><br><span class="line">        [ -W filecount ]</span><br><span class="line">        [ -E spi@ipaddr algo:secret,...  ]</span><br><span class="line">        [ -y datalinktype ] [ -z postrotate-command ] [ -Z user ]</span><br><span class="line">        [ --time-stamp-precision=tstamp_precision ]</span><br><span class="line">        [ --immediate-mode ] [ --version ]</span><br><span class="line">        [ expression ]</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">选项翻译如下： </span><br><span class="line"></span><br><span class="line">-l：使标准输出变为缓冲行形式；</span><br><span class="line">-c：抓包次数；</span><br><span class="line">-nn：直接以 IP 及 Port Number 显示，而非主机名与服务名称；</span><br><span class="line">-s ：&lt; 数据包大小 & gt; 设置每个数据包的大小；</span><br><span class="line">-i：指定监听的网络接口；</span><br><span class="line">-r：从指定的文件中读取包；</span><br><span class="line">-w：输出信息保存到指定文件；</span><br><span class="line">-a：将网络地址和广播地址转变成名字；</span><br><span class="line">-d：将匹配信息包的代码以人们能够理解的汇编格式给出；</span><br><span class="line">-e：在输出行打印出数据链路层的头部信息；</span><br><span class="line">-f：将外部的 Internet 地址以数字的形式打印出来；</span><br><span class="line">-t：在输出的每一行不打印时间戳；</span><br><span class="line">-v ：输出稍微详细的报文信息；--vv 则输出更详细信息。</span><br></pre></td></tr></table></figure>
 <p>表达式指正则表达式，tcpdump 利用它作为过滤报文的条件，如果一个报文满足表达式的条件，则会捕获该报文。如果没有给出任何条件，则会截获网络上所有的信息包。<br>在表达式中一般有如下几种类型的关键字： </p>
 <ol>
