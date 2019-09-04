@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="rsync安装配置实践">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-05-24T07:04:59.373Z">
+<meta property="og:updated_time" content="2019-09-02T03:37:16.521Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="rsync 安装配置实践">
 <meta name="twitter:description" content="rsync安装配置实践">
@@ -159,7 +159,9 @@
 </code></pre><p>–remove-source-files 该选项告诉 rsync 移除 sender 端已经成功传输到 receiver 端的文件 (不包括任何目录文件)。</p>
 <pre><code>rsync -avP --remove-source-files source dest
 </code></pre><p>rsync 过滤模块比较复杂，建议参考官网和 Google 实例测试<br>–exclude 选项如果只有前者可以单独使用，多个规则需要写多条<br>–include 选项通常需要配合 –exclude 同时使用<br>过滤规则比较多可以写在文件里读取，由于 rsync 不支持正则表达式，复杂的逻辑建议先使用 bash shell 过滤</p>
-<p><a href="https://rsync.samba.org/documentation.html" target="_blank" rel="noopener">https://rsync.samba.org/documentation.html</a></p>
+<p>Basically, first include all directories, then exclude all files.</p>
+<pre><code>rsync -a --include=&apos;*/&apos; --exclude=&apos;*&apos; source/ destination/
+</code></pre><p><a href="https://rsync.samba.org/documentation.html" target="_blank" rel="noopener">https://rsync.samba.org/documentation.html</a></p>
 <p>rsync (一)：基本命令和用法 - <a href="https://www.cnblogs.com/f-ck-need-u/p/7220009.html" target="_blank" rel="noopener">https://www.cnblogs.com/f-ck-need-u/p/7220009.html</a></p>
   
 	</div>
@@ -253,7 +255,7 @@
 		  
 		
 		  
-			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>126</sup></a></li>
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>131</sup></a></li>
 		  
 		
 		  

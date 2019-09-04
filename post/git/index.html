@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://i.v2ex.co/fAhm82RJ.png">
 <meta property="og:image" content="http://gityuan.com/images/git/1.png">
-<meta property="og:updated_time" content="2017-02-10T02:00:57.000Z">
+<meta property="og:updated_time" content="2019-09-03T06:10:13.470Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Git 常用命令和 Git 团队使用规范指南">
 <meta name="twitter:description" content="Git是目前世界上最先进的分布式版本控制系统">
@@ -106,7 +106,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SVN-与-Git-的最主要的区别"><span class="toc-number">3.</span> <span class="toc-text">SVN 与 Git 的最主要的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-搭建和使用"><span class="toc-number">4.</span> <span class="toc-text">Git 搭建和使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-服务端"><span class="toc-number">4.1.</span> <span class="toc-text">Git 服务端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-客户端"><span class="toc-number">4.2.</span> <span class="toc-text">Git 客户端</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-常用命令"><span class="toc-number">5.</span> <span class="toc-text">Git 常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-使用规范"><span class="toc-number">6.</span> <span class="toc-text">Git 使用规范</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SVN-与-Git-的最主要的区别"><span class="toc-number">3.</span> <span class="toc-text">SVN 与 Git 的最主要的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-搭建和使用"><span class="toc-number">4.</span> <span class="toc-text">Git 搭建和使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-服务端"><span class="toc-number">4.1.</span> <span class="toc-text">Git 服务端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-客户端"><span class="toc-number">4.2.</span> <span class="toc-text">Git 客户端</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-常用命令"><span class="toc-number">5.</span> <span class="toc-text">Git 常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#git-命令一览"><span class="toc-number">6.</span> <span class="toc-text">git 命令一览</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何提交-PR"><span class="toc-number">7.</span> <span class="toc-text">如何提交 PR</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-使用规范"><span class="toc-number">8.</span> <span class="toc-text">Git 使用规范</span></a></li></ol>
 		
 		</div>
 		 -->
@@ -143,7 +143,7 @@
 <li><code>[&lt;xxx&gt;]</code> 自定义可选内容</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 初始设置</span></span><br><span class="line">git config --global user.name <span class="string">"&lt; 用户名 & gt;"</span> <span class="comment"># 设置用户名</span></span><br><span class="line">git config --global user.email <span class="string">"&lt; 电子邮件 & gt;"</span> <span class="comment"># 设置电子邮件</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地操作</span></span><br><span class="line">git add [-i] <span class="comment"># 保存更新，-i 为逐个确认。</span></span><br><span class="line">git status <span class="comment"># 检查更新。</span></span><br><span class="line">git commit [-a] -m <span class="string">"&lt; 更新说明 & gt;"</span> <span class="comment"># 提交更新，-a 为包含内容修改和增删，-m 为说明信息，也可以使用 -am。</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 远端操作</span></span><br><span class="line">git <span class="built_in">clone</span> &lt;git 地址 & gt; <span class="comment"># 克隆到本地。</span></span><br><span class="line">git fetch <span class="comment"># 远端抓取。</span></span><br><span class="line">git merge <span class="comment"># 与本地当前分支合并。</span></span><br><span class="line">git pull [&lt; 远端别名 & gt;] [&lt; 远端 branch&gt;] <span class="comment"># 抓取并合并, 相当于第 2、3 步</span></span><br><span class="line">git push [-f] [&lt; 远端别名 & gt;] [&lt; 远端 branch&gt;] <span class="comment"># 推送到远端，-f 为强制覆盖</span></span><br><span class="line">git remote add &lt; 别名 & gt; &lt;git 地址 & gt; <span class="comment"># 设置远端别名</span></span><br><span class="line">git remote [-v] <span class="comment"># 列出远端，-v 为详细信息</span></span><br><span class="line">git remote show &lt; 远端别名 & gt; <span class="comment"># 查看远端信息</span></span><br><span class="line">git remote rename &lt; 远端别名 & gt; &lt; 新远端别名 & gt; <span class="comment"># 重命名远端</span></span><br><span class="line">git remote rm &lt; 远端别名 & gt; <span class="comment"># 删除远端</span></span><br><span class="line">git remote update [&lt; 远端别名 & gt;] <span class="comment"># 更新分支列表</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 分支相关</span></span><br><span class="line">git branch [-r] [-a] <span class="comment"># 列出分支，-r 远端 ,-a 全部</span></span><br><span class="line">git branch &lt; 分支名 & gt; <span class="comment"># 新建分支</span></span><br><span class="line">git branch -b &lt; 分支名 & gt; <span class="comment"># 新建并切换分支</span></span><br><span class="line">git branch -d &lt; 分支名 & gt; <span class="comment"># 删除分支</span></span><br><span class="line">git checkout &lt; 分支名 & gt; <span class="comment"># 切换到分支</span></span><br><span class="line">git checkout -b &lt; 本地 branch&gt; [-t &lt; 远端别名 & gt;/&lt; 远端分支 & gt;] <span class="comment">#-b 新建本地分支并切换到分支, -t 绑定远端分支</span></span><br><span class="line">git merge &lt; 分支名 & gt; <span class="comment"># 合并某分支到当前分支</span></span><br></pre></td></tr></table></figure>
-<p>Git 常用命令 - <a href="http://gityuan.com/2015/06/27/git-notes/" target="_blank" rel="noopener">http://gityuan.com/2015/06/27/git-notes/</a></p>
+<p><a href="http://gityuan.com/2015/06/27/git-notes/" target="_blank" rel="noopener">Git 常用命令</a></p>
 <p><img src="http://gityuan.com/images/git/1.png" alt=""></p>
 <ul>
 <li>workspace: 本地的工作目录。（记作 A）</li>
@@ -155,6 +155,326 @@
 <p>以下所有的命令的功能说明，都采用上述的标记的 A、B、C、D 的方式来阐述。</p>
 </blockquote>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 初始化 </span></span><br><span class="line">git init // 创建</span><br><span class="line">git <span class="built_in">clone</span> /path/to/repository // 检出</span><br><span class="line">git config --global user.email <span class="string">"you@example.com"</span> // 配置 email</span><br><span class="line">git config --global user.name <span class="string">"Name"</span> // 配置用户名</span><br><span class="line"></span><br><span class="line"><span class="comment"># 操作</span></span><br><span class="line">git add &lt;file&gt; // 文件添加，A → B</span><br><span class="line">git add . // 所有文件添加，A → B</span><br><span class="line"></span><br><span class="line">git commit -m <span class="string">"代码提交信息"</span> // 文件提交，B → C</span><br><span class="line">git commit --amend // 与上次 commit 合并, *B → C</span><br><span class="line"></span><br><span class="line">git push origin master // 推送至 master 分支, C → D</span><br><span class="line">git pull // 更新本地仓库至最新改动， D → A</span><br><span class="line">git fetch // 抓取远程仓库更新， D → C</span><br><span class="line"></span><br><span class="line">git <span class="built_in">log</span> // 查看提交记录</span><br><span class="line">git status // 查看修改状态</span><br><span class="line">git diff// 查看详细修改内容</span><br><span class="line">git show// 显示某次提交的内容</span><br><span class="line"></span><br><span class="line"><span class="comment"># 撤销操作</span></span><br><span class="line">git reset &lt;file&gt;// 某个文件索引会回滚到最后一次提交， C → B</span><br><span class="line">git reset// 索引会回滚到最后一次提交， C → B</span><br><span class="line">git reset --hard // 索引会回滚到最后一次提交， C → B → A</span><br><span class="line"></span><br><span class="line">git checkout // 从 index 复制到 workspace， B → A</span><br><span class="line">git checkout -- files // 文件从 index 复制到 workspace， B → A</span><br><span class="line">git checkout HEAD -- files // 文件从 < span class="built_in">local</span> repository 复制到 workspace， C → A<br><span class="line"></span><br><span class="line"><span class="comment"># 分支相关</span></span><br><span class="line">git checkout -b branch_name // 创建名叫“branch_name” 的分支，并切换过去 </span><br><span class="line">git checkout master // 切换回主分支</span><br><span class="line">git branch -d branch_name // 删除名叫“branch_name” 的分支</span><br><span class="line">git push origin branch_name // 推送分支到远端仓库</span><br><span class="line">git merge branch_name // 合并分支 branch_name 到当前分支(如 master)</span><br><span class="line">git rebase // 衍合，线性化的自动， D → A</span><br><span class="line"></span><br><span class="line"><span class="comment"># 冲突处理</span></span><br><span class="line">git diff // 对比 workspace 与 index</span><br><span class="line">git diff HEAD // 对于 workspace 与最后一次 commit</span><br><span class="line">git diff &lt;source_branch&gt; &lt;target_branch&gt; // 对比差异</span><br><span class="line">git add &lt;filename&gt; // 修改完冲突，需要 add 以标记合并成功</span><br><span class="line"></span><br><span class="line"><span class="comment"># 其他</span></span><br><span class="line">gitk // 开灯图形化 git</span><br><span class="line">git config color.ui <span class="literal">true</span> // 彩色的 git 输出</span><br><span class="line">git config format.pretty oneline // 显示历史记录时，每个提交的信息只显示一行</span><br><span class="line">git add -i // 交互式添加文件到暂存区</span><br></pre></td></tr></table></figure>
+<h2 id="git-命令一览"><a href="#git-命令一览" class="headerlink" title="git 命令一览"></a>git 命令一览</h2><p><a href="http://rogerdudler.github.io/git-guide/index.zh.html" target="_blank" rel="noopener">Git 简明指南</a></p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>解析</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>git init</td>
+<td>初始化本地 git 仓库（创建新仓库）</td>
+</tr>
+<tr>
+<td>git config –global user.name “xxx”</td>
+<td>配置用户名</td>
+</tr>
+<tr>
+<td>git config –global user.email “<a href="mailto:xxx@xxx.com" target="_blank" rel="noopener">xxx@xxx.com</a>“</td>
+<td>配置邮件</td>
+</tr>
+<tr>
+<td>git config –global color.ui true</td>
+<td>git status 等命令自动着色</td>
+</tr>
+<tr>
+<td>git config –global –unset http.proxy</td>
+<td>remove proxy configuration on git</td>
+</tr>
+<tr>
+<td>git clone git+ssh:<a href="mailto://git@192.168.53.168" target="_blank" rel="noopener">//git@192.168.53.168</a>/VT.git</td>
+<td>clone 远程仓库</td>
+</tr>
+<tr>
+<td>git status</td>
+<td>查看当前版本状态（是否修改）</td>
+</tr>
+<tr>
+<td>git add xyz</td>
+<td>添加 xyz 文件至 index</td>
+</tr>
+<tr>
+<td>git add .</td>
+<td>增加当前子目录下所有更改过的文件至 index</td>
+</tr>
+<tr>
+<td>git commit -m ‘xxx’</td>
+<td>提交</td>
+</tr>
+<tr>
+<td>git commit –amend -m ‘xxx’</td>
+<td>合并上一次提交（用于反复修改）</td>
+</tr>
+<tr>
+<td>git commit -am ‘xxx’</td>
+<td>将 add 和 commit 合为一步</td>
+</tr>
+<tr>
+<td>git rm xxx</td>
+<td>删除 index 中的文件</td>
+</tr>
+<tr>
+<td>git rm -r *</td>
+<td>递归删除</td>
+</tr>
+<tr>
+<td>git log</td>
+<td>显示提交日志</td>
+</tr>
+<tr>
+<td>git log -1</td>
+<td>显示 1 行日志 -n 为 n 行</td>
+</tr>
+<tr>
+<td>git log –stat</td>
+<td>显示提交日志及相关变动文件</td>
+</tr>
+<tr>
+<td>git show dfb02e6xxxx</td>
+<td>显示某个提交的详细内容</td>
+</tr>
+<tr>
+<td>git show dfb02</td>
+<td>可只用 commitid 的前几位</td>
+</tr>
+<tr>
+<td>git show HEAD</td>
+<td>显示 HEAD 提交日志</td>
+</tr>
+<tr>
+<td>git show HEAD^</td>
+<td>显示 HEAD 的父（上一个版本）的提交日志 为上两个版本 5 为上 5 个版本</td>
+</tr>
+<tr>
+<td>git tag</td>
+<td>显示已存在的 tag</td>
+</tr>
+<tr>
+<td>git tag -a v2.0 -m ‘xxx’</td>
+<td>增加 v2.0 的 tag</td>
+</tr>
+<tr>
+<td>git show v2.0</td>
+<td>显示 v2.0 的日志及详细内容</td>
+</tr>
+<tr>
+<td>git log v2.0</td>
+<td>显示 v2.0 的日志</td>
+</tr>
+<tr>
+<td>git diff</td>
+<td>显示所有未添加至 index 的变更</td>
+</tr>
+<tr>
+<td>git diff –cached</td>
+<td>显示所有已添加 index 但还未 commit 的变更</td>
+</tr>
+<tr>
+<td>git diff HEAD^</td>
+<td>比较与上一个版本的差异</td>
+</tr>
+<tr>
+<td>git diff HEAD — ./lib</td>
+<td>比较与 HEAD 版本 lib 目录的差异</td>
+</tr>
+<tr>
+<td>git diff origin/master..master</td>
+<td>比较远程分支 master 上有本地分支 master 上没有的</td>
+</tr>
+<tr>
+<td>git diff origin/master..master –stat</td>
+<td>只显示差异的文件，不显示具体内容</td>
+</tr>
+<tr>
+<td>git remote add origin git+ssh:<a href="mailto://git@192.168.53.168" target="_blank" rel="noopener">//git@192.168.53.168</a>/VT.git</td>
+<td>增加远程定义（用于 push/pull/fetch）</td>
+</tr>
+<tr>
+<td>git branch</td>
+<td>显示本地分支</td>
+</tr>
+<tr>
+<td>git branch –contains 50089</td>
+<td>显示包含提交 50089 的分支</td>
+</tr>
+<tr>
+<td>git branch -a</td>
+<td>显示所有分支</td>
+</tr>
+<tr>
+<td>git branch -r</td>
+<td>显示所有原创分支</td>
+</tr>
+<tr>
+<td>git branch –merged</td>
+<td>显示所有已合并到当前分支的分支</td>
+</tr>
+<tr>
+<td>git branch –no-merged</td>
+<td>显示所有未合并到当前分支的分支</td>
+</tr>
+<tr>
+<td>git branch -m master master_copy</td>
+<td>本地分支改名</td>
+</tr>
+<tr>
+<td>git checkout -b master_copy</td>
+<td>从当前分支创建新分支 master_copy 并检出</td>
+</tr>
+<tr>
+<td>git checkout -b master master_copy</td>
+<td>上面的完整版</td>
+</tr>
+<tr>
+<td>git checkout features/performance</td>
+<td>检出已存在的 features/performance 分支</td>
+</tr>
+<tr>
+<td>git checkout –track hotfixes/BJVEP933</td>
+<td>检出远程分支 hotfixes/BJVEP933 并创建本地跟踪分支</td>
+</tr>
+<tr>
+<td>git checkout v2.0</td>
+<td>检出版本 v2.0</td>
+</tr>
+<tr>
+<td>git checkout -b devel origin/develop</td>
+<td>从远程分支 develop 创建新本地分支 devel 并检出</td>
+</tr>
+<tr>
+<td>git checkout — README</td>
+<td>检出 head 版本的 README 文件（可用于修改错误回退）</td>
+</tr>
+<tr>
+<td>git merge origin/master</td>
+<td>合并远程 master 分支至当前分支</td>
+</tr>
+<tr>
+<td>git cherry-pick ff44785404a8e</td>
+<td>合并提交 ff44785404a8e 的修改</td>
+</tr>
+<tr>
+<td>git push origin master</td>
+<td>将当前分支 push 到远程 master 分支</td>
+</tr>
+<tr>
+<td>git push origin :hotfixes/BJVEP933</td>
+<td>删除远程仓库的 hotfixes/BJVEP933 分支</td>
+</tr>
+<tr>
+<td>git push –tags</td>
+<td>把所有 tag 推送到远程仓库</td>
+</tr>
+<tr>
+<td>git fetch</td>
+<td>获取所有远程分支（不更新本地分支，另需 merge）</td>
+</tr>
+<tr>
+<td>git fetch –prune</td>
+<td>获取所有原创分支并清除服务器上已删掉的分支</td>
+</tr>
+<tr>
+<td>git pull origin master</td>
+<td>获取远程分支 master 并 merge 到当前分支</td>
+</tr>
+<tr>
+<td>git mv README README2</td>
+<td>重命名文件 README 为 README2</td>
+</tr>
+<tr>
+<td>git reset –hard HEAD</td>
+<td>将当前版本重置为 HEAD（通常用于 merge 失败回退）</td>
+</tr>
+<tr>
+<td>git branch -d hotfixes/BJVEP933</td>
+<td>删除分支 hotfixes/BJVEP933（本分支修改已合并到其他分支）</td>
+</tr>
+<tr>
+<td>git branch -D hotfixes/BJVEP933</td>
+<td>强制删除分支 hotfixes/BJVEP933</td>
+</tr>
+<tr>
+<td>git ls-files</td>
+<td>列出 git index 包含的文件</td>
+</tr>
+<tr>
+<td>git show-branch</td>
+<td>图示当前分支历史</td>
+</tr>
+<tr>
+<td>git show-branch –all</td>
+<td>图示所有分支历史</td>
+</tr>
+<tr>
+<td>git whatchanged</td>
+<td>显示提交历史对应的文件修改</td>
+</tr>
+<tr>
+<td>git revert dfb02e6e4f2f7b573337763e5c0013802e392818</td>
+<td>撤销提交 dfb02e6e4f2f7b573337763e5c0013802e392818</td>
+</tr>
+<tr>
+<td>git ls-tree HEAD</td>
+<td>内部命令：显示某个 git 对象</td>
+</tr>
+<tr>
+<td>git rev-parse v2.0</td>
+<td>内部命令：显示某个 ref 对于的 SHA1 HASH</td>
+</tr>
+<tr>
+<td>git reflog</td>
+<td>显示所有提交，包括孤立节点</td>
+</tr>
+<tr>
+<td>git show master@{yesterday}</td>
+<td>显示 master 分支昨天的状态</td>
+</tr>
+<tr>
+<td>git log –pretty=format:’%h %s’ –graph</td>
+<td>图示提交日志</td>
+</tr>
+<tr>
+<td>git stash</td>
+<td>暂存当前修改，将所有至为 HEAD 状态</td>
+</tr>
+<tr>
+<td>git stash list</td>
+<td>查看所有暂存</td>
+</tr>
+<tr>
+<td>git stash show -p stash@{0}</td>
+<td>参考第一次暂存</td>
+</tr>
+<tr>
+<td>git stash apply stash@{0}</td>
+<td>应用第一次暂存</td>
+</tr>
+<tr>
+<td>git grep “delete from”</td>
+<td>文件中搜索文本 “delete from”</td>
+</tr>
+</tbody>
+</table>
+<h2 id="如何提交-PR"><a href="#如何提交-PR" class="headerlink" title="如何提交 PR"></a>如何提交 PR</h2><blockquote>
+<p>引用 kubeasz 的帮助文件为例</p>
+</blockquote>
+<p><a href="https://github.com/easzlab/kubeasz/blob/master/docs/mixes/HowToContribute.md" target="_blank" rel="noopener">为项目 kubeasz 提交 pull request</a></p>
+<p>首先请核对下本地 git config 配置的用户名和邮箱与你 github 上的注册用户和邮箱一致，否则即使 pull request 被接受，贡献者列表中也看不到自己的名字，设置命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git config --global user.email <span class="string">"you@example.com"</span></span><br><span class="line">$ git config --global user.name <span class="string">"Your Name"</span></span><br></pre></td></tr></table></figure>
+<ol>
+<li>登陆 github，在本项目页面点击 fork 到自己仓库</li>
+<li>clone 自己的仓库到本地：git clone <a href="https://github.com/xxx/kubeasz.git" target="_blank" rel="noopener">https://github.com/xxx/kubeasz.git</a></li>
+<li>在 master 分支添加原始仓库为上游分支：git remote add upstream <a href="https://github.com/easzlab/kubeasz.git" target="_blank" rel="noopener">https://github.com/easzlab/kubeasz.git</a></li>
+<li>在本地新建开发分支：git checkout -b dev</li>
+<li>在开发分支修改代码并提交：git add ., git commit -am ‘xx 变更说明’</li>
+<li>切换至 master 分支，同步原始仓库：git checkout master， git pull upstream master</li>
+<li>切换至 dev 分支，合并本地 master 分支（已经和原始仓库同步），可能需要解冲突：git checkout dev, git merge master</li>
+<li>提交本地 dev 分支到自己的远程 dev 仓库：git push origin dev</li>
+<li>在 github 自己仓库页面，点击 Compare &amp; pull request 给原始仓库发 pull request 请求<br>a. 等待原作者回复（接受 / 拒绝）</li>
+</ol>
 <h2 id="Git-使用规范"><a href="#Git-使用规范" class="headerlink" title="Git 使用规范"></a>Git 使用规范</h2><p>Git 使用规范流程 - <a href="http://www.ruanyifeng.com/blog/2015/08/git-use-process.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2015/08/git-use-process.html</a><br>团队中的 Git 实践 - <a href="https://ourai.ws/posts/working-with-git-in-team/" target="_blank" rel="noopener">https://ourai.ws/posts/working-with-git-in-team/</a><br>构家网 git 团队协作使用规范 v2 - <a href="http://wenku.baidu.com/view/e1430d1b7f1922791788e81e" target="_blank" rel="noopener">http://wenku.baidu.com/view/e1430d1b7f1922791788e81e</a></p>
 <blockquote>
 <p>Git 使用规范提醒</p>
@@ -232,7 +552,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SVN-与-Git-的最主要的区别"><span class="toc-number">3.</span> <span class="toc-text">SVN 与 Git 的最主要的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-搭建和使用"><span class="toc-number">4.</span> <span class="toc-text">Git 搭建和使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-服务端"><span class="toc-number">4.1.</span> <span class="toc-text">Git 服务端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-客户端"><span class="toc-number">4.2.</span> <span class="toc-text">Git 客户端</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-常用命令"><span class="toc-number">5.</span> <span class="toc-text">Git 常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-使用规范"><span class="toc-number">6.</span> <span class="toc-text">Git 使用规范</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SVN-与-Git-的最主要的区别"><span class="toc-number">3.</span> <span class="toc-text">SVN 与 Git 的最主要的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-搭建和使用"><span class="toc-number">4.</span> <span class="toc-text">Git 搭建和使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-服务端"><span class="toc-number">4.1.</span> <span class="toc-text">Git 服务端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-客户端"><span class="toc-number">4.2.</span> <span class="toc-text">Git 客户端</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-常用命令"><span class="toc-number">5.</span> <span class="toc-text">Git 常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#git-命令一览"><span class="toc-number">6.</span> <span class="toc-text">git 命令一览</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何提交-PR"><span class="toc-number">7.</span> <span class="toc-text">如何提交 PR</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-使用规范"><span class="toc-number">8.</span> <span class="toc-text">Git 使用规范</span></a></li></ol>
  
   </div>
 
@@ -259,7 +579,7 @@
 		  
 		
 		  
-			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>126</sup></a></li>
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>131</sup></a></li>
 		  
 		
 		  

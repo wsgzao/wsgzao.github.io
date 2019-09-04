@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="基于bash find命令执行log日志备份和清理日志简单实践">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-08-02T11:28:45.878Z">
+<meta property="og:updated_time" content="2019-09-02T03:46:12.348Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="基于 bash find 命令执行 log 日志备份和清理的一次简单实践">
 <meta name="twitter:description" content="基于bash find命令执行log日志备份和清理日志简单实践">
@@ -159,7 +159,11 @@
 <blockquote>
 <p>check_backup_log.sh</p>
 </blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">var_date=<span class="variable">$1</span></span><br><span class="line">var_src=<span class="string">"/data/backup/"</span></span><br><span class="line">find <span class="variable">$&#123;var_src&#125;</span> | grep -i <span class="variable">$&#123;var_date&#125;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">var_date=<span class="variable">$1</span></span><br><span class="line">var_src=<span class="string">"/data/backup/"</span></span><br><span class="line">find <span class="variable">$&#123;var_src&#125;</span> | grep -i <span class="variable">$&#123;var_date&#125;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>copy_dir_to_backup.sh</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">var_path=<span class="string">"/data/gop/live/primary/gop/"</span></span><br><span class="line">var_str=<span class="string">"/data/backup/"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># rsync copy all directories </span></span><br><span class="line"><span class="comment"># rsync -anv --include='*/' --exclude='*' $&#123;var_path&#125; $&#123;var_str&#125;</span></span><br><span class="line">rsync -a --include=<span class="string">'*/'</span> --exclude=<span class="string">'*'</span> <span class="variable">$&#123;var_path&#125;</span> <span class="variable">$&#123;var_str&#125;</span></span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>move_backup.sh</p>
 </blockquote>
@@ -279,7 +283,7 @@
 		  
 		
 		  
-			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>126</sup></a></li>
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>131</sup></a></li>
 		  
 		
 		  
