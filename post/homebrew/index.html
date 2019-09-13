@@ -1,0 +1,677 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+  
+    <title>macOS 使用 Homebrew 的经验分享 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="macOS使用Homebrew的经验分享">
+<meta property="og:type" content="article">
+<meta property="og:title" content="macOS 使用 Homebrew 的经验分享">
+<meta property="og:url" content="https://wsgzao.github.io/post/homebrew/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="macOS使用Homebrew的经验分享">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-09-13T03:46:18.617Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="macOS 使用 Homebrew 的经验分享">
+<meta name="twitter:description" content="macOS使用Homebrew的经验分享">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/homebrew/" title="macOS 使用 Homebrew 的经验分享" itemprop="url">macOS 使用 Homebrew 的经验分享</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2019-09-11T06:59:49.000Z" itemprop="datePublished"> 发表于 2019-09-11</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Homebrew-简介"><span class="toc-number">3.</span> <span class="toc-text">Homebrew 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么需要-Homebrew"><span class="toc-number">4.</span> <span class="toc-text">为什么需要 Homebrew</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Homebrew-快速入门"><span class="toc-number">5.</span> <span class="toc-text">Homebrew 快速入门</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Homebrew-安装"><span class="toc-number">5.1.</span> <span class="toc-text">Homebrew 安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装"><span class="toc-number">5.2.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#基础功能"><span class="toc-number">5.3.</span> <span class="toc-text">基础功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#名词解释"><span class="toc-number">5.4.</span> <span class="toc-text">名词解释</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Homebrew-进阶用法"><span class="toc-number">6.</span> <span class="toc-text">Homebrew 进阶用法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Tap"><span class="toc-number">6.1.</span> <span class="toc-text">Tap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Services"><span class="toc-number">6.2.</span> <span class="toc-text">Services</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cask"><span class="toc-number">6.3.</span> <span class="toc-text">Cask</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Bundle"><span class="toc-number">6.4.</span> <span class="toc-text">Bundle</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Homebrew-扩展用法"><span class="toc-number">7.</span> <span class="toc-text">Homebrew 扩展用法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#提交-Formula"><span class="toc-number">7.1.</span> <span class="toc-text">提交 Formula</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自建-Tap"><span class="toc-number">7.2.</span> <span class="toc-text">自建 Tap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#私有-Tap"><span class="toc-number">7.3.</span> <span class="toc-text">私有 Tap</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Homebrew-Tips"><span class="toc-number">8.</span> <span class="toc-text">Homebrew Tips</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#禁用自动升级"><span class="toc-number">8.1.</span> <span class="toc-text">禁用自动升级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#直接安装-Formula"><span class="toc-number">8.2.</span> <span class="toc-text">直接安装 Formula</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装旧版软件"><span class="toc-number">9.</span> <span class="toc-text">安装旧版软件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Homebrew-常见问题"><span class="toc-number">10.</span> <span class="toc-text">Homebrew 常见问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">11.</span> <span class="toc-text">参考文章</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本来想着 macOS 使用 Homebrew 对大家没啥难度，之前就分享了一篇介绍 homebrew-bundle 备份恢复的文章，不过长期使用后还是觉得有必要做一下总结，道理也很简单，越简单越频繁使用的产品就越值得挖掘一些背自己忽视的小技巧，因为如果可以做到每天节省 5 分钟那么量变可能会成为质变。</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019 年 09 月 11 日 - 更新转载 <a href="https://crispgm.com/page/dive-in-homebrew.html" target="_blank" rel="noopener">Homebrew 深度应用</a><br>2019 年 09 月 08 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/homebrew/">https://wsgzao.github.io/post/homebrew/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<p><a href="https://brew.sh/" target="_blank" rel="noopener">Homebrew</a></p>
+<p><a href="https://wsgzao.github.io/post/homebrew-bundle/">macOS 使用 homebrew-bundle 优雅的备份和恢复软件列表</a></p>
+<hr>
+<h2 id="Homebrew-简介"><a href="#Homebrew-简介" class="headerlink" title="Homebrew 简介"></a>Homebrew 简介</h2><p>Homebrew 是一款享有盛名的包管理工具，是 macOS 上包管理的事实 (de facto) 标准 。Homebrew 的意思是家酿啤酒。</p>
+<p>它的官方 slogan 是 The missing package manager for macOS (or Linux)。Linuxbrew 已经在 Homebrew 1.9 正式合入，成为 Homebrew 的 “一等公民”。</p>
+<p>Homebrew 最早的创建者是 Max Howell，目前的主要维护者是 Mike McQuaid。同 Jekyll 等开源项目一样，Homebrew 的核心维护者也是 GitHub 的员工。GitHub 对于员工亲自参加开源项目方面，做得一直不错。</p>
+<p>顺带插播一条奇闻逸事：Homebrew 的创始人 Max Howell 活跃在开源社区，目前主要从事 Swift 相关的库开发。他在 2015 年初曾去 Google 面试，因为 “白板” 写算法题「翻转二叉树」失败，愤而发 tweet 讽刺：</p>
+<blockquote>
+<p>Google: 90% of our engineers use the software you wrote (Homebrew), but you can’t invert a binary tree on a whiteboard so fuck off. </p>
+</blockquote>
+<h2 id="为什么需要-Homebrew"><a href="#为什么需要-Homebrew" class="headerlink" title="为什么需要 Homebrew"></a>为什么需要 Homebrew</h2><p>对于使用 Unix/Linux 类系统的用户往往都遇到过这些需求：</p>
+<ul>
+<li>开源程序是源码分发，需要自己编译，但 <code>./configure</code> 参数超多，还要解决各种库的依赖</li>
+<li>想把软件安装到用户目录，而不是系统目录（这样不需要 root 权限）</li>
+<li>自己编译安装了软件，想删除时却不知道在哪里删除和删除哪些文件</li>
+</ul>
+<p>各 Linux 发行版为了提升安装软件的体验，大多都提供了官方的包管理器，如 Ubuntu 的 aptitude (apt-get)。而苹果官方没有为 macOS 提供包管理器，市面上最好的解决方案就是 Homebrew。</p>
+<p>目前 Homebrew 的中文内容大多以简单入门级教程为主，对于它的各类能力提之甚少，我希望在这里更全面的分享 Homebrew。</p>
+<h2 id="Homebrew-快速入门"><a href="#Homebrew-快速入门" class="headerlink" title="Homebrew 快速入门"></a>Homebrew 快速入门</h2><p>网上基础的教程很多，我这里只简略的介绍下。对于基础功能类的深度用法，推荐这篇 <a href="https://swiftcafe.io/post/home-brew" target="_blank" rel="noopener">macOS 包管理工具 Homebrew 不完全指南</a>。</p>
+<h3 id="Homebrew-安装"><a href="#Homebrew-安装" class="headerlink" title="Homebrew 安装"></a>Homebrew 安装</h3><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>开始安装前需要安装 macOS 命令行工具：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcode-select —install</span><br></pre></td></tr></table></figure>
+<p>或者，在 <a href="https://developer.apple.com/download/more/" target="_blank" rel="noopener">https://developer.apple.com/download/more/</a> 下载安装。</p>
+<p>然后执行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/bin/ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;</span><br></pre></td></tr></table></figure>
+<h3 id="基础功能"><a href="#基础功能" class="headerlink" title="基础功能"></a>基础功能</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"># 安装 </span><br><span class="line">brew install wget</span><br><span class="line"></span><br><span class="line"># 完成安装后可以列出已安装内容 </span><br><span class="line">brew list</span><br><span class="line"></span><br><span class="line"># 显示可以升级的包 </span><br><span class="line">brew outdated</span><br><span class="line"></span><br><span class="line">cmake (3.13.4) &lt; 3.14.0</span><br><span class="line">yarn (1.13.0) &lt; 1.15.2</span><br><span class="line">youtube-dl (2019.03.09) &lt; 2019.03.18</span><br><span class="line"></span><br><span class="line"># 进行升级 </span><br><span class="line">brew upgrade cmake</span><br><span class="line"></span><br><span class="line"># 删除 </span><br><span class="line">brew uninstall wget</span><br><span class="line"></span><br><span class="line"># 安装桌面程序 </span><br><span class="line">brew cask install google-chrome</span><br></pre></td></tr></table></figure>
+<p>对于 Homebrew-cask 管理桌面程序，这里先不细说，后面会专门讲。</p>
+<p>Homebrew 会把软件安装到 <code>/usr/local/Cellar</code>，并且通过软链链接到 <code>/usr/local/bin</code>。我们可以通过 <code>brew unlink</code> 和 <code>brew link</code> 删除或创建链接。</p>
+<h3 id="名词解释"><a href="#名词解释" class="headerlink" title="名词解释"></a>名词解释</h3><p>Homebrew 把软件安装过程中的各种名词都进行了拟物化命名，这些命名挺有意思，但对于大多数英语水平一般的人来说，有不少词汇有些生僻。</p>
+<table>
+<thead>
+<tr>
+<th>英文</th>
+<th>直译</th>
+<th>实际含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>formula(e)</td>
+<td>公式</td>
+<td>安装包的描述文件，formulae 为复数</td>
+</tr>
+<tr>
+<td>cellar</td>
+<td>地窖</td>
+<td>安装好后所在的目录</td>
+</tr>
+<tr>
+<td>keg</td>
+<td>小桶</td>
+<td>具体某个包所在的目录，keg 是 cellar 的子目录</td>
+</tr>
+<tr>
+<td>bottle</td>
+<td>瓶子</td>
+<td>预先编译好的包，不需要现场下载编译源码，速度会快很多；</td>
+</tr>
+</tbody>
+</table>
+<p>官方库中的包大多都是通过 bottle 方式安装 |<br>| tap | (插入) 水龙头 | 下载启用某个源 |<br>| cask | 木桶 | 安装 macOS native 应用的扩展 |<br>| bundle | 捆 | 描述 Homebrew 依赖的扩展 |</p>
+<h2 id="Homebrew-进阶用法"><a href="#Homebrew-进阶用法" class="headerlink" title="Homebrew 进阶用法"></a>Homebrew 进阶用法</h2><p>对于 Homebrew，我们很多时候往往都是上来就 <code>brew search</code> 或是 <code>brew install</code>。缺什么安什么，没有充分的应用它的强大能力。</p>
+<p>首先，Homebrew 虽为解决控制台程序而生，但它完全有能力（Cask）安装任何桌面软件。它还支持丰富的分类目软件库或第三方库。</p>
+<p>除此之外，它还有一个打包安装或备份工具，可以把已安装的软件输出成 Brewfile。迁移到新电脑时，只要根据 Brewfile 运行 Homebrew bundle，就可以一键安装全部控制台、桌面和来自 Mac App Store 的程序（Mac App Store 上的软件通过 <a href="https://github.com/mas-cli/mas" target="_blank" rel="noopener">mas</a> 支持）。</p>
+<h3 id="Tap"><a href="#Tap" class="headerlink" title="Tap"></a>Tap</h3><p>Tap 在 Homebrew 中我理解是个动词，指的是启用某个源。实际看了下发现，homebrew-services 和 homebrew-bundle 也已 tap 形式存在，因此可以认为 tap 实际指的应该是扩展（extension）。</p>
+<p>Homebrew 默认情况下会自带：</p>
+<ul>
+<li>homebrew/core</li>
+<li>homebrew/cask</li>
+<li>homebrew/services</li>
+<li>homebrew/bundle</li>
+</ul>
+<p>后两者并没有任何公式配方，而只是扩展程序。</p>
+<p>除此之外的源，需要通过 <code>brew tap</code> 来启用。如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew tap heroku/brew</span><br><span class="line">brew install heroku</span><br></pre></td></tr></table></figure>
+<h3 id="Services"><a href="#Services" class="headerlink" title="Services"></a>Services</h3><p><a href="https://github.com/Homebrew/homebrew-services" target="_blank" rel="noopener">Homebrew-services</a> 是 Homebrew 的后台服务程序扩展，它基于 macOS 的 <code>launchctl</code>。后台服务类程序的安装依旧使用 Homebrew，在管理时可以使用 Homebrew-services 进行启动、重启和停止等操作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew install mysql</span><br><span class="line">brew services start mysql</span><br></pre></td></tr></table></figure>
+<h3 id="Cask"><a href="#Cask" class="headerlink" title="Cask"></a>Cask</h3><p><a href="https://github.com/Homebrew/homebrew-cask" target="_blank" rel="noopener">Homebrew-cask</a> 是 Homebrew 的 macOS Native 应用扩展，通过 cask 可以安装各类应用程序。</p>
+<p>搜索 Cask 的方法和搜索普通包一样，但安装时需要加上 cask 指令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew search google-chrome</span><br><span class="line">brew cask install google-chrome</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>cask-versions</p>
+</blockquote>
+<p>Homebrew Cask 和 Homebrew 一样，默认库只维护最新版本，但有的时候我们还是需要用旧版的（比如：我只有 Dash 3 的 License，所以需要用 Dash 3 而不是最新的 Dash 4），那就可能需要使用 cask-versions。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew tap homebrew/cask-versions</span><br><span class="line">brew cask install dash3</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>cask-fonts</p>
+</blockquote>
+<p>Homebrew 官方的字体源，比如 Mozilla 的开源字体 Fira Code：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew tap homebrew/cask-fonts</span><br><span class="line">brew cask install font-fira-code</span><br></pre></td></tr></table></figure>
+<h3 id="Bundle"><a href="#Bundle" class="headerlink" title="Bundle"></a>Bundle</h3><p>Homebrew 不仅仅是一个包管理器，还具有软件依赖管理能力。通过 <a href="https://github.com/Homebrew/homebrew-bundle" target="_blank" rel="noopener">Homebrew Bundle</a> 可以帮你解决所有软件依赖，包括官方和第三方的 formula 以及 cask，甚至还包括 Mac App Store（简称 mas）中的应用。</p>
+<p>Homebrew 默认就安装了 Homebrew Bundle。</p>
+<p>我们只需要一个 <code>Brewfile</code>，就可以配置好所有需要的应用。熟悉 Ruby 的人应该不太需要解释，毕竟 Ruby 自己就有 Bundler 这套东西，Brewfile 和 Gemfile 属于对应关系。</p>
+<p>如果你的安装列表已经足够 “干净”，那么可以执行 <code>brew bundle dump</code> 来生成现有依赖，输出到 <code>Brewfile</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">brew bundle dump</span><br><span class="line">cat Brewfile</span><br><span class="line"></span><br><span class="line">brew &quot;git&quot;</span><br><span class="line">brew &quot;wget&quot;</span><br><span class="line">brew &quot;mas&quot;</span><br><span class="line">brew &quot;p7zip&quot;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>如果想自己写也比较容易，<code>Brewfile</code> 是一种简单的 Ruby DSL，写起来比大部分配置文件都简单。只需要掌握一些常用到的命令，主要有 <code>brew</code>, <code>tap</code>, <code>cask</code> 和 <code>mas</code>。</p>
+<p>这四条命令分别对应：</p>
+<ul>
+<li>brew install</li>
+<li>brew tap</li>
+<li>brew cask install</li>
+<li>mas install</li>
+</ul>
+<blockquote>
+<p>注：Homebrew 虽然好用，但 Homebrew 并不能管理 MAS「Mac App Store」上的应用软件，<a href="https://www.hi-linux.com/posts/18202.html" target="_blank" rel="noopener">在终端上轻松管理「Mac App Store」中应用的神器 mas-cli</a></p>
+</blockquote>
+<p>命令行类应用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">brew &quot;git&quot;</span><br><span class="line">brew &quot;wget&quot;</span><br><span class="line">brew &quot;vim&quot;</span><br></pre></td></tr></table></figure>
+<p>非命令行类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cask &quot;google-chrome&quot;</span><br><span class="line">cask &quot;alfred&quot;</span><br><span class="line">cask &quot;visual-studio-code&quot;</span><br></pre></td></tr></table></figure>
+<p>非官方 Formula 应用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">tap  &quot;homebrew/cask-versions&quot;</span><br><span class="line">brew &quot;dash3&quot;</span><br><span class="line">tap  &quot;homebrew/cask-fonts&quot;</span><br><span class="line">cask &quot;font-source-code-pro&quot;</span><br></pre></td></tr></table></figure>
+<p>Mac App Store 上的应用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mas &quot;WeChat&quot;, id: 836500024</span><br></pre></td></tr></table></figure>
+<p>因此，维护好 <a href="https://github.com/crispgm/dotfiles/blob/master/Brewfile" target="_blank" rel="noopener">Brewfile</a> 就可以完美解决应用自动化安装，只需要运行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew bundle</span><br></pre></td></tr></table></figure>
+<h2 id="Homebrew-扩展用法"><a href="#Homebrew-扩展用法" class="headerlink" title="Homebrew 扩展用法"></a>Homebrew 扩展用法</h2><h3 id="提交-Formula"><a href="#提交-Formula" class="headerlink" title="提交 Formula"></a>提交 Formula</h3><p>创建并提交一个 Formula 比较容易，官方教程非常详细。这里，我就不做单独介绍了。</p>
+<h3 id="自建-Tap"><a href="#自建-Tap" class="headerlink" title="自建 Tap"></a>自建 Tap</h3><p>Homebrew 除了各种官方维护的源外，还支持自建软件库。默认使用 GitHub，需要以 “homebrew-xxx” 格式命名 Repo。Formula 或 Cask 文件需要存放在 Formula 或 Casks 二级目录中。</p>
+<p>比如，Heroku 的自建库在 GitHub 上是 <code>heroku/homebrew-brew</code>。通过 <code>brew tap heroku/brew</code> 就可以获取库里维护的包了。</p>
+<h3 id="私有-Tap"><a href="#私有-Tap" class="headerlink" title="私有 Tap"></a>私有 Tap</h3><p>上面说到，Tap 默认维护在 GitHub，那么当我们想安装一些需要 <strong> 保密 </strong> 的软件时该怎么办呢？</p>
+<p>答案是 Tap 支持指定 Git，因此也可以使用内网域名内的 Git：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew tap yourcompany/brew git@git.yourcompany.com: yourcompany/homebrew-brew.git</span><br><span class="line">brew install inhouse-app</span><br></pre></td></tr></table></figure>
+<h2 id="Homebrew-Tips"><a href="#Homebrew-Tips" class="headerlink" title="Homebrew Tips"></a>Homebrew Tips</h2><h3 id="禁用自动升级"><a href="#禁用自动升级" class="headerlink" title="禁用自动升级"></a>禁用自动升级</h3><p>Homebrew 自动升级触发概率很高，由于网络等问题，检查更新会很久有时会比较烦。可以通过环境变量禁用自动升级：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HOMEBREW_NO_AUTO_UPDATE=1 brew info mysql</span><br></pre></td></tr></table></figure>
+<h3 id="直接安装-Formula"><a href="#直接安装-Formula" class="headerlink" title="直接安装 Formula"></a>直接安装 Formula</h3><p>Homebrew 的安装指令并非只支持名字，也可以用文件安装包括网络文件和本地文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 本地 </span><br><span class="line">brew install blabla.rb</span><br><span class="line"># 远程 </span><br><span class="line">brew install https://blablablabla.com/blabla.rb</span><br></pre></td></tr></table></figure>
+<h2 id="安装旧版软件"><a href="#安装旧版软件" class="headerlink" title="安装旧版软件"></a>安装旧版软件</h2><p>Homebrew 默认情况下只支持最新版软件安装，有些重要的版本会单独存在。但想安装一些小版本就得自己 DIY 了。</p>
+<p>我所知有两种方法：</p>
+<ol>
+<li>在 GitHub 找到 Formula 所在 Repo 中（默认为 <a href="https://github.com/Homebrew/homebrew-core/blob/master/Formula/" target="_blank" rel="noopener">homebrew-core</a>）的文件，把文件远程地址复制下来，用 <code>brew install</code> 安装。</li>
+<li>进入 homebrew-core 在 macOS 本地的路径，默认为 <code>/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core</code>，<code>git checkout</code> 到所在 commit，再用 <code>brew pin</code> 锁定这个文件的更新，然后进行安装。</li>
+</ol>
+<h2 id="Homebrew-常见问题"><a href="#Homebrew-常见问题" class="headerlink" title="Homebrew 常见问题"></a>Homebrew 常见问题</h2><blockquote>
+<p>我遇到的问题大多数是升级 macOS Mojave 之后产生的，升级前要三思而后行，先备份，先备份，先备份</p>
+</blockquote>
+<p>Homebrew Permissions Denied Issues Solution</p>
+<pre><code>sudo chown -R $(whoami) $(brew --prefix)/*
+</code></pre><p>Reference - <a href="https://gist.github.com/irazasyed/7732946" target="_blank" rel="noopener">https://gist.github.com/irazasyed/7732946</a></p>
+<p>xcrun: error: invalid active developer path (/Library/Developer/CommandLineTools), missing xcrun at: /Library/Developer/CommandLineTools/usr/bin/xcrun.</p>
+<p>Reference - <a href="https://apple.stackexchange.com/questions/254380/why-am-i-getting-an-invalid-active-developer-path-when-attempting-to-use-git-a" target="_blank" rel="noopener">https://apple.stackexchange.com/questions/254380/why-am-i-getting-an-invalid-active-developer-path-when-attempting-to-use-git-a</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># The problem is that you are using XCode and you explicit have to agree to the license agreement. So open Terminal, and run the following:</span><br><span class="line"></span><br><span class="line">xcode-select --install</span><br><span class="line"></span><br><span class="line"># This will download and install xcode developer tools and fix the problem. As a follow on step, you may need to reset the path to Xcode if you have several versions or want the command line tools to run without Xcode.</span><br><span class="line"></span><br><span class="line">xcode-select --switch /Applications/Xcode.app</span><br><span class="line">xcode-select --switch /Library/Developer/CommandLineTools</span><br></pre></td></tr></table></figure>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://twitter.com/mxcl/status/608682016205344768" target="_blank" rel="noopener">Max Howell on Twitter: “Google: 90% of our engineers use the software you wrote (Homebrew), but you can’t invert a binary tree on a whiteboard so fuck off.”</a></p>
+<p><a href="https://github.com/Linuxbrew/brew/issues/612" target="_blank" rel="noopener">https://github.com/Linuxbrew/brew/issues/612</a></p>
+<p><a href="https://docs.brew.sh/Formula-Cookbook#homebrew-terminology" target="_blank" rel="noopener">Formula Cookbook — Homebrew Documentation</a></p>
+<p><a href="http://tmr08c.github.io/devops/2016/10/24/homebrew-glossary.html" target="_blank" rel="noopener">Glossary of Homebrew Terms</a></p>
+<p><a href="https://docs.brew.sh/Formula-Cookbook#an-introduction" target="_blank" rel="noopener">Formula Cookbook — Homebrew Documentation</a></p>
+<p><a href="https://www.hi-linux.com/posts/18202.html" target="_blank" rel="noopener">在终端上轻松管理「Mac App Store」中应用的神器 mas-cli</a></p>
+<p><a href="https://crispgm.com/page/dive-in-homebrew.html" target="_blank" rel="noopener">Homebrew 深度应用</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/homebrew/" data-title="macOS 使用 Homebrew 的经验分享 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/regex/" title="正则表达式从小白到入门">
+  <strong>上一篇：</strong><br/>
+  <span>
+  正则表达式从小白到入门</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/vim/"  title="Vim 从小白到入门">
+ <strong>下一篇：</strong><br/> 
+ <span>Vim 从小白到入门
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Homebrew-简介"><span class="toc-number">3.</span> <span class="toc-text">Homebrew 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么需要-Homebrew"><span class="toc-number">4.</span> <span class="toc-text">为什么需要 Homebrew</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Homebrew-快速入门"><span class="toc-number">5.</span> <span class="toc-text">Homebrew 快速入门</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Homebrew-安装"><span class="toc-number">5.1.</span> <span class="toc-text">Homebrew 安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装"><span class="toc-number">5.2.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#基础功能"><span class="toc-number">5.3.</span> <span class="toc-text">基础功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#名词解释"><span class="toc-number">5.4.</span> <span class="toc-text">名词解释</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Homebrew-进阶用法"><span class="toc-number">6.</span> <span class="toc-text">Homebrew 进阶用法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Tap"><span class="toc-number">6.1.</span> <span class="toc-text">Tap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Services"><span class="toc-number">6.2.</span> <span class="toc-text">Services</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cask"><span class="toc-number">6.3.</span> <span class="toc-text">Cask</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Bundle"><span class="toc-number">6.4.</span> <span class="toc-text">Bundle</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Homebrew-扩展用法"><span class="toc-number">7.</span> <span class="toc-text">Homebrew 扩展用法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#提交-Formula"><span class="toc-number">7.1.</span> <span class="toc-text">提交 Formula</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自建-Tap"><span class="toc-number">7.2.</span> <span class="toc-text">自建 Tap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#私有-Tap"><span class="toc-number">7.3.</span> <span class="toc-text">私有 Tap</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Homebrew-Tips"><span class="toc-number">8.</span> <span class="toc-text">Homebrew Tips</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#禁用自动升级"><span class="toc-number">8.1.</span> <span class="toc-text">禁用自动升级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#直接安装-Formula"><span class="toc-number">8.2.</span> <span class="toc-text">直接安装 Formula</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装旧版软件"><span class="toc-number">9.</span> <span class="toc-text">安装旧版软件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Homebrew-常见问题"><span class="toc-number">10.</span> <span class="toc-text">Homebrew 常见问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">11.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>134</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>
