@@ -1,0 +1,543 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+  
+    <title>基于 bash shell 脚本制定灵活的 trimlog 日志清理策略 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="基于bash shell脚本制定灵活的trimlog日志清理策略">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于 bash shell 脚本制定灵活的 trimlog 日志清理策略">
+<meta property="og:url" content="https://wsgzao.github.io/post/trimlog/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="基于bash shell脚本制定灵活的trimlog日志清理策略">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-10-08T08:55:40.057Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基于 bash shell 脚本制定灵活的 trimlog 日志清理策略">
+<meta name="twitter:description" content="基于bash shell脚本制定灵活的trimlog日志清理策略">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/trimlog/" title="基于 bash shell 脚本制定灵活的 trimlog 日志清理策略" itemprop="url">基于 bash shell 脚本制定灵活的 trimlog 日志清理策略</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2019-10-08T06:59:49.000Z" itemprop="datePublished"> 发表于 2019-10-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#问题描述"><span class="toc-number">3.</span> <span class="toc-text">问题描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#bash-shell-代码"><span class="toc-number">4.</span> <span class="toc-text">bash shell 代码</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>透过 Zabbix 文件系统监控告警发现日志未定时清理，进一步排查后确认前同事写的 trimlog 脚本在某些服务器上执行定时任务时出现了异常，review 后发现代码逻辑本身没有问题，主要由于 cron job 在执行 date 参数时没有使用转义字符导致，不过 trimlog.sh 这个日志清理脚本代码结构清晰易读，做下共享方便大家参考和二次修改。</p>
+<blockquote>
+<p>基于 bash shell 脚本制定灵活的 trimlog 日志清理策略</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019 年 10 月 08 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/trimlog/">https://wsgzao.github.io/post/trimlog/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<p><a href="https://wsgzao.github.io/post/find/">基于 bash find 命令执行 log 日志备份和清理的一次简单实践</a></p>
+<hr>
+<h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查 crontab</span></span><br><span class="line">cat /etc/crontab</span><br><span class="line"></span><br><span class="line"><span class="comment">#Ansible: gdp_trim_log</span></span><br><span class="line">0 1 * * * root /data/release/trimlog.sh <span class="string">'/data/release/log/gop_gdp'</span> 30 1 <span class="string">'*'</span> <span class="string">'%Y%m%d'</span> &gt;&gt; /data/release/trimlog.txt</span><br><span class="line">0 1 * * * root /data/release/trimlog.sh <span class="string">'/data/release/log/cacheupdate'</span> 30 1 <span class="string">'*'</span> <span class="string">'%Y%m%d'</span> &gt;&gt; /data/release/trimlog.txt</span><br><span class="line"><span class="comment">#Ansible: gdp_trim_backup</span></span><br><span class="line">0 1 * * * root /data/release/trimbackup.sh <span class="string">'/data/release/backup/gop_gdp'</span> 30 &gt;&gt; /data/release/trimbackup.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查 crontab 日志 </span></span><br><span class="line">less /var/<span class="built_in">log</span>/cron</span><br><span class="line"></span><br><span class="line">Oct  8 01:00:01 sg-gop-10-71-12-146 CROND[183782]: (root) CMD (/data/release/trimlog.sh <span class="string">'/data/release/log/gop_gdp'</span> 30 1 <span class="string">'*'</span> <span class="string">')</span></span><br><span class="line"><span class="string">Oct  8 01:00:01 sg-gop-10-71-12-146 CROND[183783]: (root) CMD (/data/release/trimbackup.sh'</span>/data/release/backup/gop_gdp<span class="string">'30 &gt;&gt; /data/release/trimbackup.txt)</span></span><br><span class="line"><span class="string">Oct  8 01:00:01 sg-gop-10-71-12-146 CROND[183784]: (root) CMD (/data/release/trimlog.sh'</span>/data/release/<span class="built_in">log</span>/cacheupdate<span class="string">'30 1'</span>*<span class="string">''</span>)</span><br><span class="line">Oct  8 01:00:01 sg-gop-10-71-12-146 CROND[183786]: (root) CMD (/usr/lib64/sa/sa1 1 1)</span><br><span class="line">Oct  8 01:00:01 sg-gop-10-71-12-146 CROND[183788]: (root) CMD (<span class="built_in">cd</span> /tmp &amp;&amp;  ss -tna | awk <span class="string">'&#123;print $1&#125;'</span> | sort | uniq -c &gt; snmpss.tmp &amp;&amp; chcon system_u:object_r</span><br><span class="line">:snmpd_var_run_t:s0 snmpss.tmp &amp;&amp; mv -f snmpss.tmp snmpss.cache)</span><br><span class="line">Oct  8 01:00:01 sg-gop-10-71-12-146 CROND[183779]: (root) CMDOUT (/bin/bash: -c: line 0: unexpected EOF <span class="keyword">while</span> looking <span class="keyword">for</span> matching `<span class="string">''</span>)</span><br><span class="line">Oct  8 01:00:01 sg-gop-10-71-12-146 CROND[183779]: (root) CMDOUT (/bin/bash: -c: line 1: syntax error: unexpected end of file)</span><br><span class="line">Oct  8 01:00:01 sg-gop-10-71-12-146 CROND[183778]: (root) CMDOUT (/bin/bash: -c: line 0: unexpected EOF <span class="keyword">while</span> looking <span class="keyword">for</span> matching `<span class="string">''</span>)</span><br><span class="line">Oct  8 01:00:01 sg-gop-10-71-12-146 CROND[183778]: (root) CMDOUT (/bin/bash: -c: line 1: syntax error: unexpected end of file)</span><br><span class="line">Oct  8 01:00:01 sg-gop-10-71-12-146 CROND[183777]: (root) CMDOUT (find: ‘/data/release/backup/gop_gdp’: No such file or directory)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在 crontab 的 date 中加入转移字符即可 </span></span><br><span class="line">0 1 * * * root /data/release/trimlog.sh <span class="string">'/data/release/log/gop_gdp'</span> 30 1 <span class="string">'*'</span> <span class="string">'\%Y\%m\%d'</span> &gt;&gt; /data/release/trimlog.txt</span><br><span class="line">0 1 * * * root /data/release/trimlog.sh <span class="string">'/data/release/log/cacheupdate'</span> 30 1 <span class="string">'*'</span> <span class="string">'\%Y\%m\%d'</span> &gt;&gt; /data/release/trimlog.txt</span><br></pre></td></tr></table></figure>
+<h2 id="bash-shell-代码"><a href="#bash-shell-代码" class="headerlink" title="bash shell 代码"></a>bash shell 代码</h2><blockquote>
+<p>vim /data/release/trimlog.sh</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">dir=`dirname <span class="variable">$0</span>`</span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$#</span> -lt 1 ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"usage: <span class="variable">$0</span> DIRECTORY [DELETE_DAYS] [COMPRESS_DAYS] [COMPRESS_FILE_PATTERN] [DATE_PATTERN]"</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"multiple matches example for COMPRESS_FILE_PATTERN: data|error"</span></span><br><span class="line">	<span class="built_in">exit</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">current_date=$(date +<span class="string">"%Y-%m-%d %T"</span>)</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Start trim log at <span class="variable">$current_date</span>"</span></span><br><span class="line"></span><br><span class="line">path=<span class="variable">$1</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$#</span> -gt 1 ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">	log_delete_days=<span class="variable">$2</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	log_delete_days=7</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$#</span> -gt 2 ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">	log_compress_days=<span class="variable">$3</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	log_compress_days=0</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$#</span> -gt 3 ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">	log_compress_match=<span class="variable">$4</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	log_compress_match=<span class="string">'*'</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$#</span> -gt 4 ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">	date_pattern=<span class="variable">$5</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	date_pattern=<span class="string">"%Y-%m-%d"</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$log_delete_days</span> -gt 0 ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">	files=`ls <span class="variable">$path</span>/*.<span class="built_in">log</span>.*`</span><br><span class="line">	i=0</span><br><span class="line">	<span class="keyword">while</span> [ <span class="variable">$i</span> -le <span class="variable">$log_delete_days</span> ]</span><br><span class="line">	<span class="keyword">do</span></span><br><span class="line">		d=`date <span class="string">"+<span class="variable">$date_pattern</span>"</span> --date <span class="string">"<span class="variable">$i</span> day ago"</span>`</span><br><span class="line">		files=`<span class="built_in">echo</span> <span class="string">"<span class="variable">$files</span>"</span>|grep -v <span class="variable">$d</span>`</span><br><span class="line">		i=`expr <span class="variable">$i</span> + 1`</span><br><span class="line">	<span class="keyword">done</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"<span class="variable">$files</span>"</span>|xargs rm -f</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$log_compress_days</span> -gt 0 ] &amp;&amp; [ -n <span class="string">"<span class="variable">$log_compress_match</span>"</span> ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">	files=`ls <span class="variable">$path</span>/*.<span class="built_in">log</span>.*|grep -v <span class="string">"\.gz$"</span>|grep -E <span class="string">"<span class="variable">$log_compress_match</span>"</span>`</span><br><span class="line">	i=0</span><br><span class="line">	<span class="keyword">while</span> [ <span class="variable">$i</span> -lt <span class="variable">$log_compress_days</span> ]</span><br><span class="line">	<span class="keyword">do</span></span><br><span class="line">		d=`date <span class="string">"+<span class="variable">$date_pattern</span>"</span> --date <span class="string">"<span class="variable">$i</span> day ago"</span>`</span><br><span class="line">		files=`<span class="built_in">echo</span> <span class="string">"<span class="variable">$files</span>"</span>|grep -v <span class="variable">$d</span>`</span><br><span class="line">		i=`expr <span class="variable">$i</span> + 1`</span><br><span class="line">	<span class="keyword">done</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"<span class="variable">$files</span>"</span>|xargs gzip</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">current_date=$(date +<span class="string">"%Y-%m-%d %T"</span>)</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Finish trim log at <span class="variable">$current_date</span>"</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>vim /data/release/trimbackup.sh</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">dir=`dirname <span class="variable">$0</span>`</span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$#</span> -lt 1 ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"usage: <span class="variable">$0</span> DIRECTORY [KEEP_BACKUP_NUM]"</span></span><br><span class="line">	<span class="built_in">exit</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">current_date=$(date +<span class="string">"%Y-%m-%d %T"</span>)</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Start trim backup at <span class="variable">$current_date</span>"</span></span><br><span class="line"></span><br><span class="line">path=<span class="variable">$1</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$#</span> -gt 1 ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">	keep_backup_num=<span class="variable">$2</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	keep_backup_num=10</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">i=0</span><br><span class="line">find <span class="variable">$path</span> -maxdepth 1 ! -path <span class="variable">$path</span> -<span class="built_in">type</span> d -<span class="built_in">printf</span> <span class="string">'%p\n'</span> | sort -r -n | <span class="keyword">while</span> <span class="built_in">read</span> dir; <span class="keyword">do</span></span><br><span class="line">	i=`expr <span class="variable">$i</span> + 1`</span><br><span class="line">	<span class="keyword">if</span> [ <span class="variable">$i</span> -gt <span class="variable">$keep_backup_num</span> ]</span><br><span class="line">	<span class="keyword">then</span></span><br><span class="line">		<span class="built_in">echo</span> <span class="string">"del <span class="variable">$dir</span>"</span></span><br><span class="line">		rm -rf <span class="variable">$dir</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		<span class="built_in">echo</span> <span class="string">"keep <span class="variable">$dir</span>"</span></span><br><span class="line">	<span class="keyword">fi</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line">current_date=$(date +<span class="string">"%Y-%m-%d %T"</span>)</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Finish trim backup at <span class="variable">$current_date</span>"</span></span><br></pre></td></tr></table></figure>  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/trimlog/" data-title="基于 bash shell 脚本制定灵活的 trimlog 日志清理策略 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/singapore/" title="从国内跳槽至新加坡工作的经验分享">
+  <strong>上一篇：</strong><br/>
+  <span>
+  从国内跳槽至新加坡工作的经验分享</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/insurance-xiaobang/"  title="家庭保险配置公开课从小白到入门">
+ <strong>下一篇：</strong><br/> 
+ <span>家庭保险配置公开课从小白到入门
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#问题描述"><span class="toc-number">3.</span> <span class="toc-text">问题描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#bash-shell-代码"><span class="toc-number">4.</span> <span class="toc-text">bash shell 代码</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>135</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>
