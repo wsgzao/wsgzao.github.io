@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="Zabbix常见问题整理">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-07-12T06:21:14.245Z">
+<meta property="og:updated_time" content="2019-10-29T09:00:00.592Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Zabbix 常见问题整理">
 <meta name="twitter:description" content="Zabbix常见问题整理">
@@ -122,7 +122,7 @@
 <p>常见错误建议先查看 log，常见的问题通常由权限，防火墙，数据库，参数错误，性能瓶颈等问题导致</p>
 </blockquote>
 <p>zabbix_get [7189]: Check access restrictions in Zabbix agent configuration<br>zabbix 的服务器端与客户端连接的主要工具就是 zabbix 里 bin 文件夹下的 zabbix_get 文件，这个命令只能在 zabbix 的 server 端使用</p>
-<p>Assuming that agent dropped connection because of access permissions（由于访问权限导致 agent 连接失败）<br>问题实现：zabbix_server 和 zabbix_agent 在同一台机器，server 监听全网地址，agent 监听内网地址。导致上面的报错发生<br>解决方案：把 zabbix_agentd.conf 中 的 server 把 zabbix_server 的公网和内网地址都加行。然后 agent 就可以正常获取到值了</p>
+<p>Assuming that agent dropped connection because of access permissions（由于访问权限导致 agent 连接失败）<br>问题实现：zabbix_server 和 zabbix_agent 在同一台机器，server 监听全网地址，agent 监听内网地址。导致上面的报错发生<br>解决方案：把 zabbix_agentd.conf 中 的 server 把 zabbix_server 的公网和内网地址都加行。然后 agent 就可以正常获取到值了<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">zabbix_get -s 127.0.0.1 -p 10050 -k system.hostname</span><br><span class="line">Check access restrictions in Zabbix agent configuration</span><br><span class="line"># 如果 zabbix-agent 报以下错误需要检查 agent 和 server 的版本是否匹配</span><br><span class="line">Message from xx.xx.xx.xx is missing header. Message ignored.</span><br></pre></td></tr></table></figure></p>
 <p>解决 zabbix 中文乱码问题</p>
 <p>方法一：下载文泉驿字体<br>yum -y install wqy-microhei-fonts<br>cp /usr/share/fonts/wqy-microhei/wqy-microhei.ttc /usr/share/fonts/dejavu/DejaVuSans.ttf</p>
 <p>方法二：从 Windows 中拷贝<br>cd /usr/share/zabbix/fonts<br>从 windows 拷贝 simhei.ttf 字体到当前目录<br>替换配置文件<br>vim /usr/share/zabbix/include/defines.inc.php<br>define(‘ZBX_GRAPH_FONT_NAME’,           ‘simhei’)</p>
