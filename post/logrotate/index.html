@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20191106155554.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20191106155617.png">
-<meta property="og:updated_time" content="2019-11-06T08:26:05.636Z">
+<meta property="og:updated_time" content="2019-11-06T08:36:59.731Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux 日志切割神器 logroate 原理介绍和配置详解">
 <meta name="twitter:description" content="Linux日志切割神器logroate原理介绍和配置详解">
@@ -122,10 +122,10 @@
 <h2 id="logrotate-简介"><a href="#logrotate-简介" class="headerlink" title="logrotate 简介"></a>logrotate 简介</h2><blockquote>
 <p>logrotate ‐ rotates, compresses, and mails system logs</p>
 </blockquote>
-<p>logrotate is designed to ease administration of systems that generate large numbers of log<br>files. It allows automatic rotation, compression, removal, and mailing of log files.<br>Each log file may be handled daily, weekly, monthly, or when it grows too large.</p>
-<p>Normally, logrotate is run as a daily cron job. It will not modify a log more than once<br>in one day unless the criterion for that log is based on the log’s size and logrotate is<br>being run more than once each day, or unless the -f or –force option is used.</p>
-<p>Any number of config files may be given on the command line. Later config files may<br>override the options given in earlier files, so the order in which the logrotate config<br>files are listed is important. Normally, a single config file which includes any other<br>config files which are needed should be used. See below for more information on how to<br>use the include directive to accomplish this. If a directory is given on the command<br>line, every file in that directory is used as a config file.</p>
-<p>If no command line arguments are given, logrotate will print version and copyright<br>information, along with a short usage summary. If any errors occur while rotating logs,<br>logrotate will exit with non-zero status.</p>
+<p>logrotate is designed to ease administration of systems that generate large numbers of log files. It allows automatic rotation, compression, removal, and mailing of log files. Each log file may be handled daily, weekly, monthly, or when it grows too large.</p>
+<p>Normally, logrotate is run as a daily cron job. It will not modify a log more than once in one day unless the criterion for that log is based on the log’s size and logrotate is being run more than once each day, or unless the -f or –force option is used.</p>
+<p>Any number of config files may be given on the command line. Later config files may override the options given in earlier files, so the order in which the logrotate config files are listed is important. Normally, a single config file which includes any other config files which are needed should be used. See below for more information on how to<br>use the include directive to accomplish this. If a directory is given on the command line, every file in that directory is used as a config file.</p>
+<p>If no command line arguments are given, logrotate will print version and copyright information, along with a short usage summary. If any errors occur while rotating logs, logrotate will exit with non-zero status.</p>
 <p>logrotate 是一个 linux 系统日志的管理工具。可以对单个日志文件或者某个目录下的文件按时间 / 大小进行切割，压缩操作；指定日志保存数量；还可以在切割之后运行自定义命令。</p>
 <p>logrotate 是基于 crontab 运行的，所以这个时间点是由 crontab 控制的，具体可以查询 crontab 的配置文件 /etc/anacrontab。 系统会按照计划的频率运行 logrotate，通常是每天。在大多数的 Linux 发行版本上，计划每天运行的脚本位于  /etc/cron.daily/logrotate。</p>
 <p>主流 Linux 发行版上都默认安装有 logrotate 包，如果你的 linux 系统中找不到 logrotate, 可以使用 apt-get 或 yum 命令来安装。</p>
