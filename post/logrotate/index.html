@@ -9,26 +9,26 @@
         window.location.protocol = "https";
   </script> 
   
-    <title>Linux 日志切割神器 logroate 原理介绍和配置详解 | HelloDog</title>
+    <title>Linux 日志切割神器 logrotate 原理介绍和配置详解 | HelloDog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wsgzao">
     
 
     
-    <meta name="description" content="Linux日志切割神器logroate原理介绍和配置详解">
+    <meta name="description" content="Linux日志切割神器logrotate原理介绍和配置详解">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Linux 日志切割神器 logroate 原理介绍和配置详解">
+<meta property="og:title" content="Linux 日志切割神器 logrotate 原理介绍和配置详解">
 <meta property="og:url" content="https://wsgzao.github.io/post/logrotate/index.html">
 <meta property="og:site_name" content="HelloDog">
-<meta property="og:description" content="Linux日志切割神器logroate原理介绍和配置详解">
+<meta property="og:description" content="Linux日志切割神器logrotate原理介绍和配置详解">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20191106155554.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20191106155617.png">
-<meta property="og:updated_time" content="2019-11-06T08:36:59.731Z">
+<meta property="og:updated_time" content="2019-11-07T03:28:49.545Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Linux 日志切割神器 logroate 原理介绍和配置详解">
-<meta name="twitter:description" content="Linux日志切割神器logroate原理介绍和配置详解">
+<meta name="twitter:title" content="Linux 日志切割神器 logrotate 原理介绍和配置详解">
+<meta name="twitter:description" content="Linux日志切割神器logrotate原理介绍和配置详解">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20191106155554.png">
 
     
@@ -90,7 +90,7 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/post/logrotate/" title="Linux 日志切割神器 logroate 原理介绍和配置详解" itemprop="url">Linux 日志切割神器 logroate 原理介绍和配置详解</a>
+      <a href="/post/logrotate/" title="Linux 日志切割神器 logrotate 原理介绍和配置详解" itemprop="url">Linux 日志切割神器 logrotate 原理介绍和配置详解</a>
   </h1>
   <p class="article-author">By
        
@@ -110,9 +110,9 @@
 		
 		</div>
 		 -->
-		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在 Linux 环境中能够帮助我们分析问题蛛丝马迹的有效办法之一便是日志，常见的如操作系统 syslog 日志 <code>/var/log/messages</code>，应用程序 Nginx 日志 <code>/var/log/nginx/*.log</code>。但如果服务器数量较多，日志文件大小增长较快，不断消耗磁盘空间就会触发告警，如果需要人为定期按照各种维度去手动清理日志就显得十分棘手。为了节省空间和方便整理，可以将日志文件按时间或大小分成多份，删除时间久远的日志文件，这就是通常说的日志滚动 <a href="https://en.wikipedia.org/wiki/Log_rotation" target="_blank" rel="noopener">(log rotation)</a>。logrotate<a href="https://github.com/logrotate/logrotate" target="_blank" rel="noopener">(GitHub 地址)</a> 诞生于 1996/11/19 是一个 Linux 系统日志的管理工具，本文会详细介绍 Linux 日志切割神器 logroate 的原理和配置。</p>
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在 Linux 环境中能够帮助我们分析问题蛛丝马迹的有效办法之一便是日志，常见的如操作系统 syslog 日志 <code>/var/log/messages</code>，应用程序 Nginx 日志 <code>/var/log/nginx/*.log</code>。但如果服务器数量较多，日志文件大小增长较快，不断消耗磁盘空间就会触发告警，如果需要人为定期按照各种维度去手动清理日志就显得十分棘手。为了节省空间和方便整理，可以将日志文件按时间或大小分成多份，删除时间久远的日志文件，这就是通常说的日志滚动 <a href="https://en.wikipedia.org/wiki/Log_rotation" target="_blank" rel="noopener">(log rotation)</a>。logrotate<a href="https://github.com/logrotate/logrotate" target="_blank" rel="noopener">(GitHub 地址)</a> 诞生于 1996/11/19 是一个 Linux 系统日志的管理工具，本文会详细介绍 Linux 日志切割神器 logrotate 的原理和配置。</p>
 <blockquote>
-<p>Linux 日志切割神器 logroate 原理介绍和配置详解</p>
+<p>Linux 日志切割神器 logrotate 原理介绍和配置详解</p>
 </blockquote>
 <h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019 年 11 月 05 日 - 初稿</p>
 <p>阅读原文 - <a href="https://wsgzao.github.io/post/logrotate/">https://wsgzao.github.io/post/logrotate/</a></p>
@@ -209,7 +209,31 @@
 <blockquote>
 <p>常见配置参数</p>
 </blockquote>
-<p>daily ：指定转储周期为每天<br>weekly ：指定转储周期为每周<br>monthly ：指定转储周期为每月<br>rotate count ：指定日志文件删除之前转储的次数，0 指没有备份，5 指保留 5 个备份<br>tabooext [+] list：让 logrotate 不转储指定扩展名的文件，缺省的扩展名是：.rpm-orig, .rpmsave, v, 和～<br>missingok：在日志轮循期间，任何错误将被忽略，例如 “文件无法找到” 之类的错误。<br>size size：当日志文件到达指定的大小时才转储，bytes (缺省) 及 KB (sizek) 或 MB (sizem)<br>compress： 通过 gzip 压缩转储以后的日志<br>nocompress： 不压缩<br>copytruncate：用于还在打开中的日志文件，把当前日志备份并截断<br>nocopytruncate： 备份日志文件但是不截断<br>create mode owner group ： 转储文件，使用指定的文件模式创建新的日志文件<br>nocreate： 不建立新的日志文件<br>delaycompress： 和 compress 一起使用时，转储的日志文件到下一次转储时才压缩<br>nodelaycompress： 覆盖 delaycompress 选项，转储同时压缩。<br>errors address ： 专储时的错误信息发送到指定的 Email 地址<br>ifempty ：即使是空文件也转储，这个是 logrotate 的缺省选项。<br>notifempty ：如果是空文件的话，不转储<br>mail address ： 把转储的日志文件发送到指定的 E-mail 地址<br>nomail ： 转储时不发送日志文件<br>olddir directory：储后的日志文件放入指定的目录，必须和当前日志文件在同一个文件系统<br>noolddir： 转储后的日志文件和当前日志文件放在同一个目录下<br>prerotate/endscript： 在转储以前需要执行的命令可以放入这个对，这两个关键字必须单独成行</p>
+<ul>
+<li>daily ：指定转储周期为每天</li>
+<li>weekly ：指定转储周期为每周</li>
+<li>monthly ：指定转储周期为每月</li>
+<li>rotate count ：指定日志文件删除之前转储的次数，0 指没有备份，5 指保留 5 个备份</li>
+<li>tabooext [+] list：让 logrotate 不转储指定扩展名的文件，缺省的扩展名是：.rpm-orig, .rpmsave, v, 和～</li>
+<li>missingok：在日志轮循期间，任何错误将被忽略，例如 “文件无法找到” 之类的错误。</li>
+<li>size size：当日志文件到达指定的大小时才转储，bytes (缺省) 及 KB (sizek) 或 MB (sizem)</li>
+<li>compress： 通过 gzip 压缩转储以后的日志</li>
+<li>nocompress： 不压缩</li>
+<li>copytruncate：用于还在打开中的日志文件，把当前日志备份并截断</li>
+<li>nocopytruncate： 备份日志文件但是不截断</li>
+<li>create mode owner group ： 转储文件，使用指定的文件模式创建新的日志文件</li>
+<li>nocreate： 不建立新的日志文件</li>
+<li>delaycompress： 和 compress 一起使用时，转储的日志文件到下一次转储时才压缩</li>
+<li>nodelaycompress： 覆盖 delaycompress 选项，转储同时压缩。</li>
+<li>errors address ： 专储时的错误信息发送到指定的 Email 地址</li>
+<li>ifempty ：即使是空文件也转储，这个是 logrotate 的缺省选项。</li>
+<li>notifempty ：如果是空文件的话，不转储</li>
+<li>mail address ： 把转储的日志文件发送到指定的 E-mail 地址</li>
+<li>nomail ： 转储时不发送日志文件</li>
+<li>olddir directory：储后的日志文件放入指定的目录，必须和当前日志文件在同一个文件系统</li>
+<li>noolddir： 转储后的日志文件和当前日志文件放在同一个目录下</li>
+<li>prerotate/endscript： 在转储以前需要执行的命令可以放入这个对，这两个关键字必须单独成行</li>
+</ul>
 <p>更多信息请参考 man logrotate 帮助文档</p>
 <h3 id="手动运行-logrotate-演练"><a href="#手动运行-logrotate-演练" class="headerlink" title="手动运行 logrotate 演练"></a>手动运行 logrotate 演练</h3><p>logrotate 可以在任何时候从命令行手动调用。<br>调用 /etc/lograte.d/ 下配置的所有日志：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# logrotate /etc/logrotate.conf</span><br></pre></td></tr></table></figure>
@@ -267,7 +291,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://wsgzao.github.io/post/logrotate/" data-title="Linux 日志切割神器 logroate 原理介绍和配置详解 | HelloDog" data-tsina="" class="share clearfix">
+	  <div data-url="https://wsgzao.github.io/post/logrotate/" data-title="Linux 日志切割神器 logrotate 原理介绍和配置详解 | HelloDog" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
