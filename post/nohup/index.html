@@ -1,0 +1,607 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+  
+    <title>Linux 后台运行任务 nohup 结合 &amp; 用法以及如何精准查找进程并 kill 后台任务实践 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="Linux后台运行任务nohup结合&amp;用法以及如何精准查找进程并kill后台任务实践">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 后台运行任务 nohup 结合 &amp; 用法以及如何精准查找进程并 kill 后台任务实践">
+<meta property="og:url" content="https://wsgzao.github.io/post/nohup/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="Linux后台运行任务nohup结合&amp;用法以及如何精准查找进程并kill后台任务实践">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-11-15T12:01:34.699Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux 后台运行任务 nohup 结合 &amp; 用法以及如何精准查找进程并 kill 后台任务实践">
+<meta name="twitter:description" content="Linux后台运行任务nohup结合&amp;用法以及如何精准查找进程并kill后台任务实践">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/nohup/" title="Linux 后台运行任务 nohup 结合 &amp; 用法以及如何精准查找进程并 kill 后台任务实践" itemprop="url">Linux 后台运行任务 nohup 结合 &amp; 用法以及如何精准查找进程并 kill 后台任务实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2019-11-15T06:59:49.000Z" itemprop="datePublished"> 发表于 2019-11-15</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nohup-介绍"><span class="toc-number">3.</span> <span class="toc-text">nohup 介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nohup-和-amp-的关系"><span class="toc-number">4.</span> <span class="toc-text">nohup 和 &amp; 的关系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nohup-和-amp-使用实例"><span class="toc-number">5.</span> <span class="toc-text">nohup 和 &amp; 使用实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查找后台运行程序"><span class="toc-number">6.</span> <span class="toc-text">查找后台运行程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#杀死后台运行程序"><span class="toc-number">7.</span> <span class="toc-text">杀死后台运行程序</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#kill"><span class="toc-number">7.1.</span> <span class="toc-text">kill</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#killall"><span class="toc-number">7.2.</span> <span class="toc-text">killall</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用-pstree-查找和杀死复杂进程"><span class="toc-number">7.3.</span> <span class="toc-text">使用 pstree 查找和杀死复杂进程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">8.</span> <span class="toc-text">参考文章</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>nohup 为什么要跟着 &amp; 一起使用，不知道大家有没有思考过其中的小区别，另外很多人会推崇使用 screen，但是实际生产环境应用场景有限我就不展开了。这次实际遇到的问题主要是因为使用 crontab 调用了多个不同的 nohup 后台执行任务，然而代码逻辑中出现对相同文件的占用导致任务进程产生冲突使得 system load 负载达到 600 之高，需要 kill 任务时也不能盲目操作，需要杀掉的进程多且进程名与其它正常的进程名字有交集，需要合理运用 pstree 找到问题的源头。</p>
+<blockquote>
+<p>Linux 后台运行任务 nohup 结合 &amp; 用法以及如何精准查找进程并 kill 后台任务实践</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019 年 11 月 15 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/nohup/">https://wsgzao.github.io/post/nohup/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<hr>
+<h2 id="nohup-介绍"><a href="#nohup-介绍" class="headerlink" title="nohup 介绍"></a>nohup 介绍</h2><p>用途：不挂断地运行命令。</p>
+<p>语法：nohup Command [Arg …] [　&amp; ]</p>
+<ul>
+<li>无论是否将 nohup 命令的输出重定向到终端，输出都将附加到当前目录的 nohup.out 文件中。</li>
+<li>如果当前目录的 nohup.out 文件不可写，输出重定向到 $HOME/nohup.out 文件中。</li>
+<li>如果没有文件能创建或打开以用于追加，那么 Command 参数指定的命令不可调用。</li>
+</ul>
+<p>退出状态：该命令返回下列出口值：</p>
+<ul>
+<li>126 可以查找但不能调用 Command 参数指定的命令。</li>
+<li>127 nohup 命令发生错误或不能查找由 Command 参数指定的命令。否则 nohup 命令的退出状态是 Command 参数指定命令的退出状态。</li>
+</ul>
+<h2 id="nohup-和-amp-的关系"><a href="#nohup-和-amp-的关系" class="headerlink" title="nohup 和 &amp; 的关系"></a>nohup 和 &amp; 的关系</h2><p>使用 <code>nohup</code> 运行程序:</p>
+<ul>
+<li>输出重定向，默认重定向到当前目录下 nohup.out 文件</li>
+<li>使用 Ctrl + C 发送 SIGINT 信号，程序关闭</li>
+<li>关闭 Shell Session 发送 SIGHUP 信号，程序免疫</li>
+</ul>
+<p>使用 <code>&amp;</code> 运行程序：</p>
+<ul>
+<li>程序转入后台运行</li>
+<li>结果会输出到终端</li>
+<li>使用 Ctrl + C 发送 SIGINT 信号，程序免疫</li>
+<li>关闭 Shell session 发送 SIGHUP 信号，程序关闭</li>
+</ul>
+<h2 id="nohup-和-amp-使用实例"><a href="#nohup-和-amp-使用实例" class="headerlink" title="nohup 和 &amp; 使用实例"></a>nohup 和 &amp; 使用实例</h2><blockquote>
+<p>一般两个一起组合使用不会受 Ctrl C 和 Shell 关闭的影响：</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 最简单的后台运行 </span></span><br><span class="line">nohup <span class="built_in">command</span> &amp;</span><br><span class="line"><span class="comment"># 输出默认重定向到当前目录下 nohup.out 文件 </span></span><br><span class="line">nohup python main.py &amp;  </span><br><span class="line"><span class="comment"># 自定义输出文件 (标准输出和错误输出合并到 main.log)</span></span><br><span class="line">nohup python main.py &gt;&gt; main.log 2&gt;&amp;1 &amp; </span><br><span class="line"><span class="comment"># 与上一个例子相同作用的简写方法 </span></span><br><span class="line">nohup python main.py &amp;&gt; main.log &amp;</span><br><span class="line"><span class="comment"># 不记录输出信息 </span></span><br><span class="line">nohup python main.py &amp;&gt; /dev/null &amp;</span><br><span class="line"><span class="comment"># 不记录输出信息并将程序的进程号写入 pidfile.txt 文件中，方便后续杀死进程 </span></span><br><span class="line">nohup python main.py &amp;&gt; /dev/null &amp; <span class="built_in">echo</span> $! &gt; pidfile.txt</span><br></pre></td></tr></table></figure>
+<p>由于使用 nohup 时，会自动将输出写入 nohup.out 文件中，如果文件很大的话，nohup.out 就会不停的增大，我们可以利用 Linux 下一个特殊的文件 /dev/null 来解决这个问题，这个文件就相当于一个黑洞，任何输出到这个文件的东西都将消失 只保留输出错误信息 nohup command &gt;/dev/null 2&gt;log &amp; 所有信息都不要 nohup command &gt;/dev/null 2&gt;&amp;1 &amp;</p>
+<p>这里解释一下后面的 2&gt;&amp;1 。 这涉及到 Linux 的重定向，其中 0、1、2 分别是标准输入、标准输出、标准错误输出，用来指定需要重定向的标准输入输出。默认情况下是标出输出，也就是 1 。例如我们而上文提到的 2&gt;&amp;1 是 将错误信息重定向到标准输出。</p>
+<p>还有就是如果不想让程序输出，Linux 下有一个 /dev/null 的特殊文件，就像一个黑洞，所有输出到这个文件的信息全部会消失，如果你不需要输出日志，这样做就不会导致输出日志文件越来越大，占用存储空间的问题了</p>
+<blockquote>
+<p>其他相关命令</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># 结束当前任务 </span><br><span class="line">ctrl+c</span><br><span class="line"># 将一个正在前台执行的命令放到后台，并且处于暂停状态 </span><br><span class="line">ctrl+z</span><br><span class="line"># 查看任务，返回任务编号 和 进程号 </span><br><span class="line">jobs -l</span><br><span class="line"># 将一个在后台暂停的命令，变成在后台继续执行。如果后台中有多个命令，可以用 bg %jobnumber 将选中的命令调出。</span><br><span class="line">bg %jobnumber</span><br><span class="line"># 将后台中的命令调至前台继续运行。如果后台中有多个命令，可以用 fg %jobnumber（是命令编号，不是进程号）将选中的命令调出 </span><br><span class="line">fg %jobnumber</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>编写一个测试脚本</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"><span class="keyword">for</span> ((i=1; i&lt;1000; i++))</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    d=`date <span class="string">'+%Y-%m-%d %H:%M:%S'</span>`</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"<span class="variable">$d</span> print <span class="variable">$&#123;i&#125;</span>"</span></span><br><span class="line">    sleep 2s</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+<h2 id="查找后台运行程序"><a href="#查找后台运行程序" class="headerlink" title="查找后台运行程序"></a>查找后台运行程序</h2><ol>
+<li>已知 pid 进程号当然最好了</li>
+<li>使用 <code>ps -ef</code> 或者 <code>ps -aux</code> 结合 <code>grep</code> 过滤</li>
+<li>使用 <code>pstree -p</code> 确认复杂进程树结构</li>
+<li>使用 <code>lsof -i:80</code> 查端口获得进程号</li>
+<li>使用 <code>netstat -anp | grep 80</code> 查端口获得进程号，推荐使用 <code>lsof</code></li>
+</ol>
+<h2 id="杀死后台运行程序"><a href="#杀死后台运行程序" class="headerlink" title="杀死后台运行程序"></a>杀死后台运行程序</h2><h3 id="kill"><a href="#kill" class="headerlink" title="kill"></a>kill</h3><p>kill 命令用来删除执行中的程序或工作。kill 可将指定的信息送至程序。预设的信息为 SIGTERM (15), 可将指定程序终止。若仍无法终止该程序，可使用 SIGKILL (9) 信息尝试强制删除程序，即 kill -9。程序或工作的编号可利用 ps 指令或 job 指令查看。</p>
+<p>语法<br>kill(选项)(参数)</p>
+<p>选项<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-a：当处理当前进程时，不限制命令名和进程号的对应关系；</span><br><span class="line">-l &lt; 信息编号 & gt;：若不加 & lt; 信息编号 & gt; 选项，则 - l 参数会列出全部的信息名称；</span><br><span class="line">-p：指定 kill 命令只打印相关进程的进程号，而不发送任何信号；</span><br><span class="line">-s &lt; 信息名称或编号 & gt;：指定要送出的信息；</span><br><span class="line">-u：指定用户。</span><br></pre></td></tr></table></figure></p>
+<p>参数<br>进程或作业识别号：指定要删除的进程或作业。</p>
+<p>实例<br>列出所有信号名称：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"> kill -l</span><br><span class="line"> 1) SIGHUP       2) SIGINT       3) SIGQUIT      4) SIGILL</span><br><span class="line"> 5) SIGTRAP      6) SIGABRT      7) SIGBUS       8) SIGFPE</span><br><span class="line"> 9) SIGKILL     10) SIGUSR1     11) SIGSEGV     12) SIGUSR2</span><br><span class="line">13) SIGPIPE     14) SIGALRM     15) SIGTERM     16) SIGSTKFLT</span><br><span class="line">17) SIGCHLD     18) SIGCONT     19) SIGSTOP     20) SIGTSTP</span><br><span class="line">21) SIGTTIN     22) SIGTTOU     23) SIGURG      24) SIGXCPU</span><br><span class="line">25) SIGXFSZ     26) SIGVTALRM   27) SIGPROF     28) SIGWINCH</span><br><span class="line">29) SIGIO       30) SIGPWR      31) SIGSYS      34) SIGRTMIN</span><br><span class="line">35) SIGRTMIN+1  36) SIGRTMIN+2  37) SIGRTMIN+3  38) SIGRTMIN+4</span><br><span class="line">39) SIGRTMIN+5  40) SIGRTMIN+6  41) SIGRTMIN+7  42) SIGRTMIN+8</span><br><span class="line">43) SIGRTMIN+9  44) SIGRTMIN+10 45) SIGRTMIN+11 46) SIGRTMIN+12</span><br><span class="line">47) SIGRTMIN+13 48) SIGRTMIN+14 49) SIGRTMIN+15 50) SIGRTMAX-14</span><br><span class="line">51) SIGRTMAX-13 52) SIGRTMAX-12 53) SIGRTMAX-11 54) SIGRTMAX-10</span><br><span class="line">55) SIGRTMAX-9  56) SIGRTMAX-8  57) SIGRTMAX-7  58) SIGRTMAX-6</span><br><span class="line">59) SIGRTMAX-5  60) SIGRTMAX-4  61) SIGRTMAX-3  62) SIGRTMAX-2</span><br><span class="line">63) SIGRTMAX-1  64) SIGRTMAX</span><br></pre></td></tr></table></figure></p>
+<p>只有第 9 种信号 (SIGKILL) 才可以无条件终止进程，其他信号进程都有权利忽略，下面是常用的信号：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">HUP     1    终端断线 </span><br><span class="line">INT     2    中断（同 Ctrl + C）</span><br><span class="line">QUIT    3    退出（同 Ctrl + \）</span><br><span class="line">TERM   15    终止 </span><br><span class="line">KILL    9    强制终止 </span><br><span class="line">CONT   18    继续（与 STOP 相反， fg/bg 命令）</span><br><span class="line">STOP   19    暂停（同 Ctrl + Z）</span><br></pre></td></tr></table></figure></p>
+<p>先用 ps 查找进程，然后用 kill 杀掉：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ps -ef | grep vim</span><br><span class="line">root      3268  2884  0 16:21 pts/1    00:00:00 vim install.log</span><br><span class="line">root      3370  2822  0 16:21 pts/0    00:00:00 grep vim</span><br><span class="line"></span><br><span class="line">kill 3268</span><br><span class="line">kill 3268</span><br><span class="line">-bash: kill: (3268) - 没有那个进程 </span><br></pre></td></tr></table></figure></p>
+<h3 id="killall"><a href="#killall" class="headerlink" title="killall"></a>killall</h3><p>killall 和 pill 命令差不多都是使用进程的名称来杀死进程，使用此指令可以杀死一组同名进程。我们可以使用 kill 命令杀死指定进程 PID 的进程，如果要找到我们需要杀死的进程，我们还需要在之前使用 ps 等命令再配合 grep 来查找进程，而 killall 把这两个过程合二为一，是一个很好用的命令。</p>
+<p>语法<br>killall(选项)(参数)</p>
+<p>选项<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">-e：对长名称进行精确匹配；</span><br><span class="line">-l：忽略大小写的不同；</span><br><span class="line">-p：杀死进程所属的进程组；</span><br><span class="line">-i：交互式杀死进程，杀死进程前需要进行确认；</span><br><span class="line">-l：打印所有已知信号列表；</span><br><span class="line">-q：如果没有进程被杀死。则不输出任何信息；</span><br><span class="line">-r：使用正规表达式匹配要杀死的进程名称；</span><br><span class="line">-s：用指定的进程号代替默认信号 “SIGTERM”；</span><br><span class="line">-u：杀死指定用户的进程。</span><br></pre></td></tr></table></figure></p>
+<p>参数<br>进程名称：指定要杀死的进程名称。</p>
+<p>实例<br>杀死所有同名进程<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">killall vi</span><br></pre></td></tr></table></figure></p>
+<h3 id="使用-pstree-查找和杀死复杂进程"><a href="#使用-pstree-查找和杀死复杂进程" class="headerlink" title="使用 pstree 查找和杀死复杂进程"></a>使用 pstree 查找和杀死复杂进程</h3><p>常见的 3 个 kill 命令</p>
+<ul>
+<li>kill</li>
+<li>pkill</li>
+<li>killall</li>
+</ul>
+<p>搭配查找进程命令</p>
+<ul>
+<li>pidof</li>
+<li>pstree</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 已知进程号，启动时输出后台运行程序的进程号，然后读取进程号杀死后台程序：</span></span><br><span class="line"><span class="built_in">kill</span> -9 `cat pidfile.txt`</span><br><span class="line"></span><br><span class="line"><span class="comment"># 进程数量较多且有规律，不和其他正常进程冲突 </span></span><br><span class="line">killall 进程名 </span><br><span class="line"><span class="built_in">kill</span> -9 $(pidof 进程名)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 进程数量多，规律不明显，混了正常进程 </span></span><br><span class="line">pstree -p</span><br><span class="line"></span><br><span class="line"><span class="comment"># 复杂点的情况比如像我遇到的真实案例 </span></span><br><span class="line">|-crond(127436)-+-crond(138887)---bash(138892)---bash(138895)---grep(140604)</span><br><span class="line">|               |-crond(139310)---bash(139323)---bash(139324)---python(139431)</span><br><span class="line">|               |-crond(139311)---bash(139325)---bash(139331)---python(139452)</span><br><span class="line">|               |-crond(139312)---bash(139318)---bash(139319)---python(139442)</span><br><span class="line">|               |-crond(139313)---bash(139317)---bash(139320)---python(139444)</span><br><span class="line">|               |-crond(139314)---bash(139329)---bash(139340)---python(139443)</span><br><span class="line">|               |-crond(139315)---bash(139327)---bash(139339)---grep(140768)</span><br><span class="line">|               |-crond(139651)---bash(139660)---bash(139661)---python(139915)</span><br><span class="line">|               |-crond(139652)---bash(139664)---bash(139666)---python(139916)</span><br><span class="line">|               |-crond(139653)---bash(139663)---bash(139665)---python(139914)</span><br><span class="line">|               |-crond(139654)---bash(139675)---bash(139683)---python(139918)</span><br><span class="line">|               |-crond(139655)---bash(139668)---bash(139677)---python(139913)</span><br><span class="line">|               `-crond(139656)---bash(139669)---bash(139682)---grep(139780)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果你喜欢用 grep 也没有问题，多设置几个过滤条件语句组合在一起即可 </span></span><br><span class="line">ps -ef | grep <span class="string">'python'</span> | grep -v grep | awk <span class="string">'&#123;print $2&#125;'</span> |xargs <span class="built_in">kill</span> -9</span><br></pre></td></tr></table></figure>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://woodenrobot.me/2019/07/04/Linux-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C%E4%BB%BB%E5%8A%A1-nohup-%E5%92%8C/" target="_blank" rel="noopener">Linux 后台运行任务 nohup 和 &amp;</a></p>
+<p><a href="https://www.2daygeek.com/kill-terminate-a-process-in-linux-using-kill-pkill-killall-command/" target="_blank" rel="noopener">3 Easy Ways to Kill or Terminate a Process on Linux</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/nohup/" data-title="Linux 后台运行任务 nohup 结合 &amp; 用法以及如何精准查找进程并 kill 后台任务实践 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/quanwai/" title="圈外同学个人发展战略课程">
+  <strong>上一篇：</strong><br/>
+  <span>
+  圈外同学个人发展战略课程</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/nginx/"  title="Nginx 基础知识从小白到入门">
+ <strong>下一篇：</strong><br/> 
+ <span>Nginx 基础知识从小白到入门
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nohup-介绍"><span class="toc-number">3.</span> <span class="toc-text">nohup 介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nohup-和-amp-的关系"><span class="toc-number">4.</span> <span class="toc-text">nohup 和 &amp; 的关系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nohup-和-amp-使用实例"><span class="toc-number">5.</span> <span class="toc-text">nohup 和 &amp; 使用实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查找后台运行程序"><span class="toc-number">6.</span> <span class="toc-text">查找后台运行程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#杀死后台运行程序"><span class="toc-number">7.</span> <span class="toc-text">杀死后台运行程序</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#kill"><span class="toc-number">7.1.</span> <span class="toc-text">kill</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#killall"><span class="toc-number">7.2.</span> <span class="toc-text">killall</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用-pstree-查找和杀死复杂进程"><span class="toc-number">7.3.</span> <span class="toc-text">使用 pstree 查找和杀死复杂进程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">8.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>142</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>15</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

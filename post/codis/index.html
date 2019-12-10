@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190724154111.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190724162130.png">
-<meta property="og:updated_time" content="2019-08-09T07:50:35.601Z">
+<meta property="og:updated_time" content="2019-11-19T09:23:26.250Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redis(Codis) 分布式集群部署实践">
 <meta name="twitter:description" content="Redis(Codis)分布式集群部署实践">
@@ -106,7 +106,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-简介"><span class="toc-number">3.</span> <span class="toc-text">Codis 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-架构"><span class="toc-number">4.</span> <span class="toc-text">Codis 架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-部署"><span class="toc-number">5.</span> <span class="toc-text">Codis 部署</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-HA"><span class="toc-number">6.</span> <span class="toc-text">Codis HA</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-监控"><span class="toc-number">7.</span> <span class="toc-text">Codis 监控</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis-迁移至-Codis"><span class="toc-number">8.</span> <span class="toc-text">Redis 迁移至 Codis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-扩容"><span class="toc-number">9.</span> <span class="toc-text">Codis 扩容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-其他经验分享"><span class="toc-number">10.</span> <span class="toc-text">Codis 其他经验分享</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文献"><span class="toc-number">11.</span> <span class="toc-text">参考文献</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-简介"><span class="toc-number">3.</span> <span class="toc-text">Codis 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-架构"><span class="toc-number">4.</span> <span class="toc-text">Codis 架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-部署"><span class="toc-number">5.</span> <span class="toc-text">Codis 部署</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-HA"><span class="toc-number">6.</span> <span class="toc-text">Codis HA</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-in-Kubernetes"><span class="toc-number">7.</span> <span class="toc-text">Codis in Kubernetes</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-监控"><span class="toc-number">8.</span> <span class="toc-text">Codis 监控</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis-迁移至-Codis"><span class="toc-number">9.</span> <span class="toc-text">Redis 迁移至 Codis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-扩容"><span class="toc-number">10.</span> <span class="toc-text">Codis 扩容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-其他经验分享"><span class="toc-number">11.</span> <span class="toc-text">Codis 其他经验分享</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文献"><span class="toc-number">12.</span> <span class="toc-text">参考文献</span></a></li></ol>
 		
 		</div>
 		 -->
@@ -215,8 +215,22 @@
 </li>
 </ul>
 <h2 id="Codis-部署"><a href="#Codis-部署" class="headerlink" title="Codis 部署"></a>Codis 部署</h2><p>Codis 官方的 GitHub 教程已经写的比较详细了，这里重点分享 Ansible 自动化部署方案</p>
+<ol>
+<li>基于官方的简化版 ansible 一键部署 codis</li>
+<li>基于组件的模块化 ansible 部署 codis</li>
+</ol>
 <h2 id="Codis-HA"><a href="#Codis-HA" class="headerlink" title="Codis HA"></a>Codis HA</h2><p>Codis 的架构本身分成 Proxy 集群 + Redis 集群，Proxy 集群的高可用，可以基于 Zookeeper 来做故障转移，而 Redis 集群的高可用是借助于 Redis Sentinel 开源的哨兵集群来实现，那边 Codis 作为非 Redis 组件，需要解决的一个问题就是如何集成 Redis 哨兵集群。</p>
-<h2 id="Codis-监控"><a href="#Codis-监控" class="headerlink" title="Codis 监控"></a>Codis 监控</h2><h2 id="Redis-迁移至-Codis"><a href="#Redis-迁移至-Codis" class="headerlink" title="Redis 迁移至 Codis"></a>Redis 迁移至 Codis</h2><p>分两种情况:</p>
+<h2 id="Codis-in-Kubernetes"><a href="#Codis-in-Kubernetes" class="headerlink" title="Codis in Kubernetes"></a>Codis in Kubernetes</h2><blockquote>
+<p>好处是上线很快，坏处是出了问题你就直接嗝屁了，debug 困难推荐先上测试后上生产</p>
+</blockquote>
+<p><a href="https://github.com/CodisLabs/codis/tree/release3.2/kubernetes" target="_blank" rel="noopener">https://github.com/CodisLabs/codis/tree/release3.2/kubernetes</a></p>
+<h2 id="Codis-监控"><a href="#Codis-监控" class="headerlink" title="Codis 监控"></a>Codis 监控</h2><p>Codis 的监控主要分为 3 部分，衍生部分还包括 Zookeeper，这里就不展开了</p>
+<ol>
+<li>Codis Proxy</li>
+<li>Codis Redis Cluster</li>
+<li>Codis Sentinels</li>
+</ol>
+<h2 id="Redis-迁移至-Codis"><a href="#Redis-迁移至-Codis" class="headerlink" title="Redis 迁移至 Codis"></a>Redis 迁移至 Codis</h2><p>分两种情况:</p>
 <ol>
 <li>原来使用 twemproxy 的用户: 可以, 使用 codis 项目内的 redis-port 工具, 可以实时的同步 twemproxy 底下的 redis 数据到你的 codis 集群上. 搞定了以后, 只需要你修改一下你的配置, 将 twemproxy 的地址改成 codis 的地址就好了. 除此之外, 你什么事情都不用做.</li>
 <li>原来使用 Redis 的用户: 如果你使用了 <a href="https://github.com/CodisLabs/codis/blob/release3.2/doc/unsupported_cmds.md" target="_blank" rel="noopener">doc/unsupported_cmds</a>中提到的命令，是无法直接迁移到 Codis 上的. 你需要修改你的代码, 用其他的方式实现.</li>
@@ -320,7 +334,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-简介"><span class="toc-number">3.</span> <span class="toc-text">Codis 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-架构"><span class="toc-number">4.</span> <span class="toc-text">Codis 架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-部署"><span class="toc-number">5.</span> <span class="toc-text">Codis 部署</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-HA"><span class="toc-number">6.</span> <span class="toc-text">Codis HA</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-监控"><span class="toc-number">7.</span> <span class="toc-text">Codis 监控</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis-迁移至-Codis"><span class="toc-number">8.</span> <span class="toc-text">Redis 迁移至 Codis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-扩容"><span class="toc-number">9.</span> <span class="toc-text">Codis 扩容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-其他经验分享"><span class="toc-number">10.</span> <span class="toc-text">Codis 其他经验分享</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文献"><span class="toc-number">11.</span> <span class="toc-text">参考文献</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-简介"><span class="toc-number">3.</span> <span class="toc-text">Codis 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-架构"><span class="toc-number">4.</span> <span class="toc-text">Codis 架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-部署"><span class="toc-number">5.</span> <span class="toc-text">Codis 部署</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-HA"><span class="toc-number">6.</span> <span class="toc-text">Codis HA</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-in-Kubernetes"><span class="toc-number">7.</span> <span class="toc-text">Codis in Kubernetes</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-监控"><span class="toc-number">8.</span> <span class="toc-text">Codis 监控</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis-迁移至-Codis"><span class="toc-number">9.</span> <span class="toc-text">Redis 迁移至 Codis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-扩容"><span class="toc-number">10.</span> <span class="toc-text">Codis 扩容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codis-其他经验分享"><span class="toc-number">11.</span> <span class="toc-text">Codis 其他经验分享</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文献"><span class="toc-number">12.</span> <span class="toc-text">参考文献</span></a></li></ol>
  
   </div>
 
@@ -347,7 +361,7 @@
 		  
 		
 		  
-			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>139</sup></a></li>
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>142</sup></a></li>
 		  
 		
 		  

@@ -1,0 +1,541 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+  
+    <title>通俗易懂 QPS、TPS、PV、UV、GMV、IP、RPS 的概念解释 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="通俗易懂 QPS、TPS、PV、UV、GMV、IP、RPS的概念解释">
+<meta property="og:type" content="article">
+<meta property="og:title" content="通俗易懂 QPS、TPS、PV、UV、GMV、IP、RPS 的概念解释">
+<meta property="og:url" content="https://wsgzao.github.io/post/qps/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="通俗易懂 QPS、TPS、PV、UV、GMV、IP、RPS的概念解释">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-12-09T08:17:45.141Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="通俗易懂 QPS、TPS、PV、UV、GMV、IP、RPS 的概念解释">
+<meta name="twitter:description" content="通俗易懂 QPS、TPS、PV、UV、GMV、IP、RPS的概念解释">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/qps/" title="通俗易懂 QPS、TPS、PV、UV、GMV、IP、RPS 的概念解释" itemprop="url">通俗易懂 QPS、TPS、PV、UV、GMV、IP、RPS 的概念解释</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2019-12-09T06:59:49.000Z" itemprop="datePublished"> 发表于 2019-12-09</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#QPS"><span class="toc-number">3.</span> <span class="toc-text">QPS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TPS"><span class="toc-number">4.</span> <span class="toc-text">TPS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PV"><span class="toc-number">5.</span> <span class="toc-text">PV</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UV"><span class="toc-number">6.</span> <span class="toc-text">UV</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IP"><span class="toc-number">7.</span> <span class="toc-text">IP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GMV"><span class="toc-number">8.</span> <span class="toc-text">GMV</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RPS"><span class="toc-number">9.</span> <span class="toc-text">RPS</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>关于 QPS、TPS、PV、UV、GMV、IP、RPS 这些词语，看起来好像挺专业。但实际上，我认为是这是每个程序员必懂的知识点了，你可以搞不懂它们怎么计算的，但是你最少要了解它们分别代表什么意思。</p>
+<blockquote>
+<p>通俗易懂 QPS、TPS、PV、UV、GMV、IP、RPS 的概念解释</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019 年 12 月 09 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/qps/">https://wsgzao.github.io/post/qps/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<hr>
+<h2 id="QPS"><a href="#QPS" class="headerlink" title="QPS"></a>QPS</h2><p>Queries Per Second，每秒查询数。每秒能够响应的查询次数。</p>
+<p>QPS 是对一个特定的查询服务器在规定时间内所处理流量多少的衡量标准，在因特网上，作为域名系统服务器的机器的性能经常用每秒查询率来衡量。每秒的响应请求数，也即是最大吞吐能力。</p>
+<h2 id="TPS"><a href="#TPS" class="headerlink" title="TPS"></a>TPS</h2><p>Transactions Per Second 的缩写，每秒处理的事务数目。一个事务是指一个客户机向服务器发送请求然后服务器做出反应的过程。客户机在发送请求时开始计时，收到服务器响应后结束计时，以此来计算使用的时间和完成的事务个数，最终利用这些信息作出的评估分。</p>
+<p>TPS 的过程包括：客户端请求服务端、服务端内部处理、服务端返回客户端。</p>
+<p>例如，访问一个 Index 页面会请求服务器 3 次，包括一次 html，一次 css，一次 js，那么访问这一个页面就会产生一个 “T”，产生三个 “Q”。</p>
+<h2 id="PV"><a href="#PV" class="headerlink" title="PV"></a>PV</h2><p>Page View 即页面浏览量，通常是衡量一个网络新闻频道或网站甚至一条网络新闻的主要指标。户每一次对网站中的每个页面访问均被记录 1 次。用户对同一页面的多次刷新，访问量累计。</p>
+<p>根据这个特性，刷网站的 PV 就很好刷了。</p>
+<p>与 PV 相关的还有 <strong>RV</strong>，即重复访问者数量 Repeat Visitors。</p>
+<h2 id="UV"><a href="#UV" class="headerlink" title="UV"></a>UV</h2><p>访问数（Unique Visitor）指独立访客访问数，统计 1 天内访问某站点的用户数 (以 cookie 为依据)，一台电脑终端为一个访客。</p>
+<h2 id="IP"><a href="#IP" class="headerlink" title="IP"></a>IP</h2><p>（Internet Protocol）独立 IP 数，是指 1 天内多少个独立的 IP 浏览了页面，即统计不同的 IP 浏览用户数量。同一 IP 不管访问了几个页面，独立 IP 数均为 1；不同的 IP 浏览页面，计数会加 1。IP 是基于用户广域网 IP 地址来区分不同的访问者的，所以，多个用户（多个局域网 IP）在同一个路由器（同一个广域网 IP）内上网，可能被记录为一个独立 IP 访问者。如果用户不断更换 IP，则有可能被多次统计。</p>
+<h2 id="GMV"><a href="#GMV" class="headerlink" title="GMV"></a>GMV</h2><p>是 Gross Merchandise Volume 的简称。只要是订单，不管消费者是否付款、卖家是否发货、是否退货，都可放进 GMV 。</p>
+<h2 id="RPS"><a href="#RPS" class="headerlink" title="RPS"></a>RPS</h2><p>代表吞吐率，即 Requests Per Second 的缩写。吞吐率是服务器并发处理能力的量化描述，单位是 reqs/s，指的是某个并发用户数下单位时间内处理的请求数。<br>某个并发用户数下单位时间内能处理的最大的请求数，称之为最大吞吐率。</p>
+<blockquote>
+<p>有人把 RPS 说等效于 QPS。其实可以看作同一个统计方式，只是叫法不同而已。RPS/QPS，可以使用 apche ab 工具进行测量。</p>
+</blockquote>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/qps/" data-title="通俗易懂 QPS、TPS、PV、UV、GMV、IP、RPS 的概念解释 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/post/rsync/"  title="rsync 安装配置实践">
+ <strong>下一篇：</strong><br/> 
+ <span>rsync 安装配置实践
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#QPS"><span class="toc-number">3.</span> <span class="toc-text">QPS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TPS"><span class="toc-number">4.</span> <span class="toc-text">TPS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PV"><span class="toc-number">5.</span> <span class="toc-text">PV</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UV"><span class="toc-number">6.</span> <span class="toc-text">UV</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IP"><span class="toc-number">7.</span> <span class="toc-text">IP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GMV"><span class="toc-number">8.</span> <span class="toc-text">GMV</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RPS"><span class="toc-number">9.</span> <span class="toc-text">RPS</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>142</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>15</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>
