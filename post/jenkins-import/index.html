@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="Jenkins export and import jobs 迁移导出导入任务实践小结">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-01-07T06:49:04.262Z">
+<meta property="og:updated_time" content="2020-01-07T06:52:49.939Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Jenkins export and import jobs 迁移导出导入任务实践小结">
 <meta name="twitter:description" content="Jenkins export and import jobs 迁移导出导入任务实践小结">
@@ -188,20 +188,22 @@
 <li>基于类似 Job Import Plugin 插件形式，该类方案普适性较差，不推荐</li>
 <li>基于 Jenkins REST API，核心是获取 <code>&lt;jenkinshost&gt;/job/&lt;jobname&gt;/config.xml</code>，效果最佳</li>
 </ol>
-<h3 id="REST-API"><a href="#REST-API" class="headerlink" title="REST API"></a>REST API</h3><p><jenkinshost>/api/</jenkinshost></p>
-<p>Many objects of Jenkins provide the remote access API. They are available at /…/api/ where “…” portion is the object for which you’d like to access.</p>
+<h3 id="REST-API"><a href="#REST-API" class="headerlink" title="REST API"></a>REST API</h3><p>Many objects of Jenkins provide the remote access API. They are available at /…/api/ where “…” portion is the object for which you’d like to access.</p>
 <blockquote>
-<p>XML API<br>Access data exposed in HTML as XML for machine consumption. Schema is also available.<br>You can also specify optional XPath to control the fragment you’d like to obtain (but see below). For example, ../api/xml?xpath=/<em>/</em>[0].</p>
+<p>XML API</p>
 </blockquote>
+<p>Access data exposed in HTML as XML for machine consumption. Schema is also available.<br>You can also specify optional XPath to control the fragment you’d like to obtain (but see below). For example, ../api/xml?xpath=/<em>/</em>[0].</p>
 <p>For XPath that matches multiple nodes, you need to also specify the “wrapper” query parameter to specify the name of the root XML element to be create so that the resulting XML becomes well-formed.</p>
 <p>Similarly exclude query parameter can be used to exclude nodes that match the given XPath from the result. This is useful for trimming down the amount of data you fetch (but again see below). This query parameter can be specified multiple times.</p>
 <p>XPath filtering is powerful, and you can have it only return a very small data, but note that the server still has to build a full DOM of the raw data, which could cause a large memory spike. To avoid overloading the server, consider using the tree parameter, or use the xpath parameter in conjunction with the tree parameter. When used together, the result of the tree parameter filtering is built into DOM, then the XPath is applied to compute the final return value. In this way, you can often substantially reduce the size of DOM built in memory.</p>
 <blockquote>
-<p>JSON API<br>Access the same data as JSON for JavaScript-based access. tree may be used.</p>
+<p>JSON API</p>
 </blockquote>
+<p>Access the same data as JSON for JavaScript-based access. tree may be used.</p>
 <blockquote>
-<p>Python API<br>Access the same data as Python for Python clients. This can be parsed into Python object as eval(urllib.urlopen(“…”).read()) and the resulting object tree is identical to that of JSON. However, when you do this, beware of the security implication. If you are connecting to a non-trusted Jenkins, the server can send you malicious Python programs.</p>
+<p>Python API</p>
 </blockquote>
+<p>Access the same data as Python for Python clients. This can be parsed into Python object as eval(urllib.urlopen(“…”).read()) and the resulting object tree is identical to that of JSON. However, when you do this, beware of the security implication. If you are connecting to a non-trusted Jenkins, the server can send you malicious Python programs.</p>
 <p>In Python 2.6 or later you can safely parse this output using ast.literal_eval(urllib.urlopen(“…”).read())</p>
 <p>For more information about remote API in Jenkins, see the documentation.</p>
 <p><a href="https://jenkins.io/redirect/remote-api" target="_blank" rel="noopener">https://jenkins.io/redirect/remote-api</a></p>
