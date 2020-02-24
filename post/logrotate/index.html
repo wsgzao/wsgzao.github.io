@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20191106155554.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20191106155617.png">
-<meta property="og:updated_time" content="2019-11-07T03:28:49.545Z">
+<meta property="og:updated_time" content="2020-02-24T02:44:12.727Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux 日志切割神器 logrotate 原理介绍和配置详解">
 <meta name="twitter:description" content="Linux日志切割神器logrotate原理介绍和配置详解">
@@ -259,7 +259,7 @@
 <blockquote>
 <p>influxdb</p>
 </blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@gop-sg-192-168-56-103 logrotate.d]# cat influxdb</span><br><span class="line">/var/log/influxdb/influxd.log &#123;</span><br><span class="line">    daily</span><br><span class="line">    rotate 7</span><br><span class="line">    missingok</span><br><span class="line">    dateext</span><br><span class="line">    copytruncate</span><br><span class="line">    compress</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@gop-sg-192-168-56-103 logrotate.d]# cat influxdb</span><br><span class="line">/var/log/influxdb/access.log &#123;</span><br><span class="line">    daily</span><br><span class="line">    rotate 7</span><br><span class="line">    missingok</span><br><span class="line">    dateext</span><br><span class="line">    copytruncate</span><br><span class="line">    compress</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="关于-USR1-信号解释"><a href="#关于-USR1-信号解释" class="headerlink" title="关于 USR1 信号解释"></a>关于 USR1 信号解释</h2><p>USR1 亦通常被用来告知应用程序重载配置文件；例如，向 Apache HTTP 服务器发送一个 USR1 信号将导致以下步骤的发生：停止接受新的连接，等待当前连接停止，重新载入配置文件，重新打开日志文件，重启服务器，从而实现相对平滑的不关机的更改。</p>
 <p>对于 USR1 和 2 都可以用户自定义的，在 POSIX 兼容的平台上，SIGUSR1 和 SIGUSR2 是发送给一个进程的信号，它表示了用户定义的情况。它们的符号常量在头文件 signal.h 中定义。在不同的平台上，信号的编号可能发生变化，因此需要使用符号名称。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kill -HUP pid</span><br><span class="line">killall -HUP pName</span><br></pre></td></tr></table></figure>
