@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="Nginx禁止未绑定域名或IP访问80和443端口实践小结">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-02-27T07:37:45.177Z">
+<meta property="og:updated_time" content="2020-02-27T08:56:00.685Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Nginx 禁止未绑定域名或 IP 访问 80 和 443 端口实践小结">
 <meta name="twitter:description" content="Nginx禁止未绑定域名或IP访问80和443端口实践小结">
@@ -107,7 +107,7 @@
 		
 		</div>
 		 -->
-		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>nginx 在决定请求由哪个 server 块执行时，主要关注的是 server 块中的 listen 和 server_name 两个字段，如果根据 listen 指令无法得到最佳匹配，将会开始解析 server_name 指令。nginx 会检查请求中的 “Host” 头，这个值包含了客户端实际试图请求的域名或者 ip 地址。nginx 会根据这个值去匹配 server_name 指令，匹配规则会在文章中详细描述。其中有一个需要大家注意的地方如果没有批到到任何规则的话，则会选择可用列表中的第一个 server。带来的问题就是未绑定域名或 IP 直接访问 80 和 443 端口会给后端逻辑服务增加压力并产生不合理的错误日志，合适的解决办法是通过在 nginx 的 server 块中添加 default_server 禁止未绑定域名或 IP 访问 80 和 443 端口过滤不合理的流量。</p>
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>nginx 在决定请求由哪个 server 块执行时，主要关注的是 server 块中的 listen 和 server_name 两个字段，如果根据 listen 指令无法得到最佳匹配，将会开始解析 server_name 指令。nginx 会检查请求中的 “Host” 头，这个值包含了客户端实际试图请求的域名或者 ip 地址。nginx 会根据这个值去匹配 server_name 指令，匹配规则会在文章中详细描述。其中有一个需要大家注意的地方是如果没有匹配到任何规则的话，则会选择可用列表中的第一个 server，带来的问题就是未绑定域名或 IP 直接访问 80 和 443 端口会给后端逻辑服务增加压力并产生不合理的错误日志，合适的解决办法是通过在 nginx 的 server 块中添加 default_server 禁止未绑定域名或 IP 访问 80 和 443 端口过滤不合理的流量。</p>
 <blockquote>
 <p>Nginx 禁止未绑定域名或 IP 访问 80 和 443 端口实践小结</p>
 </blockquote>
