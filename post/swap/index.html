@@ -1,0 +1,635 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+  
+    <title>SWAP 常见问题分析和性能调优配置实践小结 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="SWAP常见问题分析和性能调优配置实践小结">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SWAP 常见问题分析和性能调优配置实践小结">
+<meta property="og:url" content="https://wsgzao.github.io/post/swap/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="SWAP常见问题分析和性能调优配置实践小结">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200426173540.png">
+<meta property="og:updated_time" content="2020-04-26T09:44:47.052Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SWAP 常见问题分析和性能调优配置实践小结">
+<meta name="twitter:description" content="SWAP常见问题分析和性能调优配置实践小结">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200426173540.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/swap/" title="SWAP 常见问题分析和性能调优配置实践小结" itemprop="url">SWAP 常见问题分析和性能调优配置实践小结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2020-04-27T06:59:49.000Z" itemprop="datePublished"> 发表于 2020-04-27</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Red-Hat-SWAP-SPACE"><span class="toc-number">3.</span> <span class="toc-text">Red Hat SWAP SPACE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SWAP-预备知识"><span class="toc-number">4.</span> <span class="toc-text">SWAP 预备知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是-swap"><span class="toc-number">4.1.</span> <span class="toc-text">什么是 swap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么会-swap"><span class="toc-number">4.2.</span> <span class="toc-text">为什么会 swap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#swap-的到底是什么"><span class="toc-number">4.3.</span> <span class="toc-text">swap 的到底是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#swapiness"><span class="toc-number">4.4.</span> <span class="toc-text">swapiness</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#swap-的好坏"><span class="toc-number">4.5.</span> <span class="toc-text">swap 的好坏</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#swap-查看方法"><span class="toc-number">5.</span> <span class="toc-text">swap 查看方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见的-swap-优化思路"><span class="toc-number">6.</span> <span class="toc-text">常见的 swap 优化思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#swap-对性能的影响"><span class="toc-number">6.1.</span> <span class="toc-text">swap 对性能的影响</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vm-swappiness-优化"><span class="toc-number">6.2.</span> <span class="toc-text">vm.swappiness 优化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关闭和开启-swap"><span class="toc-number">7.</span> <span class="toc-text">关闭和开启 swap</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#增加-swap"><span class="toc-number">8.</span> <span class="toc-text">增加 swap</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">9.</span> <span class="toc-text">参考文章</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>SWAP 内存交换分区对大家来说是一个经常被忽视的细节，如果大家对 SWAP 配置不是很熟悉可以参考文章内提到的 Red Hat SWAP SPACE 最佳实践配置链接。本文主要分享 SWAP 的基础知识和优化建议，以及如何使用 ansible 优雅的关闭和增加 SWAP 交换分区等实践心得。</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2020 年 04 月 27 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/swap/">https://wsgzao.github.io/post/swap/</a></p>
+<hr>
+<h2 id="Red-Hat-SWAP-SPACE"><a href="#Red-Hat-SWAP-SPACE" class="headerlink" title="Red Hat SWAP SPACE"></a>Red Hat SWAP SPACE</h2><blockquote>
+<p>Red Hat 官方给出的配置建议已经很详细了，我不再做多余介绍</p>
+</blockquote>
+<p>Swap space in Linux is used when the amount of physical memory (RAM) is full. If the system needs more memory resources and the RAM is full, inactive pages in memory are moved to the swap space. While swap space can help machines with a small amount of RAM, it should not be considered a replacement for more RAM. Swap space is located on hard drives, which have a slower access time than physical memory. Swap space can be a dedicated swap partition (recommended), a swap file, or a combination of swap partitions and swap files. Note that Btrfs does not support swap space.</p>
+<p>In years past, the recommended amount of swap space increased linearly with the amount of RAM in the system. However, modern systems often include hundreds of gigabytes of RAM. As a consequence, recommended swap space is considered a function of system memory workload, not system memory.</p>
+<p>m Swap Space” illustrates the recommended size of a swap partition depending on the amount of RAM in your system and whether you want sufficient memory for your system to hibernate. The recommended swap partition size is established automatically during installation. To allow for hibernation, however, you need to edit the swap space in the custom partitioning stage.</p>
+<p>Recommendations in Table 15.1, “Recommended System Swap Space” are especially important on systems with low memory (1 GB and less). Failure to allocate sufficient swap space on these systems can cause issues such as instability or even render the installed system unbootable.</p>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200426173540.png" alt=""></p>
+<p>At the border between each range listed in Table 15.1, “Recommended System Swap Space”, for example a system with 2 GB, 8 GB, or 64 GB of system RAM, discretion can be exercised with regard to chosen swap space and hibernation support. If your system resources allow for it, increasing the swap space may lead to better performance. A swap space of at least 100 GB is recommended for systems with over 140 logical processors or over 3 TB of RAM.</p>
+<p>Note that distributing swap space over multiple storage devices also improves swap space performance, particularly on systems with fast drives, controllers, and interfaces.</p>
+<p><a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/storage_administration_guide/ch-swapspace" target="_blank" rel="noopener">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/storage_administration_guide/ch-swapspace</a></p>
+<h2 id="SWAP-预备知识"><a href="#SWAP-预备知识" class="headerlink" title="SWAP 预备知识"></a>SWAP 预备知识</h2><h3 id="什么是-swap"><a href="#什么是-swap" class="headerlink" title="什么是 swap"></a>什么是 swap</h3><p>swap 当我们指的名词的时候，它可以是一个分区，也可以是一个文件，是操作系统中一个存放从内存中置换出的数据的地方。<br>当我们指的是一个动词时候，代表的是从物理内存交换数据到 swap 分区这个动作。</p>
+<h3 id="为什么会-swap"><a href="#为什么会-swap" class="headerlink" title="为什么会 swap"></a>为什么会 swap</h3><ol>
+<li>当物理内存不够用时候，会根据特定的算法，把一部分内存交换到 swap 分区(此时还会伴随着高 IO)。但是并不是所有的内存都可以被交换到 swap 分区。</li>
+<li>kswapd 进程周期性对内存进行检查，如果发现高于水位线，则触发 swap，此举是为了不让系统剩余内存很少，防止出现突然的大内存申请。这块暂不深入讲解，后续再补充。</li>
+</ol>
+<h3 id="swap-的到底是什么"><a href="#swap-的到底是什么" class="headerlink" title="swap 的到底是什么"></a>swap 的到底是什么</h3><p>首先我们要知道，内存管理将内存分为 active 和 inactive，进程用户空间使用的映射包括了匿名映射 (anon) 和文件映射(file)。所有一共有 active anon,inactive anon,active file,inactive file。对于文件映射，由于本身是磁盘空间中的文件，所有它不会被 swap，当需要释放时候，脏数据直接写回磁盘，其他数据直接释放即可。内存交换到 swap，肯定是交换不活跃的数据，所有，inactive anon 是最主要的被交换的内存。那么对于操作系统来说，当我需要回收内存时候，你说它是针对文件映射好，还是针对匿名映射好，这就涉及到了一个参数：swapiness</p>
+<h3 id="swapiness"><a href="#swapiness" class="headerlink" title="swapiness"></a>swapiness</h3><p>swapiness 是设置内存回收时候，更倾向于回收文件映射还是匿名映射，在 / proc/sys/vm/swappiness 设置值。对于 swapiness=100，那么两者之间的权重是一致的，值越小，越倾向于回收文件映射，不过如果达到系统高水位线，还是会 swap，除非直接使用 swapoff -a 等手段关闭系统 swap。</p>
+<h3 id="swap-的好坏"><a href="#swap-的好坏" class="headerlink" title="swap 的好坏"></a>swap 的好坏</h3><p>swap 的好处是当内存不足时候，可以将一部分交换出去，不会触发 oom-killer。跑得慢总比不能跑好。<br>swap 的坏处是交换时候，会触发高 IO，同时会降低系统的性能。对于我们隔离做的不好的时候，会影响到其他应用的性能。</p>
+<h2 id="swap-查看方法"><a href="#swap-查看方法" class="headerlink" title="swap 查看方法"></a>swap 查看方法</h2><p>一个工具往往具有多种用途，但是本文只说明针对 swap 问题</p>
+<table>
+<thead>
+<tr>
+<th>工具名称</th>
+<th>使用姿势</th>
+<th>采集指标来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>free</td>
+<td>free -h</td>
+<td>/proc/meminfo</td>
+</tr>
+<tr>
+<td>top</td>
+<td>按 f，选择 swap</td>
+<td>/proc/$pid/smaps</td>
+</tr>
+<tr>
+<td>vmstat</td>
+<td>vmstat</td>
+<td>/proc/meminfo</td>
+</tr>
+<tr>
+<td>iotop</td>
+<td>iotop</td>
+<td></td>
+</tr>
+<tr>
+<td>iostat</td>
+<td>iostat -xdm</td>
+<td></td>
+</tr>
+<tr>
+<td>pidstat</td>
+<td>pidstat -d 1</td>
+<td>/proc/$pid/io</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 通过此命令查看内存被哪些进程占用（单位是 MByte）</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> `<span class="built_in">cd</span> /proc;ls | grep <span class="string">"^[0-9]"</span> | awk <span class="string">'$0 &gt;100'</span>` ;<span class="keyword">do</span> awk <span class="string">'/Swap:/&#123;a=a+$2&#125;END&#123;print'</span><span class="string">"<span class="variable">$i</span>"</span><span class="string">',a/1024"M"&#125;'</span> /proc/<span class="variable">$i</span>/smaps ;<span class="keyword">done</span> 2&gt;&amp;1 | sort -k2nr | head</span><br><span class="line"></span><br><span class="line">3131 102.676M</span><br><span class="line">3127 94.4414M</span><br><span class="line">3136 69.9648M</span><br><span class="line">3129 61.1445M</span><br><span class="line">3097 50.7695M</span><br><span class="line">3086 47.0078M</span><br><span class="line">3119 46.4102M</span><br><span class="line">3106 42.4648M</span><br><span class="line">3094 37.5547M</span><br><span class="line">3092 36.8398M</span><br><span class="line"></span><br><span class="line"><span class="comment"># 注：以上结果输出 PID 与内存占用大小，通过 PID 可以找到对应进程</span></span><br></pre></td></tr></table></figure>
+<h2 id="常见的-swap-优化思路"><a href="#常见的-swap-优化思路" class="headerlink" title="常见的 swap 优化思路"></a>常见的 swap 优化思路</h2><blockquote>
+<p>以 K8s 为代表的容器编排已经给出了比较简单粗暴的分类</p>
+</blockquote>
+<ol>
+<li>有状态(Stateful)</li>
+<li>无状态(Stateless)</li>
+</ol>
+<p>针对有状态的服务比如 Database 数据库，Cache 缓存等，为了减少核心服务出现 Out of Memory（OOM）的情况，合理的使用 swap 并做好监控是非常有必要的。</p>
+<p>针对无状态的服务比如 K8s，ElasticSearch 等，禁用 swap 的核心原因都是出于性能的考虑，但也需要注意配置内存的限制以及告警策略</p>
+<p><a href="https://discuss.kubernetes.io/t/swap-off-why-is-it-necessary/6879" target="_blank" rel="noopener">Swap Off - why is it necessary?</a></p>
+<p><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-configuration-memory.html" target="_blank" rel="noopener">Set up Elasticsearch » Important System Configuration » Disable swapping</a></p>
+<h3 id="swap-对性能的影响"><a href="#swap-对性能的影响" class="headerlink" title="swap 对性能的影响"></a>swap 对性能的影响</h3><p>这是显而易见的，但是还是有必要说的更清楚一点：内存交换 到磁盘对服务器性能来说是 <em> 致命 </em> 的。想想看：一个内存操作必须能够被快速执行。</p>
+<p>如果内存交换到磁盘上，一个 100 微秒的操作可能变成 10 毫秒。再想想那么多 10 微秒的操作时延累加起来。不难看出 swap 对于性能是多么可怕。</p>
+<p>最好的办法就是在你的操作系统中完全禁用 swap。这样可以暂时禁用：</p>
+<pre><code>sudo swapoff -a
+</code></pre><p>如果需要永久禁用，你可能需要修改 <code>/etc/fstab</code> 文件，这要参考你的操作系统相关文档。</p>
+<p>如果你并不打算完全禁用 swap，也可以选择降低 <code>swappiness</code> 的值。 这个值决定操作系统交换内存的频率。 这可以预防正常情况下发生交换，但仍允许操作系统在紧急情况下发生交换。</p>
+<p>对于大部分 Linux 操作系统，可以在 <code>sysctl</code> 中这样配置：</p>
+<pre><code>vm.swappiness = 1
+</code></pre><p><code>swappiness</code> 设置为 <code>1</code> 比设置为 <code>0</code> 要好，因为在一些内核版本 <code>swappiness</code> 设置为 <code>0</code> 会触发系统 OOM-killer（注：Linux 内核的 Out of Memory（OOM）killer 机制）。</p>
+<h3 id="vm-swappiness-优化"><a href="#vm-swappiness-优化" class="headerlink" title="vm.swappiness 优化"></a>vm.swappiness 优化</h3><p>swappiness 的值的大小对如何使用 swap 分区是有着很大的联系的。swappiness=0 的时候表示最大限度使用物理内存，然后才是 swap 空间，swappiness＝100 的时候表示积极的使用 swap 分区，并且把内存上的数据及时的搬运到 swap 空间里面。linux 的基本默认设置为 60，具体如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/sys/vm/swappiness</span><br><span class="line">60</span><br></pre></td></tr></table></figure>
+<p>也就是说，你的内存在使用到 100-60=40% 的时候，就开始出现有交换分区的使用。大家知道，内存的速度会比磁盘快很多，这样子会加大系统 io，同时造的成大量页的换进换出，严重影响系统的性能，所以我们在操作系统层面，要尽可能使用内存，对该参数进行调整。</p>
+<blockquote>
+<p>临时调整 swap，这只是临时调整的方法，重启后会回到默认设置的</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 配置</span></span><br><span class="line">sysctl vm.swappiness=1</span><br><span class="line"><span class="comment"># 查看</span></span><br><span class="line">cat /proc/sys/vm/swappiness</span><br><span class="line">1</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>永久生效 swap 配置</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 要想永久调整的话，需要将在 / etc/sysctl.conf 修改，加上：</span></span><br><span class="line">vim /etc/sysctl.conf</span><br><span class="line">vm.swappiness=1</span><br><span class="line"><span class="comment"># 刷新生效</span></span><br><span class="line">sysctl -p</span><br></pre></td></tr></table></figure>
+<h2 id="关闭和开启-swap"><a href="#关闭和开启-swap" class="headerlink" title="关闭和开启 swap"></a>关闭和开启 swap</h2><blockquote>
+<p>使用 ansible 实现关闭 swap，config_swap_off.yml</p>
+</blockquote>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">- hosts:</span> <span class="string">all</span></span><br><span class="line"><span class="attr">  become:</span> <span class="literal">yes</span></span><br><span class="line"><span class="attr">  gather_facts:</span> <span class="literal">no</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  tasks:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">Disable</span> <span class="string">SWAP</span> <span class="string">in</span> <span class="string">fstab</span></span><br><span class="line"><span class="attr">      replace:</span></span><br><span class="line"><span class="attr">        path:</span> <span class="string">/etc/fstab</span></span><br><span class="line"><span class="attr">        regexp:</span> <span class="string">'^(\s*)([^#\n]+\s+)(\w+\s+)swap(\s+.*)$'</span></span><br><span class="line"><span class="attr">        replace:</span> <span class="string">'#\1\2\3swap\4'</span></span><br><span class="line"><span class="attr">        backup:</span> <span class="literal">yes</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">Disable</span> <span class="string">SWAP</span></span><br><span class="line"><span class="attr">      shell:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        swapoff -a</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>使用 ansible 实现开启 swap，config_swap_on.yml</p>
+</blockquote>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">- hosts:</span> <span class="string">all</span></span><br><span class="line"><span class="attr">  become:</span> <span class="literal">yes</span></span><br><span class="line"><span class="attr">  gather_facts:</span> <span class="literal">no</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  tasks:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">Reenable</span> <span class="string">SWAP</span> <span class="string">in</span> <span class="string">fstab</span></span><br><span class="line"><span class="attr">      replace:</span></span><br><span class="line"><span class="attr">        path:</span> <span class="string">/etc/fstab</span></span><br><span class="line"><span class="attr">        regexp:</span> <span class="string">'^#(\s*)([^#\n]+\s+)(\w+\s+)swap(\s+.*)$'</span></span><br><span class="line"><span class="attr">        replace:</span> <span class="string">'\1\2\3swap\4'</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">Enable</span> <span class="string">SWAP</span></span><br><span class="line"><span class="attr">      shell:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        swapon -a</span></span><br></pre></td></tr></table></figure>
+<h2 id="增加-swap"><a href="#增加-swap" class="headerlink" title="增加 swap"></a>增加 swap</h2><blockquote>
+<p>制作 swap 文件</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建一个 1G 的文件作为交换分区使用</span></span><br><span class="line">dd <span class="keyword">if</span>=/dev/zero of=/opt/swapfile bs=1M count=1000</span><br><span class="line"></span><br><span class="line"><span class="comment"># 格式化成 swap 分区</span></span><br><span class="line">mkswap /opt/swapfile</span><br><span class="line"></span><br><span class="line"><span class="comment"># 打开 swap 分区</span></span><br><span class="line">swapon /opt/swapfile</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在 / etc/fstab 中增加一条记录如下</span></span><br><span class="line">/opt/swapfile    swap   swap defaults 0 0</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>制作 swap 分区</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建一个 swap 分区</span></span><br><span class="line">fdisk /dev/sdb</span><br><span class="line"></span><br><span class="line"><span class="comment"># 新建一个分区</span></span><br><span class="line">n</span><br><span class="line">p</span><br><span class="line">default</span><br><span class="line">default</span><br><span class="line">...</span><br><span class="line"><span class="comment"># 修改分区 id 为 swap</span></span><br><span class="line">t</span><br><span class="line">82</span><br><span class="line"><span class="comment"># 写入分区表</span></span><br><span class="line">w</span><br><span class="line"></span><br><span class="line"><span class="comment"># 同步内存和分区表信息</span></span><br><span class="line">partprobe</span><br><span class="line"></span><br><span class="line"><span class="comment"># 格式化成 swap 分区</span></span><br><span class="line">mkswap /dev/sdb1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 打开 swap 分区</span></span><br><span class="line">swapon /dev/sdb1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在 / etc/fstab 中增加一条记录如下</span></span><br><span class="line">/opt/swapfile    swap   swap defaults 0 0</span><br></pre></td></tr></table></figure>
+<p>Tips: 如果本机已有 2G swap 交换分区, 又制作了一个 8G 的 swap 分区文件, 那么在执行 <code>swapon</code> 命令之后, swap 空间将为 10G(swap 空间会累加)</p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/storage_administration_guide/ch-swapspace" target="_blank" rel="noopener">Red Hat SWAP SPACE</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/swap/" data-title="SWAP 常见问题分析和性能调优配置实践小结 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/post/bash/"  title="Bash 命令语法和 Bash Cheat Sheet 中文速查表">
+ <strong>下一篇：</strong><br/> 
+ <span>Bash 命令语法和 Bash Cheat Sheet 中文速查表
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Red-Hat-SWAP-SPACE"><span class="toc-number">3.</span> <span class="toc-text">Red Hat SWAP SPACE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SWAP-预备知识"><span class="toc-number">4.</span> <span class="toc-text">SWAP 预备知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是-swap"><span class="toc-number">4.1.</span> <span class="toc-text">什么是 swap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么会-swap"><span class="toc-number">4.2.</span> <span class="toc-text">为什么会 swap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#swap-的到底是什么"><span class="toc-number">4.3.</span> <span class="toc-text">swap 的到底是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#swapiness"><span class="toc-number">4.4.</span> <span class="toc-text">swapiness</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#swap-的好坏"><span class="toc-number">4.5.</span> <span class="toc-text">swap 的好坏</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#swap-查看方法"><span class="toc-number">5.</span> <span class="toc-text">swap 查看方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见的-swap-优化思路"><span class="toc-number">6.</span> <span class="toc-text">常见的 swap 优化思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#swap-对性能的影响"><span class="toc-number">6.1.</span> <span class="toc-text">swap 对性能的影响</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vm-swappiness-优化"><span class="toc-number">6.2.</span> <span class="toc-text">vm.swappiness 优化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关闭和开启-swap"><span class="toc-number">7.</span> <span class="toc-text">关闭和开启 swap</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#增加-swap"><span class="toc-number">8.</span> <span class="toc-text">增加 swap</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">9.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>159</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>15</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>
