@@ -1,0 +1,606 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+  
+    <title>图解 HTTPS | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="图解HTTPS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="图解 HTTPS">
+<meta property="og:url" content="https://wsgzao.github.io/post/https/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="图解HTTPS">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200510171326.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200510171633.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200510171725.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200510171839.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200510171859.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200510171918.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200510171949.png">
+<meta property="og:updated_time" content="2020-05-10T09:21:17.476Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="图解 HTTPS">
+<meta name="twitter:description" content="图解HTTPS">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200510171326.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/https/" title="图解 HTTPS" itemprop="url">图解 HTTPS</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2020-05-10T06:59:49.000Z" itemprop="datePublished"> 发表于 2020-05-10</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#存在即合理"><span class="toc-number">3.</span> <span class="toc-text">存在即合理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一层层揭开-HTTPS-神秘面纱"><span class="toc-number">4.</span> <span class="toc-text">一层层揭开 HTTPS 神秘面纱</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#第一层（安全传输数据）"><span class="toc-number">4.1.</span> <span class="toc-text">第一层（安全传输数据）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#第二层（安全传输密钥）"><span class="toc-number">4.2.</span> <span class="toc-text">第二层（安全传输密钥）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#第三层（安全传输公钥）"><span class="toc-number">4.3.</span> <span class="toc-text">第三层（安全传输公钥）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四层（安全传输证书）"><span class="toc-number">4.4.</span> <span class="toc-text">四层（安全传输证书）</span></a></li></ol></li></ol>
+		
+		</div>
+		 -->
+		<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200510171326.png" alt=""></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p><a href="https://weread.qq.com/web/reader/3da32b505dd9f43da9a1aca" target="_blank" rel="noopener">图解 HTTP</a>这本书蛮多人推荐的，在搜索 HTTPS 相关知识的时候正好看到 <a href="https://www.waitalone.cn/technology/https.html" target="_blank" rel="noopener">图解 HTTPS</a> 的文章，细节解释的通俗易通就申请个人转载，方便回顾学习。</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2020 年 05 月 10 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/https/">https://wsgzao.github.io/post/https/</a></p>
+<hr>
+<h2 id="存在即合理"><a href="#存在即合理" class="headerlink" title="存在即合理"></a>存在即合理</h2><p>http 是非常常见的应用层协议，是超文本传输协议的简称，其传输的内容都是明文的。在这个混乱的世界，明文传输信息想想就可怕，网络 “小混混” 的手段远比我们这些凡人高明得多，他们有一万种方式劫持，篡改我们的数据。对于一个网站或者服务，如果你给你的用户两个选择：</p>
+<ol>
+<li>通讯数据明文传输，速度快；</li>
+<li>通讯数据加密传输，但是速度可能会稍微慢一点；</li>
+</ol>
+<p>我想，只要脑袋没有长歪的用户都宁愿牺牲一点速度去换取数据传输的安全。</p>
+<p>这样，https 的存在就具备了合理性，https 中的 s 表示 SSL 或者 TLS，就是在原 http 的基础上加上一层用于数据加密、解密、身份认证的安全层。</p>
+<h2 id="一层层揭开-HTTPS-神秘面纱"><a href="#一层层揭开-HTTPS-神秘面纱" class="headerlink" title="一层层揭开 HTTPS 神秘面纱"></a>一层层揭开 HTTPS 神秘面纱</h2><p>本文试图通过层层渐进方式来通俗的阐述 https 的原理，若有错误，欢迎大家指正。</p>
+<p>虽然要层层渐进，但是我们不妨先奉上刚画好的还热乎着的 https 通信完整流程图：</p>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200510171633.png" alt=""></p>
+<p>从上图可以看到，右边有一堆钥匙，一看到钥匙我们就能想到这个过程免不了加密。另外，那些钥匙长得还不一样，有些只有一把，有些是一对，嗯，是的，你看得真仔细。</p>
+<p>好的，扯远了，现在开始层层渐进。</p>
+<h3 id="第一层（安全传输数据）"><a href="#第一层（安全传输数据）" class="headerlink" title="第一层（安全传输数据）"></a>第一层（安全传输数据）</h3><p>假如我们要实现一个功能：<strong> 一个用户 A 给一个用户 B 发消息，但是要保证这个消息的内容只能被 A 和 B 知道，其他的无论是墨渊上神还是太上老君都没办法破解或者篡改消息的内容。</strong></p>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200510171725.png" alt=""></p>
+<p>如上图，需求就是这么简单，A 给 B 发一条消息，因为比较私密，不想被其他人看到。</p>
+<p>由于消息不想被其他人看到，所以我们自然而然就会想到为消息加密，并且只有 A 和 B 才有解密的密钥。这里需要考虑几点：</p>
+<ol>
+<li>使用什么加密方式？</li>
+<li>密钥怎么告知对方？</li>
+</ol>
+<p>对于第一个问题，加密算法分为两类：对称加密和非对称加密，这里我们选择对称机密，原因有如下几个：</p>
+<ol>
+<li>对称加密速度快，加密时 CPU 资源消耗少；</li>
+<li>非对称加密对待加密的数据的长度有比较严格的要求，不能太长，但是实际中消息可能会很长（比如你给你女朋友发情书），因此非对称加密就满足不了；</li>
+</ol>
+<p>对于第二个问题，这是导致整个 https 通信过程很复杂的根本原因。 如果 A 或 B 直接把他们之间用于解密的密钥通过互联网传输给对方，那一旦密钥被第三者劫持，第三者就能正确解密 A,B 之间的通信数据。</p>
+<h3 id="第二层（安全传输密钥）"><a href="#第二层（安全传输密钥）" class="headerlink" title="第二层（安全传输密钥）"></a>第二层（安全传输密钥）</h3><p>通过第一层的描述，第二层需要解决的问题是：安全地传输 A,B 之间用于解密数据的密钥。</p>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200510171839.png" alt=""></p>
+<p>因为如果传输过程中这把密钥被第三者拿到了，就能解密传通信数据，所以，这把密钥必须得加密，就算第三者劫持到这把加密过的密钥，他也不能解密，得到真正的密钥。</p>
+<p>这里有一个问题，那要用什么方式加密这把密钥呢？如果使用对称加密，那这个对称加密的密钥又怎么安全地告诉对方呢？完了，陷入死循环了…. 所以，一定不能用对称加密</p>
+<p>那就是用非对称加密咯，那如何应用非对称加密来加密那把密钥呢？</p>
+<p>考虑如下方式：</p>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200510171859.png" alt=""></p>
+<ol>
+<li>客户端： 我要发起 HTTPS 请求，麻烦给我一个非对称加密的公钥；</li>
+<li>服务器： (生成一对非对称加密的密钥对，然后把公钥发给客户端)，接着，这是公钥；</li>
+<li>客户端：（收到公钥，生成一个随机数，作为上图中那一把密钥，用刚才收到的公钥加密这个密钥，然后发给服务器）这是我刚生成的加密过的密钥；</li>
+<li>服务器：（收到加密后的密钥，用本地的第一步自己生成的非对称加密的私钥解密，得到真正的密钥）;</li>
+<li>现在，客户端和服务器都知道了这把密钥，就能愉快地用这个密钥对称加密数据…</li>
+</ol>
+<p>分析一下上面步骤的可行性：</p>
+<ul>
+<li>上述步骤中最终用于加密数据的密钥是客户端生成并且用公钥加密之后传给服务器的，因为私钥只有服务器才有，所以也就只有服务器才能解开客户端上报的密钥；</li>
+<li>要保证传输的密钥只能被服务器解密，就得保证用于加密密钥的公钥一定是服务器下发的，绝对不可能被第三方篡改过；</li>
+</ul>
+<p>因为还可能存在一种 “中间人攻击” 的情况，如下图：</p>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200510171918.png" alt=""></p>
+<p>这种情况下，客户端和服务器之间通信的数据就完全被坏人破解了。</p>
+<h3 id="第三层（安全传输公钥）"><a href="#第三层（安全传输公钥）" class="headerlink" title="第三层（安全传输公钥）"></a>第三层（安全传输公钥）</h3><p>从上一层可以知道，要保证数据的安全，就必须得保证服务器给客户端下发的公钥是真正的公钥，而不是中间人伪造的公钥。那怎么保证呢？</p>
+<p>那就得引入数字证书了，数字证书是服务器主动去权威机构申请的，证书中包含了上一个图中的加密过的 A 公钥和权威机构的信息，所以服务器只需要给客户端下发数字证书即可。现在流程图如下：</p>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200510171949.png" alt=""></p>
+<p>那数字证书中的 A 公钥是如何加密的呢？</p>
+<p>答案是非对称加密，只不过这里是使用只有权威机构自己才有的私钥加密。</p>
+<p>等一下，既然 A 公钥被权威机构的私钥加密了，那客户端收到证书之后怎么解密证书中的 A 公钥呢? 需要有权威机构的公钥才能解密啊！那这个权威机构的公钥又是怎么安全地传输给客户端的呢？感觉进入了鸡生蛋，蛋生鸡的悖论了~~</p>
+<p>别慌，<strong> 答案是权威机构的公钥不需要传输，因为权威机构会和主流的浏览器或操作系统合作，将他们的公钥内置在浏览器或操作系统环境中。</strong> 客户端收到证书之后，只需要从证书中找到权威机构的信息，并从本地环境中找到权威机构的公钥，就能正确解密 A 公钥。</p>
+<p>这样就绝对安全了吗？既然权威技能能给服务器签发数字证书，那为什么就不可能给中间人签发数字证书呢? 毕竟赚钱的生意权威机构也不会拒绝的呀。</p>
+<p>试想一下：</p>
+<blockquote>
+<p>服务器给客户端下发数字证书时证书被中间人劫持了，中间人将服务器的证书替换成自己的证书下发给客户端，客户端收到之后能够通过权威机构的公钥解密证书内容（因为中间人的证书也是权威机构私钥加密的），从而获取公钥，但是，这里的公钥并不是服务器原本的 A 公钥，而是中间人自己证书中的 B 公钥。从第二层可知，如果不能保证客户端收到的公钥是服务器下发的，那整个通信数据的安全就没法保证。简单总结就是证书被调包~</p>
+</blockquote>
+<p>所以，还得保证客户端收到的证书就是服务器下发的证书，没有被中间人篡改过。</p>
+<h3 id="四层（安全传输证书）"><a href="#四层（安全传输证书）" class="headerlink" title="四层（安全传输证书）"></a>四层（安全传输证书）</h3><p>这一层，我们的任务是：保证客户端收到的证书是服务器下发的证书，没有被中间人篡改过。</p>
+<p>所以，这里就有两个需求:</p>
+<ul>
+<li>证明证书内容没有被第三方篡改过；</li>
+<li>证明证书是服务器下发的；</li>
+</ul>
+<p>其实这些问题，数字证书本身已经提供方案了，数字证书中除了包含加密之后的服务器公钥，权威机构的信息之外，还包含了证书内容的签名(先通过 Hash 函数计算得到证书数字摘要，然后用权威机构私钥加密数字摘要得到数字签名)，签名计算方法以及证书对应的域名。这样一来，客户端收到证书之后：</p>
+<ul>
+<li>使用权威机构的公钥解密数字证书，得到证书内容（服务器的公钥）以及证书的数字签名，然后根据证书上描述的计算证书签名的方法计算一下当前证书的签名，与收到的签名作对比，如果一样，表示证书一定是服务器下发的，没有被中间人篡改过。因为中间人虽然有权威机构的公钥，能够解析证书内容并篡改，但是篡改完成之后中间人需要将证书重新加密，但是中间人没有权威机构的私钥，无法加密，强行加密只会导致客户端无法解密，如果中间人强行乱修改证书，就会导致证书内容和证书签名不匹配。所以证书签名就能判断证书是否被篡改</li>
+<li>再考虑证书被掉包的情况：中间人同样可以向权威机构申请一份证书，然后在服务器给客户端下发证书的时候劫持原证书，将自己的假证书下发给客户端，客户端收到之后依然能够使用权威机构的公钥解密证书，并且证书签名也没问题。但是这个时候客户端还需要检查证书中的域名和当前访问的域名是否一致。如果不一致，会发出警告！</li>
+</ul>
+<p>从上面的分析可以看到，数字证书中的信息确实能让客户端辨别证书的真伪。</p>
+<p>原文转自：<a href="https://zhuanlan.zhihu.com/p/25976060" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/25976060</a></p>
+<p>修复了文中的一处错误</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/https/" data-title="图解 HTTPS | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/post/keepalived/"  title="Keepalived 原理介绍和配置实践">
+ <strong>下一篇：</strong><br/> 
+ <span>Keepalived 原理介绍和配置实践
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#存在即合理"><span class="toc-number">3.</span> <span class="toc-text">存在即合理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一层层揭开-HTTPS-神秘面纱"><span class="toc-number">4.</span> <span class="toc-text">一层层揭开 HTTPS 神秘面纱</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#第一层（安全传输数据）"><span class="toc-number">4.1.</span> <span class="toc-text">第一层（安全传输数据）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#第二层（安全传输密钥）"><span class="toc-number">4.2.</span> <span class="toc-text">第二层（安全传输密钥）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#第三层（安全传输公钥）"><span class="toc-number">4.3.</span> <span class="toc-text">第三层（安全传输公钥）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四层（安全传输证书）"><span class="toc-number">4.4.</span> <span class="toc-text">四层（安全传输证书）</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>162</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>15</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>
