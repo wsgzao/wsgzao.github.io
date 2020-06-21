@@ -9,24 +9,24 @@
         window.location.protocol = "https";
   </script> 
   
-    <title>使用 ssh config 作为 ssh 代理轻松管理内网服务器 | HelloDog</title>
+    <title>golang 学习路径 | HelloDog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wsgzao">
     
 
     
-    <meta name="description" content="使用ssh config作为ssh代理轻松管理内网服务器">
+    <meta name="description" content="golang学习路径">
 <meta property="og:type" content="article">
-<meta property="og:title" content="使用 ssh config 作为 ssh 代理轻松管理内网服务器">
-<meta property="og:url" content="https://wsgzao.github.io/post/ssh-config/index.html">
+<meta property="og:title" content="golang 学习路径">
+<meta property="og:url" content="https://wsgzao.github.io/post/golang/index.html">
 <meta property="og:site_name" content="HelloDog">
-<meta property="og:description" content="使用ssh config作为ssh代理轻松管理内网服务器">
+<meta property="og:description" content="golang学习路径">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-03-12T08:46:33.576Z">
+<meta property="og:updated_time" content="2020-06-18T03:45:51.354Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="使用 ssh config 作为 ssh 代理轻松管理内网服务器">
-<meta name="twitter:description" content="使用ssh config作为ssh代理轻松管理内网服务器">
+<meta name="twitter:title" content="golang 学习路径">
+<meta name="twitter:description" content="golang学习路径">
 
     
     <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
@@ -87,14 +87,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/post/ssh-config/" title="使用 ssh config 作为 ssh 代理轻松管理内网服务器" itemprop="url">使用 ssh config 作为 ssh 代理轻松管理内网服务器</a>
+      <a href="/post/golang/" title="golang 学习路径" itemprop="url">golang 学习路径</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
 		
   <p class="article-time">
-    <time datetime="2019-01-31T03:18:44.000Z" itemprop="datePublished"> 发表于 2019-01-31</time>
+    <time datetime="2020-06-17T06:59:49.000Z" itemprop="datePublished"> 发表于 2020-06-17</time>
     
   </p>
 </header>
@@ -103,45 +103,22 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh-config-的配置文件来源"><span class="toc-number">3.</span> <span class="toc-text">ssh_config 的配置文件来源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh-config-配置文件实例"><span class="toc-number">4.</span> <span class="toc-text">ssh_config 配置文件实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装-Go-运行环境"><span class="toc-number">3.</span> <span class="toc-text">安装 Go 运行环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#编译-Codis"><span class="toc-number">4.</span> <span class="toc-text">编译 Codis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">5.</span> <span class="toc-text">参考文章</span></a></li></ol>
 		
 		</div>
 		 -->
-		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>企业内部大部分服务器都只有内网，一般可以使用 NAT 方式正向代理访问公网资源。对于 Linux 来说一般通过 ssh 登录服务器，在没有公网 IP 的情况下可以修改 ssh config 配置文件，利用一台可以接入内网并具有公网 IP 的服务器作为代理或者称为 Tunnel 跳板机来管理，可以灵活定制访问规则并优化 ssh 参数让管理更加轻松。</p>
-<blockquote>
-<p>使用 ssh config 作为 ssh 代理轻松管理内网服务器</p>
-</blockquote>
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>golang 学习路径</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2020 年 06 月 17 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/golang/">https://wsgzao.github.io/post/golang/</a></p>
 <hr>
-<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019 年 01 月 31 日 - 初稿</p>
-<p>阅读原文 - <a href="https://wsgzao.github.io/post/ssh-config/">https://wsgzao.github.io/post/ssh-config/</a></p>
-<p><strong> 扩展阅读 </strong></p>
-<p>SSH CONFIG FILE -  <a href="https://www.ssh.com/ssh/config/" target="_blank" rel="noopener">https://www.ssh.com/ssh/config/</a></p>
-<hr>
-<h2 id="ssh-config-的配置文件来源"><a href="#ssh-config-的配置文件来源" class="headerlink" title="ssh_config 的配置文件来源"></a>ssh_config 的配置文件来源</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">man ssh_config</span><br><span class="line"></span><br><span class="line">NAME</span><br><span class="line">     ssh_config -- OpenSSH SSH client configuration files</span><br><span class="line"></span><br><span class="line">DESCRIPTION</span><br><span class="line">     ssh(1) obtains configuration data from the following sources <span class="keyword">in</span> the following order:</span><br><span class="line"></span><br><span class="line">           1.   <span class="built_in">command</span>-line options</span><br><span class="line">           2.   user<span class="string">'s configuration file (~/.ssh/config)</span></span><br><span class="line"><span class="string">           3.   system-wide configuration file (/etc/ssh/ssh_config)</span></span><br></pre></td></tr></table></figure>
-<p>ssh 程序可以从三个途径获取配置参数：</p>
-<ol>
-<li>命令行选型，比如 -F configfile</li>
-<li>用户配置文件，放置在 ~/.ssh/config</li>
-<li>系统配置文件，放置在 /etc/ssh/ssh_config（区别于 /etc/ssh/sshd_config）</li>
-</ol>
-<p>上面三个途径，前面的途径传入的参数可以覆盖后面的途径传入的参数（与 linux 里的大部分应用类似）。因为 / etc/ssh/ssh_config 会影响 ssh 全局的配置，因此如果想对多主机进行管理（不影响别人的情况下），可以考虑修改自己家目录下的~/.ssh/config 文件（~ 字符表示当前登录用户的家目录）。</p>
-<h2 id="ssh-config-配置文件实例"><a href="#ssh-config-配置文件实例" class="headerlink" title="ssh_config 配置文件实例"></a>ssh_config 配置文件实例</h2><p>首先看一个配置文件的 demo，假设 8.8.8.8 是你可以直接登录的 Tunnel 公网跳板机，10.65.32.0 是需要管理的内网地址段，前提是 8.8.8.8 和内网服务器的防火墙策略均已配置正确，这里就不再赘述。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># cat ~/.ssh/config</span></span><br><span class="line"></span><br><span class="line">StrictHostKeyChecking no</span><br><span class="line">CheckHostIP no</span><br><span class="line"></span><br><span class="line">Host 10.65.32.*</span><br><span class="line">  HostName %h</span><br><span class="line">  ProxyCommand ssh bastion_GOP_SG_NC_MAIN -W %h:%p</span><br><span class="line">Host bastion_GOP_SG_NC_MAIN</span><br><span class="line">  HostName 8.8.8.8</span><br><span class="line">  port 22</span><br><span class="line">  User wangao</span><br><span class="line"></span><br><span class="line">Host 10.65.200.*</span><br><span class="line">  HostName %h</span><br><span class="line">  ProxyCommand ssh bastion_GOP_SG_MH_MAIN -W %h:%p</span><br><span class="line">Host bastion_GOP_SG_MH_MAIN</span><br><span class="line">  HostName 9.9.9.9</span><br><span class="line">  port 22</span><br><span class="line">  User wangao</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">StrictHostKeyChecking no</span><br><span class="line">CheckHostIP no</span><br><span class="line"></span><br><span class="line">Host 10.71.12.*</span><br><span class="line">  HostName %h</span><br><span class="line">  ProxyCommand ssh bastion_GOP_SG_NC_MAIN -W %h:%p</span><br><span class="line"></span><br><span class="line">Host 10.71.13.*</span><br><span class="line">  HostName %h</span><br><span class="line">  ProxyCommand ssh bastion_GOP_SG_NC_MAIN -W %h:%p</span><br><span class="line"></span><br><span class="line">Host 10.71.14.*</span><br><span class="line">  HostName %h</span><br><span class="line">  ProxyCommand ssh bastion_GOP_SG_NC_MAIN -W %h:%p</span><br><span class="line"></span><br><span class="line">Host 10.71.15.*</span><br><span class="line">  HostName %h</span><br><span class="line">  ProxyCommand ssh bastion_GOP_SG_NC_MAIN -W %h:%p</span><br><span class="line"></span><br><span class="line">Host bastion_GOP_SG_NC_MAIN</span><br><span class="line">  HostName 8.8.8.8</span><br><span class="line">  port 22</span><br><span class="line">  User wangao</span><br></pre></td></tr></table></figure>
-<p>CheckHostIP no，禁用 known_hosts 检查<br>Directs ssh to additionally check the host IP address in the known_hosts file.</p>
-<p>StrictHostKeyChecking no，跳过 known_hosts 写入<br>Specifies if ssh should never automatically add host keys to the ~/.ssh/known_hosts file, and refuses to connect to hosts whose host key has changed.</p>
-<p>Host 字段<br>Host 字段配置了登录别名，这里需要注意的是，Host 是支持通配符的， * 代表 0～n 个非空白字符，? 代表一个非空白字符，! 表示例外通配</p>
-<p>HostName 字段<br>指定远程主机名，可以直接使用 IP 地址。如果这个字段中包含 ‘%h’ ，则实际使用时会被命令行中的主机名替换</p>
-<p>User 字段<br>指定登录用户名</p>
-<p>IdentityFile 字段<br>指定密钥认证使用的私钥文件路径。默认为 ~/.ssh/id_rsa。这个字段可以指定多个密钥文件（以 , 分开），在连接的过程中会依次尝试这些密钥文件。和 HostName 字段一样，值也可以直接指定参数代替：</p>
-<p>Port 字段<br>指定远程主机端口号，默认为 22 。</p>
-<p>%h，远程主机名<br>%p，远程端口</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><blockquote>
-<p>如果你还不了解 ssh 或者对 ssh 端口转发感兴趣，可以参考以下内容</p>
+<h2 id="安装-Go-运行环境"><a href="#安装-Go-运行环境" class="headerlink" title="安装 Go 运行环境"></a>安装 Go 运行环境</h2><p><a href="https://golang.org/doc/install" target="_blank" rel="noopener">Getting Started</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># download</span></span><br><span class="line">wget https://dl.google.com/go/go1.13.12.linux-amd64.tar.gz</span><br><span class="line"><span class="comment">#tar -C /usr/local -xzf go$VERSION.$OS-$ARCH.tar.gz</span></span><br><span class="line">tar -C /usr/<span class="built_in">local</span> -xzf go1.13.12.linux-amd64.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># config env</span></span><br><span class="line">vim /etc/profile</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:/usr/<span class="built_in">local</span>/go/bin</span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> /etc/profile</span><br><span class="line"></span><br><span class="line"><span class="comment"># test</span></span><br><span class="line">go version</span><br><span class="line">go version go1.13.12 linux/amd64</span><br></pre></td></tr></table></figure>
+<h2 id="编译-Codis"><a href="#编译-Codis" class="headerlink" title="编译 Codis"></a>编译 Codis</h2><blockquote>
+<p>以 Codis 为例，官方步骤可能有坑</p>
 </blockquote>
-<p>SSH 使用密钥登录并禁止口令登录实践 - <a href="https://wsgzao.github.io/post/ssh/">https://wsgzao.github.io/post/ssh/</a></p>
-<p>玩转 SSH 端口转发 - <a href="https://blog.fundebug.com/2017/04/24/ssh-port-forwarding/" target="_blank" rel="noopener">https://blog.fundebug.com/2017/04/24/ssh-port-forwarding/</a></p>
-  
+<p><a href="https://github.com/CodisLabs/codis/blob/release3.2/doc/tutorial_zh.md" target="_blank" rel="noopener">Codis 使用文档</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># install package</span></span><br><span class="line">yum install -y git gcc autoconf automake m4</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置编译环境，在 / etc/profile 文件中输入下面三行 </span></span><br><span class="line">vim /etc/profile</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:/usr/<span class="built_in">local</span>/go/bin</span><br><span class="line"><span class="built_in">export</span> GOPATH=/usr/<span class="built_in">local</span>/codis/gopath</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$GOPATH</span>/bin</span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> /etc/profile</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载 Codis 源码 </span></span><br><span class="line">mkdir -p <span class="variable">$GOPATH</span>/src/github.com/CodisLabs</span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$_</span> &amp;&amp; git <span class="built_in">clone</span> https://github.com/CodisLabs/codis.git -b release3.2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编译 redis 依赖，以免报 jemalloc 版本等错误 (Codis 官方遗漏的步骤)</span></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$GOPATH</span>/src/github.com/CodisLabs/codis/extern/redis-3.2.11/deps</span><br><span class="line">make hiredis jemalloc linenoise lua geohash-int</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编译 Codis 源代码，直接通过 make 编译，可以看到如下输出：</span></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$GOPATH</span>/src/github.com/CodisLabs/codis</span><br><span class="line">make</span><br><span class="line">===============================================================================</span><br><span class="line">go build -i -o bin/codis-dashboard ./cmd/dashboard</span><br><span class="line">go build -i -tags <span class="string">"cgo_jemalloc"</span> -o bin/codis-proxy ./cmd/proxy</span><br><span class="line">go build -i -o bin/codis-admin ./cmd/admin</span><br><span class="line">go build -i -o bin/codis-ha ./cmd/ha</span><br><span class="line">go build -i -o bin/codis-fe ./cmd/fe</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看编译后的版本 </span></span><br><span class="line">cat bin/version</span><br><span class="line">version = 2018-11-04 16:22:35 +0800 @de1ad026e329561c22e2a3035fbfe89dc7fef764 @3.2.2-12-gde1ad02</span><br><span class="line">compile = 2020-06-17 06:39:48 -0400 by go version go1.13.12 linux/amd64</span><br></pre></td></tr></table></figure>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2>  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -158,7 +135,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://wsgzao.github.io/post/ssh-config/" data-title="使用 ssh config 作为 ssh 代理轻松管理内网服务器 | HelloDog" data-tsina="" class="share clearfix">
+	  <div data-url="https://wsgzao.github.io/post/golang/" data-title="golang 学习路径 | HelloDog" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -172,18 +149,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/post/ac18/" title="腾达 AC18 刷梅林固件 (KoolShare) 和恢复原厂固件实践心得">
+ <a href="/post/ansible/" title="Ansible 学习路径">
   <strong>上一篇：</strong><br/>
   <span>
-  腾达 AC18 刷梅林固件 (KoolShare) 和恢复原厂固件实践心得</span>
+  Ansible 学习路径</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/post/ssh/"  title="SSH 使用密钥登录并禁止口令登录实践">
+<a href="/post/vmware-fusion/"  title="VMware Fusion NAT 无法连网解决方案">
  <strong>下一篇：</strong><br/> 
- <span>SSH 使用密钥登录并禁止口令登录实践
+ <span>VMware Fusion NAT 无法连网解决方案
 </span>
 </a>
 </div>
@@ -206,7 +183,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh-config-的配置文件来源"><span class="toc-number">3.</span> <span class="toc-text">ssh_config 的配置文件来源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh-config-配置文件实例"><span class="toc-number">4.</span> <span class="toc-text">ssh_config 配置文件实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装-Go-运行环境"><span class="toc-number">3.</span> <span class="toc-text">安装 Go 运行环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#编译-Codis"><span class="toc-number">4.</span> <span class="toc-text">编译 Codis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">5.</span> <span class="toc-text">参考文章</span></a></li></ol>
  
   </div>
 
