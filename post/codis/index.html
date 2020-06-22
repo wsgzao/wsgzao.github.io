@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190724154111.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190724162130.png">
-<meta property="og:updated_time" content="2020-06-22T02:54:56.245Z">
+<meta property="og:updated_time" content="2020-06-22T03:45:11.251Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redis(Codis) 分布式集群部署实践">
 <meta name="twitter:description" content="Redis(Codis)分布式集群部署实践">
@@ -111,7 +111,7 @@
 		</div>
 		 -->
 		<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190724154111.png" alt=""></p>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Codis 3.x 稳定版本已经很久没更新了，虽然有缺点也称不上完美但确实可以有效解决横向扩展问题。Redis 5.0 因为所谓的 <code>政治正确</code> 把 master-slave 名字修改为 master-replica 上了开源社区热议排行榜，然而大家在选择 Redis 集群方案的时候除了自研和 Codis 以外依然没有太多的选择余地。我们使用 Codis 的原因也很简单，Redis 主从模式内存从 128GB 一路增加到 1TB 后硬件终于受不鸟了，要么像数据库借鉴 “拆” 的奥义做到庖丁解牛一般，不然摆在眼前的路基本只剩下相对成熟可靠的 Codis。本文分享了 Redis 高可用技术解决方案选型的参考文章和 Codis 集群搭建的过程，希望对大家有帮助。</p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Codis 3.x 稳定版本已经很久没更新了，虽然有缺点也称不上完美但确实可以有效解决横向扩展问题。Redis 5.0 因为所谓的 <code>政治正确</code> 把 master-slave 名字修改为 master-replica 上了开源社区热议排行榜，客户端 SDK 的 API 完全兼容 redis-cluster 在 <code>Redis 6.0</code> 官方推出 <code>redis-cluster-proxy</code> 集群代理方案前成本很高，目前也需要等待社区验证新方案的稳定性，所以大家在选择 Redis 集群方案的时候除了自研和 Codis 以外依然没有太多的选择余地。我们使用 Codis 的原因也很简单，Redis 主从模式内存从 128GB 一路增加到 1TB 后硬件终于受不鸟了，要么像数据库借鉴 “拆” 的奥义做到庖丁解牛一般，不然摆在眼前的路基本只剩下相对成熟可靠的 Codis。本文分享了 Redis 高可用技术解决方案选型的参考文章和 Codis 集群搭建的过程，希望对大家有帮助。</p>
 <blockquote>
 <p>Redis(Codis)分布式集群部署实践</p>
 </blockquote>
