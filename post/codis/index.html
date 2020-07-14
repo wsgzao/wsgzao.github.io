@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190724154111.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190724162130.png">
-<meta property="og:updated_time" content="2020-07-14T03:32:57.605Z">
+<meta property="og:updated_time" content="2020-07-14T03:50:23.292Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redis(Codis) 分布式集群部署实践">
 <meta name="twitter:description" content="Redis(Codis)分布式集群部署实践">
@@ -344,8 +344,9 @@
 <p>由于 Codis-ha 也会依赖该节点的返回来判断 Codis-server 是否挂掉，如果无响应超过设置时间，便会强制提升 SLAVE 至 MASTER，导致整个迁移任务失败。这时如果 Proxy 的信息没有更新的话，并且迁移故障的 KEY 所在 SLOT 可能会存在 KEY 的信息不完整，虽然服务恢复，但是仍有大量 key 失效。</p>
 <p>所以一般不推荐使用 Codis 存大的 HASH 表，LIST 等等，并且在迁移之前，至少要对该 Group 做一次检查 BIG KEY 即：redis-cli –bigkeys 查看是否有 BIG KEY 存在，再酌情迁移。</p>
 <ol start="3">
-<li>关于 Codis-server，一般 Codis-proxy 或者 Codis-dashboard 我们使用 supervisor 管理，在进程退出的情况下立即拉起来重新服务，而 Codis-Server 则不推荐使用该方式，原因是这样的：一般作为 Codis-server，是关闭 rdb dump 的，如果 Codis-server 挂掉，当重新启动时，是没有 rdb 文件的，或者 rdb 文件是上一次切换之前的。如果挂掉立即重新启动，则该 Codis 有可能是空的，或者数据不是最新，而同时，SLAVE 同步，也会清空数据库，或者同步旧数据。</li>
+<li>关于 Codis-server</li>
 </ol>
+<p>一般 Codis-proxy 或者 Codis-dashboard 我们使用 supervisor 管理，在进程退出的情况下立即拉起来重新服务，而 Codis-Server 则不推荐使用该方式，原因是这样的：一般作为 Codis-server，是关闭 rdb dump 的，如果 Codis-server 挂掉，当重新启动时，是没有 rdb 文件的，或者 rdb 文件是上一次切换之前的。如果挂掉立即重新启动，则该 Codis 有可能是空的，或者数据不是最新，而同时，SLAVE 同步，也会清空数据库，或者同步旧数据。</p>
 <h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://my.oschina.net/u/658658/blog/500499" target="_blank" rel="noopener">Codis 作者黄东旭细说分布式 Redis 架构设计和踩过的那些坑们</a><br><a href="https://mp.weixin.qq.com/s/BoLsVKYyu8yRXZbxd1uuQw" target="_blank" rel="noopener">史上最全 Redis 高可用技术解决方案大全</a><br><a href="https://mp.weixin.qq.com/s/F68-e2umTQIq0aGfif58ow" target="_blank" rel="noopener">深入浅出百亿请求高可用 Redis (codis) 分布式集群揭秘</a><br><a href="https://cloud.tencent.com/developer/article/1006262" target="_blank" rel="noopener">大规模 codis 集群的治理与实践</a><br><a href="https://www.menina.cn/article/61" target="_blank" rel="noopener">避免 Redis (Codis) 的 Timeout 及监控</a><br><a href="https://mp.weixin.qq.com/s?__biz=MzA4Nzg5Nzc5OA==&amp;mid=2651678993&amp;idx=1&amp;sn=195b7e98450befb9bde04ea58756a731&amp;chksm=8bcbaab8bcbc23ae01f8288bcfb2c65d0e8b9ee4610420c252fa1ab5709b7909b26d4d5da67b&amp;mpshare=1&amp;scene=23&amp;srcid&amp;sharer_sharetime=1565249364003&amp;sharer_shareid=456ba82bbd1a1c9f32e5725824095308%23rd" target="_blank" rel="noopener">10 分钟彻底理解 Redis 的持久化和主从复制</a><br><a href="https://zhuanlan.zhihu.com/p/53044266" target="_blank" rel="noopener">Codis AutoRebalance 流程学习</a><br><a href="https://www.cnblogs.com/zhoujinyi/p/9950105.html" target="_blank" rel="noopener">使用 codis-admin 搭建 codis 集群</a><br><a href="https://my.oschina.net/u/3023401/blog/1547362" target="_blank" rel="noopener">Codis 运维 D4 - Codis3 详解</a><br><a href="https://segmentfault.com/a/1190000021361786" target="_blank" rel="noopener">4000 余字为你讲透 Codis 内部工作原理</a><br><a href="https://qiankunli.github.io/2019/04/23/codis_source.html" target="_blank" rel="noopener">Codis 源码分析</a></p>
   
 	</div>
