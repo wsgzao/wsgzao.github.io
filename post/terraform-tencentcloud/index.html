@@ -26,7 +26,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201012160649.svg">
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201013003753.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201013003909.png">
-<meta property="og:updated_time" content="2020-10-12T16:56:10.262Z">
+<meta property="og:updated_time" content="2020-10-13T17:33:05.467Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Terraform tencentcloud 部署实践">
 <meta name="twitter:description" content="Terraform tencentcloud部署实践">
@@ -98,7 +98,7 @@
 		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
 		
   <p class="article-time">
-    <time datetime="2020-10-10T06:59:49.000Z" itemprop="datePublished"> 发表于 2020-10-10</time>
+    <time datetime="2020-10-13T06:59:49.000Z" itemprop="datePublished"> 发表于 2020-10-13</time>
     
   </p>
 </header>
@@ -107,7 +107,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TencentCloud-Provider"><span class="toc-number">3.</span> <span class="toc-text">TencentCloud Provider</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#腾讯云创建用户"><span class="toc-number">3.1.</span> <span class="toc-text">腾讯云创建用户</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置-provider-环境变量"><span class="toc-number">3.2.</span> <span class="toc-text">配置 provider 环境变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查询公共资源"><span class="toc-number">3.3.</span> <span class="toc-text">查询公共资源</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#腾讯云资源编排-TIC-实践"><span class="toc-number">4.</span> <span class="toc-text">腾讯云资源编排 TIC 实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#terraform-腾讯云实践"><span class="toc-number">5.</span> <span class="toc-text">terraform 腾讯云实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">6.</span> <span class="toc-text">参考文章</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TencentCloud-Provider"><span class="toc-number">3.</span> <span class="toc-text">TencentCloud Provider</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#腾讯云创建用户"><span class="toc-number">3.1.</span> <span class="toc-text">腾讯云创建用户</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置-provider-环境变量"><span class="toc-number">3.2.</span> <span class="toc-text">配置 provider 环境变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查询公共资源"><span class="toc-number">3.3.</span> <span class="toc-text">查询公共资源</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#腾讯云资源编排-TIC-实践"><span class="toc-number">4.</span> <span class="toc-text">腾讯云资源编排 TIC 实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#terraform-tencentcloud-腾讯云实践"><span class="toc-number">5.</span> <span class="toc-text">terraform tencentcloud 腾讯云实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">6.</span> <span class="toc-text">参考文章</span></a></li></ol>
 		
 		</div>
 		 -->
@@ -131,9 +131,8 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">export TENCENTCLOUD_SECRET_ID=&quot;your_secret_id&quot;</span><br><span class="line">export TENCENTCLOUD_SECRET_KEY=&quot;your_secret_key&quot;</span><br><span class="line">export TENCENTCLOUD_REGION=&quot;your_region&quot;</span><br></pre></td></tr></table></figure>
 <p>推荐的配置是使用环境变量加载 <code>SECRET_ID</code> 和 <code>SECRET_KEY</code></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># tencentcloud-sandbox.</span><br><span class="line">export TENCENTCLOUD_SECRET_ID=&quot;xxx&quot;</span><br><span class="line">export TENCENTCLOUD_SECRET_KEY=&quot;xxx&quot;</span><br><span class="line"></span><br><span class="line"># provider.tf</span><br><span class="line">terraform &#123;</span><br><span class="line">  required_providers &#123;</span><br><span class="line">    tencentcloud = &#123;</span><br><span class="line">      source = &quot;tencentcloudstack/tencentcloud&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  required_version = &quot;&gt;= 0.13&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># main.tf</span><br><span class="line">provider &quot;tencentcloud&quot; &#123;</span><br><span class="line">  region = &quot;ap-chengdu&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><a href="https://www.terraform.io/docs/commands/environment-variables.html" target="_blank" rel="noopener">https://www.terraform.io/docs/commands/environment-variables.html</a></p>
 <h3 id="查询公共资源"><a href="#查询公共资源" class="headerlink" title="查询公共资源"></a>查询公共资源</h3><p>把资源依赖的上游资源，先查询出来，便宜后面引用</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"># Get availability regions</span><br><span class="line">data &quot;tencentcloud_availability_regions&quot; &quot;default&quot; &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># Get availability zones</span><br><span class="line">data &quot;tencentcloud_availability_zones&quot; &quot;default&quot; &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># Get availability images</span><br><span class="line">data &quot;tencentcloud_images&quot; &quot;default&quot; &#123;</span><br><span class="line">  image_type = [&quot;PUBLIC_IMAGE&quot;]</span><br><span class="line">  os_name    = &quot;centos&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># Get availability instance types</span><br><span class="line">data &quot;tencentcloud_instance_types&quot; &quot;default&quot; &#123;</span><br><span class="line">  cpu_core_count = 1</span><br><span class="line">  memory_size    = 1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"># Get availability regions</span><br><span class="line">data &quot;tencentcloud_availability_regions&quot; &quot;default&quot; &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># Get availability zones</span><br><span class="line">data &quot;tencentcloud_availability_zones&quot; &quot;default&quot; &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># Get availability images</span><br><span class="line">data &quot;tencentcloud_images&quot; &quot;default&quot; &#123;</span><br><span class="line">  image_type = [&quot;PUBLIC_IMAGE&quot;]</span><br><span class="line">  os_name    = &quot;centos&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># Get availability instance types</span><br><span class="line">data &quot;tencentcloud_instance_types&quot; &quot;default&quot; &#123;</span><br><span class="line">  cpu_core_count = 1</span><br><span class="line">  memory_size    = 2</span><br><span class="line"></span><br><span class="line">  filter &#123;</span><br><span class="line">    name   = &quot;zone&quot;</span><br><span class="line">    values = [&quot;$&#123;var.availability_zone&#125;&quot;]</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  filter &#123;</span><br><span class="line">    name   = &quot;instance-family&quot;</span><br><span class="line">    values = [&quot;S5&quot;]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="腾讯云资源编排-TIC-实践"><a href="#腾讯云资源编排-TIC-实践" class="headerlink" title="腾讯云资源编排 TIC 实践"></a>腾讯云资源编排 TIC 实践</h2><p>TIC（Tencent Cloud Infrastructure as Code）<br><a href="https://cloud.tencent.com/document/product/1213/45684" target="_blank" rel="noopener">https://cloud.tencent.com/document/product/1213/45684</a></p>
 <p>完整 tf 配置文件内容，请下载 <a href="https://tic-demo-1259649581.cos.ap-nanjing.myqcloud.com/templates/tic-demo-config.zip" target="_blank" rel="noopener">tic-demo-config.zip</a></p>
 <p>创建资源参数配置文件。为了与现网真实运营环境保持一致，我们创建了 2 台 CVM 云服务器、1 个 VPC、1 个子网、1 个路由表、1 个安全组、1 个云数据库 MySQL，分别创建了对应的配置文件为：cvm.tf、vpc.tf、subnet.tf、route_table.tf、security_group.tf、mysql.tf，文件的结构如下：</p>
@@ -187,7 +186,21 @@
 </tbody>
 </table>
 <p>关于模版可以查看公共<br><a href="https://console.cloud.tencent.com/tic/templates" target="_blank" rel="noopener">https://console.cloud.tencent.com/tic/templates</a></p>
-<h2 id="terraform-腾讯云实践"><a href="#terraform-腾讯云实践" class="headerlink" title="terraform 腾讯云实践"></a>terraform 腾讯云实践</h2><p>对方正在输入…</p>
+<h2 id="terraform-tencentcloud-腾讯云实践"><a href="#terraform-tencentcloud-腾讯云实践" class="headerlink" title="terraform tencentcloud 腾讯云实践"></a>terraform tencentcloud 腾讯云实践</h2><p>terraform requirement: (region: sinagpore)</p>
+<ol>
+<li>VPC</li>
+<li>CVM * 2. CentOS7, 2c2g, 50G+200G disk, no public IP</li>
+<li>CVM * 1 same specs with public IP as jumpserver</li>
+<li>MYSQL * 1</li>
+<li>REDIS * 1</li>
+<li>LB * 1, for user access the website externally.</li>
+<li>Security GROUP, limited 443, 22,36000, open 80. allow all from internal.</li>
+<li>cos bucket * 1</li>
+<li>cam user * 1 with api key only, who could only access a sub-folder under the cos bucket in step 7.</li>
+<li>Output necessary info without login to console and check</li>
+</ol>
+<p><a href="https://cloud.tencent.com/document/product/552" target="_blank" rel="noopener">NAT 网关</a></p>
+<p>对方正在输入…</p>
 <h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://979137.com/archives/870.html" target="_blank" rel="noopener">巧用 Terraform 完成腾讯云上自动运维</a></p>
 <p><a href="http://www.panooo.com/Terraform_On_TencentCloud" target="_blank" rel="noopener">Terraform – Practice on Tencent Cloud</a></p>
 <p><a href="https://cloud.tencent.com/developer/article/1473713" target="_blank" rel="noopener">腾讯云 Terraform 应用指南</a></p>
@@ -222,19 +235,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/post/homebrew-update/" title="Updating Homebrew 卡住的解决方案">
-  <strong>上一篇：</strong><br/>
-  <span>
-  Updating Homebrew 卡住的解决方案</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/post/nc/"  title="nc 命令使用小结">
+<a href="/post/sshpass/"  title="macOS 安装 sshpass">
  <strong>下一篇：</strong><br/> 
- <span>nc 命令使用小结
+ <span>macOS 安装 sshpass
 </span>
 </a>
 </div>
@@ -257,7 +262,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TencentCloud-Provider"><span class="toc-number">3.</span> <span class="toc-text">TencentCloud Provider</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#腾讯云创建用户"><span class="toc-number">3.1.</span> <span class="toc-text">腾讯云创建用户</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置-provider-环境变量"><span class="toc-number">3.2.</span> <span class="toc-text">配置 provider 环境变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查询公共资源"><span class="toc-number">3.3.</span> <span class="toc-text">查询公共资源</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#腾讯云资源编排-TIC-实践"><span class="toc-number">4.</span> <span class="toc-text">腾讯云资源编排 TIC 实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#terraform-腾讯云实践"><span class="toc-number">5.</span> <span class="toc-text">terraform 腾讯云实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">6.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TencentCloud-Provider"><span class="toc-number">3.</span> <span class="toc-text">TencentCloud Provider</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#腾讯云创建用户"><span class="toc-number">3.1.</span> <span class="toc-text">腾讯云创建用户</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置-provider-环境变量"><span class="toc-number">3.2.</span> <span class="toc-text">配置 provider 环境变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查询公共资源"><span class="toc-number">3.3.</span> <span class="toc-text">查询公共资源</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#腾讯云资源编排-TIC-实践"><span class="toc-number">4.</span> <span class="toc-text">腾讯云资源编排 TIC 实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#terraform-tencentcloud-腾讯云实践"><span class="toc-number">5.</span> <span class="toc-text">terraform tencentcloud 腾讯云实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">6.</span> <span class="toc-text">参考文章</span></a></li></ol>
  
   </div>
 
