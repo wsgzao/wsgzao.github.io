@@ -1,0 +1,649 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+  
+    <title>CentOS7 基于 LNMP 安装配置 Laravel | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="CentOS7基于LNMP安装配置Laravel">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CentOS7 基于 LNMP 安装配置 Laravel">
+<meta property="og:url" content="https://wsgzao.github.io/post/laravel/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="CentOS7基于LNMP安装配置Laravel">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://curder.gitbooks.io/blog/content/assets/restart_nginx.jpg">
+<meta property="og:updated_time" content="2020-10-21T07:17:42.365Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CentOS7 基于 LNMP 安装配置 Laravel">
+<meta name="twitter:description" content="CentOS7基于LNMP安装配置Laravel">
+<meta name="twitter:image" content="https://curder.gitbooks.io/blog/content/assets/restart_nginx.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/laravel/" title="CentOS7 基于 LNMP 安装配置 Laravel" itemprop="url">CentOS7 基于 LNMP 安装配置 Laravel</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2020-10-21T06:59:49.000Z" itemprop="datePublished"> 发表于 2020-10-21</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#软件版本"><span class="toc-number">3.</span> <span class="toc-text">软件版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#升级-EPEL-仓库"><span class="toc-number">4.</span> <span class="toc-text">升级 EPEL 仓库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装-Nginx"><span class="toc-number">5.</span> <span class="toc-text">安装 Nginx</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装-php-fpm"><span class="toc-number">6.</span> <span class="toc-text">安装 php-fpm</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#方式一-remi-仓库（推荐）"><span class="toc-number">6.1.</span> <span class="toc-text">方式一 remi 仓库（推荐）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多版本安装"><span class="toc-number">6.2.</span> <span class="toc-text">多版本安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方式二-webtatic-仓库"><span class="toc-number">6.3.</span> <span class="toc-text">方式二 webtatic 仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置-php-fpm"><span class="toc-number">6.4.</span> <span class="toc-text">配置 php-fpm</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#检查-php-fpm"><span class="toc-number">6.5.</span> <span class="toc-text">检查 php-fpm</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装-MySQL"><span class="toc-number">7.</span> <span class="toc-text">安装 MySQL</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#下载并安装-MySQL5-7"><span class="toc-number">7.1.</span> <span class="toc-text">下载并安装 MySQL5.7</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动-MySQL"><span class="toc-number">7.2.</span> <span class="toc-text">启动 MySQL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试-MySQL"><span class="toc-number">7.3.</span> <span class="toc-text">测试 MySQL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置-MySQL"><span class="toc-number">7.4.</span> <span class="toc-text">配置 MySQL</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装-PHP-Composer"><span class="toc-number">8.</span> <span class="toc-text">安装 PHP Composer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NodeJS-NPM-Yarn"><span class="toc-number">9.</span> <span class="toc-text">NodeJS + NPM + Yarn</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装-Laravel-测试-LNMP"><span class="toc-number">10.</span> <span class="toc-text">安装 Laravel 测试 LNMP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为-Larvel-配置-Nginx-配置"><span class="toc-number">11.</span> <span class="toc-text">为 Larvel 配置 Nginx 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#测试并重启-Nginx"><span class="toc-number">11.1.</span> <span class="toc-text">测试并重启 Nginx</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试-Laravel"><span class="toc-number">11.2.</span> <span class="toc-text">测试 Laravel</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">12.</span> <span class="toc-text">参考文章</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>距离上一次接触 Laravel 还是 2015 年的时候，这一次基于 CentOS7 的 LNMP(Linux, Nginx, MySQL, PHP)再重新回味下当年部署的乐趣，文档里记录的是手动部署的步骤，ansible 自动化部署代码我就不放出来了，有问题可以留言咨询。</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2020 年 10 月 21 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/laravel/">https://wsgzao.github.io/post/laravel/</a></p>
+<hr>
+<h2 id="软件版本"><a href="#软件版本" class="headerlink" title="软件版本"></a>软件版本</h2><blockquote>
+<p>php 版本各位可以选择 7.3 以上，我自己选择了 7.2 的最新版</p>
+</blockquote>
+<ul>
+<li>CentOS Linux release 7.x</li>
+<li>nginx 1.16.x</li>
+<li>MySQL 5.7.x</li>
+<li>php-fpm 7.2.x</li>
+<li>Composer 1.x</li>
+<li>laravel 7.x</li>
+<li>nodejs v6.x</li>
+<li>npm 3.x </li>
+<li>yarn 1.x</li>
+</ul>
+<h2 id="升级-EPEL-仓库"><a href="#升级-EPEL-仓库" class="headerlink" title="升级 EPEL 仓库"></a>升级 EPEL 仓库</h2><p>EPEL (Extra Packages for Enterprise Linux，企业版 Linux 的额外软件包) 是 Fedora 小组维护的一个软件仓库项目，为 RHEL/CentOS 提供他们默认不提供的软件包。这个源兼容 RHEL 及像 CentOS 和 Scientific Linux 这样的衍生版本。</p>
+<p>更多详细介绍查看这里：<a href="https://fedoraproject.org/wiki/EPEL" title="EPEL Repository" target="_blank" rel="noopener">EPEl</a></p>
+<p>我们需要 Nginx 安装的 EPEL 仓库，因为官方 CentOS 仓库中不存在 Nginx 软件包。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum -y install epel-release</span><br></pre></td></tr></table></figure>
+<h2 id="安装-Nginx"><a href="#安装-Nginx" class="headerlink" title="安装 Nginx"></a>安装 Nginx</h2><p>使用 LNMP 环境下运行 Laravel。Nginx 是其中的 Web 服务器部分，可以从 EPEL 仓库安装。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 Nginx</span></span><br><span class="line">sudo yum -y install nginx</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装完成后，启动 Nginx 并将其添加到系统自启动</span></span><br><span class="line">sudo systemctl start nginx</span><br><span class="line">sudo systemctl <span class="built_in">enable</span> nginx</span><br><span class="line"></span><br><span class="line"><span class="comment"># Nginx 默认运行在 80 端口，使用下面的 netstat 命令检查。</span></span><br><span class="line">netstat -plntu | grep 80</span><br></pre></td></tr></table></figure>
+<h2 id="安装-php-fpm"><a href="#安装-php-fpm" class="headerlink" title="安装 php-fpm"></a>安装 php-fpm</h2><p>在 CentOS 基础库中不存在 PHP 7.2，我们需要从名为 <code>remi</code> 或 <code>webtatic</code> 的第三方仓库中安装它。</p>
+<h3 id="方式一-remi-仓库（推荐）"><a href="#方式一-remi-仓库（推荐）" class="headerlink" title="方式一 remi 仓库（推荐）"></a>方式一 remi 仓库（推荐）</h3><blockquote>
+<p>之所以推荐它是因为它非常方便切换 PHP 的版本。</p>
+</blockquote>
+<p>更多仓库相关信息<a href="https://rpms.remirepo.net/" target="_blank" rel="noopener">参考这里</a>。</p>
+<p><strong> 安装 </strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sudo rpm --import http://rpms.famillecollet.com/RPM-GPG-KEY-remi</span><br><span class="line">sudo rpm -ivh http://rpms.famillecollet.com/enterprise/remi-release-7.rpm</span><br><span class="line">sudo yum-config-manager --enable remi-php72 # 默认 remi 仓库禁用的，在实际需要的时候启用</span><br><span class="line">sudo yum update</span><br><span class="line"># sudo yum search php72 | more</span><br><span class="line">sudo yum install -y php72 php72-php-fpm php72-php-gd php72-php-json php72-php-mbstring php72-php-mysqlnd php72-php-xml php72-php-xmlrpc php72-php-opcache php72-php-pecl-zip</span><br><span class="line">sudo mkdir -p /run/php-fpm/remi-php72 # 创建一个 sock 存放的目录</span><br><span class="line">sudo ln -s  `which php72` /usr/local/sbin/php # 建立软连接方便命令行使用</span><br></pre></td></tr></table></figure>
+<p>执行完上面的命令后，CentOS 系统上已经安装了 PHP 7.2, 安装好的 <code>php72</code> 目录在 <code>/etc/opt/remi/php72</code>, 也可以参考这个 <a href="https://www.cyberciti.biz/faq/how-to-install-php-7-2-on-centos-7-rhel-7/" target="_blank" rel="noopener">链接</a> 查看更多操作详情。</p>
+<p><strong> 卸载 </strong></p>
+<p><code>remi</code> 仓库支持 PHP 的多版本共存，<strong> 不到万不得已不建议使用卸载操作 </strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo yum-config-manager --disable remi-php72 # 禁用 remi-php72 仓库</span><br><span class="line">sudo systemctl stop php72-php-fpm.service</span><br><span class="line">yum remove php72 php72-php-fpm php72-php-gd php72-php-json php72-php-mbstring php72-php-mysqlnd php72-php-xml php72-php-xmlrpc php72-php-opcache</span><br><span class="line">sudo rmdir /run/php-fpm/remi-php72</span><br><span class="line">sudo rm -rf /etc/opt/remi/remi-php72 # 删除前记得备份配置</span><br></pre></td></tr></table></figure>
+<p>至此，使用 remi 仓库安装的 PHP 已经成功卸载。</p>
+<h3 id="多版本安装"><a href="#多版本安装" class="headerlink" title="多版本安装"></a>多版本安装</h3><p>再安装一个 PHP7.3 版本为例，执行下面的操作即可完成 PHP7.3 版本的安装。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo yum-config-manager --enable remi-php73</span><br><span class="line">sudo yum install php73 php73-php-fpm php73-php-gd php73-php-json php73-php-mbstring php73-php-mysqlnd php73-php-xml php73-php-xmlrpc php73-php-opcache</span><br><span class="line">sudo mkdir -p /run/php-fpm/remi-php73 # 创建一个 sock 存放的目录</span><br><span class="line">sudo ln -s  `which php73` /usr/local/sbin/php # 建立软连接方便命令行使用</span><br></pre></td></tr></table></figure>
+<h3 id="方式二-webtatic-仓库"><a href="#方式二-webtatic-仓库" class="headerlink" title="方式二 webtatic 仓库"></a>方式二 webtatic 仓库</h3><p><strong> 安装 </strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm</span><br><span class="line">sudo yum install -y php72w php72w-gd php72w-curl php72w-common php72w-cli php72w-mysql php72w-mbstring php72w-fpm php72w-xml php72w-pdo php72w-zip</span><br></pre></td></tr></table></figure>
+<p>其他版本下载可以查看这里：<a href="https://webtatic.com/projects/yum-repository/" title="webtatic repository" target="_blank" rel="noopener">webtatic 仓库</a>。</p>
+<blockquote>
+<p>如果执行上面的命令一直报错 <code>curl: (35) Encountered end of file</code>，可以尝试将上面的 <code>https</code> 协议改成 <code>http</code> 协议获取 rpm 源。</p>
+</blockquote>
+<p>执行完上面的命令后，CentOS 系统上已经安装了 PHP 7.2, 安装好的 php72w 目录在 <code>/etc/php</code> 下。</p>
+<p><strong> 卸载 </strong></p>
+<blockquote>
+<p><strong> 注意：</strong> 如果想更换到 php5.6 或 7.1 版本, 直接把上面 yum 命令里面的关键字 <code>php72w</code> 换成 <code>php56w</code> 或者 <code>php71w</code> 就可以了。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl stop php-fpm</span><br><span class="line">yum remove php72w php72w-curl php72w-common php72w-cli php72w-mysql php72w-mbstring php72w-fpm php72w-xml php72w-pdo php72w-zip</span><br></pre></td></tr></table></figure>
+<p>至此，使用 webtatic 仓库安装的 PHP 已经成功卸载。</p>
+<h3 id="配置-php-fpm"><a href="#配置-php-fpm" class="headerlink" title="配置 php-fpm"></a>配置 php-fpm</h3><p>通过使用 vim 编辑配置文件 <code>php.ini</code> 来配置 PHP，<strong>remi 仓库 </strong> 方式安装的主配置文件存放位置在 <code>/etc/opt/remi/php72/php.ini</code>， <strong>webtatic 仓库 </strong> 方式安装的主配置文件存放位置在 <code>/etc/php.ini</code>。</p>
+<ul>
+<li>在文件中找如如下行，取消它的行注释并将值更改为 0。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cgi.fix_pathinfo=0</span><br></pre></td></tr></table></figure>
+<p>保存文件并退出编辑器。</p>
+<p>编辑 <code>php-fpm</code> 文件 <code>www.conf</code>，<strong>remi 仓库 </strong> 方式安装的配置文件存放位置在 <code>/etc/opt/remi/php72/php-fpm.d/www.conf</code>，<strong>webtatic 仓库 </strong> 方式安装的配置文件存放位置在 <code>/etc/php-fpm.d/www.conf</code>。</p>
+<ul>
+<li><code>php-fpm</code> 将在用户和组 <code>nginx</code> 下运行，将下面两行的值更改为 <code>nginx</code>，这里用户和用户组请保持与 <code>Nginx</code> 的用户和用户组一致。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 用户和组保持和 Nginx 一致，使用命令 egrep &apos;^(user|group)&apos; /etc/nginx/nginx.conf 查看 nginx 进程的用户</span><br><span class="line">user = nginx</span><br><span class="line">group = nginx</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>php-fpm</code> 将在套接字文件下运行，而不是使用服务器端口，<strong>remi 仓库 </strong> 方式安装的 PHP 可以将值改为 <code>/run/php-fpm/remi-php72/php-fpm.sock</code>， <strong>webtatic 仓库 </strong> 方式安装的 PHP 请将’listen’值更改为路径 <code>/run/php-fpm/php-fpm.sock</code>。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># remi</span><br><span class="line">listen = /run/php-fpm/remi-php72/php-fpm.sock</span><br><span class="line"></span><br><span class="line"># webtatic</span><br><span class="line">listen = /run/php-fpm/php-fpm.sock</span><br></pre></td></tr></table></figure>
+<ul>
+<li>套接字文件所有者将是 “nginx” 用户，权限模式为 660，取消注释并更改所有值。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">listen.owner = nginx</span><br><span class="line">listen.group = nginx</span><br><span class="line">listen.mode  = 0660</span><br></pre></td></tr></table></figure>
+<ul>
+<li>对于环境变量，取消注释这些行并设置值。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">env[HOSTNAME] = $HOSTNAME</span><br><span class="line">env[PATH] = /usr/local/bin:/usr/bin:/bin</span><br><span class="line">env[TMP] = /tmp</span><br><span class="line">env[TMPDIR] = /tmp</span><br><span class="line">env[TEMP] = /tmp</span><br></pre></td></tr></table></figure>
+<p>保存文件并退出 vim 编辑，然后启动 <code>php-fpm</code> 并使其在启动时运行。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># remi</span><br><span class="line">sudo systemctl start php72-php-fpm.service</span><br><span class="line">sudo systemctl enable php72-php-fpm.service</span><br><span class="line"></span><br><span class="line"># webtatic</span><br><span class="line">sudo systemctl start php-fpm</span><br><span class="line">sudo systemctl enable php-fpm</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>使用 <code>remi</code> 仓库的时候启动的时候可能会报错，由于 <code>php-fpm.sock</code> 文件目录不存在，执行命令：<code>sudo mkdir -p /run/php-fpm/remi-php72</code> 后在启动就没有问题了。</p>
+</blockquote>
+<h3 id="检查-php-fpm"><a href="#检查-php-fpm" class="headerlink" title="检查 php-fpm"></a>检查 php-fpm</h3><p><code>php-fpm</code> 在套接字文件下运行，使用以下命令检查。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo netstat -pl | grep php-fpm.sock</span><br></pre></td></tr></table></figure>
+<h2 id="安装-MySQL"><a href="#安装-MySQL" class="headerlink" title="安装 MySQL"></a>安装 MySQL</h2><p>可以使用 MariaDB 或 PostgreSQL 作为 Laravel 项目的数据库存储。 这里使用 MySQL 数据库服务器进行安装。 它在 CentOS 存储库中可用， 使用下面的 <code>yum</code> 命令<a href="https://dev.mysql.com/doc/mysql-yum-repo-quick-guide/en/" title="mysql server install" target="_blank" rel="noopener">安装 MySQL-server</a>。</p>
+<h3 id="下载并安装-MySQL5-7"><a href="#下载并安装-MySQL5-7" class="headerlink" title="下载并安装 MySQL5.7"></a>下载并安装 MySQL5.7</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wget https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm</span><br><span class="line">rpm -ivh mysql57-community-release-el7-11.noarch.rpm</span><br><span class="line">sudo yum update</span><br><span class="line">sudo yum install -y mysql-server</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>执行上面的命令进行 MySQL 的安装，在安装的过程中两次按 <code>Y</code> 键，在同意后安装完成。</p>
+</blockquote>
+<h3 id="启动-MySQL"><a href="#启动-MySQL" class="headerlink" title="启动 MySQL"></a>启动 MySQL</h3><p>使用下面的命令启动 <code>mysql</code> 并使其随系统启动而启动。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl start mysqld</span><br><span class="line">sudo systemctl enable mysqld</span><br></pre></td></tr></table></figure>
+<h3 id="测试-MySQL"><a href="#测试-MySQL" class="headerlink" title="测试 MySQL"></a>测试 MySQL</h3><p>MySQL 已经启动并在 3306 端口上运行，可以使用 netstat 命令检查。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">netstat -plntu | grep 3306 # 检查端口</span><br><span class="line">ps aux|grep mysqld # 检查进程</span><br></pre></td></tr></table></figure>
+<h3 id="配置-MySQL"><a href="#配置-MySQL" class="headerlink" title="配置 MySQL"></a>配置 MySQL</h3><p>获取安装时初始化密码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo grep &apos;temporary password&apos; /var/log/mysqld.log</span><br></pre></td></tr></table></figure>
+<p>登录并重设 root 账户密码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql -uroot -p # 回车输入上面获取到的密码</span><br><span class="line"></span><br><span class="line">ALTER USER &apos;root&apos;@&apos;localhost&apos; IDENTIFIED BY &apos;MyNewPassword1!&apos;;</span><br></pre></td></tr></table></figure>
+<p>创建一个测试数据库和测试用户</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CREATE DATABASE laravel; -- 创建一个 laravel 数据库</span><br><span class="line">GRANT ALL PRIVILEGES ON laravel.* TO laravel@localhost IDENTIFIED BY &quot;LaravelPassword1!&quot;; -- 创建一个对应的用户</span><br></pre></td></tr></table></figure>
+<p>至此，MySQL 的安装和配置已经完成。</p>
+<h2 id="安装-PHP-Composer"><a href="#安装-PHP-Composer" class="headerlink" title="安装 PHP Composer"></a>安装 PHP Composer</h2><p>PHP composer 是 PHP 语言的包管理器。 它创建于 2011 年，灵感来自于 Node.js 的 “npm” 和 Ruby 的 “bundler” 安装程序。 使用 <code>curl</code> 命令安装 composer。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">php -r &quot;copy(&apos;https://install.phpcomposer.com/installer&apos;, &apos;composer-setup.php&apos;);&quot;</span><br><span class="line">php composer-setup.php</span><br><span class="line">php -r &quot;unlink(&apos;composer-setup.php&apos;);&quot;</span><br><span class="line">sudo mv composer.phar /usr/local/bin/composer</span><br></pre></td></tr></table></figure>
+<ul>
+<li>配置 Packagist 国内镜像</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">composer config -g repo.packagist composer https://packagist.phpcomposer.com</span><br></pre></td></tr></table></figure>
+<p>安装完成后，尝试使用 “composer” 命令，您将看到以下结果。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">composer</span><br><span class="line">composer config -g repo.packagist -l # 查看配置的 Packagist 国内镜像</span><br></pre></td></tr></table></figure>
+<p>至此，PHP Composer 已经正常安装在了 CentOS 系统上。</p>
+<h2 id="NodeJS-NPM-Yarn"><a href="#NodeJS-NPM-Yarn" class="headerlink" title="NodeJS + NPM + Yarn"></a>NodeJS + NPM + Yarn</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo yum -y install nodejs npm</span><br><span class="line">curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo</span><br><span class="line">sudo yum install -y yarn</span><br></pre></td></tr></table></figure>
+<h2 id="安装-Laravel-测试-LNMP"><a href="#安装-Laravel-测试-LNMP" class="headerlink" title="安装 Laravel 测试 LNMP"></a>安装 Laravel 测试 LNMP</h2><p>现在进入到 laravel 的根目录’/var/www/laravel’。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir -p /var/www/laravel &amp;&amp; cd /var/www/laravel</span><br></pre></td></tr></table></figure>
+<p>Laravel 提供了两种在服务器上 <a href="https://laravel.com/docs/7.x/installation" title="laravel install document" target="_blank" rel="noopener">安装框架</a> 的方法。可以用 Laravel 安装程序安装 Laravel，也可以用 PHP composer 安装它。在这里我将通过使用 composer 命令创建一个新项目来安装 Laravel，运行下面的命令来安装 Laravel。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">composer create-project laravel/laravel .</span><br></pre></td></tr></table></figure>
+<p>等待 Laravel 安装完成。 这可能需要一些时间。</p>
+<p>安装完成后，将 Laravel Web 根目录的所有者更改为 “nginx” 用户，并使用以下命令将存储目录的权限更改为 755。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chown -R nginx:root /var/www/laravel</span><br><span class="line">chmod 755 -R /var/www/laravel/storage</span><br></pre></td></tr></table></figure>
+<p>至此，Laravel 安装已经完成。</p>
+<h2 id="为-Larvel-配置-Nginx-配置"><a href="#为-Larvel-配置-Nginx-配置" class="headerlink" title="为 Larvel 配置 Nginx 配置"></a>为 Larvel 配置 Nginx 配置</h2><p>在这个步骤中，将为 Laravel 项目创建 Nginx 虚拟主机配置。 我们需要为此 Laravel 定义 web 根目录 <code>/var/www/laravel/public</code>。</p>
+<p>接下来，<code>cd</code> 到 Nginx 目录，并在 <code>conf.d</code> 目录中创建一个新的虚拟主机配置文件 <code>laravel.conf</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/nginx</span><br><span class="line">vim conf.d/laravel.conf</span><br></pre></td></tr></table></figure>
+<p>将下面的配置粘贴到文件中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 80;</span><br><span class="line"></span><br><span class="line">    # Log files for Debugging</span><br><span class="line">    access_log /var/log/nginx/laravel-access.log;</span><br><span class="line">    error_log /var/log/nginx/laravel-error.log;</span><br><span class="line"></span><br><span class="line">    # Webroot Directory for Laravel project</span><br><span class="line">    root /var/www/laravel/public;</span><br><span class="line">    index index.php index.html index.htm;</span><br><span class="line"></span><br><span class="line">    # Your Domain Name</span><br><span class="line">    server_name laravel.domain.io;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        try_files $uri $uri/ /index.php?$query_string;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    # PHP-FPM Configuration Nginx</span><br><span class="line">    location ~ \.php$ &#123;</span><br><span class="line">        try_files $uri =404;</span><br><span class="line">        fastcgi_split_path_info ^(.+\.php)(/.+)$;</span><br><span class="line">        # fastcgi_pass unix:/run/php-fpm/php-fpm.sock; # webtatic</span><br><span class="line">        fastcgi_pass unix:/run/php-fpm/remi-php72/php-fpm.sock; # remi</span><br><span class="line">        fastcgi_index index.php;</span><br><span class="line">        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;</span><br><span class="line">        include fastcgi_params;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    location ~ /\.ht &#123;</span><br><span class="line">        deny all;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>保存文件并退出 vim 编辑器。</p>
+<h3 id="测试并重启-Nginx"><a href="#测试并重启-Nginx" class="headerlink" title="测试并重启 Nginx"></a>测试并重启 Nginx</h3><p>测试 nginx 配置，确保没有错误，然后重新启动 nginx 服务。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nginx -t # 测试配置是否正确</span><br><span class="line">sudo systemctl restart nginx # 重启 Nginx</span><br></pre></td></tr></table></figure>
+<p><img src="https://curder.gitbooks.io/blog/content/assets/restart_nginx.jpg" alt=""></p>
+<p>至此，Laravel 的 nginx 虚拟主机配置已经完成。</p>
+<h3 id="测试-Laravel"><a href="#测试-Laravel" class="headerlink" title="测试 Laravel"></a>测试 Laravel</h3><p>打开浏览器并输入服务器配置的 Laravel URL，在 Nginx 虚拟主机文件中定义了 Laravel 的域名。 我的是 <code>laravel.domain.io</code>。</p>
+<p>访问域名时，您将看到 Laravel 框架的首页。</p>
+<p>CentOS 7 上的 Nginx、PHP-FPM、MySQL、Composer、NodeJS、Yarn 和 Laravel 安装已经成功。</p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://laravel.com/docs/7.x/installation" target="_blank" rel="noopener">https://laravel.com/docs/7.x#installation</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/laravel/" data-title="CentOS7 基于 LNMP 安装配置 Laravel | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/post/csshx/"  title="使用 csshX 同步管理多个 SSH 会话">
+ <strong>下一篇：</strong><br/> 
+ <span>使用 csshX 同步管理多个 SSH 会话
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#软件版本"><span class="toc-number">3.</span> <span class="toc-text">软件版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#升级-EPEL-仓库"><span class="toc-number">4.</span> <span class="toc-text">升级 EPEL 仓库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装-Nginx"><span class="toc-number">5.</span> <span class="toc-text">安装 Nginx</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装-php-fpm"><span class="toc-number">6.</span> <span class="toc-text">安装 php-fpm</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#方式一-remi-仓库（推荐）"><span class="toc-number">6.1.</span> <span class="toc-text">方式一 remi 仓库（推荐）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多版本安装"><span class="toc-number">6.2.</span> <span class="toc-text">多版本安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方式二-webtatic-仓库"><span class="toc-number">6.3.</span> <span class="toc-text">方式二 webtatic 仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置-php-fpm"><span class="toc-number">6.4.</span> <span class="toc-text">配置 php-fpm</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#检查-php-fpm"><span class="toc-number">6.5.</span> <span class="toc-text">检查 php-fpm</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装-MySQL"><span class="toc-number">7.</span> <span class="toc-text">安装 MySQL</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#下载并安装-MySQL5-7"><span class="toc-number">7.1.</span> <span class="toc-text">下载并安装 MySQL5.7</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动-MySQL"><span class="toc-number">7.2.</span> <span class="toc-text">启动 MySQL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试-MySQL"><span class="toc-number">7.3.</span> <span class="toc-text">测试 MySQL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置-MySQL"><span class="toc-number">7.4.</span> <span class="toc-text">配置 MySQL</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装-PHP-Composer"><span class="toc-number">8.</span> <span class="toc-text">安装 PHP Composer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NodeJS-NPM-Yarn"><span class="toc-number">9.</span> <span class="toc-text">NodeJS + NPM + Yarn</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装-Laravel-测试-LNMP"><span class="toc-number">10.</span> <span class="toc-text">安装 Laravel 测试 LNMP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为-Larvel-配置-Nginx-配置"><span class="toc-number">11.</span> <span class="toc-text">为 Larvel 配置 Nginx 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#测试并重启-Nginx"><span class="toc-number">11.1.</span> <span class="toc-text">测试并重启 Nginx</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试-Laravel"><span class="toc-number">11.2.</span> <span class="toc-text">测试 Laravel</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">12.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>175</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>
