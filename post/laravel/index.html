@@ -23,12 +23,10 @@
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="CentOS7基于LNMP安装配置Laravel">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://curder.gitbooks.io/blog/content/assets/restart_nginx.jpg">
-<meta property="og:updated_time" content="2020-10-21T07:17:42.365Z">
+<meta property="og:updated_time" content="2020-10-21T07:25:54.643Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CentOS7 基于 LNMP 安装配置 Laravel">
 <meta name="twitter:description" content="CentOS7基于LNMP安装配置Laravel">
-<meta name="twitter:image" content="https://curder.gitbooks.io/blog/content/assets/restart_nginx.jpg">
 
     
     <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
@@ -161,27 +159,17 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl stop php-fpm</span><br><span class="line">yum remove php72w php72w-curl php72w-common php72w-cli php72w-mysql php72w-mbstring php72w-fpm php72w-xml php72w-pdo php72w-zip</span><br></pre></td></tr></table></figure>
 <p>至此，使用 webtatic 仓库安装的 PHP 已经成功卸载。</p>
 <h3 id="配置-php-fpm"><a href="#配置-php-fpm" class="headerlink" title="配置 php-fpm"></a>配置 php-fpm</h3><p>通过使用 vim 编辑配置文件 <code>php.ini</code> 来配置 PHP，<strong>remi 仓库 </strong> 方式安装的主配置文件存放位置在 <code>/etc/opt/remi/php72/php.ini</code>， <strong>webtatic 仓库 </strong> 方式安装的主配置文件存放位置在 <code>/etc/php.ini</code>。</p>
-<ul>
-<li>在文件中找如如下行，取消它的行注释并将值更改为 0。</li>
-</ul>
+<p>在文件中找如如下行，取消它的行注释并将值更改为 0。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cgi.fix_pathinfo=0</span><br></pre></td></tr></table></figure>
 <p>保存文件并退出编辑器。</p>
 <p>编辑 <code>php-fpm</code> 文件 <code>www.conf</code>，<strong>remi 仓库 </strong> 方式安装的配置文件存放位置在 <code>/etc/opt/remi/php72/php-fpm.d/www.conf</code>，<strong>webtatic 仓库 </strong> 方式安装的配置文件存放位置在 <code>/etc/php-fpm.d/www.conf</code>。</p>
-<ul>
-<li><code>php-fpm</code> 将在用户和组 <code>nginx</code> 下运行，将下面两行的值更改为 <code>nginx</code>，这里用户和用户组请保持与 <code>Nginx</code> 的用户和用户组一致。</li>
-</ul>
+<p><code>php-fpm</code> 将在用户和组 <code>nginx</code> 下运行，将下面两行的值更改为 <code>nginx</code>，这里用户和用户组请保持与 <code>Nginx</code> 的用户和用户组一致。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 用户和组保持和 Nginx 一致，使用命令 egrep &apos;^(user|group)&apos; /etc/nginx/nginx.conf 查看 nginx 进程的用户</span><br><span class="line">user = nginx</span><br><span class="line">group = nginx</span><br></pre></td></tr></table></figure>
-<ul>
-<li><code>php-fpm</code> 将在套接字文件下运行，而不是使用服务器端口，<strong>remi 仓库 </strong> 方式安装的 PHP 可以将值改为 <code>/run/php-fpm/remi-php72/php-fpm.sock</code>， <strong>webtatic 仓库 </strong> 方式安装的 PHP 请将’listen’值更改为路径 <code>/run/php-fpm/php-fpm.sock</code>。</li>
-</ul>
+<p><code>php-fpm</code> 将在套接字文件下运行，而不是使用服务器端口，<strong>remi 仓库 </strong> 方式安装的 PHP 可以将值改为 <code>/run/php-fpm/remi-php72/php-fpm.sock</code>， <strong>webtatic 仓库 </strong> 方式安装的 PHP 请将’listen’值更改为路径 <code>/run/php-fpm/php-fpm.sock</code>。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># remi</span><br><span class="line">listen = /run/php-fpm/remi-php72/php-fpm.sock</span><br><span class="line"></span><br><span class="line"># webtatic</span><br><span class="line">listen = /run/php-fpm/php-fpm.sock</span><br></pre></td></tr></table></figure>
-<ul>
-<li>套接字文件所有者将是 “nginx” 用户，权限模式为 660，取消注释并更改所有值。</li>
-</ul>
+<p>套接字文件所有者将是 “nginx” 用户，权限模式为 660，取消注释并更改所有值。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">listen.owner = nginx</span><br><span class="line">listen.group = nginx</span><br><span class="line">listen.mode  = 0660</span><br></pre></td></tr></table></figure>
-<ul>
-<li>对于环境变量，取消注释这些行并设置值。</li>
-</ul>
+<p>对于环境变量，取消注释这些行并设置值。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">env[HOSTNAME] = $HOSTNAME</span><br><span class="line">env[PATH] = /usr/local/bin:/usr/bin:/bin</span><br><span class="line">env[TMP] = /tmp</span><br><span class="line">env[TMPDIR] = /tmp</span><br><span class="line">env[TEMP] = /tmp</span><br></pre></td></tr></table></figure>
 <p>保存文件并退出 vim 编辑，然后启动 <code>php-fpm</code> 并使其在启动时运行。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># remi</span><br><span class="line">sudo systemctl start php72-php-fpm.service</span><br><span class="line">sudo systemctl enable php72-php-fpm.service</span><br><span class="line"></span><br><span class="line"># webtatic</span><br><span class="line">sudo systemctl start php-fpm</span><br><span class="line">sudo systemctl enable php-fpm</span><br></pre></td></tr></table></figure>
@@ -208,9 +196,7 @@
 <p>至此，MySQL 的安装和配置已经完成。</p>
 <h2 id="安装-PHP-Composer"><a href="#安装-PHP-Composer" class="headerlink" title="安装 PHP Composer"></a>安装 PHP Composer</h2><p>PHP composer 是 PHP 语言的包管理器。 它创建于 2011 年，灵感来自于 Node.js 的 “npm” 和 Ruby 的 “bundler” 安装程序。 使用 <code>curl</code> 命令安装 composer。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">php -r &quot;copy(&apos;https://install.phpcomposer.com/installer&apos;, &apos;composer-setup.php&apos;);&quot;</span><br><span class="line">php composer-setup.php</span><br><span class="line">php -r &quot;unlink(&apos;composer-setup.php&apos;);&quot;</span><br><span class="line">sudo mv composer.phar /usr/local/bin/composer</span><br></pre></td></tr></table></figure>
-<ul>
-<li>配置 Packagist 国内镜像</li>
-</ul>
+<p>配置 Packagist 国内镜像</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">composer config -g repo.packagist composer https://packagist.phpcomposer.com</span><br></pre></td></tr></table></figure>
 <p>安装完成后，尝试使用 “composer” 命令，您将看到以下结果。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">composer</span><br><span class="line">composer config -g repo.packagist -l # 查看配置的 Packagist 国内镜像</span><br></pre></td></tr></table></figure>
@@ -232,7 +218,6 @@
 <p>保存文件并退出 vim 编辑器。</p>
 <h3 id="测试并重启-Nginx"><a href="#测试并重启-Nginx" class="headerlink" title="测试并重启 Nginx"></a>测试并重启 Nginx</h3><p>测试 nginx 配置，确保没有错误，然后重新启动 nginx 服务。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nginx -t # 测试配置是否正确</span><br><span class="line">sudo systemctl restart nginx # 重启 Nginx</span><br></pre></td></tr></table></figure>
-<p><img src="https://curder.gitbooks.io/blog/content/assets/restart_nginx.jpg" alt=""></p>
 <p>至此，Laravel 的 nginx 虚拟主机配置已经完成。</p>
 <h3 id="测试-Laravel"><a href="#测试-Laravel" class="headerlink" title="测试 Laravel"></a>测试 Laravel</h3><p>打开浏览器并输入服务器配置的 Laravel URL，在 Nginx 虚拟主机文件中定义了 Laravel 的域名。 我的是 <code>laravel.domain.io</code>。</p>
 <p>访问域名时，您将看到 Laravel 框架的首页。</p>
