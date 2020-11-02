@@ -1,0 +1,598 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+  
+    <title>macOS 使用 iterm2 启用 rz 与 sz 功能 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="macOS使用iterm2启用rz与sz功能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="macOS 使用 iterm2 启用 rz 与 sz 功能">
+<meta property="og:url" content="https://wsgzao.github.io/post/lrzsz/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="macOS使用iterm2启用rz与sz功能">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201102111035.png">
+<meta property="og:updated_time" content="2020-11-02T03:33:36.625Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="macOS 使用 iterm2 启用 rz 与 sz 功能">
+<meta name="twitter:description" content="macOS使用iterm2启用rz与sz功能">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201102111035.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/lrzsz/" title="macOS 使用 iterm2 启用 rz 与 sz 功能" itemprop="url">macOS 使用 iterm2 启用 rz 与 sz 功能</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2020-11-02T02:59:49.000Z" itemprop="datePublished"> 发表于 2020-11-02</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lrzsz-简介"><span class="toc-number">3.</span> <span class="toc-text">lrzsz 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装-lrzsz"><span class="toc-number">4.</span> <span class="toc-text">安装 lrzsz</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装执行脚本"><span class="toc-number">5.</span> <span class="toc-text">安装执行脚本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设置-Iterm2-的-Tirgger-特性"><span class="toc-number">6.</span> <span class="toc-text">设置 Iterm2 的 Tirgger 特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-rz-和-sz"><span class="toc-number">7.</span> <span class="toc-text">使用 rz 和 sz</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">8.</span> <span class="toc-text">参考文章</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文主要介绍 macOS 环境下使用 iterm2 的 rz(上传) 和 sz(下载) 功能的安装流程，某些时候这些小命令可以方便的代替 scp 绕过安全限制执行简单的上传和下载任务，同理 SecureCRT 和 Xshell 也可以启用 rz 和 sz 功能。</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2020 年 11 月 02 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/lrzsz/">https://wsgzao.github.io/post/lrzsz/</a></p>
+<hr>
+<h2 id="lrzsz-简介"><a href="#lrzsz-简介" class="headerlink" title="lrzsz 简介"></a>lrzsz 简介</h2><blockquote>
+<p>lrzsz: free x/y/zmodem implementation</p>
+</blockquote>
+<p><em>lrzsz</em> is a unix communication package providing the <a href="ftp://ftp.std.com/obi/Standards/FileTransfer/YMODEM8.DOC.1.Z" target="_blank" rel="noopener">XMODEM, YMODEM</a> <a href="http://www.easysw.com/~mike/serial/zmodem.html" target="_blank" rel="noopener">ZMODEM</a> file transfer protocols. lrzsz is a heavily rehacked version of the last public domain release of <a href="http://www.omen.com/" target="_blank" rel="noopener">Omen Technologies</a> <em>rzsz</em> package, and is now <a href="http://www.gnu.ai.mit.edu/philosophy/free-sw.html" target="_blank" rel="noopener">free software</a> and released under the <a href="http://www.gnu.ai.mit.edu/copyleft/gpl.html" target="_blank" rel="noopener">GNU General Public Licence</a>.</p>
+<blockquote>
+<p>Features of lrzsz</p>
+</blockquote>
+<ul>
+<li>very portable, automagically configured with GNU <em>autoconf</em>.</li>
+<li>crash recovery.</li>
+<li>up to 8KB block sizes (ZMODEM8K).</li>
+<li>internationalized (using GNU <em>gettext</em>). German translation of the programs output exists.</li>
+<li>far more secure than the original sources.</li>
+<li>high performance. say `make vcheck-z’ and have a look at the BPS rate - i recently saw <em>1.4 MB per second</em> transfering a large file through pipes (on a I586/133 system. Beat that!).</li>
+<li>good blocksize calculation (tries to compute an optimal blocksize based on the number of errors occured).</li>
+<li>It’s <a href="http://www.gnu.org/philosophy/free-sw.html" target="_blank" rel="noopener">free software</a>.</li>
+</ul>
+<p><a href="https://www.ohse.de/uwe/software/lrzsz.html" target="_blank" rel="noopener">https://www.ohse.de/uwe/software/lrzsz.html</a></p>
+<h2 id="安装-lrzsz"><a href="#安装-lrzsz" class="headerlink" title="安装 lrzsz"></a>安装 lrzsz</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">brew install lrzsz</span><br><span class="line"></span><br><span class="line">==&gt; Downloading https://homebrew.bintray.com/bottles/lrzsz-0.12.20_1.catalina.bottle.tar.gz</span><br><span class="line">######################################################################## 100.0%</span><br><span class="line">==&gt; Pouring lrzsz-0.12.20_1.catalina.bottle.tar.gz</span><br><span class="line">🍺  /usr/local/Cellar/lrzsz/0.12.20_1: 18 files, 473.9KB</span><br></pre></td></tr></table></figure>
+<ol>
+<li>Install lrzsz on OSX: <code>brew install lrzsz</code></li>
+<li>Save the <code>iterm2-send-zmodem.sh</code> and <code>iterm2-recv-zmodem.sh</code> scripts in <code>/usr/local/bin/</code></li>
+<li>Set up Triggers in iTerm 2 like so:<br><a href="https://www.iterm2.com/documentation-triggers.html" target="_blank" rel="noopener">How to Create a Trigger</a></li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Regular expression: rz waiting to receive.\*\*B0100</span><br><span class="line">Action: Run Silent Coprocess</span><br><span class="line">Parameters: /usr/local/bin/iterm2-send-zmodem.sh</span><br><span class="line">Instant: checked</span><br><span class="line"></span><br><span class="line">Regular expression: \*\*B00000000000000</span><br><span class="line">Action: Run Silent Coprocess</span><br><span class="line">Parameters: /usr/local/bin/iterm2-recv-zmodem.sh</span><br><span class="line">Instant: checked</span><br></pre></td></tr></table></figure>
+<p>To send a file to a remote machine:</p>
+<ol>
+<li>Type <code>rz</code> on the remote machine</li>
+<li>Select the file(s) on the local machine to send</li>
+<li>Wait for the coprocess indicator to disappear</li>
+</ol>
+<p>The receive a file from a remote machine</p>
+<ol>
+<li>Type <code>sz filename1 filename2 … filenameN</code> on the remote machine</li>
+<li>Select the folder to receive to on the local machine</li>
+<li>Wait for the coprocess indicator to disappear</li>
+</ol>
+<h2 id="安装执行脚本"><a href="#安装执行脚本" class="headerlink" title="安装执行脚本"></a>安装执行脚本</h2><p>将 <code>iterm2-send-zmodem.sh</code> 和 <code>iterm2-recv-zmodem.sh</code> 保存到 <code>/usr/local/bin</code> 目录下。</p>
+<p><a href="https://raw.githubusercontent.com/RobberPhex/iterm2-zmodem/master/iterm2-send-zmodem.sh" target="_blank" rel="noopener">iterm2-send-zmodem.sh</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># Author: Matt Mastracci (matthew@mastracci.com)</span></span><br><span class="line"><span class="comment"># AppleScript from http://stackoverflow.com/questions/4309087/cancel-button-on-osascript-in-a-bash-script</span></span><br><span class="line"><span class="comment"># licensed under cc-wiki with attribution required </span></span><br><span class="line"><span class="comment"># Remainder of script public domain</span></span><br><span class="line"></span><br><span class="line">osascript -e <span class="string">'tell application"iTerm2"to version'</span> &gt; /dev/null 2&gt;&amp;1 &amp;&amp; NAME=iTerm2 || NAME=iTerm</span><br><span class="line"><span class="keyword">if</span> [[ <span class="variable">$NAME</span> = <span class="string">"iTerm"</span> ]]; <span class="keyword">then</span></span><br><span class="line">	FILE=$(osascript -e <span class="string">'tell application"iTerm"to activate'</span> -e <span class="string">'tell application"iTerm"to set thefile to choose file with prompt"Choose a file to send"'</span> -e <span class="string">"do shell script (\"echo \"&amp;(quoted form of POSIX path of thefile as Unicode text)&amp;\"\")"</span>)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	FILE=$(osascript -e <span class="string">'tell application "iTerm2" to activate'</span> -e <span class="string">'tell application "iTerm2" to set thefile to choose file with prompt "Choose a file to send"'</span> -e <span class="string">"do shell script (\"echo \"&amp;(quoted form of POSIX path of thefile as Unicode text)&amp;\"\")"</span>)</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="keyword">if</span> [[ <span class="variable">$FILE</span> = <span class="string">""</span> ]]; <span class="keyword">then</span></span><br><span class="line">	<span class="built_in">echo</span> Cancelled.</span><br><span class="line">	<span class="comment"># Send ZModem cancel</span></span><br><span class="line">	<span class="built_in">echo</span> -e \\x18\\x18\\x18\\x18\\x18</span><br><span class="line">	sleep 1</span><br><span class="line">	<span class="built_in">echo</span></span><br><span class="line">	<span class="built_in">echo</span> \<span class="comment"># Cancelled transfer</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	/usr/<span class="built_in">local</span>/bin/sz <span class="string">"<span class="variable">$FILE</span>"</span> --escape --binary --bufsize 4096</span><br><span class="line">	sleep 1</span><br><span class="line">	<span class="built_in">echo</span></span><br><span class="line">	<span class="built_in">echo</span> \<span class="comment"># Received"$FILE"</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+<p><a href="https://raw.githubusercontent.com/RobberPhex/iterm2-zmodem/master/iterm2-recv-zmodem.sh" target="_blank" rel="noopener">iterm2-recv-zmodem.sh</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># Author: Matt Mastracci (matthew@mastracci.com)</span></span><br><span class="line"><span class="comment"># AppleScript from http://stackoverflow.com/questions/4309087/cancel-button-on-osascript-in-a-bash-script</span></span><br><span class="line"><span class="comment"># licensed under cc-wiki with attribution required </span></span><br><span class="line"><span class="comment"># Remainder of script public domain</span></span><br><span class="line"></span><br><span class="line">osascript -e <span class="string">'tell application"iTerm2"to version'</span> &gt; /dev/null 2&gt;&amp;1 &amp;&amp; NAME=iTerm2 || NAME=iTerm</span><br><span class="line"><span class="keyword">if</span> [[ <span class="variable">$NAME</span> = <span class="string">"iTerm"</span> ]]; <span class="keyword">then</span></span><br><span class="line">	FILE=$(osascript -e <span class="string">'tell application"iTerm"to activate'</span> -e <span class="string">'tell application"iTerm"to set thefile to choose folder with prompt"Choose a folder to place received files in"'</span> -e <span class="string">"do shell script (\"echo \"&amp;(quoted form of POSIX path of thefile as Unicode text)&amp;\"\")"</span>)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	FILE=$(osascript -e <span class="string">'tell application "iTerm2" to activate'</span> -e <span class="string">'tell application "iTerm2" to set thefile to choose folder with prompt "Choose a folder to place received files in"'</span> -e <span class="string">"do shell script (\"echo \"&amp;(quoted form of POSIX path of thefile as Unicode text)&amp;\"\")"</span>)</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [[ <span class="variable">$FILE</span> = <span class="string">""</span> ]]; <span class="keyword">then</span></span><br><span class="line">	<span class="built_in">echo</span> Cancelled.</span><br><span class="line">	<span class="comment"># Send ZModem cancel</span></span><br><span class="line">	<span class="built_in">echo</span> -e \\x18\\x18\\x18\\x18\\x18</span><br><span class="line">	sleep 1</span><br><span class="line">	<span class="built_in">echo</span></span><br><span class="line">	<span class="built_in">echo</span> \<span class="comment"># Cancelled transfer</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	<span class="built_in">cd</span> <span class="string">"<span class="variable">$FILE</span>"</span></span><br><span class="line">	/usr/<span class="built_in">local</span>/bin/rz --rename --escape --binary --bufsize 4096 </span><br><span class="line">	sleep 1</span><br><span class="line">	<span class="built_in">echo</span></span><br><span class="line">	<span class="built_in">echo</span></span><br><span class="line">	<span class="built_in">echo</span> \<span class="comment"># Sent \-\&gt; $FILE</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在 / usr/loal/bin 目录下创建两个文件 </span></span><br><span class="line"><span class="built_in">cd</span> /usr/<span class="built_in">local</span>/bin</span><br><span class="line">vi iterm2-recv-zmodem.sh</span><br><span class="line">vi iterm2-send-zmodem.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 赋予这两个文件可执行权限 </span></span><br><span class="line">chmod 777 /usr/<span class="built_in">local</span>/bin/iterm2-*</span><br></pre></td></tr></table></figure>
+<h2 id="设置-Iterm2-的-Tirgger-特性"><a href="#设置-Iterm2-的-Tirgger-特性" class="headerlink" title="设置 Iterm2 的 Tirgger 特性"></a>设置 Iterm2 的 Tirgger 特性</h2><p>配置好配置文件之后，开始对 iTerm2 进行配置</p>
+<p>点击 iTerm2 的设置界面 Perference-&gt; Profiles -&gt; Default -&gt; Advanced -&gt; Triggers 的 Edit 按钮，加入以下配置</p>
+<p>添加两条 trigger，分别设置 Regular expression，Action，Parameters，Instant 如下：</p>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201102111035.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Regular expression: rz waiting to receive.\*\*B0100</span><br><span class="line">Action: Run Silent Coprocess</span><br><span class="line">Parameters: /usr/local/bin/iterm2-send-zmodem.sh</span><br><span class="line">Instant: checked</span><br><span class="line"></span><br><span class="line">Regular expression: \*\*B00000000000000</span><br><span class="line">Action: Run Silent Coprocess</span><br><span class="line">Parameters: /usr/local/bin/iterm2-recv-zmodem.sh</span><br><span class="line">Instant: checked</span><br></pre></td></tr></table></figure>
+<h2 id="使用-rz-和-sz"><a href="#使用-rz-和-sz" class="headerlink" title="使用 rz 和 sz"></a>使用 rz 和 sz</h2><blockquote>
+<p>前提是客户端也要安装 lrzsz</p>
+</blockquote>
+<ul>
+<li>rz 上传功能<ul>
+<li>在 bash 中，也就是 iTerm2 终端输入 rz 就会弹出文件选择框，选择文件 choose 就开始上传，会上传到当前目录</li>
+<li>rz 中的 r 意为 received（接收），告诉客户端，我（服务器）要接收文件 received by cilent，就等同于客户端在上传。</li>
+</ul>
+</li>
+<li>sz 下载功能<ul>
+<li>sz fileName(你要下载的文件的名字) 回车，会弹出窗体 我们选择要保存的地方即可。</li>
+<li>sz 中的 s 意为 send（发送），告诉客户端，我（服务器）要发送文件 send to cilent，就等同于客户端在下载。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">sz 用法：</span><br><span class="line"></span><br><span class="line">	下载一个文件 </span><br><span class="line">	sz filename </span><br><span class="line"></span><br><span class="line">	下载多个文件 </span><br><span class="line">	sz filename1 filename2</span><br><span class="line"></span><br><span class="line">	下载 dir 目录下的所有文件，不包含 dir 下的文件夹 </span><br><span class="line">	sz dir/*</span><br><span class="line"></span><br><span class="line">rz 用法：</span><br><span class="line"></span><br><span class="line">	输入 rz 回车后，会出现文件选择对话框，选择需要上传文件，一次可以指定多个文件，上传到服务器的路径为当前执行 rz 命令的目录。</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>备注说明</p>
+</blockquote>
+<ol>
+<li>rz 与 sz 只适合小的文件传输，大文件还是使用 Filezilla 与 xftp 等工具进行传输；</li>
+<li>只能传输文件，而不能传输文件夹；</li>
+<li>不是所有工具都支持 rz 与 sz，必须支持 ZModem 协议才行，例如 putty 不能使用 rz 与 sz。</li>
+</ol>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://github.com/RobberPhex/iterm2-zmodem/" target="_blank" rel="noopener">ZModem integration for iTerm 2</a></p>
+<p><a href="https://www.cnblogs.com/shoufeng/p/10575704.html" target="_blank" rel="noopener">通过 SecureCRT 的 rz、sz 和 sftp 实现文件的上传和下载</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/lrzsz/" data-title="macOS 使用 iterm2 启用 rz 与 sz 功能 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/post/efk/"  title="开源日志管理方案 ELK 和 EFK 的区别">
+ <strong>下一篇：</strong><br/> 
+ <span>开源日志管理方案 ELK 和 EFK 的区别
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lrzsz-简介"><span class="toc-number">3.</span> <span class="toc-text">lrzsz 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装-lrzsz"><span class="toc-number">4.</span> <span class="toc-text">安装 lrzsz</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装执行脚本"><span class="toc-number">5.</span> <span class="toc-text">安装执行脚本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设置-Iterm2-的-Tirgger-特性"><span class="toc-number">6.</span> <span class="toc-text">设置 Iterm2 的 Tirgger 特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-rz-和-sz"><span class="toc-number">7.</span> <span class="toc-text">使用 rz 和 sz</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">8.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>179</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>
