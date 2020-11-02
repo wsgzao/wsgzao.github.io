@@ -39,7 +39,8 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201030174206.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201030175253.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201030175134.png">
-<meta property="og:updated_time" content="2020-11-02T16:20:23.809Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201103003623.png">
+<meta property="og:updated_time" content="2020-11-02T16:36:50.575Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Grafana Loki 开源日志聚合系统代替 ELK 或 EFK">
 <meta name="twitter:description" content="Grafana Loki开源日志聚合系统代替ELK或EFK">
@@ -276,9 +277,27 @@
 <li><em>Log queries</em> return the contents of log lines.</li>
 <li><em>Metric queries</em> extend log queries and calculate sample values based on the content of logs from a log query.</li>
 </ul>
-<h3 id="Log-Stream-Selector"><a href="#Log-Stream-Selector" class="headerlink" title="Log Stream Selector"></a>Log Stream Selector</h3><p>也是使用大括号进行条件的筛选, 同时支持正则</p>
-<pre><code>{app=&quot;mysql&quot;,name=~&quot;mysql-backup.+&quot;}
-</code></pre><ul>
+<p>受 PromQL 的启发，Loki 也有自己的 LogQL 查询语句。根据官方的说法，它就像一个 <code>分布式的 grep 日志聚合查看器</code>。和 PromeQL 一样，LogQL 也是使用标签和运算符进行过滤，它主要分为两个部分：</p>
+<ul>
+<li>log stream selector （日志流选择器）</li>
+<li>filter expression （过滤器表达式）</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201103003623.png" alt=""></p>
+<p>我们用这两部分就可以在 Loki 中组合出我们想要的功能，通常情况下我们可以拿来做如下功能</p>
+<ul>
+<li>根据日志流选择器查看日志内容</li>
+<li>通过过滤规则在日志流中计算相关的度量指标</li>
+</ul>
+<h3 id="Log-Stream-Selector"><a href="#Log-Stream-Selector" class="headerlink" title="Log Stream Selector"></a>Log Stream Selector</h3><p>日志流选择器这部分和 PromQL 的语法一样，主要也是通过采集上来的日志 label 来确定你要查询的日志流。通常 label 的匹配运算支持以下几种：</p>
+<ul>
+<li>\=: 完全匹配</li>
+<li>!=: 不匹配</li>
+<li>\=~: 正则表达式匹配</li>
+<li><p>!~: 正则表达式不匹配</p>
+<p>{app=”mysql”,name=~”mysql-backup.+”}</p>
+</li>
+</ul>
+<ul>
 <li><code>=</code>: exactly equal.</li>
 <li><code>!=</code>: not equal.</li>
 <li><code>=~</code>: regex matches.</li>
@@ -314,12 +333,15 @@
 </ul>
 <p>还有很多比如’and, or’的操作都是支持, 就不一一搬运了</p>
 <p><a href="https://grafana.com/docs/loki/latest/logql/" target="_blank" rel="noopener">https://grafana.com/docs/loki/latest/logql/</a></p>
+<p><a href="https://juejin.im/post/6885882888995209224" target="_blank" rel="noopener">五分钟了解 LogQL</a></p>
 <h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://grafana.com/docs/loki/latest/" target="_blank" rel="noopener">Loki Documentation</a></p>
 <p><a href="https://grafana.com/categories/loki/" target="_blank" rel="noopener">Loki Posts</a></p>
 <p><a href="https://grafana.com/blog/2018/12/12/loki-prometheus-inspired-open-source-logging-for-cloud-natives/" target="_blank" rel="noopener">Loki: Prometheus-inspired, open source logging for cloud natives</a></p>
 <p><a href="https://blog.csdn.net/Linkthaha/" target="_blank" rel="noopener">Loki 日志系统详解</a></p>
 <p><a href="https://www.qikqiak.com/post/grafana-log-tool-loki/" target="_blank" rel="noopener">Grafana 日志聚合工具 Loki</a></p>
 <p><a href="https://www.qikqiak.com/post/grafana-loki-usage/" target="_blank" rel="noopener">Grafana Loki 简明教程</a></p>
+<p><a href="https://juejin.im/post/6878188974645444621" target="_blank" rel="noopener">Loki 最佳实践（译）</a></p>
+<p><a href="https://juejin.im/post/6888510459108917256" target="_blank" rel="noopener">Loki 迎来 2.0 重大更新，LogQL 语法大幅增强​！</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
