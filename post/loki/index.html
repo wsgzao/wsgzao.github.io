@@ -40,7 +40,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201030175253.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201030175134.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201103003623.png">
-<meta property="og:updated_time" content="2020-11-02T16:36:50.575Z">
+<meta property="og:updated_time" content="2020-11-03T03:24:52.525Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Grafana Loki 开源日志聚合系统代替 ELK 或 EFK">
 <meta name="twitter:description" content="Grafana Loki开源日志聚合系统代替ELK或EFK">
@@ -112,7 +112,7 @@
 		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
 		
   <p class="article-time">
-    <time datetime="2020-10-02T08:59:49.000Z" itemprop="datePublished"> 发表于 2020-10-02</time>
+    <time datetime="2020-11-02T08:59:49.000Z" itemprop="datePublished"> 发表于 2020-11-02</time>
     
   </p>
 </header>
@@ -128,7 +128,7 @@
 		<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201030154037.png" alt=""></p>
 <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在对公司容器云的日志方案进行设计的时候，发现主流的 ELK (Elasticsearch, <code>Logstash</code>, Kibana) 或者 EFK (Elasticsearch, <code>Filebeat</code> or <code>Fluentd</code>, Kibana) 比较重，再加上现阶段对于 ES 复杂的搜索功能很多都用不上，最终选择了 Grafana 开源的 Loki 日志系统。下面我们来介绍下 Loki 的一些基本概念和架构，当然 EFK 作为业界成熟的日志聚合解决方案也是大家应该需要熟悉和掌握的。</p>
 <p><a href="https://grafana.com/blog/2020/10/28/loki-2.0-released-transform-logs-as-youre-querying-them-and-set-up-alerts-within-loki/" target="_blank" rel="noopener">Loki 2.0 released: Transform logs as you’re querying them, and set up alerts within Loki</a>, Loki 2.0 大版本更新后更好用了</p>
-<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2020 年 10 月 02 日 - 初稿</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2020 年 11 月 02 日 - 初稿</p>
 <p>阅读原文 - <a href="https://wsgzao.github.io/post/loki/">https://wsgzao.github.io/post/loki/</a></p>
 <hr>
 <h2 id="Loki-简介"><a href="#Loki-简介" class="headerlink" title="Loki 简介"></a>Loki 简介</h2><p>Grafana Loki is a set of components that can be composed into a fully featured logging stack.</p>
@@ -212,7 +212,7 @@
 <p>Loki 官方已经写得很详细了，我以 docker-compose 为例做个简单的演示</p>
 </blockquote>
 <p>Install with Docker Compose</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">version: &quot;3&quot;</span><br><span class="line"></span><br><span class="line">networks:</span><br><span class="line">  loki:</span><br><span class="line"></span><br><span class="line">services:</span><br><span class="line">  loki:</span><br><span class="line">    image: grafana/loki:2.0.0</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;3100:3100&quot;</span><br><span class="line">    command: -config.file=/etc/loki/local-config.yaml</span><br><span class="line">    networks:</span><br><span class="line">      - loki</span><br><span class="line"></span><br><span class="line">  promtail:</span><br><span class="line">    image: grafana/promtail:2.0.0</span><br><span class="line">    volumes:</span><br><span class="line">      - /var/log:/var/log</span><br><span class="line">    command: -config.file=/etc/promtail/config.yml</span><br><span class="line">    networks:</span><br><span class="line">      - loki</span><br><span class="line"></span><br><span class="line">  grafana:</span><br><span class="line">    image: grafana/grafana:latest</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;3000:3000&quot;</span><br><span class="line">    networks:</span><br><span class="line">      - loki</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">version: &quot;3&quot;</span><br><span class="line"></span><br><span class="line">networks:</span><br><span class="line">  loki:</span><br><span class="line"></span><br><span class="line">services:</span><br><span class="line">  loki:</span><br><span class="line">    image: grafana/loki:latest</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;3100:3100&quot;</span><br><span class="line">    command: -config.file=/etc/loki/local-config.yaml</span><br><span class="line">    networks:</span><br><span class="line">      - loki</span><br><span class="line"></span><br><span class="line">  promtail:</span><br><span class="line">    image: grafana/promtail:latest</span><br><span class="line">    volumes:</span><br><span class="line">      - /var/log:/var/log</span><br><span class="line">    command: -config.file=/etc/promtail/config.yml</span><br><span class="line">    networks:</span><br><span class="line">      - loki</span><br><span class="line"></span><br><span class="line">  grafana:</span><br><span class="line">    image: grafana/grafana:latest</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;3000:3000&quot;</span><br><span class="line">    networks:</span><br><span class="line">      - loki</span><br></pre></td></tr></table></figure>
 <p>Run the following commands in your command line. They work for Windows or Linux systems.</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">wget https://raw.githubusercontent.com/grafana/loki/v2.0.0/production/docker-compose.yaml -O docker-compose.yaml</span><br><span class="line">docker-compose -f docker-compose.yaml up -d</span><br><span class="line"></span><br><span class="line">[root@localhost loki]# docker-compose ps</span><br><span class="line">     Name                    Command               State           Ports</span><br><span class="line">---------------------------------------------------------------------------------</span><br><span class="line">loki_grafana_1    /run.sh                          Up      0.0.0.0:3000-&gt;3000/tcp</span><br><span class="line">loki_loki_1       /usr/bin/loki -config.file ...   Up      0.0.0.0:3100-&gt;3100/tcp</span><br><span class="line">loki_promtail_1   /usr/bin/promtail -config. ...   Up</span><br></pre></td></tr></table></figure>
 <h2 id="Loki-使用"><a href="#Loki-使用" class="headerlink" title="Loki 使用"></a>Loki 使用</h2><p>安装完成后，访问上面节点的 3000 端口访问 grafana，默认情况下使用 (admin:admin) 访问 -&gt; 选择添加数据源：</p>
@@ -372,19 +372,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/post/terraform/" title="Terraform 学习路径">
-  <strong>上一篇：</strong><br/>
-  <span>
-  Terraform 学习路径</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/post/devops/"  title="DevOps Roadmap 持续学习路径分享">
+<a href="/post/lrzsz/"  title="macOS 使用 iterm2 启用 rz 与 sz 功能">
  <strong>下一篇：</strong><br/> 
- <span>DevOps Roadmap 持续学习路径分享
+ <span>macOS 使用 iterm2 启用 rz 与 sz 功能
 </span>
 </a>
 </div>
