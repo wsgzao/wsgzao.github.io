@@ -42,7 +42,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201105181327.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201103160550.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201103003623.png">
-<meta property="og:updated_time" content="2020-11-05T10:13:51.575Z">
+<meta property="og:updated_time" content="2020-11-06T05:52:41.518Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Grafana Loki 开源日志聚合系统代替 ELK 或 EFK">
 <meta name="twitter:description" content="Grafana Loki开源日志聚合系统代替ELK或EFK">
@@ -114,7 +114,7 @@
 		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
 		
   <p class="article-time">
-    <time datetime="2020-11-02T08:59:49.000Z" itemprop="datePublished"> 发表于 2020-11-02</time>
+    <time datetime="2020-11-05T08:59:49.000Z" itemprop="datePublished"> 发表于 2020-11-05</time>
     
   </p>
 </header>
@@ -238,9 +238,12 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">server:</span><br><span class="line">  http_listen_port: 9080</span><br><span class="line">  grpc_listen_port: 0</span><br><span class="line"></span><br><span class="line">positions:</span><br><span class="line">  filename: /tmp/positions.yaml</span><br><span class="line"></span><br><span class="line">clients:</span><br><span class="line">  - url: http://loki:3100/loki/api/v1/push</span><br><span class="line"></span><br><span class="line">scrape_configs:</span><br><span class="line">- job_name: system</span><br><span class="line">  static_configs:</span><br><span class="line">  - targets:</span><br><span class="line">      - localhost</span><br><span class="line">    labels:</span><br><span class="line">      job: varlogs</span><br><span class="line">      __path__: /var/log/*log</span><br></pre></td></tr></table></figure>
 <p>这里的 job 就是 varlog，文件路径就是 / var/log/*log</p>
 <p><a href="https://raw.githubusercontent.com/grafana/loki/master/cmd/promtail/promtail-local-config.yaml" target="_blank" rel="noopener">https://raw.githubusercontent.com/grafana/loki/master/cmd/promtail/promtail-local-config.yaml</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">    --log-driver=loki \</span><br><span class="line">    --log-opt loki-url=&quot;http://localhost:3100/loki/api/v1/push&quot; \</span><br><span class="line">    --log-opt loki-external-labels=&quot;tags=test-docker-A&quot; \</span><br><span class="line">    busybox sh -c &apos;while true; do echo &quot;This is a log message from container A&quot;; sleep 10; done;&apos;</span><br><span class="line"></span><br><span class="line">docker run -d \</span><br><span class="line">    --log-driver=loki \</span><br><span class="line">    --log-opt loki-url=&quot;http://localhost:3100/loki/api/v1/push&quot; \</span><br><span class="line">    --log-opt loki-external-labels=&quot;tags=test-docker-B&quot; \</span><br><span class="line">    busybox sh -c &apos;while true; do echo &quot;This is a log message from container B&quot;; sleep 10; done;&apos;</span><br></pre></td></tr></table></figure>
-<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201105181327.png" alt=""></p>
+<p>如果是安装二进制的 promtail 那就更简单了</p>
+<p><a href="https://github.com/grafana/loki/releases" target="_blank" rel="noopener">https://github.com/grafana/loki/releases</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># download promtail binary file</span></span><br><span class="line">wget https://github.com/grafana/loki/releases/download/v2.0.0/promtail-linux-amd64.zip</span><br><span class="line">unzip promtail-linux-amd64.zip</span><br><span class="line"></span><br><span class="line"><span class="comment"># add promtail.yml file</span></span><br><span class="line">server:</span><br><span class="line">  http_listen_port: 9080</span><br><span class="line">  grpc_listen_port: 0</span><br><span class="line"></span><br><span class="line">positions:</span><br><span class="line">  filename: /tmp/positions.yaml</span><br><span class="line"></span><br><span class="line">clients:</span><br><span class="line">  - url: http://localhost:3100/loki/api/v1/push</span><br><span class="line"></span><br><span class="line">scrape_configs:</span><br><span class="line">- job_name: system</span><br><span class="line">  static_configs:</span><br><span class="line">  - targets:</span><br><span class="line">      - localhost</span><br><span class="line">    labels:</span><br><span class="line">      job: varlogs</span><br><span class="line">      __path__: /var/<span class="built_in">log</span>/*<span class="built_in">log</span></span><br><span class="line"></span><br><span class="line">- job_name: wangao-date</span><br><span class="line">  static_configs:</span><br><span class="line">  - targets:</span><br><span class="line">      - localhost</span><br><span class="line">    labels:</span><br><span class="line">      job: date</span><br><span class="line">      __path__: /var/<span class="built_in">log</span>/wangao/date</span><br><span class="line"></span><br><span class="line"><span class="comment"># create test date file</span></span><br><span class="line">mkdir /var/<span class="built_in">log</span>/wangao</span><br><span class="line"><span class="built_in">cd</span> /var/<span class="built_in">log</span>/wangao</span><br><span class="line">nohup sh -c <span class="string">'while true; do echo `date` &gt;&gt; date; sleep 1; done;'</span> &amp;</span><br><span class="line"></span><br><span class="line"><span class="comment"># run promtail</span></span><br><span class="line">./promtail-linux-amd64 -config.file=promtail-local-config.yaml</span><br><span class="line">nohup ./promtail-linux-amd64 -config.file=promtail-local-config.yaml &amp;</span><br></pre></td></tr></table></figure>
 <p>也可以通过修改 <code>docker --log-driver=loki</code> 创建测试日志的容器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">    --log-driver=loki \</span><br><span class="line">    --log-opt loki-url=&quot;http://localhost:3100/loki/api/v1/push&quot; \</span><br><span class="line">    --log-opt loki-external-labels=&quot;tags=test-docker-A&quot; \</span><br><span class="line">    --name test-docker-A \</span><br><span class="line">    busybox sh -c &apos;while true; do echo &quot;This is a log message from container A&quot;; sleep 10; done;&apos;</span><br><span class="line"></span><br><span class="line">docker run -d \</span><br><span class="line">    --log-driver=loki \</span><br><span class="line">    --log-opt loki-url=&quot;http://localhost:3100/loki/api/v1/push&quot; \</span><br><span class="line">    --log-opt loki-external-labels=&quot;tags=test-docker-B&quot; \</span><br><span class="line">    --name test-docker-B \</span><br><span class="line">    busybox sh -c &apos;while true; do echo &quot;This is a log message from container B&quot;; sleep 10; done;&apos;</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201105181327.png" alt=""></p>
 <p><a href="https://grafana.com/docs/loki/latest/clients/docker-driver/configuration/" target="_blank" rel="noopener">https://grafana.com/docs/loki/latest/clients/docker-driver/configuration/</a></p>
 <h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>从上面的步骤已经可以一窥使用方法了，如果要使用起来，我们还需要了解如下信息：</p>
 <blockquote>
@@ -441,18 +444,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/post/efk/" title="开源日志管理方案 ELK 和 EFK 的区别">
+ <a href="/post/macbook/" title="MacBook macOS 从小白到入门">
   <strong>上一篇：</strong><br/>
   <span>
-  开源日志管理方案 ELK 和 EFK 的区别</span>
+  MacBook macOS 从小白到入门</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/post/lrzsz/"  title="macOS 使用 iterm2 启用 rz 与 sz 功能">
+<a href="/post/efk/"  title="开源日志管理方案 ELK 和 EFK 的区别">
  <strong>下一篇：</strong><br/> 
- <span>macOS 使用 iterm2 启用 rz 与 sz 功能
+ <span>开源日志管理方案 ELK 和 EFK 的区别
 </span>
 </a>
 </div>
