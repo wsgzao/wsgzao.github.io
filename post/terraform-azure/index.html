@@ -35,7 +35,7 @@
 <meta property="og:image" content="https://docs.microsoft.com/en-us/azure/role-based-access-control/media/rbac-and-directory-admin-roles/rbac-admin-roles.png">
 <meta property="og:image" content="https://docs.microsoft.com/zh-cn/azure/role-based-access-control/media/rbac-and-directory-admin-roles/rbac-admin-roles.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20210301114638.png">
-<meta property="og:updated_time" content="2021-03-04T09:39:42.955Z">
+<meta property="og:updated_time" content="2021-03-15T09:45:02.219Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Terraform Azure 部署实践">
 <meta name="twitter:description" content="Terraform Azure部署实践">
@@ -116,7 +116,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#学习路径"><span class="toc-number">3.</span> <span class="toc-text">学习路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Azure-Provider"><span class="toc-number">4.</span> <span class="toc-text">Azure Provider</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#理解-Azure-RBAC"><span class="toc-number">5.</span> <span class="toc-text">理解 Azure RBAC</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Azure-登录验证方式"><span class="toc-number">5.1.</span> <span class="toc-text">Azure 登录验证方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装-Azure-CLI"><span class="toc-number">5.2.</span> <span class="toc-text">安装 Azure CLI</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform-on-Azure"><span class="toc-number">6.</span> <span class="toc-text">Terraform on Azure</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform-Azure-常见问题"><span class="toc-number">7.</span> <span class="toc-text">Terraform Azure 常见问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">8.</span> <span class="toc-text">参考文章</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#学习路径"><span class="toc-number">3.</span> <span class="toc-text">学习路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Azure-Provider"><span class="toc-number">4.</span> <span class="toc-text">Azure Provider</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#理解-Azure-RBAC"><span class="toc-number">5.</span> <span class="toc-text">理解 Azure RBAC</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Azure-登录验证方式"><span class="toc-number">5.1.</span> <span class="toc-text">Azure 登录验证方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装-Azure-CLI"><span class="toc-number">5.2.</span> <span class="toc-text">安装 Azure CLI</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform-on-Azure"><span class="toc-number">6.</span> <span class="toc-text">Terraform on Azure</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform-Azure-常见问题"><span class="toc-number">7.</span> <span class="toc-text">Terraform Azure 常见问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Azure-Best-Practices"><span class="toc-number">8.</span> <span class="toc-text">Azure Best Practices</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Governance"><span class="toc-number">8.1.</span> <span class="toc-text">Governance</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Identity-and-Access-Management"><span class="toc-number">8.2.</span> <span class="toc-text">Identity and Access Management</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DevOps"><span class="toc-number">8.3.</span> <span class="toc-text">DevOps</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Security"><span class="toc-number">8.4.</span> <span class="toc-text">Security</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Networking"><span class="toc-number">8.5.</span> <span class="toc-text">Networking</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Storage"><span class="toc-number">8.6.</span> <span class="toc-text">Storage</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Compute"><span class="toc-number">8.7.</span> <span class="toc-text">Compute</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AppServices"><span class="toc-number">8.8.</span> <span class="toc-text">AppServices</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">9.</span> <span class="toc-text">参考文章</span></a></li></ol>
 		
 		</div>
 		 -->
@@ -126,6 +126,9 @@
 <hr>
 <h2 id="学习路径"><a href="#学习路径" class="headerlink" title="学习路径"></a>学习路径</h2><p><a href="https://learn.hashicorp.com/collections/terraform/azure-get-started" target="_blank" rel="noopener">Terraform Get Started - Azure</a></p>
 <p><a href="https://docs.microsoft.com/en-us/azure/developer/terraform/" target="_blank" rel="noopener">Terraform on Azure documentation</a></p>
+<p><a href="https://docs.microsoft.com/en-us/learn/azure/" target="_blank" rel="noopener">Azure on Microsoft Learn</a></p>
+<p><a href="https://github.com/hashicorp/learn-terraform-provision-aks-cluster" target="_blank" rel="noopener">Provision an AKS Cluster learn guide</a></p>
+<p><a href="https://learnk8s.io/blog/get-start-terraform-aks" target="_blank" rel="noopener">Getting started with Terraform and Kubernetes on Azure AKS</a></p>
 <h2 id="Azure-Provider"><a href="#Azure-Provider" class="headerlink" title="Azure Provider"></a>Azure Provider</h2><p>The Azure Provider can be used to configure infrastructure in <a href="https://azure.microsoft.com/en-us/" target="_blank" rel="noopener">Microsoft Azure</a> using the Azure Resource Manager API’s. Documentation regarding the <a href="https://www.terraform.io/docs/configuration/data-sources.html" target="_blank" rel="noopener">Data Sources</a> and <a href="https://www.terraform.io/docs/configuration/resources.html" target="_blank" rel="noopener">Resources</a> supported by the Azure Provider can be found in the navigation to the left.</p>
 <p>Interested in the provider’s latest features, or want to make sure you’re up to date? Check out the <a href="https://github.com/terraform-providers/terraform-provider-azurerm/blob/master/CHANGELOG.md" target="_blank" rel="noopener">changelog</a> for version information and release notes.</p>
 <p>Azure Terraform 相关 API 都可以通过官网查询，注意版本</p>
@@ -181,9 +184,68 @@
 <p><a href="https://docs.microsoft.com/en-us/azure/developer/terraform/create-linux-virtual-machine-with-infrastructure" target="_blank" rel="noopener">Create a Linux VM with infrastructure in Azure using Terraform</a></p>
 <p><a href="https://docs.microsoft.com/zh-cn/azure/developer/terraform/create-linux-virtual-machine-with-infrastructure" target="_blank" rel="noopener">使用 Terraform 在 Azure 中创建带有基础结构的 Linux VM</a></p>
 <h2 id="Terraform-Azure-常见问题"><a href="#Terraform-Azure-常见问题" class="headerlink" title="Terraform Azure 常见问题"></a>Terraform Azure 常见问题</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">az login</span><br><span class="line">Port <span class="string">'8400'</span> is taken with error <span class="string">'[Errno 8] nodename nor servname provided, or not known'</span>. Trying with the next one</span><br><span class="line">Port <span class="string">'8401'</span> is taken with error <span class="string">'[Errno 8] nodename nor servname provided, or not known'</span>. Trying with the next one</span><br><span class="line">Port <span class="string">'8402'</span> is taken with error <span class="string">'[Errno 8] nodename nor servname provided, or not known'</span>. Trying with the next one</span><br><span class="line">Port <span class="string">'8403'</span> is taken with error <span class="string">'[Errno 8] nodename nor servname provided, or not known'</span>. Trying with the next one</span><br><span class="line">Port <span class="string">'8404'</span> is taken with error <span class="string">'[Errno 8] nodename nor servname provided, or not known'</span>. Trying with the next one</span><br><span class="line">Port <span class="string">'8405'</span> is taken with error <span class="string">'[Errno 8] nodename nor servname provided, or not known'</span>. Trying with the next one</span><br><span class="line">Error: can<span class="string">'t reserve a port for authentication reply url</span></span><br><span class="line"><span class="string">Login failed</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># macOS 中添加 localhost 可解决 </span></span><br><span class="line"><span class="string">sudo vi /etc/hosts</span></span><br><span class="line"><span class="string">127.0.0.1 localhost</span></span><br></pre></td></tr></table></figure>
-<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://docs.microsoft.com/en-us/azure/" target="_blank" rel="noopener">Azure 文档</a></p>
+<h2 id="Azure-Best-Practices"><a href="#Azure-Best-Practices" class="headerlink" title="Azure Best Practices"></a>Azure Best Practices</h2><p>A collection of all the best practice references that I can find.</p>
+<h3 id="Governance"><a href="#Governance" class="headerlink" title="Governance"></a>Governance</h3><ul>
+<li>Subscription design guide<ul>
+<li><a href="https://docs.microsoft.com/en-us/azure/architecture/cloud-adoption/decision-guides/subscriptions/" target="_blank" rel="noopener">https://docs.microsoft.com/en-us/azure/architecture/cloud-adoption/decision-guides/subscriptions/</a></li>
+</ul>
+</li>
+<li>Azure enterprise scaffold: Prescriptive subscription governance<ul>
+<li>Governance, Hierarchy, Management Groups, Resource Groups</li>
+<li><a href="https://docs.microsoft.com/en-us/azure/architecture/cloud-adoption/appendix/azure-scaffold" target="_blank" rel="noopener">https://docs.microsoft.com/en-us/azure/architecture/cloud-adoption/appendix/azure-scaffold</a></li>
+</ul>
+</li>
+<li>Resource groups<ul>
+<li><a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-overview#resource-groups" target="_blank" rel="noopener">https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-overview#resource-groups</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="Identity-and-Access-Management"><a href="#Identity-and-Access-Management" class="headerlink" title="Identity and Access Management"></a>Identity and Access Management</h3><ul>
+<li>IDAM<ul>
+<li><a href="https://docs.microsoft.com/en-us/azure/security/fundamentals/identity-management-best-practices" target="_blank" rel="noopener">https://docs.microsoft.com/en-us/azure/security/fundamentals/identity-management-best-practices</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="DevOps"><a href="#DevOps" class="headerlink" title="DevOps"></a>DevOps</h3><ul>
+<li>Azure Resource Manager template best practices<ul>
+<li><a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/template-best-practices" target="_blank" rel="noopener">https://docs.microsoft.com/en-us/azure/azure-resource-manager/template-best-practices</a></li>
+</ul>
+</li>
+<li>Deploy resources with Resource Manager templates and Azure PowerShell<ul>
+<li><a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-template-deploy" target="_blank" rel="noopener">https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-template-deploy</a></li>
+</ul>
+</li>
+<li>Best Practices For Using Azure Resource Manager Templates<ul>
+<li><a href="https://blogs.msdn.microsoft.com/mvpawardprogram/2018/05/01/azure-resource-manager/" target="_blank" rel="noopener">https://blogs.msdn.microsoft.com/mvpawardprogram/2018/05/01/azure-resource-manager/</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="Security"><a href="#Security" class="headerlink" title="Security"></a>Security</h3><ul>
+<li>Azure security best practices and patterns<ul>
+<li><a href="https://docs.microsoft.com/en-us/azure/security/security-best-practices-and-patterns" target="_blank" rel="noopener">https://docs.microsoft.com/en-us/azure/security/security-best-practices-and-patterns</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="Networking"><a href="#Networking" class="headerlink" title="Networking"></a>Networking</h3><ul>
+<li>Best practices to set up networking for workloads migrated to Azure<ul>
+<li><a href="https://docs.microsoft.com/en-au/azure/architecture/cloud-adoption/migrate/azure-best-practices/migrate-best-practices-networking" target="_blank" rel="noopener">https://docs.microsoft.com/en-au/azure/architecture/cloud-adoption/migrate/azure-best-practices/migrate-best-practices-networking</a></li>
+</ul>
+</li>
+<li>Best practices to consider before deploying a network virtual appliance<ul>
+<li><a href="https://azure.microsoft.com/en-au/blog/best-practices-to-consider-before-deploying-a-network-virtual-appliance/" target="_blank" rel="noopener">https://azure.microsoft.com/en-au/blog/best-practices-to-consider-before-deploying-a-network-virtual-appliance/</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="Storage"><a href="#Storage" class="headerlink" title="Storage"></a>Storage</h3><ul>
+<li>Azure Storage security guide<ul>
+<li><a href="https://docs.microsoft.com/en-us/azure/storage/common/storage-security-guide" target="_blank" rel="noopener">https://docs.microsoft.com/en-us/azure/storage/common/storage-security-guide</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="Compute"><a href="#Compute" class="headerlink" title="Compute"></a>Compute</h3><h3 id="AppServices"><a href="#AppServices" class="headerlink" title="AppServices"></a>AppServices</h3><h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://docs.microsoft.com/en-us/azure/" target="_blank" rel="noopener">Azure 文档</a></p>
 <p><a href="https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs" target="_blank" rel="noopener">Azure Provider</a></p>
 <p><a href="https://github.com/terraform-providers/terraform-provider-azurerm" target="_blank" rel="noopener">terraform-provider-azurerm</a></p>
+<p><a href="https://www.cnblogs.com/AllenMaster/p/14196875.html" target="_blank" rel="noopener">Azure Terraform（二）语法详解 </a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -214,6 +276,14 @@
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/post/ping/" title="为 ping 添加时间戳后台运行实时输出保存日志">
+  <strong>上一篇：</strong><br/>
+  <span>
+  为 ping 添加时间戳后台运行实时输出保存日志</span>
+</a>
+</div>
+
 
 <div class="next">
 <a href="/post/singapore/"  title="从国内跳槽至新加坡工作的经验分享">
@@ -241,7 +311,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#学习路径"><span class="toc-number">3.</span> <span class="toc-text">学习路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Azure-Provider"><span class="toc-number">4.</span> <span class="toc-text">Azure Provider</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#理解-Azure-RBAC"><span class="toc-number">5.</span> <span class="toc-text">理解 Azure RBAC</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Azure-登录验证方式"><span class="toc-number">5.1.</span> <span class="toc-text">Azure 登录验证方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装-Azure-CLI"><span class="toc-number">5.2.</span> <span class="toc-text">安装 Azure CLI</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform-on-Azure"><span class="toc-number">6.</span> <span class="toc-text">Terraform on Azure</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform-Azure-常见问题"><span class="toc-number">7.</span> <span class="toc-text">Terraform Azure 常见问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">8.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#学习路径"><span class="toc-number">3.</span> <span class="toc-text">学习路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Azure-Provider"><span class="toc-number">4.</span> <span class="toc-text">Azure Provider</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#理解-Azure-RBAC"><span class="toc-number">5.</span> <span class="toc-text">理解 Azure RBAC</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Azure-登录验证方式"><span class="toc-number">5.1.</span> <span class="toc-text">Azure 登录验证方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装-Azure-CLI"><span class="toc-number">5.2.</span> <span class="toc-text">安装 Azure CLI</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform-on-Azure"><span class="toc-number">6.</span> <span class="toc-text">Terraform on Azure</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform-Azure-常见问题"><span class="toc-number">7.</span> <span class="toc-text">Terraform Azure 常见问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Azure-Best-Practices"><span class="toc-number">8.</span> <span class="toc-text">Azure Best Practices</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Governance"><span class="toc-number">8.1.</span> <span class="toc-text">Governance</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Identity-and-Access-Management"><span class="toc-number">8.2.</span> <span class="toc-text">Identity and Access Management</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DevOps"><span class="toc-number">8.3.</span> <span class="toc-text">DevOps</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Security"><span class="toc-number">8.4.</span> <span class="toc-text">Security</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Networking"><span class="toc-number">8.5.</span> <span class="toc-text">Networking</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Storage"><span class="toc-number">8.6.</span> <span class="toc-text">Storage</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Compute"><span class="toc-number">8.7.</span> <span class="toc-text">Compute</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AppServices"><span class="toc-number">8.8.</span> <span class="toc-text">AppServices</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">9.</span> <span class="toc-text">参考文章</span></a></li></ol>
  
   </div>
 
@@ -268,7 +338,7 @@
 		  
 		
 		  
-			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>181</sup></a></li>
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>182</sup></a></li>
 		  
 		
 		  
