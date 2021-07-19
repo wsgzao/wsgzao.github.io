@@ -32,7 +32,7 @@
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="为ping添加时间戳后台运行实时输出保存日志">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-06-09T07:18:12.596Z">
+<meta property="og:updated_time" content="2021-06-11T07:29:02.047Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="为 ping 添加时间戳后台运行实时输出保存日志">
 <meta name="twitter:description" content="为ping添加时间戳后台运行实时输出保存日志">
@@ -127,7 +127,7 @@
 <p>ping（呯）是一种计算机网络工具，用来测试数据包能否透过 IP 协议到达特定主机。ping 的运作原理是向目标主机传出一个 ICMP 的请求回显数据包，并等待接收回显回应数据包。程序会按时间和成功响应的次数估算丢失数据包率（丢包率）和数据包往返时间（网络时延，Round-trip delay time）。</p>
 <p>直接 <code>ping ip</code> 即可。</p>
 <p>若显示 <code>ping</code> 的回显时间，此命令也提供了参数 <code>-D</code> 来回显时间戳。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ping baidu.com -D</span></span><br><span class="line">PING baidu.com (39.156.69.79) 56(84) bytes of data.</span><br><span class="line">[1623205720.047547] 64 bytes from 39.156.69.79 (39.156.69.79): icmp_seq=1 ttl=23 time=274 ms</span><br><span class="line">[1623205720.321747] 64 bytes from 39.156.69.79 (39.156.69.79): icmp_seq=2 ttl=23 time=274 ms</span><br><span class="line">[1623205721.322361] 64 bytes from 39.156.69.79 (39.156.69.79): icmp_seq=3 ttl=23 time=274 ms</span><br><span class="line">[1623205722.323220] 64 bytes from 39.156.69.79 (39.156.69.79): icmp_seq=4 ttl=23 time=274 ms</span><br><span class="line">[1623205723.324359] 64 bytes from 39.156.69.79 (39.156.69.79): icmp_seq=5 ttl=23 time=274 ms</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ping baidu.com -D</span></span><br><span class="line">PING baidu.com (39.156.69.79) 56(84) bytes of data.</span><br><span class="line">[1623205720.047547] 64 bytes from 39.156.69.79 (39.156.69.79): icmp_seq=1 ttl=23 time=274 ms</span><br><span class="line">[1623205720.321747] 64 bytes from 39.156.69.79 (39.156.69.79): icmp_seq=2 ttl=23 time=274 ms</span><br><span class="line">[1623205721.322361] 64 bytes from 39.156.69.79 (39.156.69.79): icmp_seq=3 ttl=23 time=274 ms</span><br><span class="line">[1623205722.323220] 64 bytes from 39.156.69.79 (39.156.69.79): icmp_seq=4 ttl=23 time=274 ms</span><br><span class="line">[1623205723.324359] 64 bytes from 39.156.69.79 (39.156.69.79): icmp_seq=5 ttl=23 time=274 ms</span><br><span class="line"></span><br><span class="line"><span class="comment"># 文章后面介绍了两种方法，我倾向于使用 fflush()</span></span><br><span class="line">ping baidu.com -i 1 | awk <span class="string">'&#123; print strftime("%Y-%m-%d-%H:%M:%S",systime())" | "$0; fflush() &#125;'</span> &gt;&gt; ping-baidu.com.txt &amp;</span><br><span class="line">2021-06-11-07:24:58 | 64 bytes from 220.181.38.148 (220.181.38.148): icmp_seq=1 ttl=37 time=182 ms</span><br><span class="line">2021-06-11-07:24:59 | 64 bytes from 220.181.38.148 (220.181.38.148): icmp_seq=2 ttl=37 time=181 ms</span><br><span class="line">2021-06-11-07:25:01 | 64 bytes from 220.181.38.148 (220.181.38.148): icmp_seq=4 ttl=37 time=181 ms</span><br></pre></td></tr></table></figure>
 <p>然而，时间戳可读性较差，虽然可以利用网上的一些工具（<a href="http://tool.chinaz.com/Tools/unixtime.aspx" target="_blank" rel="noopener">unitxtime</a>）来转化，但是比较麻烦，最好的方式时回显时就是可读性较好的时间格式。</p>
 <h2 id="ping-命令的使用"><a href="#ping-命令的使用" class="headerlink" title="ping 命令的使用"></a>ping 命令的使用</h2><p>常用参数</p>
 <p>-i: 每次执行 ping 操作的间隔时间, 默认是 1s;</p>
@@ -183,6 +183,14 @@
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/post/prometheus/" title="Prometheus 监控学习教程推荐">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Prometheus 监控学习教程推荐</span>
+</a>
+</div>
+
 
 <div class="next">
 <a href="/post/terraform-azure/"  title="Terraform Azure 部署实践">
@@ -237,7 +245,7 @@
 		  
 		
 		  
-			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>182</sup></a></li>
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>183</sup></a></li>
 		  
 		
 		  
