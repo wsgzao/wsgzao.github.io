@@ -32,7 +32,7 @@
 <meta property="og:site_name" content="HelloDog">
 <meta property="og:description" content="Google mtail配合Prometheus和Grafana实现自定义日志监控">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-08-11T07:05:28.835Z">
+<meta property="og:updated_time" content="2021-08-11T07:15:12.944Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Google mtail 配合 Prometheus 和 Grafana 实现自定义日志监控">
 <meta name="twitter:description" content="Google mtail配合Prometheus和Grafana实现自定义日志监控">
@@ -239,11 +239,86 @@
 </tr>
 <tr>
 <td>-logs</td>
-<td>监控的日志文件列表，可以使用, 分隔多个文件，也可以多次使用 - logs 参数，也可以指定一个文件目录，支持通配符 *，指定文件目录时需要对目录使用单引号。如：</td>
+<td>监控的日志文件列表，可以使用, 分隔多个文件，也可以多次使用 - logs 参数，也可以指定一个文件目录，支持通配符 *，指定文件目录时需要对目录使用单引号。</td>
+</tr>
+<tr>
+<td>-logtostderr</td>
+<td>直接输出标准错误信息，编译问题也直接输出</td>
+</tr>
+<tr>
+<td>-metric_push_interval_seconds</td>
+<td>metric 推送时间间隔，单位：秒，默认 60 秒</td>
+</tr>
+<tr>
+<td>-metric_push_write_deadline</td>
+<td>在出现错误退出之前等待推送成功的时间。（默认 10s）</td>
+</tr>
+<tr>
+<td>-mtailDebug</td>
+<td>设置解析器 debug 级别</td>
+</tr>
+<tr>
+<td>-mutex_profile_fraction</td>
+<td>报告的互斥锁争用事件的分数。0 关闭。（此参数为直译，不太理解啥意思）</td>
+</tr>
+<tr>
+<td>-one_shot</td>
+<td>此参数将编译并运行 mtail 程序，然后 <strong> 从指定的文件开头 </strong> 开始读取日志（从头开始读取日志，不是实时 tail），然后将收集的所有 metrics 打印到日志中。此参数用于验证 mtail 程序是否有预期输出，不用于生产环境。</td>
+</tr>
+<tr>
+<td>-override_timezone</td>
+<td>设置时区，如果使用此参数，将在时间戳转换中使用指定的时区来替代 UTC</td>
+</tr>
+<tr>
+<td>-poll_interval</td>
+<td>设置轮询所有日志文件以获取数据的间隔；必须为正，如果为零将禁用轮询。使用轮询模式，将仅轮询在 mtail 启动时找到的文件</td>
+</tr>
+<tr>
+<td>-port</td>
+<td>监听的 http 端口，默认 3903</td>
+</tr>
+<tr>
+<td>-progs</td>
+<td>mtail 脚本程序所在路径</td>
+</tr>
+<tr>
+<td>-stale_log_gc_interval</td>
+<td>stale 的垃圾收集器运行间隔（默认为 1h0m0s）</td>
+</tr>
+<tr>
+<td>-statsd_hostport</td>
+<td>statsd 地址，格式 Host:port。用于向 statsd 写入 metrics</td>
+</tr>
+<tr>
+<td>-statsd_prefix</td>
+<td>发送给 statsd 指标的 metrics 前缀</td>
+</tr>
+<tr>
+<td>-stderrthreshold</td>
+<td>严重性级别达到阈值以上的日志信息除了写入日志文件以外，还要输出到 stderr。各严重性级别对应的数值：INFO—0，WARNING—1，ERROR—2，FATAL—3，默认值为 2.</td>
+</tr>
+<tr>
+<td>-syslog_use_current_year</td>
+<td>如果时间戳没有年份，则用当前年替代。（默认为 true）</td>
+</tr>
+<tr>
+<td>-trace_sample_period</td>
+<td>用于设置跟踪的采样频率和发送到收集器的频率。将其设置为 100，则 100 条收集一条追踪。</td>
+</tr>
+<tr>
+<td>-v</td>
+<td>v 日志的日志级别，该设置可能被 vmodule 标志给覆盖. 默认为 0.</td>
+</tr>
+<tr>
+<td>-version</td>
+<td>打印 mtail 版本</td>
+</tr>
+<tr>
+<td>-vmodule</td>
+<td>按文件或模块来设置日志级别，如：-vmodule=mapreduce=2,file=1,gfs*=3</td>
 </tr>
 </tbody>
 </table>
-<p>-logs a.log,b.log,c.log<br>-logs a.log -logs b.log -logs c.log<br>-logs ‘/export/logs/*.log’ |<br>| -logtostderr | 直接输出标准错误信息，编译问题也直接输出 |<br>| -metric_push_interval_seconds | metric 推送时间间隔，单位：秒，默认 60 秒 |<br>| -metric_push_write_deadline | 在出现错误退出之前等待推送成功的时间。（默认 10s） |<br>| -mtailDebug | 设置解析器 debug 级别 |<br>| -mutex_profile_fraction | 报告的互斥锁争用事件的分数。0 关闭。（此参数为直译，不太理解啥意思） |<br>| -one_shot | 此参数将编译并运行 mtail 程序，然后 <strong> 从指定的文件开头 </strong> 开始读取日志（从头开始读取日志，不是实时 tail），然后将收集的所有 metrics 打印到日志中。此参数用于验证 mtail 程序是否有预期输出，不用于生产环境。 |<br>| -override_timezone | 设置时区，如果使用此参数，将在时间戳转换中使用指定的时区来替代 UTC |<br>| -poll_interval | 设置轮询所有日志文件以获取数据的间隔；必须为正，如果为零将禁用轮询。使用轮询模式，将仅轮询在 mtail 启动时找到的文件 |<br>| -port | 监听的 http 端口，默认 3903 |<br>| -progs | mtail 脚本程序所在路径 |<br>| -stale_log_gc_interval | stale 的垃圾收集器运行间隔（默认为 1h0m0s） |<br>| -statsd_hostport | statsd 地址，格式 Host:port。用于向 statsd 写入 metrics |<br>| -statsd_prefix | 发送给 statsd 指标的 metrics 前缀 |<br>| -stderrthreshold | 严重性级别达到阈值以上的日志信息除了写入日志文件以外，还要输出到 stderr。各严重性级别对应的数值：INFO—0，WARNING—1，ERROR—2，FATAL—3，默认值为 2. |<br>| -syslog_use_current_year | 如果时间戳没有年份，则用当前年替代。（默认为 true） |<br>| -trace_sample_period | 用于设置跟踪的采样频率和发送到收集器的频率。将其设置为 100，则 100 条收集一条追踪。 |<br>| -v | v 日志的日志级别，该设置可能被 vmodule 标志给覆盖. 默认为 0. |<br>| -version | 打印 mtail 版本 |<br>| -vmodule | 按文件或模块来设置日志级别，如：-vmodule=mapreduce=2,file=1,gfs*=3 |</p>
 <h2 id="mtail-脚本语法"><a href="#mtail-脚本语法" class="headerlink" title="mtail 脚本语法"></a>mtail 脚本语法</h2><p>Read the <a href="https://github.com/google/mtail/blob/main/docs/Programming-Guide.md" target="_blank" rel="noopener">programming guide</a> if you want to learn how to write mtail programs.</p>
 <p><a href="https://github.com/google/mtail/blob/main/docs/Programming-Guide.md" target="_blank" rel="noopener">https://github.com/google/mtail/blob/main/docs/Programming-Guide.md</a></p>
 <h3 id="mtail-脚本标准格式"><a href="#mtail-脚本标准格式" class="headerlink" title="mtail 脚本标准格式"></a>mtail 脚本标准格式</h3><p>标准格式为：</p>
