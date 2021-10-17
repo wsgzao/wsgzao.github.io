@@ -1,0 +1,568 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>CPU 优化建议使用 cpupower 设置 CPU Performance 模式 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="CPU优化建议使用cpupower设置CPU Performance模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CPU 优化建议使用 cpupower 设置 CPU Performance 模式">
+<meta property="og:url" content="https://wsgzao.github.io/post/cpupower/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="CPU优化建议使用cpupower设置CPU Performance模式">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190702190945.png">
+<meta property="og:updated_time" content="2019-07-19T02:57:25.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CPU 优化建议使用 cpupower 设置 CPU Performance 模式">
+<meta name="twitter:description" content="CPU优化建议使用cpupower设置CPU Performance模式">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190702190945.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/cpupower/" title="CPU 优化建议使用 cpupower 设置 CPU Performance 模式" itemprop="url">CPU 优化建议使用 cpupower 设置 CPU Performance 模式</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2019-07-17T05:59:49.000Z" itemprop="datePublished"> 发表于 2019-07-17</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cpufreq-的五种模式"><span class="toc-number">3.</span> <span class="toc-text">cpufreq 的五种模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cpupower-设置-performance"><span class="toc-number">4.</span> <span class="toc-text">cpupower 设置 performance</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#无法使用-cpupower-调整-performance"><span class="toc-number">5.</span> <span class="toc-text">无法使用 cpupower 调整 performance</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">6.</span> <span class="toc-text">参考文章</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>CPU 动态节能技术用于降低服务器功耗，通过选择系统空闲状态不同的电源管理策略，可以实现不同程度降低服务器功耗，更低的功耗策略意味着 CPU 唤醒更慢对性能影响更大。对于对时延和性能要求高的应用，建议关闭 CPU 的动态调节功能，禁止 CPU 休眠，并把 CPU 频率固定到最高。通常建议在服务器 BIOS 中修改电源管理为 Performance，如果发现 CPU 模式为 conservative 或者 powersave，可以使用 cpupower 设置 CPU Performance 模式，效果也是相当显著的。</p>
+<blockquote>
+<p>CPU 优化建议使用 cpupower 设置 CPU Performance 模式</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019 年 07 月 17 日 - 更新 cpupower 自启动设置脚本<br>2019 年 01 月 18 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/cpupower/">https://wsgzao.github.io/post/cpupower/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<p>CPU frequency scaling - <a href="https://wiki.archlinux.org/index.php/CPU_frequency_scaling" target="_blank" rel="noopener">https://wiki.archlinux.org/index.php/CPU_frequency_scaling</a></p>
+<hr>
+<h2 id="cpufreq-的五种模式"><a href="#cpufreq-的五种模式" class="headerlink" title="cpufreq 的五种模式"></a>cpufreq 的五种模式</h2><p>cpufreq 是一个动态调整 cpu 频率的模块，系统启动时生成一个文件夹 / sys/devices/system/cpu/cpu0/cpufreq/，里面有几个文件，其中 scaling_min_freq 代表最低频率，scaling_max_freq 代表最高频率，scalin_governor 代表 cpu 频率调整模式，用它来控制 CPU 频率。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /sys/devices/system/cpu/cpu0/cpufreq/</span><br><span class="line"></span><br><span class="line">affected_cpus</span><br><span class="line">bios_limit</span><br><span class="line">cpuinfo_cur_freq</span><br><span class="line">cpuinfo_max_freq</span><br><span class="line">cpuinfo_min_freq</span><br><span class="line">cpuinfo_transition_latency</span><br><span class="line">freqdomain_cpus</span><br><span class="line">related_cpus</span><br><span class="line">scaling_available_frequencies</span><br><span class="line">scaling_available_governors</span><br><span class="line">scaling_cur_freq</span><br><span class="line">scaling_driver</span><br><span class="line">scaling_governor</span><br><span class="line">scaling_max_freq</span><br><span class="line">scaling_min_freq</span><br><span class="line">scaling_setspeed</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前的调节器</span></span><br><span class="line">cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor</span><br><span class="line">conservative</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看频率信息</span></span><br><span class="line">cpupower frequency-info</span><br><span class="line"></span><br><span class="line">analyzing CPU 0:</span><br><span class="line">  driver: acpi-cpufreq</span><br><span class="line">  CPUs <span class="built_in">which</span> run at the same hardware frequency: 0</span><br><span class="line">  CPUs <span class="built_in">which</span> need to have their frequency coordinated by software: 0</span><br><span class="line">  maximum transition latency: 10.0 us</span><br><span class="line">  hardware limits: 800 MHz - 2.10 GHz</span><br><span class="line">  available frequency steps:  2.10 GHz, 2.10 GHz, 2.00 GHz, 1.90 GHz, 1.80 GHz, 1.70 GHz, 1.60 GHz, 1.50 GHz, 1.40 GHz, 1.30 GHz, 1.20 GHz, 1.10 GHz, 1000 MHz, 900 MHz, 800 MHz</span><br><span class="line">  available cpufreq governors: conservative userspace powersave ondemand performance</span><br><span class="line">  current policy: frequency should be within 800 MHz and 2.10 GHz.</span><br><span class="line">                  The governor <span class="string">"performance"</span> may decide <span class="built_in">which</span> speed to use</span><br><span class="line">                  within this range.</span><br><span class="line">  current CPU frequency: Unable to call hardware</span><br><span class="line">  current CPU frequency: 2.10 GHz (asserted by call to kernel)</span><br><span class="line">  boost state support:</span><br><span class="line">    Supported: yes</span><br><span class="line">    Active: yes</span><br></pre></td></tr></table></figure>
+<ol>
+<li>performance: 顾名思义只注重效率，将 CPU 频率固定工作在其支持的最高运行频率上，而不动态调节。</li>
+<li>Userspace: 最早的 cpufreq 子系统通过 userspace governor 为用户提供了这种灵活性。系统将变频策略的决策权交给了用户态应用程序，并提供了相应的接口供用户态应用程序调节 CPU 运行频率使用。也就是长期以来都在用的那个模式。可以通过手动编辑配置文件进行配置</li>
+<li>powersave: 将 CPU 频率设置为最低的所谓 “省电” 模式，CPU 会固定工作在其支持的最低运行频率上。因此这两种 governors 都属于静态 governor，即在使用它们时 CPU 的运行频率不会根据系统运行时负载的变化动态作出调整。这两种 governors 对应的是两种极端的应用场景，使用 performance governor 是对系统高性能的最大追求，而使用 powersave governor 则是对系统低功耗的最大追求。</li>
+<li>ondemand: 按需快速动态调整 CPU 频率， 一有 cpu 计算量的任务，就会立即达到最大频率运行，等执行完毕就立即回到最低频率；ondemand：userspace 是内核态的检测，用户态调整，效率低。而 ondemand 正是人们长期以来希望看到的一个完全在内核态下工作并且能够以更加细粒度的时间间隔对系统负载情况进行采样分析的 governor。 在 ondemand governor 监测到系统负载超过 up_threshold 所设定的百分比时，说明用户当前需要 CPU 提供更强大的处理能力，因此 ondemand governor 会将 CPU 设置在最高频率上运行。但是当 ondemand governor 监测到系统负载下降，可以降低 CPU 的运行频率时，到底应该降低到哪个频率呢？ ondemand governor 的最初实现是在可选的频率范围内调低至下一个可用频率，例如 CPU 支持三个可选频率，分别为 1.67GHz、1.33GHz 和 1GHz ，如果 CPU 运行在 1.67GHz 时 ondemand governor 发现可以降低运行频率，那么 1.33GHz 将被选作降频的目标频率。</li>
+<li>conservative: 与 ondemand 不同，平滑地调整 CPU 频率，频率的升降是渐变式的, 会自动在频率上下限调整，和 ondemand 的区别在于它会按需分配频率，而不是一味追求最高频率；</li>
+</ol>
+<h2 id="cpupower-设置-performance"><a href="#cpupower-设置-performance" class="headerlink" title="cpupower 设置 performance"></a>cpupower 设置 performance</h2><blockquote>
+<p>从 conservative 或者 powersave 切换到 performance 的效果还是杠杠的</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># CentOS 安装 kernel-tools</span></span><br><span class="line">yum install kernel-tools</span><br><span class="line"></span><br><span class="line"><span class="comment"># Ubuntu 安装 CPU 模式无图形化切换器</span></span><br><span class="line">apt install cpufrequtils</span><br><span class="line"></span><br><span class="line"><span class="comment"># cpupower 设置 performance</span></span><br><span class="line">cpupower frequency-set -g performance</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前的调节器</span></span><br><span class="line">cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor</span><br><span class="line">performance</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 cpupower 配置文件</span></span><br><span class="line">cat &lt;&lt; EOF | sudo tee /etc/sysconfig/cpupower</span><br><span class="line"><span class="comment"># See 'cpupower help' and cpupower(1) for more info</span></span><br><span class="line">CPUPOWER_START_OPTS=<span class="string">"frequency-set -g performance"</span></span><br><span class="line">CPUPOWER_STOP_OPTS=<span class="string">"frequency-set -g ondemand"</span></span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建自启动服务</span></span><br><span class="line">cat &lt;&lt; EOF | sudo tee /usr/lib/systemd/system/cpupower.service</span><br><span class="line">[Unit]</span><br><span class="line">Description=Configure CPU power related settings</span><br><span class="line">After=syslog.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=oneshot</span><br><span class="line">RemainAfterExit=yes</span><br><span class="line">EnvironmentFile=/etc/sysconfig/cpupower</span><br><span class="line">ExecStart=/usr/bin/cpupower <span class="variable">$CPUPOWER_START_OPTS</span></span><br><span class="line">ExecStop=/usr/bin/cpupower <span class="variable">$CPUPOWER_STOP_OPTS</span></span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment"># 刷新 system 服务</span></span><br><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl <span class="built_in">enable</span> cpupower.service</span><br><span class="line"></span><br><span class="line"><span class="comment"># systemd.service — Service unit configuration</span></span><br><span class="line">https://www.freedesktop.org/software/systemd/man/systemd.service.html</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190702190945.png" alt></p>
+<h2 id="无法使用-cpupower-调整-performance"><a href="#无法使用-cpupower-调整-performance" class="headerlink" title="无法使用 cpupower 调整 performance"></a>无法使用 cpupower 调整 performance</h2><blockquote>
+<p>比如我们遇到相同类型 CPU 硬件和操作系统版本，但不同厂商会出现无法使用 cpupower 调整 performance 的情况</p>
+</blockquote>
+<p>Dell R440 CPU: Intel(R) Xeon(R) Silver 4116 CPU @ 2.10GHz <code>Failed</code></p>
+<p>Dell R430 CPU: Intel(R) Xeon(R) CPU E5-2640 v4 @ 2.40GHz <code>Success</code></p>
+<p>Huawei 1288H V5 CPU: Intel(R) Xeon(R) Silver 4116 CPU @ 2.10GHz <code>Success</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果遇到以下报错请确认硬件厂商是否做了限制，只能通过 BIOS 调节</span></span><br><span class="line">[root@sg-gop-10-71-14-91 wangao]<span class="comment"># cpupower frequency-set -g performance</span></span><br><span class="line">Setting cpu: 0</span><br><span class="line">Error setting new values. Common errors:</span><br><span class="line">- Do you have proper administration rights? (super-user?)</span><br><span class="line">- Is the governor you requested available and modprobed?</span><br><span class="line">- Trying to <span class="built_in">set</span> an invalid policy?</span><br><span class="line">- Trying to <span class="built_in">set</span> a specific frequency, but userspace governor is not available,</span><br><span class="line">   <span class="keyword">for</span> example because of hardware <span class="built_in">which</span> cannot be <span class="built_in">set</span> to a specific frequency</span><br><span class="line">   or because the userspace governor isn<span class="string">'t loaded?</span></span><br></pre></td></tr></table></figure>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://www.kernel.org/doc/Documentation/cpu-freq/governors.txt" target="_blank" rel="noopener">CPU frequency and voltage scaling code in the Linux(TM) kernel</a><br><a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html-single/power_management_guide/index" target="_blank" rel="noopener">POWER MANAGEMENT GUIDE</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/cpupower/" data-title="CPU 优化建议使用 cpupower 设置 CPU Performance 模式 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/megacli64/" title="使用 MegaCli64 快速查看 RAID 和定位故障硬盘实践">
+  <strong>上一篇：</strong><br/>
+  <span>
+  使用 MegaCli64 快速查看 RAID 和定位故障硬盘实践</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/okr/"  title="OKR 和 KPI">
+ <strong>下一篇：</strong><br/> 
+ <span>OKR 和 KPI
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cpufreq-的五种模式"><span class="toc-number">3.</span> <span class="toc-text">cpufreq 的五种模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cpupower-设置-performance"><span class="toc-number">4.</span> <span class="toc-text">cpupower 设置 performance</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#无法使用-cpupower-调整-performance"><span class="toc-number">5.</span> <span class="toc-text">无法使用 cpupower 调整 performance</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">6.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>185</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>18</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

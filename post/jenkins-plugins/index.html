@@ -1,0 +1,674 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>Jenkins Plugins 常用插件推荐 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="Jenkins Plugins常用插件推荐">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jenkins Plugins 常用插件推荐">
+<meta property="og:url" content="https://wsgzao.github.io/post/jenkins-plugins/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="Jenkins Plugins常用插件推荐">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-12-26T07:43:05.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Jenkins Plugins 常用插件推荐">
+<meta name="twitter:description" content="Jenkins Plugins常用插件推荐">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/jenkins-plugins/" title="Jenkins Plugins 常用插件推荐" itemprop="url">Jenkins Plugins 常用插件推荐</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2019-12-16T06:59:49.000Z" itemprop="datePublished"> 发表于 2019-12-16</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#用户及权限"><span class="toc-number">3.</span> <span class="toc-text">用户及权限</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码管理"><span class="toc-number">4.</span> <span class="toc-text">代码管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#项目及视图"><span class="toc-number">5.</span> <span class="toc-text">项目及视图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建触发"><span class="toc-number">6.</span> <span class="toc-text">构建触发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建参数"><span class="toc-number">7.</span> <span class="toc-text">构建参数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建任务及环境"><span class="toc-number">8.</span> <span class="toc-text">构建任务及环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建通知"><span class="toc-number">9.</span> <span class="toc-text">构建通知</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#容器化-Slave"><span class="toc-number">10.</span> <span class="toc-text">容器化 Slave</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Admin-相关插件"><span class="toc-number">11.</span> <span class="toc-text">Admin 相关插件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#个人推荐的通用插件"><span class="toc-number">12.</span> <span class="toc-text">个人推荐的通用插件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">13.</span> <span class="toc-text">参考文章</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>开源版本的 Jenkins 具有三大能力：Master-Slave 的分布式构建调度能力、Pipeline 编排能力、强大的开源生态（插件）能力。2017 年 4 月，Jenkins 创始人 KK（Kohsuke Kawaguchi ）来到中国，交流中他也明确表示 Jenkins 的成功主要取决于其开源生态系统，Jenkins 有 1400 多个插件可供使用。因为有开源的插件生态系统的存在，Jenkins 要用得好，插件一定是不能少的，需要我们充分发现和使用插件来实现我们的需求，而不是重复造轮子，自己去实现。</p>
+<blockquote>
+<p>Jenkins Plugins 常用插件推荐</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019 年 12 月 16 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/jenkins-plugins/">https://wsgzao.github.io/post/jenkins-plugins/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<p><a href="https://plugins.jenkins.io/" target="_blank" rel="noopener">Jenkins Plugins Index</a></p>
+<hr>
+<h2 id="用户及权限"><a href="#用户及权限" class="headerlink" title="用户及权限"></a>用户及权限</h2><p>Jenkins 用户权限管理是 Jenkins Administration 中非常很重要的环节，由于大部分企业都会有自己的域控管理，所以和 LDAP 集成并基于用户组实现权限模型设计与管理是企业级 Jenkins 实践的重要内容。</p>
+<ol>
+<li><a href="https://plugins.jenkins.io/ldap" target="_blank" rel="noopener">LDAP</a> 这个插件允许使用 LDAP 对用户进行认证，LDAP 服务器可以为 Active Directory 或者 OpenLDAP。</li>
+<li><a href="https://plugins.jenkins.io/active-directory" target="_blank" rel="noopener">Active Directory</a> 这个插件允许使用 Active Directory 对用户进行认证，同时结合诸如 Matrix Authorization Strategy 插件，可以识别用户所在的所有用户组，对用户授权进行灵活配置。<br> 基于 Windows Active Directory 进行域管理的企业，推荐采用 Active Directory。</li>
+<li><a href="https://plugins.jenkins.io/github-oauth" target="_blank" rel="noopener">GitHub Authentication</a> 这个插件提供了使用 GitHub 进行用户认证和授权的方案。</li>
+<li><a href="https://plugins.jenkins.io/gitlab-oauth" target="_blank" rel="noopener">Gitlab Authentication</a> 这个插件提供了使用 GitLab 进行用户认证和授权的方案。</li>
+<li><a href="https://plugins.jenkins.io/matrix-auth" target="_blank" rel="noopener">Matrix Authorization Strategy</a> 这个插件提供了基于矩阵的授权策略，支持全局和项目级别的配置。</li>
+<li><a href="https://plugins.jenkins.io/role-strategy" target="_blank" rel="noopener">Role-based Authorization Strategy</a> 这个插件提供了一种基于角色（Role）的用户权限管理策略，支持创建 global 角色、Project 角色、Slave 角色，以及给用户分配这些角色。这款插件是最常用的 Jenkins 权限策略和管理插件。</li>
+</ol>
+<p><a href="https://www.jianshu.com/p/6c274d9b22ad" target="_blank" rel="noopener">Jenkins 自动化部署 - 权限管控篇 (六)</a></p>
+<h2 id="代码管理"><a href="#代码管理" class="headerlink" title="代码管理"></a>代码管理</h2><p>Jenkins 项目中配置 Source Code Management 去下载代码进行构建任务，是非常普遍的应用场景。Jenkins 插件支持很多 SCM 的系统，使用最常见的是 Git 和 SVN。</p>
+<ol>
+<li><a href="https://plugins.jenkins.io/git" target="_blank" rel="noopener">Git</a> 支持使用 Github、GitLab、Gerrit 等系统管理代码仓库。</li>
+<li><a href="https://plugins.jenkins.io/subversion" target="_blank" rel="noopener">Subversion</a> 支持 Subversion 系统管理源代码。</li>
+</ol>
+<h2 id="项目及视图"><a href="#项目及视图" class="headerlink" title="项目及视图"></a>项目及视图</h2><p>Jenkins 中对 Project 和 view 的管理，是用户日常工作中使用很多的功能。</p>
+<ol>
+<li><a href="https://plugins.jenkins.io/cloudbees-folder" target="_blank" rel="noopener">Folder</a> 这个插件支持用户使用目录管理项目，目录支持嵌套，并且支持目录中创建视图。</li>
+<li>List view Jenkins 默认支持 List 类型的视图，用户可以创建 List 视图过滤所关心的项目。</li>
+<li><a href="https://plugins.jenkins.io/sectioned-view" target="_blank" rel="noopener">Sectioned View</a> 这个插件支持一种新的视图，视图可以分为多个部分，每部分可以单独配置显示所选择的项目信息。</li>
+<li><a href="https://plugins.jenkins.io/nested-view" target="_blank" rel="noopener">Nested View</a> 这个插件支持一种新的视图，其表示直接显示项目，而是以目录图标显示所包含的子视图，每个子视图显示所选项目信息。</li>
+<li><a href="https://plugins.jenkins.io/build-pipeline-plugin" target="_blank" rel="noopener">Build Pipeline</a> 这个插件提供了一种 Build Pipeline 视图，用于显示上、下游项目构建的关系。</li>
+</ol>
+<h2 id="构建触发"><a href="#构建触发" class="headerlink" title="构建触发"></a>构建触发</h2><p>Jenkins 支持多种 Build 触发方式，尤其一些自动化触发方式非常有用</p>
+<ol>
+<li>Build periodically，Jenkins 内置功能，可以设置类似 crontab 时间，周期性地自动触发构建。Poll SCM，Jenkins 内置功能，类似 Build periodically，可以设置类似 crontab 时间，不同的是不是直接进行构建，而是周期性地在后台检查所配置的 SCM 有没有更新，只有当有代码更新时才会触发构建。</li>
+<li>Trigger builds remotely (e.g., from scripts)，Jenkins 内置功能，远程触发构建，通过设置 token 可以支持远程脚本中触发 Jenkins 构建。</li>
+<li><a href="https://plugins.jenkins.io/gerrit-trigger" target="_blank" rel="noopener">Gerrit Trigger</a> 这个插件将 Jenkins 集成到 Gerrit code review 中，支持 Jenkins 配置 Gerrit 服务器等信息，实现 Gerrit event 触发 Jenkins 构建。</li>
+<li><a href="https://plugins.jenkins.io/gitlab-plugin" target="_blank" rel="noopener">GitLab</a> 这个插件将 Jenkins 集成到 GitLab web hook 中，支持 Gitlab 分支及 Merge Request 等相关事件触发 Jenkins 构建。</li>
+<li><a href="https://plugins.jenkins.io/github-pullrequest" target="_blank" rel="noopener">GitHub Integration</a> 这个插件将 Jenkins 集成到 GitHub 中，支持 Gitgub 分支及 Pull requests 触发 Jenkins 构建。</li>
+<li><a href="https://plugins.jenkins.io/jira-trigger" target="_blank" rel="noopener">JIRA Trigger</a> 这个插件将 Jenkins 集成到 Jira WebHooks 中，支持 Jira issue 的状态等变化时触发 Jenkins 构建。</li>
+</ol>
+<h2 id="构建参数"><a href="#构建参数" class="headerlink" title="构建参数"></a>构建参数</h2><p>Jenkins 除了支持普通的参数类型（布尔型、字符串型、多行文本型、选择型和文件型 ）外，还有一些插件支持更加丰富实用的参数类型，比如参数间动态关联、多层级参数、隐藏参数等 。</p>
+<ol>
+<li><a href="https://plugins.jenkins.io/nodelabelparameter" target="_blank" rel="noopener">nodelabelparameter</a> 这个插件增加了一个新的参数类型，Node 和 Label，从而使用户通过参数可以选择项目构建运行的节点。<br> 其他插件不一一列举，可以查看插件说明<ul>
+<li><a href="https://plugins.jenkins.io/hidden-parameter" target="_blank" rel="noopener">https://plugins.jenkins.io/hidden-parameter</a></li>
+<li><a href="https://plugins.jenkins.io/extended-choice-parameter" target="_blank" rel="noopener">https://plugins.jenkins.io/extended-choice-parameter</a></li>
+<li><a href="https://plugins.jenkins.io/validating-string-parameter" target="_blank" rel="noopener">https://plugins.jenkins.io/validating-string-parameter</a></li>
+<li><a href="https://plugins.jenkins.io/extensible-choice-parameter" target="_blank" rel="noopener">https://plugins.jenkins.io/extensible-choice-parameter</a></li>
+<li><a href="https://wiki.jenkins.io/display/JENKINS/Active+Choices+Plugin" target="_blank" rel="noopener">https://wiki.jenkins.io/display/JENKINS/Active+Choices+Plugin</a></li>
+</ul>
+</li>
+</ol>
+<h2 id="构建任务及环境"><a href="#构建任务及环境" class="headerlink" title="构建任务及环境"></a>构建任务及环境</h2><p>围绕构建任务，有许多小的插件，却提供了一些实用的功能</p>
+<ol>
+<li><a href="https://plugins.jenkins.io/ws-cleanup" target="_blank" rel="noopener">Workspace Cleanup</a> 这个插件支持在构建前后 删除或者部分删除 workspace</li>
+<li><a href="https://plugins.jenkins.io/description-setter" target="_blank" rel="noopener">description setter</a> 这个插件支持正则表达式匹配构建 log 输出，设置构建的描述</li>
+<li><a href="https://plugins.jenkins.io/build-name-setter" target="_blank" rel="noopener">build-name-setter</a> 这个插件支持设置构建的显示名字，而不是默认的为 #1，#2，……，#buildnum</li>
+<li><a href="https://plugins.jenkins.io/envinject" target="_blank" rel="noopener">Environment Injector</a> 这个插件支持在构建任务的不同阶段插入环境变量，并且在构建结束导出所有的环境变量等功能。</li>
+</ol>
+<h2 id="构建通知"><a href="#构建通知" class="headerlink" title="构建通知"></a>构建通知</h2><p>把构建状态及时地通知用户，是 Jenkins 的一个必不可少的功能。Jenkins 支持多种主动和被动的通知方式。</p>
+<ol>
+<li><a href="https://plugins.jenkins.io/mailer" target="_blank" rel="noopener">Mailer</a> 这个插件支持基本的邮件通知功能，比如构建失败和构建恢复成功可以发送邮件通知给相关人员。</li>
+<li><a href="https://plugins.jenkins.io/email-ext" target="_blank" rel="noopener">Email Extension</a> 这个插件是邮件通知的扩展，支持定制邮件内容，触发条件以及邮件接收者，功能比基本邮件通知要灵活强大的多。</li>
+<li><a href="https://plugins.jenkins.io/slack" target="_blank" rel="noopener">Slack Notification</a> 这个插件支持把构建结果推送到 Slack channel。</li>
+</ol>
+<h2 id="容器化-Slave"><a href="#容器化-Slave" class="headerlink" title="容器化 Slave"></a>容器化 Slave</h2><p>Jenkins 的 Master-Slave 架构实现了分布式构建，可以充分的横向扩展 Slave 来提升构建能力，将 Slave 容器化是目前主流的构建环境标准化、集群化和弹性化的方式。</p>
+<ol>
+<li><a href="https://plugins.jenkins.io/docker-plugin" target="_blank" rel="noopener">https://plugins.jenkins.io/docker-plugin</a> 这个插件可以配置 docker host ，从而动态的提供 Jenkins Agent（Slave），运行构建后再销毁这个 slave。</li>
+<li><a href="https://plugins.jenkins.io/kubernetes" target="_blank" rel="noopener">https://plugins.jenkins.io/kubernetes</a> 这个插件支持利用 Kubernetes cluster 动态的提供 Jenkins Agent（Slave），利用 Kubernetes 调度机制来优化 Jenkins 负载等。</li>
+</ol>
+<h2 id="Admin-相关插件"><a href="#Admin-相关插件" class="headerlink" title="Admin 相关插件"></a>Admin 相关插件</h2><ol>
+<li>Configuration Slicing <a href="https://plugins.jenkins.io/configurationslicing" target="_blank" rel="noopener">https://plugins.jenkins.io/configurationslicing</a> 这个插件支持批量修改项目配置</li>
+<li>Mask Passwords <a href="https://plugins.jenkins.io/mask-passwords" target="_blank" rel="noopener">https://plugins.jenkins.io/mask-passwords</a> 这个插件支持遮挡构建 log 输出的 password 等敏感信息</li>
+<li>Backup <a href="https://plugins.jenkins.io/backup" target="_blank" rel="noopener">https://plugins.jenkins.io/backup</a> 这个插件添加备份功能到 Jenkins management</li>
+</ol>
+<h2 id="个人推荐的通用插件"><a href="#个人推荐的通用插件" class="headerlink" title="个人推荐的通用插件"></a>个人推荐的通用插件</h2><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Google Login Plugin</td>
+<td><a href="https://plugins.jenkins.io/google-login" target="_blank" rel="noopener">https://plugins.jenkins.io/google-login</a></td>
+</tr>
+<tr>
+<td>Role-based Authorization Strategy</td>
+<td><a href="https://plugins.jenkins.io/role-strategy" target="_blank" rel="noopener">https://plugins.jenkins.io/role-strategy</a></td>
+</tr>
+<tr>
+<td>Periodic Backup</td>
+<td><a href="https://plugins.jenkins.io/periodicbackup" target="_blank" rel="noopener">https://plugins.jenkins.io/periodicbackup</a></td>
+</tr>
+<tr>
+<td>Notification</td>
+<td><a href="https://plugins.jenkins.io/notification" target="_blank" rel="noopener">https://plugins.jenkins.io/notification</a></td>
+</tr>
+<tr>
+<td>Git Parameter</td>
+<td><a href="https://plugins.jenkins.io/git-parameter" target="_blank" rel="noopener">https://plugins.jenkins.io/git-parameter</a></td>
+</tr>
+<tr>
+<td>AnsiColor</td>
+<td><a href="https://plugins.jenkins.io/ansicolor" target="_blank" rel="noopener">https://plugins.jenkins.io/ansicolor</a></td>
+</tr>
+<tr>
+<td>SSH Agent</td>
+<td><a href="https://plugins.jenkins.io/git-parameter" target="_blank" rel="noopener">https://plugins.jenkins.io/git-parameter</a></td>
+</tr>
+<tr>
+<td>Build Name and Description Setter</td>
+<td><a href="https://plugins.jenkins.io/build-name-setter" target="_blank" rel="noopener">https://plugins.jenkins.io/build-name-setter</a></td>
+</tr>
+<tr>
+<td>Publish Over SSH</td>
+<td><a href="https://plugins.jenkins.io/publish-over-ssh" target="_blank" rel="noopener">https://plugins.jenkins.io/publish-over-ssh</a></td>
+</tr>
+<tr>
+<td>user build vars</td>
+<td><a href="https://plugins.jenkins.io/build-user-vars-plugin" target="_blank" rel="noopener">https://plugins.jenkins.io/build-user-vars-plugin</a></td>
+</tr>
+<tr>
+<td>Throttle Concurrent Builds</td>
+<td><a href="https://plugins.jenkins.io/throttle-concurrents" target="_blank" rel="noopener">https://plugins.jenkins.io/throttle-concurrents</a></td>
+</tr>
+<tr>
+<td>Active Choices</td>
+<td><a href="https://plugins.jenkins.io/uno-choice" target="_blank" rel="noopener">https://plugins.jenkins.io/uno-choice</a></td>
+</tr>
+<tr>
+<td>Rebuilder</td>
+<td><a href="https://plugins.jenkins.io/rebuild" target="_blank" rel="noopener">https://plugins.jenkins.io/rebuild</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://www.jianshu.com/p/a80ed9285537" target="_blank" rel="noopener">Jenkins 自动化部署 - 安装篇 (一)</a></p>
+<p><a href="https://www.cnblogs.com/zndxall/p/8603500.html" target="_blank" rel="noopener">jenkins 常用插件和配置项介绍和使用</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/jenkins-plugins/" data-title="Jenkins Plugins 常用插件推荐 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/jenkins-import/" title="Jenkins export and import jobs 迁移导出导入任务实践小结">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Jenkins export and import jobs 迁移导出导入任务实践小结</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/qps/"  title="通俗易懂 QPS、TPS、PV、UV、GMV、IP、RPS 的概念解释">
+ <strong>下一篇：</strong><br/> 
+ <span>通俗易懂 QPS、TPS、PV、UV、GMV、IP、RPS 的概念解释
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#用户及权限"><span class="toc-number">3.</span> <span class="toc-text">用户及权限</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码管理"><span class="toc-number">4.</span> <span class="toc-text">代码管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#项目及视图"><span class="toc-number">5.</span> <span class="toc-text">项目及视图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建触发"><span class="toc-number">6.</span> <span class="toc-text">构建触发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建参数"><span class="toc-number">7.</span> <span class="toc-text">构建参数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建任务及环境"><span class="toc-number">8.</span> <span class="toc-text">构建任务及环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建通知"><span class="toc-number">9.</span> <span class="toc-text">构建通知</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#容器化-Slave"><span class="toc-number">10.</span> <span class="toc-text">容器化 Slave</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Admin-相关插件"><span class="toc-number">11.</span> <span class="toc-text">Admin 相关插件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#个人推荐的通用插件"><span class="toc-number">12.</span> <span class="toc-text">个人推荐的通用插件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">13.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>185</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>18</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

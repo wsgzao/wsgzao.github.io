@@ -1,0 +1,627 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>PyCharm 使用 autopep8 按 PEP8 风格自动排版 Python 代码 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="PyCharm使用Autopep8按PEP8风格自动排版Python代码">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PyCharm 使用 autopep8 按 PEP8 风格自动排版 Python 代码">
+<meta property="og:url" content="https://wsgzao.github.io/post/autopep8/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="PyCharm使用Autopep8按PEP8风格自动排版Python代码">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-12-27T08:47:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PyCharm 使用 autopep8 按 PEP8 风格自动排版 Python 代码">
+<meta name="twitter:description" content="PyCharm使用Autopep8按PEP8风格自动排版Python代码">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/autopep8/" title="PyCharm 使用 autopep8 按 PEP8 风格自动排版 Python 代码" itemprop="url">PyCharm 使用 autopep8 按 PEP8 风格自动排版 Python 代码</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2018-12-27T08:40:53.000Z" itemprop="datePublished"> 发表于 2018-12-27</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#autopep8-简介"><span class="toc-number">3.</span> <span class="toc-text">autopep8 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装和使用-autopep8"><span class="toc-number">4.</span> <span class="toc-text">安装和使用 autopep8</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#autopep8-可以修复的问题"><span class="toc-number">5.</span> <span class="toc-text">autopep8 可以修复的问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pycharm-安装-autopep8"><span class="toc-number">6.</span> <span class="toc-text">Pycharm 安装 autopep8</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Python-之禅"><span class="toc-number">7.</span> <span class="toc-text">Python 之禅</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>autopep8 是一个将 Python 代码自动排版为 PEP8 风格的小工具。它使用 pep8 工具来决定代码中的哪部分需要被排版。autopep8 可以修复大部分 pep8 工具中报告的排版问题。</p>
+<blockquote>
+<p>PyCharm 使用 autopep8 按 PEP8 风格自动排版 Python 代码</p>
+</blockquote>
+<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2018 年 12 月 27 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/autopep8/">https://wsgzao.github.io/post/autopep8/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<p>autopep8 - <a href="https://pypi.python.org/pypi/autopep8/" target="_blank" rel="noopener">https://pypi.python.org/pypi/autopep8/</a></p>
+<h2 id="autopep8-简介"><a href="#autopep8-简介" class="headerlink" title="autopep8 简介"></a>autopep8 简介</h2><blockquote>
+<p>使用 autopep8 前我们有必要先了解下 PEP 8 – Style Guide for Python Code</p>
+</blockquote>
+<p>autopep8 automatically formats Python code to conform to the PEP 8 style guide. It uses the pycodestyle utility to determine what parts of the code needs to be formatted. autopep8 is capable of fixing most of the formatting issues that can be reported by pycodestyle.</p>
+<p><a href="https://www.python.org/dev/peps/pep-0008/" target="_blank" rel="noopener">https://www.python.org/dev/peps/pep-0008/</a></p>
+<p><a href="https://pypi.python.org/pypi/autopep8/" target="_blank" rel="noopener">https://pypi.python.org/pypi/autopep8/</a></p>
+<h2 id="安装和使用-autopep8"><a href="#安装和使用-autopep8" class="headerlink" title="安装和使用 autopep8"></a>安装和使用 autopep8</h2><p>autopep8 是一个开源的命令行工具，它能够将 Python 代码自动格式化为 PEP8 风格。autopep8 使用 pycodestyle 工具来决定代码中的哪部分需要被格式化，这能够修复大部分 pycodestyle 工具中报告的排版问题。autopep8 本身也是一个 Python 语言编写的工具，因此，我们可以直接使用 pip 进行安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">pip install autopep8</span><br><span class="line">autopep8 --<span class="keyword">in</span>-place optparse.py </span><br><span class="line"></span><br><span class="line"><span class="comment"># To modify a file in place (with aggressive level 2):</span></span><br><span class="line">autopep8 --<span class="keyword">in</span>-place --aggressive --aggressive &lt;filename&gt;</span><br><span class="line"></span><br><span class="line">usage: autopep8 [-h] [--version] [-v] [-d] [-i] [--global-config filename]</span><br><span class="line">                [--ignore-local-config] [-r] [-j n] [-p n] [-a]</span><br><span class="line">                [--experimental] [--exclude globs] [--list-fixes]</span><br><span class="line">                [--ignore errors] [--select errors] [--max-line-length n]</span><br><span class="line">                [--line-range line line] [--hang-closing] [--<span class="built_in">exit</span>-code]</span><br><span class="line">                [files [files ...]]</span><br><span class="line"></span><br><span class="line">Automatically formats Python code to conform to the PEP 8 style guide.</span><br><span class="line"></span><br><span class="line">positional arguments:</span><br><span class="line">  files                 files to format or <span class="string">'-'</span> <span class="keyword">for</span> standard <span class="keyword">in</span></span><br><span class="line"></span><br><span class="line">optional arguments:</span><br><span class="line">  -h, --<span class="built_in">help</span>            show this <span class="built_in">help</span> message and <span class="built_in">exit</span></span><br><span class="line">  --version             show program<span class="string">'s version number and exit</span></span><br><span class="line"><span class="string">  -v, --verbose         print verbose messages; multiple -v result in more</span></span><br><span class="line"><span class="string">                        verbose messages</span></span><br><span class="line"><span class="string">  -d, --diff            print the diff for the fixed source</span></span><br><span class="line"><span class="string">  -i, --in-place        make changes to files in place</span></span><br><span class="line"><span class="string">  --global-config filename</span></span><br><span class="line"><span class="string">                        path to a global pep8 config file; if this file does</span></span><br><span class="line"><span class="string">                        not exist then this is ignored (default:</span></span><br><span class="line"><span class="string">                        ~/.config/pep8)</span></span><br><span class="line"><span class="string">  --ignore-local-config</span></span><br><span class="line"><span class="string">                        don'</span>t look <span class="keyword">for</span> and apply <span class="built_in">local</span> config files; <span class="keyword">if</span> not</span><br><span class="line">                        passed, defaults are updated with any config files <span class="keyword">in</span></span><br><span class="line">                        the project<span class="string">'s root directory</span></span><br><span class="line"><span class="string">  -r, --recursive       run recursively over directories; must be used with</span></span><br><span class="line"><span class="string">                        --in-place or --diff</span></span><br><span class="line"><span class="string">  -j n, --jobs n        number of parallel jobs; match CPU count if value is</span></span><br><span class="line"><span class="string">                        less than 1</span></span><br><span class="line"><span class="string">  -p n, --pep8-passes n</span></span><br><span class="line"><span class="string">                        maximum number of additional pep8 passes (default:</span></span><br><span class="line"><span class="string">                        infinite)</span></span><br><span class="line"><span class="string">  -a, --aggressive      enable non-whitespace changes; multiple -a result in</span></span><br><span class="line"><span class="string">                        more aggressive changes</span></span><br><span class="line"><span class="string">  --experimental        enable experimental fixes</span></span><br><span class="line"><span class="string">  --exclude globs       exclude file/directory names that match these comma-</span></span><br><span class="line"><span class="string">                        separated globs</span></span><br><span class="line"><span class="string">  --list-fixes          list codes for fixes; used by --ignore and --select</span></span><br><span class="line"><span class="string">  --ignore errors       do not fix these errors/warnings (default:</span></span><br><span class="line"><span class="string">                        E226,E24,W50,W690)</span></span><br><span class="line"><span class="string">  --select errors       fix only these errors/warnings (e.g. E4,W)</span></span><br><span class="line"><span class="string">  --max-line-length n   set maximum allowed line length (default: 79)</span></span><br><span class="line"><span class="string">  --line-range line line, --range line line</span></span><br><span class="line"><span class="string">                        only fix errors found within this inclusive range of</span></span><br><span class="line"><span class="string">                        line numbers (e.g. 1 99); line numbers are indexed at</span></span><br><span class="line"><span class="string">                        1</span></span><br><span class="line"><span class="string">  --hang-closing        hang-closing option passed to pycodestyle</span></span><br><span class="line"><span class="string">  --exit-code           change to behavior of exit code. default behavior of</span></span><br><span class="line"><span class="string">                        return value, 0 is no differences, 1 is error exit.</span></span><br><span class="line"><span class="string">                        return 2 when add this option. 2 is exists</span></span><br><span class="line"><span class="string">                        differences.</span></span><br></pre></td></tr></table></figure>
+<p>–in-place 类似于 sed 命令的 - i 选项，如果不包含 –in-place 选项，则会将 autopep8 格式化以后的代码直接输出到控制台。我们可以使用这种方式检查 autopep8 的修改，使用 –in-place 则会直接将结果保存到源文件中。</p>
+<p>我们来看一个完整的例子，本例中使用的代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os, sys  </span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span>  </span><br><span class="line">    <span class="keyword">print</span> [item <span class="keyword">for</span> item <span class="keyword">in</span> os.listdir(<span class="string">'.'</span>) <span class="keyword">if</span> item.endswith(<span class="string">'.py'</span>)];  </span><br><span class="line">    <span class="keyword">print</span> sys.version  </span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:  </span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<p>这段代码存在三个问题：</p>
+<ol>
+<li>导入的时候，应该每一行只导入一个包；</li>
+<li>包导入和函数定义之间应该空两行；</li>
+<li>Python 代码末尾不需要分号。</li>
+</ol>
+<p>接下来，我们将使用 pycodestyple 检查这段代码，然后使用 autopep8 将代码格式化成符合 PEP 8 风格的代码。</p>
+<p>使用 pycodestyle 检查代码可检测到代码中有三个地方不符合 PEP 8 规范，如下所示：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">pycodestyle hello.py  </span><br><span class="line">hello.py:1:10: E401 multiple imports on one line  </span><br><span class="line">hello.py:3:1: E302 expected 2 blank lines, found 1  </span><br><span class="line">hello.py:4:69: E703 statement ends with a semicolon</span><br></pre></td></tr></table></figure>
+<p>使用 autopep8 格式能够转换 Python 代码。在这个例子中，autopep8 顺利地帮我们修复了所有问题，如下所示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ autopep8 hello.py  </span><br><span class="line"><span class="keyword">import</span> os  </span><br><span class="line"><span class="keyword">import</span> sys  </span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span>  </span><br><span class="line">    <span class="keyword">print</span> [item <span class="keyword">for</span> item <span class="keyword">in</span> os.listdir(<span class="string">'.'</span>) <span class="keyword">if</span> item.endswith(<span class="string">'.py'</span>)]  </span><br><span class="line">    <span class="keyword">print</span> sys.version  </span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:  </span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<p>这个时候如果查看源文件的话，会发现还是和原来一样，并没有修正为符合 PEP 8 规范的代码。前面说过，不指定 –in-place 选项，只会将结果输出到命令行。如果我们使用 –in-place 选项，将不会有任何输出，autopep8 会直接修改源文件。</p>
+<pre><code>$ autopep8 --in-place hello.py 
+</code></pre><p>autopep8 还存在 –aggressive 选项，使用该选项会执行更多实质性的更改，可以多次使用以达到更佳的效果。</p>
+<p>以官网为例我们编写一个 test_autopep8.py</p>
+<blockquote>
+<p>Before running autopep8.</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> math, sys;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">example1</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="comment">####This is a long comment. This should be wrapped to fit within 72 characters.</span></span><br><span class="line">    some_tuple=(   <span class="number">1</span>,<span class="number">2</span>, <span class="number">3</span>,<span class="string">'a'</span>  );</span><br><span class="line">    some_variable=&#123;<span class="string">'long'</span>:<span class="string">'Long code lines should be wrapped within 79 characters.'</span>,</span><br><span class="line">    <span class="string">'other'</span>:[math.pi, <span class="number">100</span>,<span class="number">200</span>,<span class="number">300</span>,<span class="number">9876543210</span>,<span class="string">'This is a long string that goes on'</span>],</span><br><span class="line">    <span class="string">'more'</span>:&#123;<span class="string">'inner'</span>:<span class="string">'This whole logical line should be wrapped.'</span>,some_tuple:[<span class="number">1</span>,</span><br><span class="line">    <span class="number">20</span>,<span class="number">300</span>,<span class="number">40000</span>,<span class="number">500000000</span>,<span class="number">60000000000000000</span>]&#125;&#125;</span><br><span class="line">    <span class="keyword">return</span> (some_tuple, some_variable)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">example2</span><span class="params">()</span>:</span> <span class="keyword">return</span> &#123;<span class="string">'has_key() is deprecated'</span>:<span class="literal">True</span>&#125;.has_key(&#123;<span class="string">'f'</span>:<span class="number">2</span>&#125;.has_key(<span class="string">''</span>));</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example3</span><span class="params">(   object )</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>    <span class="params">( self, bar )</span>:</span></span><br><span class="line">     <span class="comment">#Comments should have a space after the hash.</span></span><br><span class="line">     <span class="keyword">if</span> bar : bar+=<span class="number">1</span>;  bar=bar* bar   ; <span class="keyword">return</span> bar</span><br><span class="line">     <span class="keyword">else</span>:</span><br><span class="line">                    some_string = <span class="string">"""</span></span><br><span class="line"><span class="string">                       Indentation in multiline strings should not be touched.</span></span><br><span class="line"><span class="string">Only actual code should be reindented.</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line">                    <span class="keyword">return</span> (sys.path, some_string)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>After running autopep8.</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> math</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">example1</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="comment"># This is a long comment. This should be wrapped to fit within 72</span></span><br><span class="line">    <span class="comment"># characters.</span></span><br><span class="line">    some_tuple = (<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="string">'a'</span>)</span><br><span class="line">    some_variable = &#123;</span><br><span class="line">        <span class="string">'long'</span>: <span class="string">'Long code lines should be wrapped within 79 characters.'</span>,</span><br><span class="line">        <span class="string">'other'</span>: [</span><br><span class="line">            math.pi,</span><br><span class="line">            <span class="number">100</span>,</span><br><span class="line">            <span class="number">200</span>,</span><br><span class="line">            <span class="number">300</span>,</span><br><span class="line">            <span class="number">9876543210</span>,</span><br><span class="line">            <span class="string">'This is a long string that goes on'</span>],</span><br><span class="line">        <span class="string">'more'</span>: &#123;</span><br><span class="line">            <span class="string">'inner'</span>: <span class="string">'This whole logical line should be wrapped.'</span>,</span><br><span class="line">            some_tuple: [</span><br><span class="line">                <span class="number">1</span>,</span><br><span class="line">                <span class="number">20</span>,</span><br><span class="line">                <span class="number">300</span>,</span><br><span class="line">                <span class="number">40000</span>,</span><br><span class="line">                <span class="number">500000000</span>,</span><br><span class="line">                <span class="number">60000000000000000</span>]&#125;&#125;</span><br><span class="line">    <span class="keyword">return</span> (some_tuple, some_variable)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">example2</span><span class="params">()</span>:</span> <span class="keyword">return</span> (<span class="string">''</span> <span class="keyword">in</span> &#123;<span class="string">'f'</span>: <span class="number">2</span>&#125;) <span class="keyword">in</span> &#123;<span class="string">'has_key() is deprecated'</span>: <span class="literal">True</span>&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example3</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, bar)</span>:</span></span><br><span class="line">        <span class="comment"># Comments should have a space after the hash.</span></span><br><span class="line">        <span class="keyword">if</span> bar:</span><br><span class="line">            bar += <span class="number">1</span></span><br><span class="line">            bar = bar * bar</span><br><span class="line">            <span class="keyword">return</span> bar</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            some_string = <span class="string">"""</span></span><br><span class="line"><span class="string">                       Indentation in multiline strings should not be touched.</span></span><br><span class="line"><span class="string">Only actual code should be reindented.</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line">            <span class="keyword">return</span> (sys.path, some_string)</span><br></pre></td></tr></table></figure>
+<h2 id="autopep8-可以修复的问题"><a href="#autopep8-可以修复的问题" class="headerlink" title="autopep8 可以修复的问题"></a>autopep8 可以修复的问题</h2><blockquote>
+<p>autopep8 fixes the following issues reported by pycodestyle:</p>
+</blockquote>
+<p><a href="https://github.com/PyCQA/pycodestyle" target="_blank" rel="noopener">https://github.com/PyCQA/pycodestyle</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">E101 - Reindent all lines.</span><br><span class="line">E11  - Fix indentation.</span><br><span class="line">E121 - Fix indentation to be a multiple of four.</span><br><span class="line">E122 - Add absent indentation <span class="keyword">for</span> hanging indentation.</span><br><span class="line">E123 - Align closing bracket to match opening bracket.</span><br><span class="line">E124 - Align closing bracket to match visual indentation.</span><br><span class="line">E125 - Indent to distinguish line from next logical line.</span><br><span class="line">E126 - Fix over-indented hanging indentation.</span><br><span class="line">E127 - Fix visual indentation.</span><br><span class="line">E128 - Fix visual indentation.</span><br><span class="line">E129 - Fix visual indentation.</span><br><span class="line">E131 - Fix hanging indent <span class="keyword">for</span> unaligned continuation line.</span><br><span class="line">E133 - Fix missing indentation <span class="keyword">for</span> closing bracket.</span><br><span class="line">E20  - Remove extraneous whitespace.</span><br><span class="line">E211 - Remove extraneous whitespace.</span><br><span class="line">E22  - Fix extraneous whitespace around keywords.</span><br><span class="line">E224 - Remove extraneous whitespace around operator.</span><br><span class="line">E225 - Fix missing whitespace around operator.</span><br><span class="line">E226 - Fix missing whitespace around arithmetic operator.</span><br><span class="line">E227 - Fix missing whitespace around bitwise/<span class="built_in">shift</span> operator.</span><br><span class="line">E228 - Fix missing whitespace around modulo operator.</span><br><span class="line">E231 - Add missing whitespace.</span><br><span class="line">E241 - Fix extraneous whitespace around keywords.</span><br><span class="line">E242 - Remove extraneous whitespace around operator.</span><br><span class="line">E251 - Remove whitespace around parameter <span class="string">'='</span> sign.</span><br><span class="line">E252 - Missing whitespace around parameter equals.</span><br><span class="line">E26  - Fix spacing after comment <span class="built_in">hash</span> <span class="keyword">for</span> inline comments.</span><br><span class="line">E265 - Fix spacing after comment <span class="built_in">hash</span> <span class="keyword">for</span> block comments.</span><br><span class="line">E266 - Fix too many leading <span class="string">'#'</span> <span class="keyword">for</span> block comments.</span><br><span class="line">E27  - Fix extraneous whitespace around keywords.</span><br><span class="line">E301 - Add missing blank line.</span><br><span class="line">E302 - Add missing 2 blank lines.</span><br><span class="line">E303 - Remove extra blank lines.</span><br><span class="line">E304 - Remove blank line following <span class="keyword">function</span> decorator.</span><br><span class="line">E305 - Expected 2 blank lines after end of <span class="keyword">function</span> or class.</span><br><span class="line">E306 - Expected 1 blank line before a nested definition.</span><br><span class="line">E401 - Put imports on separate lines.</span><br><span class="line">E402 - Fix module level import not at top of file</span><br><span class="line">E501 - Try to make lines fit within --max-line-length characters.</span><br><span class="line">E502 - Remove extraneous escape of newline.</span><br><span class="line">E701 - Put colon-separated compound statement on separate lines.</span><br><span class="line">E70  - Put semicolon-separated compound statement on separate lines.</span><br><span class="line">E711 - Fix comparison with None.</span><br><span class="line">E712 - Fix comparison with boolean.</span><br><span class="line">E713 - Use <span class="string">'not in'</span> <span class="keyword">for</span> <span class="built_in">test</span> <span class="keyword">for</span> membership.</span><br><span class="line">E714 - Use <span class="string">'is not'</span> <span class="built_in">test</span> <span class="keyword">for</span> object identity.</span><br><span class="line">E721 - Use <span class="string">"isinstance()"</span> instead of comparing types directly.</span><br><span class="line">E722 - Fix bare except.</span><br><span class="line">E731 - Use a def when use <span class="keyword">do</span> not assign a lambda expression.</span><br><span class="line">W291 - Remove trailing whitespace.</span><br><span class="line">W292 - Add a single newline at the end of the file.</span><br><span class="line">W293 - Remove trailing whitespace on blank line.</span><br><span class="line">W391 - Remove trailing blank lines.</span><br><span class="line">W503 - Fix line <span class="built_in">break</span> before binary operator.</span><br><span class="line">W504 - Fix line <span class="built_in">break</span> after binary operator.</span><br><span class="line">W601 - Use <span class="string">"in"</span> rather than <span class="string">"has_key()"</span>.</span><br><span class="line">W602 - Fix deprecated form of raising exception.</span><br><span class="line">W603 - Use <span class="string">"!="</span> instead of <span class="string">"&lt;&gt;"</span></span><br><span class="line">W604 - Use <span class="string">"repr()"</span> instead of backticks.</span><br><span class="line">W605 - Fix invalid escape sequence <span class="string">'x'</span>.</span><br><span class="line">W690 - Fix various deprecated code (via lib2to3).</span><br></pre></td></tr></table></figure>
+<h2 id="Pycharm-安装-autopep8"><a href="#Pycharm-安装-autopep8" class="headerlink" title="Pycharm 安装 autopep8"></a>Pycharm 安装 autopep8</h2><p>pip 安装 autopep8: pip install autopep8</p>
+<p>PyCharm -&gt; Preferences -&gt; Tools -&gt; Extends Tools -&gt; 点击 + 加号</p>
+<p>Name: autopep8<br>Tools settings:</p>
+<ul>
+<li>Programs: <code>autopep8</code></li>
+<li>Parameters: <code>--in-place --aggressive --aggressive $FilePath$</code></li>
+<li>Working directory: <code>$ProjectFileDir$</code></li>
+<li>Advanced Options -&gt; Output Filters: <code>$FILE_PATH$\:$LINE$\:$COLUMN$\:.*</code></li>
+</ul>
+<h2 id="Python-之禅"><a href="#Python-之禅" class="headerlink" title="Python 之禅"></a>Python 之禅</h2><blockquote>
+<p>最后以 Python 之禅作为结束语</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"> wangao@wangao-MAC  ~  python3</span><br><span class="line">Python <span class="number">3.7</span><span class="number">.1</span> (default, Nov  <span class="number">6</span> <span class="number">2018</span>, <span class="number">18</span>:<span class="number">46</span>:<span class="number">03</span>)</span><br><span class="line">[Clang <span class="number">10.0</span><span class="number">.0</span> (clang<span class="number">-1000.11</span><span class="number">.45</span><span class="number">.5</span>)] on darwin</span><br><span class="line">Type <span class="string">"help"</span>, <span class="string">"copyright"</span>, <span class="string">"credits"</span> <span class="keyword">or</span> <span class="string">"license"</span> <span class="keyword">for</span> more information.</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> this</span><br><span class="line">The Zen of Python, by Tim Peters</span><br><span class="line"></span><br><span class="line">Beautiful <span class="keyword">is</span> better than ugly.</span><br><span class="line">Explicit <span class="keyword">is</span> better than implicit.</span><br><span class="line">Simple <span class="keyword">is</span> better than complex.</span><br><span class="line">Complex <span class="keyword">is</span> better than complicated.</span><br><span class="line">Flat <span class="keyword">is</span> better than nested.</span><br><span class="line">Sparse <span class="keyword">is</span> better than dense.</span><br><span class="line">Readability counts.</span><br><span class="line">Special cases aren<span class="string">'t special enough to break the rules.</span></span><br><span class="line"><span class="string">Although practicality beats purity.</span></span><br><span class="line"><span class="string">Errors should never pass silently.</span></span><br><span class="line"><span class="string">Unless explicitly silenced.</span></span><br><span class="line"><span class="string">In the face of ambiguity, refuse the temptation to guess.</span></span><br><span class="line"><span class="string">There should be one-- and preferably only one --obvious way to do it.</span></span><br><span class="line"><span class="string">Although that way may not be obvious at first unless you'</span>re Dutch.</span><br><span class="line">Now <span class="keyword">is</span> better than never.</span><br><span class="line">Although never <span class="keyword">is</span> often better than *right* now.</span><br><span class="line">If the implementation <span class="keyword">is</span> hard to explain, it<span class="string">'s a bad idea.</span></span><br><span class="line"><span class="string">If the implementation is easy to explain, it may be a good idea.</span></span><br><span class="line"><span class="string">Namespaces are one honking great idea -- let'</span>s do more of those!</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>翻译</p>
+</blockquote>
+<p>美 优于 丑</p>
+<p>明确 优于 隐晦 （1）</p>
+<p>简单 优于 复杂</p>
+<p>复杂 也好过 繁复 （2）</p>
+<p>扁平 优于 嵌套</p>
+<p>稀疏 优于 拥挤</p>
+<p>可读性很重要（3）</p>
+<p>固然代码实用与否 比洁癖更重要，</p>
+<p>我们以为的特例也往往没有特殊到必须打破上述规则的程度</p>
+<p>除非刻意地静默，</p>
+<p>否则不要无故忽视异常（4）</p>
+<p>如果遇到模棱两可的逻辑，请不要自作聪明地瞎猜。</p>
+<p>应该提供一种，且最好只提供一种，一目了然的解决方案</p>
+<p>当然这是没法一蹴而就的，除非你是荷兰人（5）</p>
+<p>固然，立刻着手 好过 永远不做。</p>
+<p>然而，永远不做 也好过 不审慎思考一撸袖子就莽着干</p>
+<p>如果你的实现很难解释，它就一定不是个好主意</p>
+<p>即使你的实现简单到爆，它也有可能是个好办法</p>
+<p>命名空间大法好，不搞不是地球人！</p>
+<blockquote>
+<p>注释</p>
+</blockquote>
+<ol>
+<li>该引入的包一个一个列出来不要合并；不要用星号；不要在方法里藏意想不到的的副作用，等等等等。还一个例子，另外一种著名的软件设计原则 Convention over Configuration（约定优于配置）如果做得不谨慎就会违背这条</li>
+<li>SO: 必要的复杂逻辑是难免的，而繁复啰嗦的代码是不可接受的</li>
+<li>Readability counts 不能翻译成可读性计数啊喂</li>
+<li>实操中很多人不注意 catch 完就 log 一下 就不管了，这样不好。软件界一般都讲 Let it fail，学名为 Fail-fast 法则。简而言之就是整个项目周期中越早暴露的问题，其修复成本越低</li>
+<li>本文作者 Tim peters 解释说这里的荷兰人指的是 Python 的作者 Guido van Rossum</li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/autopep8/" data-title="PyCharm 使用 autopep8 按 PEP8 风格自动排版 Python 代码 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/exhibitor/" title="使用 Exhibitor 监控管理 ZooKeeper">
+  <strong>上一篇：</strong><br/>
+  <span>
+  使用 Exhibitor 监控管理 ZooKeeper</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/macos-mysql/"  title="macOS Mojave 降级安装 MySQL 5.7">
+ <strong>下一篇：</strong><br/> 
+ <span>macOS Mojave 降级安装 MySQL 5.7
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#autopep8-简介"><span class="toc-number">3.</span> <span class="toc-text">autopep8 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装和使用-autopep8"><span class="toc-number">4.</span> <span class="toc-text">安装和使用 autopep8</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#autopep8-可以修复的问题"><span class="toc-number">5.</span> <span class="toc-text">autopep8 可以修复的问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pycharm-安装-autopep8"><span class="toc-number">6.</span> <span class="toc-text">Pycharm 安装 autopep8</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Python-之禅"><span class="toc-number">7.</span> <span class="toc-text">Python 之禅</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>185</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>18</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

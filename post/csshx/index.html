@@ -1,0 +1,555 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>使用 csshX 同步管理多个 SSH 会话 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="使用csshX同步管理多个SSH会话">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 csshX 同步管理多个 SSH 会话">
+<meta property="og:url" content="https://wsgzao.github.io/post/csshx/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="使用csshX同步管理多个SSH会话">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-10-21T07:21:20.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用 csshX 同步管理多个 SSH 会话">
+<meta name="twitter:description" content="使用csshX同步管理多个SSH会话">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/csshx/" title="使用 csshX 同步管理多个 SSH 会话" itemprop="url">使用 csshX 同步管理多个 SSH 会话</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2020-10-20T06:59:49.000Z" itemprop="datePublished"> 发表于 2020-10-20</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#csshx-简介"><span class="toc-number">3.</span> <span class="toc-text">csshx 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-brew-安装-csshx"><span class="toc-number">4.</span> <span class="toc-text">使用 brew 安装 csshx</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#csshx-使用"><span class="toc-number">5.</span> <span class="toc-text">csshx 使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他问题"><span class="toc-number">6.</span> <span class="toc-text">其他问题</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>终端登录管理方案非常成熟除了耳熟能详的跨平台付费方案 SeureCRT，Windows 有 Xshell，macOS 有 iTerm2，不过在 macOS 下想用到类似 SecureCRT 和 Xshell 一样的 Send to all 功能可能就没有这么方便了，而 csshX 正好可以满足批量管理操作的需求</p>
+<blockquote>
+<p>使用 csshX 同步管理多个 SSH 会话</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2020 年 10 月 20 日 - 更新 csshx 在 macOS Catalina 的使用<br>2018 年 11 月 26 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/csshx/">https://wsgzao.github.io/post/csshx/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<p>csshx - <a href="https://github.com/brockgr/csshx" target="_blank" rel="noopener">https://github.com/brockgr/csshx</a></p>
+<hr>
+<h2 id="csshx-简介"><a href="#csshx-简介" class="headerlink" title="csshx 简介"></a>csshx 简介</h2><p>As csshX is a command line tool, no special installation is needed. It maybe copied into a directory in your path, (e.g. /usr/local/bin) for your convenience.</p>
+<p>The software has been tested on Mac OS X 10.5, 10.6 and 10.7 with the default Perl installation - no additional Perl modules are required.</p>
+<p>DOCUMENTATION:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">The documentation for csshX is self contained. Please run:</span><br><span class="line"></span><br><span class="line">	csshX --man</span><br><span class="line"></span><br><span class="line">NAME</span><br><span class="line">       csshX - Cluster SSH tool using Mac OS X Terminal.app</span><br><span class="line"></span><br><span class="line">SYNOPSIS</span><br><span class="line">       csshX [--login username] [--config filename] [ [user@]host1[:port]</span><br><span class="line">       [[user@]host2[:port]] .. ]</span><br><span class="line"></span><br><span class="line">       csshX [-h | -m | -v ]</span><br><span class="line"></span><br><span class="line">DESCRIPTION</span><br><span class="line">       csshX is a tool to allow simultaneous control of multiple ssh sessions.</span><br><span class="line">       host1, host2, etc. are either remote hostnames or remote cluster names.</span><br><span class="line">       csshX will attempt to create an ssh session to each remote host in</span><br><span class="line">       separate Terminal.app windows. A master window will also be created.</span><br><span class="line">       All keyboard input in the master will be sent to all the slave windows.</span><br><span class="line"></span><br><span class="line">       To specify the username for each host, the hostname can be prepended by</span><br><span class="line">       user@. Similarly, appending :port will set the port to ssh to.</span><br><span class="line"></span><br><span class="line">       You can also use hostname ranges, to specify many hosts.</span><br><span class="line"></span><br><span class="line">OPTIONS</span><br><span class="line">       -l username, --login username</span><br><span class="line">           Remote user to authenticate as for all hosts. This is overridden by</span><br><span class="line">           user@.</span><br><span class="line"></span><br><span class="line">       -c configfile, --config configfile</span><br><span class="line">           Alternative config file to use</span><br><span class="line"></span><br><span class="line">       -h, --help</span><br><span class="line">           Quick summary of program usage</span><br><span class="line"></span><br><span class="line">       -m, --man</span><br><span class="line">           Full program man page</span><br></pre></td></tr></table></figure>
+<h2 id="使用-brew-安装-csshx"><a href="#使用-brew-安装-csshx" class="headerlink" title="使用 brew 安装 csshx"></a>使用 brew 安装 csshx</h2><p>Name: csshx<br>Use: Cluster ssh tool for Terminal.app<br>URL: <a href="https://github.com/brockgr/csshx" target="_blank" rel="noopener">https://github.com/brockgr/csshx</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 homebrew</span></span><br><span class="line">ruby -e <span class="string">"<span class="variable">$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)</span>"</span> &lt; /dev/null 2&gt; /dev/null</span><br><span class="line"><span class="comment"># 安装 csshx</span></span><br><span class="line">brew install csshx</span><br></pre></td></tr></table></figure>
+<h2 id="csshx-使用"><a href="#csshx-使用" class="headerlink" title="csshx 使用"></a>csshx 使用</h2><p>当我们管理数十台或更多 Linux 服务器的时候，往往需要在每台服务器上执行同样的命令，比如我们想一次查看 10 台服务器（node）上系统负载情况，或者想知道哪台服务器有剩余内存可以分给新客户，又或者想执行 df 命令看看哪个服务器上还有多的硬盘空间等等，除了可以用脚本或工具统一收集这些信息外，我们还可以考虑使用一些同步管理多个 SSH 会话的小工具来帮助管理多台服务器，节省时间提高管理效率。在 Linux 上可以用 pdsh、ClusterSSH 和 mussh；在 Mac 上可以用 csshX.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用 csshX 很简单，如果要同时 ssh 到 4 个服务器可以直接传递 IP</span></span><br><span class="line">csshX 192.168.0.1 192.168.0.2 192.168.0.3 192.168.0.4</span><br><span class="line"></span><br><span class="line"><span class="comment"># 也可以把这些要 ssh 管理的 IP 写到一个文件里，然后加载这个文件，[user@]host1[:port]</span></span><br><span class="line">vi hosts</span><br><span class="line">192.168.0.1</span><br><span class="line">192.168.0.2</span><br><span class="line">192.168.0.3</span><br><span class="line">192.168.0.4</span><br><span class="line"></span><br><span class="line">csshX --hosts hosts</span><br></pre></td></tr></table></figure>
+<h2 id="其他问题"><a href="#其他问题" class="headerlink" title="其他问题"></a>其他问题</h2><p>csshx is not working in New Mac OS Release MacOS Mojave</p>
+<p><a href="https://github.com/brockgr/csshx/issues/94" target="_blank" rel="noopener">https://github.com/brockgr/csshx/issues/94</a></p>
+<pre><code>brew install parera10/csshx/csshx
+</code></pre>  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/csshx/" data-title="使用 csshX 同步管理多个 SSH 会话 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/laravel/" title="CentOS7 基于 LNMP 安装配置 Laravel">
+  <strong>上一篇：</strong><br/>
+  <span>
+  CentOS7 基于 LNMP 安装配置 Laravel</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/terraform-tencentcloud/"  title="Terraform tencentcloud 部署实践">
+ <strong>下一篇：</strong><br/> 
+ <span>Terraform tencentcloud 部署实践
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#csshx-简介"><span class="toc-number">3.</span> <span class="toc-text">csshx 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-brew-安装-csshx"><span class="toc-number">4.</span> <span class="toc-text">使用 brew 安装 csshx</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#csshx-使用"><span class="toc-number">5.</span> <span class="toc-text">csshx 使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他问题"><span class="toc-number">6.</span> <span class="toc-text">其他问题</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>185</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>18</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

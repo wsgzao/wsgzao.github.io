@@ -1,0 +1,653 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>使用 GitHub 和 Hexo 搭建免费静态 Blog | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="持续更新Hexo的摸索过程，记录生活的点滴">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 GitHub 和 Hexo 搭建免费静态 Blog">
+<meta property="og:url" content="https://wsgzao.github.io/post/hexo/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="持续更新Hexo的摸索过程，记录生活的点滴">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://i.v2ex.co/5bb7J7NT.png">
+<meta property="og:updated_time" content="2021-10-17T16:14:20.985Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用 GitHub 和 Hexo 搭建免费静态 Blog">
+<meta name="twitter:description" content="持续更新Hexo的摸索过程，记录生活的点滴">
+<meta name="twitter:image" content="http://i.v2ex.co/5bb7J7NT.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/hexo/" title="使用 GitHub 和 Hexo 搭建免费静态 Blog" itemprop="url">使用 GitHub 和 Hexo 搭建免费静态 Blog</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2021-10-17T09:40:07.000Z" itemprop="datePublished"> 发表于 2021-10-17</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#准备工作"><span class="toc-number">3.</span> <span class="toc-text">准备工作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#了解-Hexo"><span class="toc-number">3.1.</span> <span class="toc-text">了解 Hexo</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装-Git"><span class="toc-number">3.2.</span> <span class="toc-text">安装 Git</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装-Node-JS"><span class="toc-number">3.3.</span> <span class="toc-text">安装 Node.JS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装-Hexo"><span class="toc-number">3.4.</span> <span class="toc-text">安装 Hexo</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hexo-初始化配置"><span class="toc-number">4.</span> <span class="toc-text">Hexo 初始化配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Hexo-官方步骤"><span class="toc-number">4.1.</span> <span class="toc-text">Hexo 官方步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建-Hexo-文件夹"><span class="toc-number">4.2.</span> <span class="toc-text">创建 Hexo 文件夹</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装-Hexo-指定版本和插件"><span class="toc-number">4.3.</span> <span class="toc-text">安装 Hexo 指定版本和插件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#本地查看效果"><span class="toc-number">4.4.</span> <span class="toc-text">本地查看效果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hexo-简写命令"><span class="toc-number">4.5.</span> <span class="toc-text">Hexo 简写命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#部署静态网页到-GitHub"><span class="toc-number">5.</span> <span class="toc-text">部署静态网页到 GitHub</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#注册设置-GitHub"><span class="toc-number">5.1.</span> <span class="toc-text">注册设置 GitHub</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#同步内容至-GitHub"><span class="toc-number">5.2.</span> <span class="toc-text">同步内容至 GitHub</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#域名和-DNS"><span class="toc-number">6.</span> <span class="toc-text">域名和 DNS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#域名推荐"><span class="toc-number">6.1.</span> <span class="toc-text">域名推荐</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DNS-推荐"><span class="toc-number">6.2.</span> <span class="toc-text">DNS 推荐</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#设置-CNAME"><span class="toc-number">6.3.</span> <span class="toc-text">设置 CNAME</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hexo-配置修改"><span class="toc-number">7.</span> <span class="toc-text">Hexo 配置修改</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#知识储备"><span class="toc-number">7.1.</span> <span class="toc-text">知识储备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hexo-主题"><span class="toc-number">7.2.</span> <span class="toc-text">Hexo 主题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常见问题"><span class="toc-number">7.3.</span> <span class="toc-text">常见问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">8.</span> <span class="toc-text">参考文章</span></a></li></ol>
+		
+		</div>
+		 -->
+		<p><img src="http://i.v2ex.co/5bb7J7NT.png" alt></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>习惯自己写 Blog 的朋友一定不会陌生 Wordpress，或许也曾在新浪博客和 QQ 空间留过脚印，但静心认真思考一下，似乎我们又总是向往更加简单自由的写作方式。GitHub 给我们提供了一个无限的空间，我们需要珍惜使用，而 Hexo 的出现从某种意义上来说代替了 Jekyll，让我们可以更专注于写作本身。本文主要介绍自己的实践心得并不断完善内容，衍生知识和原理推荐大家认真阅读官网的手册，其它推荐参考内容链接在文中也会标注出来。</p>
+<blockquote>
+<p><a href="http://www.ruanyifeng.com/blog/2012/08/blogging_with_jekyll.html" target="_blank" rel="noopener">阮一峰 - 喜欢写 Blog 的人，会经历三个阶段</a></p>
+</blockquote>
+<p>第一阶段，刚接触 Blog，觉得很新鲜，试着选择一个免费空间来写。<br>第二阶段，发现免费空间限制太多，就自己购买域名和空间，搭建独立博客。<br>第三阶段，觉得独立博客的管理太麻烦，最好在保留控制权的前提下，让别人来管，自己只负责写文章。</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2021 年 10 月 17 日 - 更新 macOS Node.js 从 16/14 降级为 12 解决 hexo g 生成空文件问题<br>2020 年 09 月 06 日 - 更新 macOS 下部署 Hexo 5.0 步骤，重构文章内容<br>2015 年 11 月 18 日 - 推荐 iissnan 的主题，完善细节内容<br>2015 年 09 月 03 日 - 完善 Windows 10 安装 Hexo 中的细节<br>2015 年 03 月 22 日 - 更新 Windows 下 Hexo 3.0 安装和升级<br>2015 年 03 月 10 日 - 增加 Hexo 3.0 降级 2.8<br>2014 年 12 月 19 日 - 完善内容<br>2014 年 12 月 09 日 - 更新 Hexo 配置修改部分<br>2014 年 06 月 19 日 - 更新全部基础架构，待完善配置修改部分<br>2014 年 06 月 17 日 - 更新部分 Hexo 建站过程，待完善<br>2014 年 05 月 29 日 - 撰写初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/hexo/">https://wsgzao.github.io/post/hexo/</a></p>
+<hr>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><p><strong> 注意 </strong> 本文主要针对 <code>Windows</code> 平台和 <code>Hexo 5.x</code></p>
+<h3 id="了解-Hexo"><a href="#了解-Hexo" class="headerlink" title="了解 Hexo"></a>了解 Hexo</h3><blockquote>
+<p>A fast, simple &amp; powerful blog framework</p>
+</blockquote>
+<p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。<br><a href="http://hexo.io/" target="_blank" rel="noopener">hexo.io</a></p>
+<h3 id="安装-Git"><a href="#安装-Git" class="headerlink" title="安装 Git"></a>安装 Git</h3><p><a href="https://windows.github.com/" target="_blank" rel="noopener">GitHub Windows</a></p>
+<p>简单可依赖，安装完成后依据提示操作即可，So Easy</p>
+<h3 id="安装-Node-JS"><a href="#安装-Node-JS" class="headerlink" title="安装 Node.JS"></a>安装 Node.JS</h3><p><a href="http://nodejs.org/" target="_blank" rel="noopener">Node.JS</a></p>
+<p><strong> 注意 </strong> 安装完成后添加 Path 环境变量，使 <code>npm</code> 命令生效。新版已经会自动配置 Path</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">;C:\Program Files\nodejs\node_modules\npm</span><br><span class="line"></span><br><span class="line"><span class="comment"># macOS</span></span><br><span class="line">brew install node@12</span><br><span class="line">brew link --overwrite node@12</span><br></pre></td></tr></table></figure>
+<h3 id="安装-Hexo"><a href="#安装-Hexo" class="headerlink" title="安装 Hexo"></a>安装 Hexo</h3><p>配置好 <code>GitHub</code> 家目录后，双击桌面上的 <code>Git Shell</code>，输入 <code>npm</code> 命令即可安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">npm install hexo --save</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果命令无法运行，可以尝试更换 taobao 的 npm 源</span></span><br><span class="line">npm install -g cnpm --registry=https://registry.npm.taobao.org</span><br><span class="line"></span><br><span class="line"><span class="comment"># macOS 首次安装 hexo-cli 会出现权限报错</span></span><br><span class="line">npm install hexo-cli -g</span><br><span class="line"></span><br><span class="line">npm WARN checkPermissions Missing write access to /usr/<span class="built_in">local</span>/lib/node_modules</span><br><span class="line">npm ERR! code EACCES</span><br><span class="line">npm ERR! syscall access</span><br><span class="line">npm ERR! path /usr/<span class="built_in">local</span>/lib/node_modules</span><br><span class="line">npm ERR! errno -13</span><br><span class="line">npm ERR! Error: EACCES: permission denied, access <span class="string">'/usr/local/lib/node_modules'</span></span><br><span class="line">npm ERR!  [Error: EACCES: permission denied, access <span class="string">'/usr/local/lib/node_modules'</span>] &#123;</span><br><span class="line">npm ERR!   errno: -13,</span><br><span class="line">npm ERR!   code: <span class="string">'EACCES'</span>,</span><br><span class="line">npm ERR!   syscall: <span class="string">'access'</span>,</span><br><span class="line">npm ERR!   path: <span class="string">'/usr/local/lib/node_modules'</span></span><br><span class="line">npm ERR! &#125;</span><br><span class="line">npm ERR!</span><br><span class="line">npm ERR! The operation was rejected by your operating system.</span><br><span class="line">npm ERR! It is likely you <span class="keyword">do</span> not have the permissions to access this file as the current user</span><br><span class="line">npm ERR!</span><br><span class="line">npm ERR! If you believe this might be a permissions issue, please double-check the</span><br><span class="line">npm ERR! permissions of the file and its containing directories, or try running</span><br><span class="line">npm ERR! the <span class="built_in">command</span> again as root/Administrator.</span><br><span class="line"></span><br><span class="line">npm ERR! A complete <span class="built_in">log</span> of this run can be found <span class="keyword">in</span>:</span><br><span class="line">npm ERR!     /Users/wangao/.npm/_logs/2020-09-06T08_50_44_338Z-debug.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用以下命令修改权限解决</span></span><br><span class="line">sudo chown -R `whoami` ~/.npm</span><br><span class="line">sudo chown -R `whoami` /usr/<span class="built_in">local</span>/lib/node_modules</span><br><span class="line"></span><br><span class="line"><span class="comment"># Node.js 版本太高需要从 16 降级为 14，否则 hexo g 生成的是空白文件</span></span><br><span class="line">https://github.com/hexojs/hexo/issues/4257</span><br><span class="line">npm uninstall hexo-cli -g</span><br><span class="line">brew uninstall node</span><br><span class="line">brew search node</span><br><span class="line">brew install node@12</span><br><span class="line">brew link --overwrite node@12</span><br><span class="line"></span><br><span class="line">npm ls --depth 0</span><br><span class="line"></span><br><span class="line"><span class="comment"># Hexo 插件和主题要遵循版本</span></span><br><span class="line">https://www.npmjs.com/package/hexo</span><br><span class="line">npm install hexo@3.9.0 --save</span><br></pre></td></tr></table></figure>
+<h2 id="Hexo-初始化配置"><a href="#Hexo-初始化配置" class="headerlink" title="Hexo 初始化配置"></a>Hexo 初始化配置</h2><h3 id="Hexo-官方步骤"><a href="#Hexo-官方步骤" class="headerlink" title="Hexo 官方步骤"></a>Hexo 官方步骤</h3><blockquote>
+<p>简单几步就可以在本地执行，还有一些插件需要和第三方主题搭配使用</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">hexo init blog</span><br><span class="line"><span class="built_in">cd</span> blog</span><br><span class="line">npm install</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
+<h3 id="创建-Hexo-文件夹"><a href="#创建-Hexo-文件夹" class="headerlink" title="创建 Hexo 文件夹"></a>创建 Hexo 文件夹</h3><p>安装完成后，根据自己喜好建立目录（如 <code>E:\kuaipan\GitHub\hexo</code>），进入 <code>Git Shell</code> 切换到该路径下 <code>E:\kuaipan\GitHub\hexo</code> 执行以下指令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">hexo init</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 Hexo 完成后，请执行下列命令，Hexo 将会在指定文件夹中新建所需要的文件。</span></span><br><span class="line">$ hexo init &lt;folder&gt;</span><br><span class="line">$ <span class="built_in">cd</span> &lt;folder&gt;</span><br><span class="line">$ npm install</span><br><span class="line"></span><br><span class="line"><span class="comment"># 新建完成后，指定文件夹的目录如下</span></span><br><span class="line">.</span><br><span class="line">├── _config.yml</span><br><span class="line">├── package.json</span><br><span class="line">├── scaffolds</span><br><span class="line">├── scripts</span><br><span class="line">├── <span class="built_in">source</span></span><br><span class="line">|      ├── _drafts</span><br><span class="line">|      └── _posts</span><br><span class="line">└── themes</span><br></pre></td></tr></table></figure>
+<h3 id="安装-Hexo-指定版本和插件"><a href="#安装-Hexo-指定版本和插件" class="headerlink" title="安装 Hexo 指定版本和插件"></a>安装 Hexo 指定版本和插件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># 版本</span></span><br><span class="line">npm install hexo@3.9.0 --save</span><br><span class="line"></span><br><span class="line"><span class="comment"># 插件</span></span><br><span class="line">npm install hexo-generator-index --save</span><br><span class="line">npm install hexo-generator-archive --save</span><br><span class="line">npm install hexo-generator-category --save</span><br><span class="line">npm install hexo-generator-tag --save</span><br><span class="line">npm install hexo-server --save</span><br><span class="line">npm install hexo-deployer-git --save</span><br><span class="line">npm install hexo-deployer-heroku --save</span><br><span class="line">npm install hexo-deployer-rsync --save</span><br><span class="line">npm install hexo-deployer-openshift --save</span><br><span class="line">npm install hexo-renderer-marked@0.2 --save</span><br><span class="line">npm install hexo-renderer-stylus@0.2 --save</span><br><span class="line">npm install hexo-generator-feed@1 --save</span><br><span class="line">npm install hexo-generator-sitemap@1 --save</span><br></pre></td></tr></table></figure>
+<h3 id="本地查看效果"><a href="#本地查看效果" class="headerlink" title="本地查看效果"></a>本地查看效果</h3><p>继续执行以下命令，成功后可登录 <code>localhost:4000</code> 查看效果<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo server</span><br></pre></td></tr></table></figure></p>
+<h3 id="Hexo-简写命令"><a href="#Hexo-简写命令" class="headerlink" title="Hexo 简写命令"></a>Hexo 简写命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hexo n <span class="comment"># 生成文章，或者 source\_posts 手动编辑 </span></span><br><span class="line">hexo s <span class="comment"># 本地发布预览效果</span></span><br><span class="line">hexo g <span class="comment"># 生成 public 静态文件</span></span><br><span class="line"> 最后我选择手动同步更新至 GitHub</span><br></pre></td></tr></table></figure>
+<h2 id="部署静态网页到-GitHub"><a href="#部署静态网页到-GitHub" class="headerlink" title="部署静态网页到 GitHub"></a>部署静态网页到 GitHub</h2><h3 id="注册设置-GitHub"><a href="#注册设置-GitHub" class="headerlink" title="注册设置 GitHub"></a>注册设置 GitHub</h3><ol>
+<li>登录<a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>，注册自定义用户名如 <code>wsgzao</code></li>
+<li>在主页右下角创建 <code>New repository</code>，name 必须和用户名一致如 <code>wsgzao.github.io</code></li>
+<li>首次创建耐心等待 10 分钟左右审核，之后即可访问静态主页如<a href="https://wsgzao.github.io">https://wsgzao.github.io</a></li>
+</ol>
+<h3 id="同步内容至-GitHub"><a href="#同步内容至-GitHub" class="headerlink" title="同步内容至 GitHub"></a>同步内容至 GitHub</h3><ol>
+<li>下载<a href="https://windows.github.com/" target="_blank" rel="noopener">GitHub Windows</a></li>
+<li>设置 <code>Local path</code> 如 <code>E:\ 快盘 \ GitHub\</code></li>
+<li>运行 <code>Git Shell</code> 切换到如 <code>E:\ 快盘 \ GitHub\hexo</code> 路径下</li>
+<li>执行 <code>hexo g</code> 命令生成 <code>public</code> 文件夹</li>
+<li>把生成的内容全部拷贝到 <code>Local path</code> 或其子目录</li>
+<li>运行 <code>GitHub</code> 确认修改信息后执行右上角的 <code>Sync</code> 同步</li>
+<li>最后访问主页观察效果</li>
+</ol>
+<p><a href="https://pages.github.com/" target="_blank" rel="noopener">https://pages.github.com/</a></p>
+<h2 id="域名和-DNS"><a href="#域名和-DNS" class="headerlink" title="域名和 DNS"></a>域名和 DNS</h2><h3 id="域名推荐"><a href="#域名推荐" class="headerlink" title="域名推荐"></a>域名推荐</h3><blockquote>
+<p>GoDaddy makes registering Domain Names fast, simple, and affordable.</p>
+</blockquote>
+<p>【推荐理由】两个字“靠谱”，支持支付宝，附优惠码链接</p>
+<p><a href="http://www.godaddy.com/" target="_blank" rel="noopener">http://www.godaddy.com/</a><br><a href="http://www.gdcodecoupon.com/" target="_blank" rel="noopener">http://www.gdcodecoupon.com/</a></p>
+<h3 id="DNS-推荐"><a href="#DNS-推荐" class="headerlink" title="DNS 推荐"></a>DNS 推荐</h3><blockquote>
+<p>致力于为您提供最稳定、最安全的域名解析服务</p>
+</blockquote>
+<p>【推荐理由】依然是两个字“靠谱”，感谢他们一直以来对于公益的坚持</p>
+<p><a href="https://www.dnspod.cn/" target="_blank" rel="noopener">https://www.dnspod.cn/</a></p>
+<h3 id="设置-CNAME"><a href="#设置-CNAME" class="headerlink" title="设置 CNAME"></a>设置 CNAME</h3><ol>
+<li>在 Github 的网站目录下创建 <code>CNAME</code> 文件</li>
+<li>填写自己的域名如 <code>hellodog.com</code>，保存结束</li>
+<li>登录 DNSPod，先添加域名，然后添加记录，设置如下</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>主机记录</th>
+<th>记录类型</th>
+<th>线路类型</th>
+<th>记录值</th>
+<th>MX 优先级</th>
+<th>TTL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>@</td>
+<td>CNAME</td>
+<td>默认</td>
+<td>wsgzao.github.io.</td>
+<td>-</td>
+<td>10</td>
+</tr>
+<tr>
+<td>www</td>
+<td>CNAME</td>
+<td>默认</td>
+<td>wsgzao.github.io.</td>
+<td>-</td>
+<td>10</td>
+</tr>
+</tbody>
+</table>
+<h2 id="Hexo-配置修改"><a href="#Hexo-配置修改" class="headerlink" title="Hexo 配置修改"></a>Hexo 配置修改</h2><blockquote>
+<p>告诉自己为什么要选择 Hexo</p>
+</blockquote>
+<h3 id="知识储备"><a href="#知识储备" class="headerlink" title="知识储备"></a>知识储备</h3><ol>
+<li>勤学勤练 Markdown</li>
+</ol>
+<blockquote>
+<p>本地 + 云端备份数据是一种习惯</p>
+</blockquote>
+<p>Markdown 学习路径 - <a href="https://wsgzao.github.io/post/markdown/">https://wsgzao.github.io/post/markdown/</a></p>
+<ol start="2">
+<li>使用性感的文本编辑器</li>
+</ol>
+<blockquote>
+<p>工欲善其事必先利其器</p>
+</blockquote>
+<ul>
+<li>Notepad2</li>
+<li>Visual Studio Code</li>
+</ul>
+<h3 id="Hexo-主题"><a href="#Hexo-主题" class="headerlink" title="Hexo 主题"></a>Hexo 主题</h3><blockquote>
+<p>选择主题建议遵循 <code>KISS</code> 原则</p>
+</blockquote>
+<p><a href="https://hexo.io/zh-cn/docs/" target="_blank" rel="noopener">Hexo Themes</a></p>
+<p><a href="https://github.com/next-theme/hexo-theme-next" target="_blank" rel="noopener">hexo-theme-next</a></p>
+<p><a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="noopener">hexo-theme-fluid</a></p>
+<p><a href="https://github.com/XPoet/hexo-theme-ils" target="_blank" rel="noopener">hexo-theme-ils</a></p>
+<p><a href="https://github.com/zchengsite/hexo-theme-oranges" target="_blank" rel="noopener">hexo-theme-oranges</a></p>
+<h3 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h3><ol>
+<li>修改配置文件时注意 <code>YAML</code> 语法，参数 <code>冒号:</code> 后一定要留 <code>空格</code></li>
+<li>中文乱码请修改文件编码格式为 <code>UTF-8</code></li>
+<li><a href="https://hexo.io/zh-cn/docs/migration.html" target="_blank" rel="noopener">如何迁移至 Hexo</a></li>
+</ol>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://hexo.io/zh-cn/docs/" target="_blank" rel="noopener">Hexo 官方中文文档</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Hexo/">Hexo</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/hexo/" data-title="使用 GitHub 和 Hexo 搭建免费静态 Blog | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/post/macos/"  title="macOS 升级后开机卡在进度条和唤醒时黑屏的解决方法">
+ <strong>下一篇：</strong><br/> 
+ <span>macOS 升级后开机卡在进度条和唤醒时黑屏的解决方法
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#准备工作"><span class="toc-number">3.</span> <span class="toc-text">准备工作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#了解-Hexo"><span class="toc-number">3.1.</span> <span class="toc-text">了解 Hexo</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装-Git"><span class="toc-number">3.2.</span> <span class="toc-text">安装 Git</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装-Node-JS"><span class="toc-number">3.3.</span> <span class="toc-text">安装 Node.JS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装-Hexo"><span class="toc-number">3.4.</span> <span class="toc-text">安装 Hexo</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hexo-初始化配置"><span class="toc-number">4.</span> <span class="toc-text">Hexo 初始化配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Hexo-官方步骤"><span class="toc-number">4.1.</span> <span class="toc-text">Hexo 官方步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建-Hexo-文件夹"><span class="toc-number">4.2.</span> <span class="toc-text">创建 Hexo 文件夹</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装-Hexo-指定版本和插件"><span class="toc-number">4.3.</span> <span class="toc-text">安装 Hexo 指定版本和插件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#本地查看效果"><span class="toc-number">4.4.</span> <span class="toc-text">本地查看效果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hexo-简写命令"><span class="toc-number">4.5.</span> <span class="toc-text">Hexo 简写命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#部署静态网页到-GitHub"><span class="toc-number">5.</span> <span class="toc-text">部署静态网页到 GitHub</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#注册设置-GitHub"><span class="toc-number">5.1.</span> <span class="toc-text">注册设置 GitHub</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#同步内容至-GitHub"><span class="toc-number">5.2.</span> <span class="toc-text">同步内容至 GitHub</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#域名和-DNS"><span class="toc-number">6.</span> <span class="toc-text">域名和 DNS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#域名推荐"><span class="toc-number">6.1.</span> <span class="toc-text">域名推荐</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DNS-推荐"><span class="toc-number">6.2.</span> <span class="toc-text">DNS 推荐</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#设置-CNAME"><span class="toc-number">6.3.</span> <span class="toc-text">设置 CNAME</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hexo-配置修改"><span class="toc-number">7.</span> <span class="toc-text">Hexo 配置修改</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#知识储备"><span class="toc-number">7.1.</span> <span class="toc-text">知识储备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hexo-主题"><span class="toc-number">7.2.</span> <span class="toc-text">Hexo 主题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常见问题"><span class="toc-number">7.3.</span> <span class="toc-text">常见问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">8.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>185</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>18</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

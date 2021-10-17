@@ -1,0 +1,591 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>SSH 使用密钥登录并禁止口令登录实践 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="ssh密钥登录是相对安全的登录管理方式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SSH 使用密钥登录并禁止口令登录实践">
+<meta property="og:url" content="https://wsgzao.github.io/post/ssh/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="ssh密钥登录是相对安全的登录管理方式">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://i.v2ex.co/zv9SM4PO.png">
+<meta property="og:updated_time" content="2019-02-01T03:32:50.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SSH 使用密钥登录并禁止口令登录实践">
+<meta name="twitter:description" content="ssh密钥登录是相对安全的登录管理方式">
+<meta name="twitter:image" content="http://i.v2ex.co/zv9SM4PO.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/ssh/" title="SSH 使用密钥登录并禁止口令登录实践" itemprop="url">SSH 使用密钥登录并禁止口令登录实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2019-01-31T02:18:44.000Z" itemprop="datePublished"> 发表于 2019-01-31</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh-登录服务器的两种方式"><span class="toc-number">3.</span> <span class="toc-text">ssh 登录服务器的两种方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#用户名密码登录"><span class="toc-number">3.1.</span> <span class="toc-text">用户名密码登录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ssh-免密登录"><span class="toc-number">3.2.</span> <span class="toc-text">ssh 免密登录</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh-免密码登录一般流程"><span class="toc-number">4.</span> <span class="toc-text">ssh 免密码登录一般流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#生成-PublicKey"><span class="toc-number">4.1.</span> <span class="toc-text">生成 PublicKey</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#复制密钥对"><span class="toc-number">4.2.</span> <span class="toc-text">复制密钥对</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改-SSH-配置文件"><span class="toc-number">4.3.</span> <span class="toc-text">修改 SSH 配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#手动增加管理用户"><span class="toc-number">4.4.</span> <span class="toc-text">手动增加管理用户</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-Ansible-添加-ssh-信任关系"><span class="toc-number">5.</span> <span class="toc-text">使用 Ansible 添加 ssh 信任关系</span></a></li></ol>
+		
+		</div>
+		 -->
+		<p><img src="http://i.v2ex.co/zv9SM4PO.png" alt></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>无论是个人的 VPS 还是企业允许公网访问的服务器，如果开放 22 端口的 SSH 密码登录验证方式，被众多黑客暴力猜解捅破菊花也可能是经常发生的惨剧。企业可以通过防火墙来做限制，普通用户也可能借助修改 22 端口和强化弱口令等方式防护，但目前相对安全和简单的方案则是让 SSH 使用密钥登录并禁止口令登录。</p>
+<blockquote>
+<p>ssh 密钥登录是相对安全的登录管理方式</p>
+</blockquote>
+<hr>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019 年 01 月 31 日 - 更新 ssh 基础知识讲解和 ansible authorized_key 示例<br>2015 年 08 月 13 日 - 增加 Bash Shell 自动修改脚本<br>2015 年 07 月 07 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/ssh/">https://wsgzao.github.io/post/ssh/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<p>SSH 原理与运用 -  <a href="http://www.ruanyifeng.com/blog/2011/12/ssh_remote_login.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2011/12/ssh_remote_login.html</a><br>Linode - <a href="https://www.linode.com/docs/networking/ssh/use-public-key-authentication-with-ssh" target="_blank" rel="noopener">https://www.linode.com/docs/networking/ssh/use-public-key-authentication-with-ssh</a></p>
+<hr>
+<h2 id="ssh-登录服务器的两种方式"><a href="#ssh-登录服务器的两种方式" class="headerlink" title="ssh 登录服务器的两种方式"></a>ssh 登录服务器的两种方式</h2><p>如果是一个比较喜欢折腾的人，在某个云平台购买了一台云主机，除了通过云平台提供的 web 页面上的命令行工具，其实也可以在本地电脑上面通过 ssh 进行登录。具体地又可以分成两种：</p>
+<ol>
+<li>ssh 用户名密码登录</li>
+<li>ssh 证书（免密码）登录</li>
+</ol>
+<p>需要说明一下，后者的安全性高于前者，因此一般会默认不启用第一种登录方式，只允许第二种登录方式。</p>
+<p>SSH 为 Secure Shell 的缩写，是建立在应用层基础上的安全协议，利用 SSH 协议可以有效防止远程管理过程中的信息泄露问题。ssh 分成服务端与客户端，其中服务端运行在被登录的机器上面，客户端运行在操作的机器上面。</p>
+<h3 id="用户名密码登录"><a href="#用户名密码登录" class="headerlink" title="用户名密码登录"></a>用户名密码登录</h3><p>通常 openssh-server 默认允许用户名密码登录，但是不排除为了安全考虑云上的服务器上禁止开启 ssh 的这种登录方式，毕竟用户名加密码的方式很容易被爆力破解。如果大家理解其中的厉害关系，可以检查修改 /etc/ssh/sshd_config（sshd 的配置文件）中 PasswordAuthentication 这一项配置为 yes（一般默认是 yes ）。修改完配置重启 sshd 服务就可以使用用户名和密码登录了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -l 指定用户名为 wangao</span></span><br><span class="line"><span class="comment"># -p 指定端口为 2222，默认为 22</span></span><br><span class="line"><span class="comment"># 输入下面的命令后根据提示输入密码就可以登录到对应的服务器了 </span></span><br><span class="line">ssh -l wangao -p 2222 192.168.56.101</span><br></pre></td></tr></table></figure>
+<h3 id="ssh-免密登录"><a href="#ssh-免密登录" class="headerlink" title="ssh 免密登录"></a>ssh 免密登录</h3><p>所谓免密登录，也就是说不需要人工再输入用户名和密码了，但这并不意味着没有了鉴权的动作，服务器毕竟是自己的，不能随便允许别人登录到上面去搞破坏。ssh 免密登录通过证书进行鉴权。</p>
+<p>这里的证书分为公钥与私钥，我们可以简单地理解为：公钥 = 锁；私钥 = 钥匙。</p>
+<p>流程基本是这样的：如果我们想要从 A 免密登录到 B，就需要把公钥（锁）放到 B 的特定位置，而 A 拥有私钥（钥匙）的完整副本。当 A 拿着私钥去访问 B 的时候，B 发现自己身上有一把锁（B 可能有很多公钥）可以被 A 的私钥打开，于是给 A 放行，A 就成功登录到 B 了。</p>
+<blockquote>
+<p>如何得到证书（公钥与私钥）<br>上面提到的证书可以通过两种方式获取得到。<br>第一种是向服务器管理员索取，一般索取得到的是私钥，这样就可以免密登录到任何存放了公钥的服务器了。<br>第二种是自己生成证书（比如使用 ssh-keygen），然后把公钥放到对应的服务器的特定位置，就可以免密登录到对应的服务器了。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 通过 ssh-keygen 可以生成需要的证书 </span></span><br><span class="line"><span class="comment"># 根据提示一路按 RETURN(ENTER) 即可 </span></span><br><span class="line"><span class="comment"># 默认情况下会生成 id_rsa 和 id_rsa.pub </span></span><br><span class="line"><span class="comment"># id_rsa 为私钥，id_rsa.pub 为公钥 </span></span><br><span class="line">ssh-keygen</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>公钥放置位置</p>
+</blockquote>
+<p>linux 系统允许多用户登录同一台服务器，一般情况下 /home 目录会有非常多的用户目录。可以把公钥放置在任何一个用户目录的 $HOME/.ssh/authorized_keys 文件中，比如 cat id_rsa.pub &gt;&gt; /home/wangao/.ssh/authorized_keys ，这样就可以使用私钥以 wangao 的名义登录对应的服务器了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -i 指定私钥，默认条件下使用 ~/.ssh/id_rsa</span></span><br><span class="line"><span class="comment"># -l 指定用户名 </span></span><br><span class="line"><span class="comment"># -p 指定端口，默认为 22</span></span><br><span class="line">ssh -i ~/.ssh/id_rsa -p 2222 -l wangao 192.168.56.101</span><br><span class="line"></span><br><span class="line"><span class="comment"># 上面的命令等同于 </span></span><br><span class="line">ssh -p 2222 wangao@192.168.56.101</span><br></pre></td></tr></table></figure>
+<h2 id="ssh-免密码登录一般流程"><a href="#ssh-免密码登录一般流程" class="headerlink" title="ssh 免密码登录一般流程"></a>ssh 免密码登录一般流程</h2><h3 id="生成-PublicKey"><a href="#生成-PublicKey" class="headerlink" title="生成 PublicKey"></a>生成 PublicKey</h3><blockquote>
+<p>建议设置并牢记 passphrase 密码短语，以 Linux 生成为例</p>
+</blockquote>
+<p>Linux：ssh-keygen -t rsa<br>[私钥 (id_rsa) 与公钥 (id_rsa.pub)]<br>Windows：SecurCRT/Xshell/PuTTY<br>[SSH-2 RSA 2048]</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># 生成 SSH 密钥对 </span></span><br><span class="line">ssh-keygen -t rsa</span><br><span class="line"></span><br><span class="line">Generating public/private rsa key pair.</span><br><span class="line"><span class="comment"># 建议直接回车使用默认路径 </span></span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/root/.ssh/id_rsa): </span><br><span class="line"><span class="comment"># 输入密码短语（留空则直接回车）</span></span><br><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase): </span><br><span class="line"><span class="comment"># 重复密码短语 </span></span><br><span class="line">Enter same passphrase again: </span><br><span class="line">Your identification has been saved <span class="keyword">in</span> /root/.ssh/id_rsa.</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> /root/.ssh/id_rsa.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">aa:8b:61:13:38:ad:b5:49:ca:51:45:b9:77:e1:97:e1 root@localhost.localdomain</span><br><span class="line">The key<span class="string">'s randomart image is:</span></span><br><span class="line"><span class="string">+--[ RSA 2048]----+</span></span><br><span class="line"><span class="string">|    .o.          |</span></span><br><span class="line"><span class="string">|    ..   . .     |</span></span><br><span class="line"><span class="string">|   .  . . o o    |</span></span><br><span class="line"><span class="string">| o.  . . o E     |</span></span><br><span class="line"><span class="string">|o.=   . S .      |</span></span><br><span class="line"><span class="string">|.*.+   .         |</span></span><br><span class="line"><span class="string">|o.*   .          |</span></span><br><span class="line"><span class="string">| . + .           |</span></span><br><span class="line"><span class="string">|  . o.           |</span></span><br><span class="line"><span class="string">+-----------------+</span></span><br></pre></td></tr></table></figure>
+<h3 id="复制密钥对"><a href="#复制密钥对" class="headerlink" title="复制密钥对"></a>复制密钥对</h3><blockquote>
+<p>也可以手动在客户端建立目录和 authorized_keys，注意修改权限</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># 复制公钥到无密码登录的服务器上, 22 端口改变可以使用下面的命令 </span></span><br><span class="line"><span class="comment">#ssh-copy-id -i ~/.ssh/id_rsa.pub "-p 10022 user@server"</span></span><br><span class="line">ssh-copy-id -i ~/.ssh/id_rsa.pub root@192.168.15.241</span><br></pre></td></tr></table></figure>
+<h3 id="修改-SSH-配置文件"><a href="#修改-SSH-配置文件" class="headerlink" title="修改 SSH 配置文件"></a>修改 SSH 配置文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编辑 sshd_config 文件 </span></span><br><span class="line">vi /etc/ssh/sshd_config</span><br><span class="line"></span><br><span class="line"><span class="comment"># 禁用密码验证 </span></span><br><span class="line">PasswordAuthentication no</span><br><span class="line"><span class="comment"># 启用密钥验证 </span></span><br><span class="line">RSAAuthentication yes</span><br><span class="line">PubkeyAuthentication yes</span><br><span class="line"><span class="comment"># 指定公钥数据库文件 </span></span><br><span class="line">AuthorsizedKeysFile .ssh/authorized_keys</span><br><span class="line"></span><br><span class="line">sed -i <span class="string">"s/^PasswordAuthentication.*/PasswordAuthentication no/g"</span> /etc/ssh/sshd_config</span><br><span class="line">sed -i <span class="string">"s/^#RSAAuthentication.*/RSAAuthentication yes/g"</span> /etc/ssh/sshd_config</span><br><span class="line">sed -i <span class="string">"s/^#PubkeyAuthentication.*/PubkeyAuthentication yes/g"</span> /etc/ssh/sshd_config</span><br><span class="line">sed -i <span class="string">"s/^#AuthorizedKeysFile.*/AuthorizedKeysFile .ssh\/authorized_keys/g"</span> /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>重启 SSH 服务前建议多保留一个会话以防不测</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># RHEL/CentOS 系统 </span></span><br><span class="line">service sshd restart</span><br><span class="line"><span class="comment"># Ubuntu 系统 </span></span><br><span class="line">service ssh restart</span><br><span class="line"><span class="comment"># Debian 系统 </span></span><br><span class="line">/etc/init.d/ssh restart</span><br></pre></td></tr></table></figure>
+<h3 id="手动增加管理用户"><a href="#手动增加管理用户" class="headerlink" title="手动增加管理用户"></a>手动增加管理用户</h3><blockquote>
+<p>可以在 == 后加入用户注释标识方便管理</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">'ssh-rsa XXXX'</span> &gt;&gt;/root/.ssh/authorized_keys</span><br><span class="line"></span><br><span class="line"><span class="comment"># 复查 </span></span><br><span class="line">cat /root/.ssh/authorized_keys</span><br></pre></td></tr></table></figure>
+<h2 id="使用-Ansible-添加-ssh-信任关系"><a href="#使用-Ansible-添加-ssh-信任关系" class="headerlink" title="使用 Ansible 添加 ssh 信任关系"></a>使用 Ansible 添加 ssh 信任关系</h2><blockquote>
+<p>使用 ansible authorized_key module 即可</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">- hosts: all</span><br><span class="line">  remote_user: root</span><br><span class="line">  gather_facts: <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">  tasks:</span><br><span class="line">    - name: authadd root</span><br><span class="line">      authorized_key:</span><br><span class="line">        user: root</span><br><span class="line">        state: present</span><br><span class="line">        key: <span class="string">"&#123;&#123; lookup('file','/root/.ssh/id_rsa.pub') &#125;&#125;"</span></span><br><span class="line">        path: /root/.ssh/authorized_keys</span><br><span class="line">        manage_dir: no</span><br><span class="line">      tags:</span><br><span class="line">        - root</span><br></pre></td></tr></table></figure>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/ssh/" data-title="SSH 使用密钥登录并禁止口令登录实践 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/ssh-config/" title="使用 ssh config 作为 ssh 代理轻松管理内网服务器">
+  <strong>上一篇：</strong><br/>
+  <span>
+  使用 ssh config 作为 ssh 代理轻松管理内网服务器</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/linux-kernel-update/"  title="Linux kernel 内核升级和降级的方法实践">
+ <strong>下一篇：</strong><br/> 
+ <span>Linux kernel 内核升级和降级的方法实践
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh-登录服务器的两种方式"><span class="toc-number">3.</span> <span class="toc-text">ssh 登录服务器的两种方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#用户名密码登录"><span class="toc-number">3.1.</span> <span class="toc-text">用户名密码登录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ssh-免密登录"><span class="toc-number">3.2.</span> <span class="toc-text">ssh 免密登录</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh-免密码登录一般流程"><span class="toc-number">4.</span> <span class="toc-text">ssh 免密码登录一般流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#生成-PublicKey"><span class="toc-number">4.1.</span> <span class="toc-text">生成 PublicKey</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#复制密钥对"><span class="toc-number">4.2.</span> <span class="toc-text">复制密钥对</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改-SSH-配置文件"><span class="toc-number">4.3.</span> <span class="toc-text">修改 SSH 配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#手动增加管理用户"><span class="toc-number">4.4.</span> <span class="toc-text">手动增加管理用户</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-Ansible-添加-ssh-信任关系"><span class="toc-number">5.</span> <span class="toc-text">使用 Ansible 添加 ssh 信任关系</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>185</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>18</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

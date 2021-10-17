@@ -1,0 +1,603 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>使用 Anaconda 实现 Python2 和 Python3 共存及相互转换 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="使用Anaconda轻松解决Python2和Python3共存">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 Anaconda 实现 Python2 和 Python3 共存及相互转换">
+<meta property="og:url" content="https://wsgzao.github.io/post/anaconda/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="使用Anaconda轻松解决Python2和Python3共存">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-05-10T08:16:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用 Anaconda 实现 Python2 和 Python3 共存及相互转换">
+<meta name="twitter:description" content="使用Anaconda轻松解决Python2和Python3共存">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/anaconda/" title="使用 Anaconda 实现 Python2 和 Python3 共存及相互转换" itemprop="url">使用 Anaconda 实现 Python2 和 Python3 共存及相互转换</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2018-05-04T06:59:49.000Z" itemprop="datePublished"> 发表于 2018-05-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么选择-Anaconda"><span class="toc-number">3.</span> <span class="toc-text">为什么选择 Anaconda</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是-Anaconda"><span class="toc-number">3.1.</span> <span class="toc-text">什么是 Anaconda</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是-conda"><span class="toc-number">3.2.</span> <span class="toc-text">什么是 conda</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Anaconda-的优点"><span class="toc-number">3.3.</span> <span class="toc-text">Anaconda 的优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Anaconda-中的重要组件"><span class="toc-number">3.4.</span> <span class="toc-text">Anaconda 中的重要组件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装-Anaconda"><span class="toc-number">4.</span> <span class="toc-text">安装 Anaconda</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#设置-Path-变量"><span class="toc-number">4.1.</span> <span class="toc-text">设置 Path 变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#python2-和-python3-版本转换"><span class="toc-number">4.2.</span> <span class="toc-text">python2 和 python3 版本转换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Anaconda-镜像"><span class="toc-number">4.3.</span> <span class="toc-text">Anaconda 镜像</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#conda-安装-django-实践"><span class="toc-number">5.</span> <span class="toc-text">conda 安装 django 实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#conda-常用命令"><span class="toc-number">6.</span> <span class="toc-text">conda 常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#anaconda-与-vscode-整合"><span class="toc-number">7.</span> <span class="toc-text">anaconda 与 vscode 整合</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>初学 Python 时，总是被 python 的两个不太兼容的版本搞得头昏脑胀。按目前的发展趋势，python 未来的主流版为 python3。但是我们经常会遇到一些很有意思代码使用的是 python2 版本。于是我们需要同时拥有 python2 和 python3 的运行环境。这里介绍一个强大的软件 Anaconda，它实现 python2 和 python3 两个版本的共存，并且可以相互转换。Anaconda 是一个用于科学计算的 Python 发行版，支持 Linux, Mac, Windows, 包含了众多流行的科学计算、数据分析的 Python 包。</p>
+<blockquote>
+<p>使用 Anaconda 轻松解决 Python2 和 Python3 共存</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018 年 05 月 04 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/anaconda/">https://wsgzao.github.io/post/anaconda/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<p>Anaconda - <a href="https://anaconda.org/" target="_blank" rel="noopener">https://anaconda.org/</a></p>
+<hr>
+<h2 id="为什么选择-Anaconda"><a href="#为什么选择-Anaconda" class="headerlink" title="为什么选择 Anaconda"></a>为什么选择 Anaconda</h2><p>Anaconda 实际上是一个软件发行版，它附带了 conda、Python 和多个科学包及其依赖项。应用程序 conda 是包和环境管理器。Anaconda 的下载文件比较大（约 500 MB），因为它附带了 Python 中最常用的数据科学包。如果只需要某些包，或者需要节省带宽或存储空间，也可以使用 Miniconda 这个较小的发行版（仅包含 conda 和 Python）。</p>
+<h3 id="什么是-Anaconda"><a href="#什么是-Anaconda" class="headerlink" title="什么是 Anaconda"></a>什么是 Anaconda</h3><p>Anaconda 是专注于数据分析的 Python 发行版本，包含了 conda、Python 等多个科学包及其依赖项。作为好奇宝宝的你是不是发现了一个新名词 conda，那么你一定会问 conda 又是什么呢？</p>
+<h3 id="什么是-conda"><a href="#什么是-conda" class="headerlink" title="什么是 conda"></a>什么是 conda</h3><blockquote>
+<p>conda 是开源包（packages）和虚拟环境（environment）的管理系统</p>
+</blockquote>
+<p>packages 管理： 可以使用 conda 来安装、更新 、卸载工具包 ，并且它更关注于数据科学相关的工具包。在安装 anaconda 时就预先集成了像 Numpy、Scipy、 pandas、Scikit-learn 这些在数据分析中常用的包。另外值得一提的是，conda 并不仅仅管理 Python 的工具包，它也能安装非 python 的包。比如在新版的 Anaconda 中就可以安装 R 语言的集成开发环境 Rstudio。</p>
+<p>虚拟环境管理： 在 conda 中可以建立多个虚拟环境，用于隔离不同项目所需的不同版本的工具包，以防止版本上的冲突。对纠结于 Python 版本的同学们，我们也可以建立 Python2 和 Python3 两个环境，来分别运行不同版本的 Python 代码。</p>
+<p>知道 是什么（what） 的同时，我们也需要问一问 为什么（why）。那么，为什么要选择用 Anaconda 呢？</p>
+<h3 id="Anaconda-的优点"><a href="#Anaconda-的优点" class="headerlink" title="Anaconda 的优点"></a>Anaconda 的优点</h3><p>Anaconda 的优点总结起来就八个字：省时省心、分析利器。</p>
+<p><strong> 省时省心 </strong>： Anaconda 通过管理工具包、开发环境、Python 版本，大大简化了你的工作流程。不仅可以方便地安装、更新、卸载工具包，而且安装时能自动安装相应的依赖包，同时还能使用不同的虚拟环境隔离不同要求的项目。</p>
+<p><strong> 分析利器 </strong>： 在 Anaconda 官网中是这么宣传自己的：适用于企业级大数据分析的 Python 工具。其包含了 720 多个数据科学相关的开源包，在数据可视化、机器学习、深度学习等多方面都有涉及。不仅可以做数据分析，甚至可以用在大数据和人工智能领域。</p>
+<p>解决了 <strong> 是什么 </strong> 以及 <strong> 为什么 </strong> 的问题后，下面让我们看一下 <strong> 怎么做（How）</strong>。</p>
+<p>说明一下 conda 的设计理念——<strong>conda 将几乎所有的工具、第三方包都当做 package 对待，甚至包括 python 和 conda 自身！</strong> 因此，conda 打破了包管理与环境管理的约束，能非常方便地安装各种版本 python、各种 package 并方便地切换。</p>
+<h3 id="Anaconda-中的重要组件"><a href="#Anaconda-中的重要组件" class="headerlink" title="Anaconda 中的重要组件"></a>Anaconda 中的重要组件</h3><p>Anaconda Navigator ：用于管理工具包和环境的图形用户界面，后续涉及的众多管理命令也可以在 Navigator 中手工实现。</p>
+<p>Jupyter notebook ：基于 web 的交互式计算环境，可以编辑易于人们阅读的文档，用于展示数据分析的过程。</p>
+<p>qtconsole ：一个可执行 IPython 的仿终端图形界面程序，相比 Python Shell 界面，qtconsole 可以直接显示代码生成的图形，实现多行代码输入执行，以及内置许多有用的功能和函数。</p>
+<p>spyder ：一个使用 Python 语言、跨平台的、科学运算集成开发环境。Spyder 的最大优点就是模仿 MATLAB 的 “工作空间”。</p>
+<p>Conda : Conda 的包管理就比较好理解了，这部分功能与 pip 类似。</p>
+<h2 id="安装-Anaconda"><a href="#安装-Anaconda" class="headerlink" title="安装 Anaconda"></a>安装 Anaconda</h2><p>Anaconda 可用于 Windows、Mac OS X 和 Linux。可以在官网上找到安装程序和安装说明<br><a href="https://www.anaconda.com/download/" target="_blank" rel="noopener">https://www.anaconda.com/download/</a></p>
+<p>如果计算机上已经安装了 Python，这不会有任何影响。实际上，脚本和程序使用的默认 Python 是 Anaconda 附带的 Python。这里需要注意的是选对自己操作系统对应的版本。安装完后打开 cmd, 输入 conda list 可以查看当前安装的内容。输入 conda upgrade –all，可以更新默认环境下的所有包。并在提示是否更新的时候输入 y（Yes）以便让更新继续。初次安装下的软件包版本一般都比较老旧，因此提前更新可以避免未来不必要的问题。</p>
+<p>本人使用的操作系统：Win10，前往 anaconda 官网下载对应的版本，本人选择的是 Python3.6 + Python 2.7（实际上下载一个即可，推荐 3.6）</p>
+<h3 id="设置-Path-变量"><a href="#设置-Path-变量" class="headerlink" title="设置 Path 变量"></a>设置 Path 变量</h3><blockquote>
+<p>默认安装不会自动添加全局变量，如果有需求可以手动配置 Path，以 Anaconda2 为例</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将加入到 PATH 路径 </span></span><br><span class="line">D:\Programs\Anaconda2</span><br><span class="line">D:\Programs\Anaconda2\Scripts</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在 cmd 输入 </span></span><br><span class="line">python -V</span><br><span class="line"></span><br><span class="line">Python 2.7.14 :: Anaconda, Inc.</span><br></pre></td></tr></table></figure>
+<h3 id="python2-和-python3-版本转换"><a href="#python2-和-python3-版本转换" class="headerlink" title="python2 和 python3 版本转换"></a>python2 和 python3 版本转换</h3><blockquote>
+<p>在 win10 环境下进行傻瓜式安装。当安装完成时，计算机便具备了 Python3.6 的环境，推荐使用 Anaconda Prompt 进入命令行</p>
+</blockquote>
+<p>接下来，在 cmd 的环境下，输入以下命令安装 Python2.7 的环境</p>
+<pre><code>conda create -n python27 python=2.7 anaconda
+</code></pre><p>上面的代码创建了一个名为 python27 的 python2.7 的环境，最后一个参数表示安装 anaconda 下 python2.7 的所有默认包，这个参数时可选的。 </p>
+<p>我们进入 cmd 环境，现在默认的 python 版本时 python3.6，只需要一行简单的代码就可以转为 python2.7 的环境</p>
+<pre><code>activate python27
+</code></pre><p>此时本窗口下的 python 版本变为了 python2.7，那么你肯定猜到了恢复到 python3.6 的命令</p>
+<pre><code>deactivate python27
+</code></pre><p>其实呢，一般没有必要恢复到原环境。只要打开一个新的 cmd 窗口，默认的 python 版本就是 python3.6</p>
+<h3 id="Anaconda-镜像"><a href="#Anaconda-镜像" class="headerlink" title="Anaconda 镜像"></a>Anaconda 镜像</h3><blockquote>
+<p>这里使用了清华大学开源软件镜像站 tuna 提供的资源，在此表示感谢</p>
+</blockquote>
+<p><a href="https://mirrors.tuna.tsinghua.edu.cn/help/anaconda/" target="_blank" rel="noopener">https://mirrors.tuna.tsinghua.edu.cn/help/anaconda/</a></p>
+<p>Anaconda 安装包可以到以下地址分流下载<br><a href="https://mirrors.tuna.tsinghua.edu.cn/anaconda/archive/" target="_blank" rel="noopener">https://mirrors.tuna.tsinghua.edu.cn/anaconda/archive/</a> </p>
+<p>因为 Anaconda.org 的服务器在国外，conda 下载的速度经常很慢。可以设置国内的镜像源来加速：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># TUNA 还提供了 Anaconda 仓库的镜像，运行以下命令即可添加 Anaconda Python 免费仓库 </span></span><br><span class="line">conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/</span><br><span class="line">conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/</span><br><span class="line"><span class="comment"># 设置搜索时显示通道地址 </span></span><br><span class="line">conda config --<span class="built_in">set</span> show_channel_urls yes</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行完上述命令后，会生成配置文件记录着我们对 conda 的配置，直接手动创建、编辑该文件是相同的效果 </span></span><br><span class="line"><span class="comment"># Linux/Mac</span></span><br><span class="line">~/.condarc</span><br><span class="line"><span class="comment"># Windows</span></span><br><span class="line">C:\Users\USER_NAME\.condarc</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行测试一下吧 </span></span><br><span class="line">conda install numpy</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>常见问题：conda 无法安装更新，报错内容如下：</p>
+</blockquote>
+<p>CondaHTTPError: HTTP 000 CONNECTION FAILED for url <a href="https://repo.anaconda.com/pkgs/free/win-64/repodata.json.bz2" target="_blank" rel="noopener">https://repo.anaconda.com/pkgs/free/win-64/repodata.json.bz2</a><br>Elapsed: -</p>
+<p>An HTTP error occurred when trying to retrieve this URL.<br>HTTP errors are often intermittent, and a simple retry will get you on your way.</p>
+<p>If your current network has <a href="https://www.anaconda.com" target="_blank" rel="noopener">https://www.anaconda.com</a> blocked, please file<br>a support request with your network engineering team.</p>
+<p>SSLError(MaxRetryError(‘HTTPSConnectionPool(host=\’repo.anaconda.com\’, port=443): Max retries exceeded with url: /pkgs/free/win-64/repodata.json.bz2 (Caused by SSLError(SSLError(“bad handshake: SysCallError(10054, \’WSAECONNRESET\’)”,),))’,),)</p>
+<p>A reportable application error has occurred. Conda has prepared the above report.<br>If submitted, this report will be used by core maintainers to improve<br>future releases of conda.<br>Would you like conda to send this report to the core maintainers?</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编辑. condarc 注释 defalts</span></span><br><span class="line">channels:</span><br><span class="line">  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/</span><br><span class="line">  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/</span><br><span class="line"><span class="comment">#  - defaults</span></span><br><span class="line">ssl_verify: <span class="literal">true</span></span><br><span class="line">show_channel_urls: <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<h2 id="conda-安装-django-实践"><a href="#conda-安装-django-实践" class="headerlink" title="conda 安装 django 实践"></a>conda 安装 django 实践</h2><blockquote>
+<p>以下操作为 anaconda python3.6 环境下进入 Anaconda Prompt 安装 django1.11 的实践过程</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在 python3.6 环境下进入 Anaconda Prompt 创建 django1.x 专用虚拟环境 </span></span><br><span class="line">conda create -n django1.x</span><br><span class="line"><span class="comment"># 激活专用虚拟环境 </span></span><br><span class="line">conda activate django1.x</span><br><span class="line"><span class="comment"># 查看 conda 当前 django 可用版本 </span></span><br><span class="line">conda search django</span><br><span class="line">conda install django==1.11.10</span><br><span class="line"><span class="comment"># 切换到虚拟环境家目录 </span></span><br><span class="line"><span class="built_in">cd</span> C:\Users\wsgzao\AppData\Local\conda\conda\envs\django1.x</span><br><span class="line"><span class="comment"># 创建项目 </span></span><br><span class="line">django-admin.py startproject myweb</span><br><span class="line"><span class="comment"># 创建 app</span></span><br><span class="line">python manage.py startapp myapp</span><br><span class="line"><span class="comment"># 启动 Django 中的开发服务器 </span></span><br><span class="line">python manage.py runserver</span><br><span class="line"><span class="comment"># 帮助文档 </span></span><br><span class="line">python manage.py -h</span><br><span class="line"><span class="comment"># Django 命令 </span></span><br><span class="line">python manage.py &lt;<span class="built_in">command</span>&gt; [options]</span><br></pre></td></tr></table></figure>
+<h2 id="conda-常用命令"><a href="#conda-常用命令" class="headerlink" title="conda 常用命令"></a>conda 常用命令</h2><p>最新版的 conda 是从 site-packages 文件夹中搜索已经安装的包，不依赖于 pip，因此可以显示出通过各种方式安装的包。conda 将 conda、python 等都视为 package，因此完全可以使用 conda 来管理 conda 和 python 的版本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 列出所有已安装的包 </span></span><br><span class="line">conda list</span><br><span class="line"><span class="comment"># 安装软件包，同时它会自动安装此软件包的依赖项 </span></span><br><span class="line">conda install package_name</span><br><span class="line"><span class="comment"># 同时安装多个包 </span></span><br><span class="line">conda install numpy pandas</span><br><span class="line"><span class="comment"># 安装指定版本的包 </span></span><br><span class="line">conda install python=2.7</span><br><span class="line"><span class="comment"># 安装离线包 </span></span><br><span class="line">conda install /package-path/package-filename.tar.bz2</span><br><span class="line"><span class="comment"># 卸载包 </span></span><br><span class="line">conda remove package_name</span><br><span class="line"><span class="comment"># 更新环境中的所有已安装的包 </span></span><br><span class="line">conda update/upgrade --all</span><br><span class="line"><span class="comment"># 更新 conda，保持 conda 最新 </span></span><br><span class="line">conda update conda</span><br><span class="line"><span class="comment"># 更新 anaconda</span></span><br><span class="line">conda update anaconda</span><br><span class="line"><span class="comment"># 更新 python</span></span><br><span class="line">conda update python</span><br><span class="line"><span class="comment"># 查看 conda 安装信息 </span></span><br><span class="line">conda info</span><br><span class="line"><span class="comment"># 查看 conda 帮助 </span></span><br><span class="line">conda <span class="built_in">help</span></span><br><span class="line"><span class="comment"># 搜索可以安装的包 </span></span><br><span class="line">conda search package_name</span><br><span class="line"><span class="comment"># 创建 conda 虚拟环境 </span></span><br><span class="line">conda create -n env_name</span><br><span class="line"><span class="comment"># 在这里，-n env_name 设置环境的名称（-n 是指名称），而 list of packages 是要安装在环境中的包的列表 </span></span><br><span class="line">conda create -n env_name list of packages</span><br><span class="line"><span class="comment"># 可以创建具有特定 Python 版本的环境 </span></span><br><span class="line">conda create -n py2.7.14 python=2.7.14</span><br><span class="line"><span class="comment"># 查看 conda 版本 </span></span><br><span class="line">conda -V</span><br><span class="line"></span><br><span class="line"><span class="comment"># 进入环境 </span></span><br><span class="line"><span class="comment"># linux 下用 </span></span><br><span class="line"><span class="built_in">source</span> activate env_name</span><br><span class="line"><span class="comment"># windows 下用 </span></span><br><span class="line">activate env_name</span><br><span class="line"></span><br><span class="line"><span class="comment"># 离开环境 </span></span><br><span class="line"><span class="comment"># linux 下用 </span></span><br><span class="line"><span class="built_in">source</span> deactivate</span><br><span class="line"><span class="comment"># windows 下用 </span></span><br><span class="line">deactivate</span><br><span class="line"></span><br><span class="line"><span class="comment"># 列出环境 </span></span><br><span class="line">conda env list</span><br><span class="line"><span class="comment"># 删除环境 </span></span><br><span class="line">conda env remove -n env_name</span><br><span class="line"><span class="comment"># 导出环境将包保存为 YAML，输出环境中的所有包的名称（包括 Python 版本）</span></span><br><span class="line">conda env <span class="built_in">export</span> &gt; environment.yaml</span><br><span class="line"><span class="comment"># 加载环境 </span></span><br><span class="line">conda env create -f environment.yaml</span><br></pre></td></tr></table></figure>
+<h2 id="anaconda-与-vscode-整合"><a href="#anaconda-与-vscode-整合" class="headerlink" title="anaconda 与 vscode 整合"></a>anaconda 与 vscode 整合</h2><p>打开 vscode，选择文件 - 首选项 - 设置，搜索 <code>python.pythonPath</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">"editor.minimap.enabled"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="string">"editor.renderControlCharacters"</span>: <span class="literal">false</span>,</span><br><span class="line">    <span class="string">"editor.renderWhitespace"</span>: <span class="string">"all"</span>,</span><br><span class="line">    <span class="string">"python.disablePromptForFeatures"</span>: [</span><br><span class="line">        <span class="string">"pylint"</span></span><br><span class="line">    ],</span><br><span class="line">    <span class="string">"python.pythonPath"</span>: <span class="string">"C:\\ProgramData\\Anaconda3"</span>,</span><br><span class="line">    <span class="string">"workbench.iconTheme"</span>: <span class="string">"vscode-icons"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/anaconda/" data-title="使用 Anaconda 实现 Python2 和 Python3 共存及相互转换 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/hpqlocfg/" title="HPQLOCFG 批量管理 HP iLO 实践">
+  <strong>上一篇：</strong><br/>
+  <span>
+  HPQLOCFG 批量管理 HP iLO 实践</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/pip/"  title="pip 离线安装和配置 pypi 国内加速镜像实践">
+ <strong>下一篇：</strong><br/> 
+ <span>pip 离线安装和配置 pypi 国内加速镜像实践
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么选择-Anaconda"><span class="toc-number">3.</span> <span class="toc-text">为什么选择 Anaconda</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是-Anaconda"><span class="toc-number">3.1.</span> <span class="toc-text">什么是 Anaconda</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是-conda"><span class="toc-number">3.2.</span> <span class="toc-text">什么是 conda</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Anaconda-的优点"><span class="toc-number">3.3.</span> <span class="toc-text">Anaconda 的优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Anaconda-中的重要组件"><span class="toc-number">3.4.</span> <span class="toc-text">Anaconda 中的重要组件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装-Anaconda"><span class="toc-number">4.</span> <span class="toc-text">安装 Anaconda</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#设置-Path-变量"><span class="toc-number">4.1.</span> <span class="toc-text">设置 Path 变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#python2-和-python3-版本转换"><span class="toc-number">4.2.</span> <span class="toc-text">python2 和 python3 版本转换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Anaconda-镜像"><span class="toc-number">4.3.</span> <span class="toc-text">Anaconda 镜像</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#conda-安装-django-实践"><span class="toc-number">5.</span> <span class="toc-text">conda 安装 django 实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#conda-常用命令"><span class="toc-number">6.</span> <span class="toc-text">conda 常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#anaconda-与-vscode-整合"><span class="toc-number">7.</span> <span class="toc-text">anaconda 与 vscode 整合</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>185</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>18</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

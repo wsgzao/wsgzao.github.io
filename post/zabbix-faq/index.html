@@ -1,0 +1,566 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>Zabbix 常见问题整理 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="Zabbix常见问题整理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Zabbix 常见问题整理">
+<meta property="og:url" content="https://wsgzao.github.io/post/zabbix-faq/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="Zabbix常见问题整理">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-10-29T09:00:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Zabbix 常见问题整理">
+<meta name="twitter:description" content="Zabbix常见问题整理">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/zabbix-faq/" title="Zabbix 常见问题整理" itemprop="url">Zabbix 常见问题整理</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2019-07-11T06:59:49.000Z" itemprop="datePublished"> 发表于 2019-07-11</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#官方文档"><span class="toc-number">3.</span> <span class="toc-text">官方文档</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FAQ"><span class="toc-number">4.</span> <span class="toc-text">FAQ</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#zabbix-server-conf-中英文解释"><span class="toc-number">5.</span> <span class="toc-text">zabbix_server.conf 中英文解释</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>根据安装和使用 Zabbix 中遇到的常见报错提示，结合 Zabbix 官网和 Google 到的一些解决方案，简单做下分享</p>
+<blockquote>
+<p>Zabbix 常见问题整理</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019 年 07 月 11 日 - 增加[Z3005] query failed: [1062] Duplicate entry 错误解决方案<br>2019 年 03 月 05 日 - 完善内容<br>2018 年 11 月 02 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/zabbix-faq/">https://wsgzao.github.io/post/zabbix-faq/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<p>Zabbix - <a href="https://www.zabbix.com/" target="_blank" rel="noopener">https://www.zabbix.com/</a></p>
+<hr>
+<h2 id="官方文档"><a href="#官方文档" class="headerlink" title="官方文档"></a>官方文档</h2><p>Frequently asked questions / Troubleshooting</p>
+<p><a href="https://www.zabbix.org/wiki/Troubleshooting" target="_blank" rel="noopener">https://www.zabbix.org/wiki/Troubleshooting</a><br><a href="https://www.zabbix.com/documentation/current/manual/appendix/faq" target="_blank" rel="noopener">https://www.zabbix.com/documentation/current/manual/appendix/faq</a></p>
+<h2 id="FAQ"><a href="#FAQ" class="headerlink" title="FAQ"></a>FAQ</h2><blockquote>
+<p>常见错误建议先查看 log，常见的问题通常由权限，防火墙，数据库，参数错误，性能瓶颈等问题导致</p>
+</blockquote>
+<p>zabbix_get [7189]: Check access restrictions in Zabbix agent configuration<br>zabbix 的服务器端与客户端连接的主要工具就是 zabbix 里 bin 文件夹下的 zabbix_get 文件，这个命令只能在 zabbix 的 server 端使用</p>
+<p>Assuming that agent dropped connection because of access permissions（由于访问权限导致 agent 连接失败）<br>问题实现：zabbix_server 和 zabbix_agent 在同一台机器，server 监听全网地址，agent 监听内网地址。导致上面的报错发生<br>解决方案：把 zabbix_agentd.conf 中 的 server 把 zabbix_server 的公网和内网地址都加行。然后 agent 就可以正常获取到值了<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">zabbix_get -s 127.0.0.1 -p 10050 -k system.hostname</span><br><span class="line">Check access restrictions in Zabbix agent configuration</span><br><span class="line"># 如果 zabbix-agent 报以下错误需要检查 agent 和 server 的版本是否匹配</span><br><span class="line">Message from xx.xx.xx.xx is missing header. Message ignored.</span><br></pre></td></tr></table></figure></p>
+<p>解决 zabbix 中文乱码问题</p>
+<p>方法一：下载文泉驿字体<br>yum -y install wqy-microhei-fonts<br>cp /usr/share/fonts/wqy-microhei/wqy-microhei.ttc /usr/share/fonts/dejavu/DejaVuSans.ttf</p>
+<p>方法二：从 Windows 中拷贝<br>cd /usr/share/zabbix/fonts<br>从 windows 拷贝 simhei.ttf 字体到当前目录<br>替换配置文件<br>vim /usr/share/zabbix/include/defines.inc.php<br>define(‘ZBX_GRAPH_FONT_NAME’,           ‘simhei’)</p>
+<p>Zabbix 报 No route to host<br>原来是被客户端的防火墙档掉了，关闭客户端防火墙或者配置相应规则即可</p>
+<p>No active checks on server: host [] not found<br>查看监控机上的 / tmp/zabbix_server.log，显示日志：<br>cannot send list of active checks to [192.168.0.1]: host [Zabbix server] not found<br>查看被监控机上的 / tmp/zabbix_agentd.log，显示日志：<br>No active checks on server: host [Zabbix server] not found<br>这是因为通过 zabbix dashboard 页面配置的被监控主机名跟被监控主机上 zabbix_agentd.conf 中配置的 Hostname 不一致。修改为一致的名字后，重启 zabbix_agentd 即可。</p>
+<p>Zabbix alerter processes more than 75% busy<br>zabbix 服务器邮件进程繁忙导致的，一般是因为在设置动作的时候，间隔太短，在一些特殊情况下，产生大量告警，例如几万封邮件，服务器发邮件，邮件进程发挂了。<br>建议通过导流解决。改发邮件的脚本，将邮件的动作改为打印时间，如下，待邮件都释放完了，再改回来。</p>
+<p>Zabbix discoverer processes more than 75% busy<br>配置了自动发现的任务。每个自动发现的任务都会在一定时间内占用一个自动发现的进程。而默认配置项为 1，所以报警<br>修改配置文件的 StartDiscoverers 选项<br>StartDiscoverers=10</p>
+<p>Zabbix poller processes more than 75% busy<br>轮询的负载量高，网上大多数说法是增加启动的 StartPollers 进程数，个人建议分析自己的 items 监控项设置是否合理，templates 模板应用是否恰当。<br>调整 StartPollers 数量<br>StartPollers=500<br>StartPollersUnreachable=100</p>
+<p>Zabbix housekeeper processes more than 75% busy<br>为了防止数据库持续增大，zabbix 有个自动删除历史数据的机制，就是 housekeeper，而 mysql 数据库删数据的时候，性能会降低，就会报这个错。建议禁用采取数据库分区表优化自动清理。<br>HousekeepingFrequency=0            #间隔时间</p>
+<p>2816:20170725:174352.675 [file:dbconfig.c,line:652] zbx_mem_realloc(): out of memory (requested 162664 bytes)<br>2816:20170725:174352.675 [file:dbconfig.c,line:652] zbx_mem_realloc(): please increase CacheSize configuration parameter<br>提示内存溢出，需要调整 zabbix 服务器配置 zabbix_server.conf<br>CacheSize=8G</p>
+<p>PHP Fatal error: Allowed memory size of 134217728 bytes exhausted (tried to allocate 11 bytes)<br>zabbix 某些页面无法打开，查看 php 日志发现，当访问这个页面是，报错内存不足，不清楚是否内存泄露，最简单的方法是调大 php 进程的可用内存，memory_limit 默认值为 128M<br>grep ‘memory_limit’ /etc/httpd/conf.d/zabbix.conf<br>        php_value memory_limit 512M</p>
+<p>Too many processes on zabbix server<br>zabbix 服务器进程太多报警，默认超过 300 个进程就报警。感觉默认值太小了，zabbix 配置调优后，进程就 500 多个了，所以我把触发值改为 600.</p>
+<p>Zabbix value cache working in low memory mode<br>zabbix 历史记录 cache 大小默认值较低，如果出现这个报错调高 ValueCacheSize 即可</p>
+<p>查看日志发现 zabbix-server 取到了数据插入数据库的 event_recovery 表时失败。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@zabbix]# tailf zabbix_server.log</span><br><span class="line">  8807:20190711:192713.951 [Z3005] query failed: [1062] Duplicate entry &apos;153816&apos; for key &apos;PRIMARY&apos; [insert into event_recovery (eventid,r_eventid,correlationid,c_eventid,userid) values (153816,16845596,null,null,null);</span><br><span class="line">]</span><br><span class="line">  8809:20190711:192713.966 [Z3005] query failed: [1062] Duplicate entry &apos;150935&apos; for key &apos;PRIMARY&apos; [insert into event_recovery (eventid,r_eventid,correlationid,c_eventid,userid) values (150935,16845597,null,null,null),(150880,16845598,null,null,null);</span><br><span class="line">]</span><br><span class="line">  8809:20190711:192716.050 [Z3005] query failed: [1062] Duplicate entry &apos;153757&apos; for key &apos;PRIMARY&apos; [insert into event_recovery (eventid,r_eventid,correlationid,c_eventid,userid) values (153757,16845599,null,null,null),(153758,16845600,null,null,null),(153713,16845601,null,null,null);</span><br></pre></td></tr></table></figure></p>
+<p>经查看表结构确定了该表只是记录了事件恢复的全部数据信息，与 user、correlation、events 表相关联。<br>所以备份 event_recovery 表并 truncate 删除重建 event_recovery<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">root@zabbix:~# mysqldump -zabbix -p&apos;zabbix&apos; zabbix event_recovery &gt; event_recovery.sql</span><br><span class="line">root@zabbix:~# mysql -uzabbix -p&apos;zabbix&apos;</span><br><span class="line">mysql&gt; use zabbix</span><br><span class="line">mysql&gt; truncate table event_recovery;</span><br><span class="line">mysql&gt; optimize table event_recovery;</span><br></pre></td></tr></table></figure></p>
+<h2 id="zabbix-server-conf-中英文解释"><a href="#zabbix-server-conf-中英文解释" class="headerlink" title="zabbix_server.conf 中英文解释"></a>zabbix_server.conf 中英文解释</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br><span class="line">385</span><br><span class="line">386</span><br><span class="line">387</span><br><span class="line">388</span><br><span class="line">389</span><br><span class="line">390</span><br><span class="line">391</span><br><span class="line">392</span><br><span class="line">393</span><br><span class="line">394</span><br><span class="line">395</span><br><span class="line">396</span><br><span class="line">397</span><br><span class="line">398</span><br><span class="line">399</span><br><span class="line">400</span><br><span class="line">401</span><br><span class="line">402</span><br><span class="line">403</span><br><span class="line">404</span><br><span class="line">405</span><br><span class="line">406</span><br><span class="line">407</span><br><span class="line">408</span><br><span class="line">409</span><br><span class="line">410</span><br><span class="line">411</span><br><span class="line">412</span><br><span class="line">413</span><br><span class="line">414</span><br><span class="line">415</span><br><span class="line">416</span><br><span class="line">417</span><br><span class="line">418</span><br><span class="line">419</span><br><span class="line">420</span><br><span class="line">421</span><br><span class="line">422</span><br><span class="line">423</span><br><span class="line">424</span><br><span class="line">425</span><br><span class="line">426</span><br><span class="line">427</span><br><span class="line">428</span><br><span class="line">429</span><br><span class="line">430</span><br><span class="line">431</span><br><span class="line">432</span><br><span class="line">433</span><br><span class="line">434</span><br><span class="line">435</span><br><span class="line">436</span><br><span class="line">437</span><br><span class="line">438</span><br><span class="line">439</span><br><span class="line">440</span><br><span class="line">441</span><br><span class="line">442</span><br><span class="line">443</span><br><span class="line">444</span><br><span class="line">445</span><br><span class="line">446</span><br><span class="line">447</span><br><span class="line">448</span><br><span class="line">449</span><br><span class="line">450</span><br><span class="line">451</span><br><span class="line">452</span><br><span class="line">453</span><br><span class="line">454</span><br><span class="line">455</span><br><span class="line">456</span><br><span class="line">457</span><br><span class="line">458</span><br><span class="line">459</span><br><span class="line">460</span><br><span class="line">461</span><br><span class="line">462</span><br><span class="line">463</span><br><span class="line">464</span><br><span class="line">465</span><br><span class="line">466</span><br><span class="line">467</span><br><span class="line">468</span><br><span class="line">469</span><br><span class="line">470</span><br><span class="line">471</span><br><span class="line">472</span><br><span class="line">473</span><br><span class="line">474</span><br><span class="line">475</span><br><span class="line">476</span><br><span class="line">477</span><br><span class="line">478</span><br><span class="line">479</span><br><span class="line">480</span><br><span class="line">481</span><br><span class="line">482</span><br><span class="line">483</span><br><span class="line">484</span><br><span class="line">485</span><br><span class="line">486</span><br><span class="line">487</span><br><span class="line">488</span><br><span class="line">489</span><br><span class="line">490</span><br><span class="line">491</span><br><span class="line">492</span><br><span class="line">493</span><br><span class="line">494</span><br><span class="line">495</span><br><span class="line">496</span><br><span class="line">497</span><br><span class="line">498</span><br><span class="line">499</span><br><span class="line">500</span><br><span class="line">501</span><br><span class="line">502</span><br><span class="line">503</span><br><span class="line">504</span><br><span class="line">505</span><br><span class="line">506</span><br><span class="line">507</span><br><span class="line">508</span><br><span class="line">509</span><br><span class="line">510</span><br><span class="line">511</span><br><span class="line">512</span><br><span class="line">513</span><br><span class="line">514</span><br><span class="line">515</span><br><span class="line">516</span><br><span class="line">517</span><br><span class="line">518</span><br><span class="line">519</span><br><span class="line">520</span><br><span class="line">521</span><br><span class="line">522</span><br><span class="line">523</span><br><span class="line">524</span><br><span class="line">525</span><br><span class="line">526</span><br><span class="line">527</span><br><span class="line">528</span><br><span class="line">529</span><br><span class="line">530</span><br><span class="line">531</span><br><span class="line">532</span><br><span class="line">533</span><br><span class="line">534</span><br><span class="line">535</span><br><span class="line">536</span><br><span class="line">537</span><br><span class="line">538</span><br><span class="line">539</span><br><span class="line">540</span><br><span class="line">541</span><br><span class="line">542</span><br><span class="line">543</span><br><span class="line">544</span><br><span class="line">545</span><br><span class="line">546</span><br><span class="line">547</span><br><span class="line">548</span><br><span class="line">549</span><br><span class="line">550</span><br><span class="line">551</span><br><span class="line">552</span><br><span class="line">553</span><br><span class="line">554</span><br><span class="line">555</span><br><span class="line">556</span><br><span class="line">557</span><br><span class="line">558</span><br><span class="line">559</span><br><span class="line">560</span><br><span class="line">561</span><br><span class="line">562</span><br><span class="line">563</span><br><span class="line">564</span><br><span class="line">565</span><br><span class="line">566</span><br><span class="line">567</span><br><span class="line">568</span><br><span class="line">569</span><br><span class="line">570</span><br><span class="line">571</span><br><span class="line">572</span><br><span class="line">573</span><br><span class="line">574</span><br><span class="line">575</span><br><span class="line">576</span><br><span class="line">577</span><br><span class="line">578</span><br><span class="line">579</span><br><span class="line">580</span><br><span class="line">581</span><br><span class="line">582</span><br><span class="line">583</span><br><span class="line">584</span><br><span class="line">585</span><br><span class="line">586</span><br><span class="line">587</span><br><span class="line">588</span><br><span class="line">589</span><br><span class="line">590</span><br><span class="line">591</span><br><span class="line">592</span><br><span class="line">593</span><br><span class="line">594</span><br><span class="line">595</span><br><span class="line">596</span><br><span class="line">597</span><br><span class="line">598</span><br><span class="line">599</span><br><span class="line">600</span><br><span class="line">601</span><br><span class="line">602</span><br><span class="line">603</span><br><span class="line">604</span><br><span class="line">605</span><br><span class="line">606</span><br><span class="line">607</span><br><span class="line">608</span><br><span class="line">609</span><br><span class="line">610</span><br><span class="line">611</span><br><span class="line">612</span><br><span class="line">613</span><br><span class="line">614</span><br><span class="line">615</span><br><span class="line">616</span><br><span class="line">617</span><br><span class="line">618</span><br><span class="line">619</span><br><span class="line">620</span><br><span class="line">621</span><br><span class="line">622</span><br><span class="line">623</span><br><span class="line">624</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># This is a configuration file for Zabbix server daemon</span></span><br><span class="line"><span class="comment"># To get more information about Zabbix, visit http://www.zabbix.com</span></span><br><span class="line"><span class="comment">############ GENERAL PARAMETERS #################</span></span><br><span class="line"><span class="comment">### Option: ListenPort</span></span><br><span class="line"><span class="comment">#   Listen port for trapper.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 1024-32767</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明: 服务端监听端口用于接收二级代理或直连 AGENT 的采集数据 </span></span><br><span class="line"><span class="comment"># ListenPort=10051</span></span><br><span class="line"><span class="comment">### Option: SourceIP</span></span><br><span class="line"><span class="comment">#   Source IP address for outgoing connections.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：服务端监听 IP，建议指定</span></span><br><span class="line"><span class="comment"># SourceIP=</span></span><br><span class="line"><span class="comment">### Option: LogType</span></span><br><span class="line"><span class="comment">#   Specifies where log messages are written to:</span></span><br><span class="line"><span class="comment">#       system  - syslog</span></span><br><span class="line"><span class="comment">#       file    - file specified with LogFile parameter</span></span><br><span class="line"><span class="comment">#       console - standard output</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># LogType=file</span></span><br><span class="line"><span class="comment">### Option: LogFile</span></span><br><span class="line"><span class="comment">#   Log file name for LogType 'file' parameter.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># LogFile=</span></span><br><span class="line"><span class="comment"># 说明：zabbix 服务端日志路径，视具体情况指定</span></span><br><span class="line">LogFile=/tmp/zabbix_server.log</span><br><span class="line"><span class="comment">### Option: LogFileSize</span></span><br><span class="line"><span class="comment">#   Maximum size of log file in MB.</span></span><br><span class="line"><span class="comment">#   0 - disable automatic log rotation.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 0-1024</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：日志达到多少 M 里就轮转；若此参数值为 0 时，则不轮转，日志将不断变大，建议设置成轮转</span></span><br><span class="line">LogFileSize=50</span><br><span class="line"><span class="comment">### Option: DebugLevel</span></span><br><span class="line"><span class="comment">#   Specifies debug level:</span></span><br><span class="line"><span class="comment">#   0 - basic information about starting and stopping of Zabbix processes</span></span><br><span class="line"><span class="comment">#   1 - critical information  灾难日志，日志量较少</span></span><br><span class="line"><span class="comment">#   2 - error information  错误级别，日志量大于 CRITICAL 级别</span></span><br><span class="line"><span class="comment">#   3 - warnings    告警级别，日志量大于 ERROR 级别</span></span><br><span class="line"><span class="comment">#   4 - for debugging (produces lots of information) 调试级别，日志量大于 WARNING</span></span><br><span class="line"><span class="comment">#   5 - extended debugging (produces even more information)</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 0-5</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：日志级别 0~4，单位时间内生成日志的量不断增大</span></span><br><span class="line">DebugLevel=3</span><br><span class="line"><span class="comment">### Option: PidFile</span></span><br><span class="line"><span class="comment">#   Name of PID file.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：zabbix 服务端程序 PID 路径</span></span><br><span class="line">PidFile=/tmp/zabbix_server.pid</span><br><span class="line"><span class="comment">### Option: DBHost</span></span><br><span class="line"><span class="comment">#   Database host name.</span></span><br><span class="line"><span class="comment">#   If set to localhost, socket is used for MySQL.</span></span><br><span class="line"><span class="comment">#   If set to empty string, socket is used for PostgreSQL.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：指定数据库信息，对于 mysql，若设置为 localhost 则 mysql 用 SOCKET 来连接(需配合参数 DBSocket 使用)，否则用 IP 连接；若 DHHOST 值为空，则默认连接 PostgreSQL</span></span><br><span class="line"><span class="comment"># DBHost=localhost</span></span><br><span class="line">DBHost=</span><br><span class="line"><span class="comment">### Option: DBName</span></span><br><span class="line"><span class="comment">#   Database name.</span></span><br><span class="line"><span class="comment">#   For SQLite3 path to database file must be provided. DBUser and DBPassword are ignored.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: yes</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># DBName=</span></span><br><span class="line"><span class="comment"># 说明：服务端连接数据库的库名</span></span><br><span class="line">DBName=</span><br><span class="line"><span class="comment">### Option: DBSchema</span></span><br><span class="line"><span class="comment">#   Schema name. Used for IBM DB2 and PostgreSQL.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：专门用于 IBM DB2 数据库的连接信息</span></span><br><span class="line"><span class="comment"># DBSchema=</span></span><br><span class="line"><span class="comment">### Option: DBUser</span></span><br><span class="line"><span class="comment">#   Database user. Ignored for SQLite.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：连接数据库的用户</span></span><br><span class="line"><span class="comment"># DBUser=</span></span><br><span class="line">DBUser=</span><br><span class="line"><span class="comment">### Option: DBPassword</span></span><br><span class="line"><span class="comment">#   Database password. Ignored for SQLite.</span></span><br><span class="line"><span class="comment">#   Comment this line if no password is used.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：连接数据库的密码</span></span><br><span class="line">DBPassword=</span><br><span class="line"><span class="comment">### Option: DBSocket</span></span><br><span class="line"><span class="comment">#   Path to MySQL socket.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：指定 MYSQL 的 SOCK 连接路径</span></span><br><span class="line">DBSocket=/tmp/mysql.sock</span><br><span class="line"><span class="comment">### Option: DBPort</span></span><br><span class="line"><span class="comment">#   Database port when not using local socket. Ignored for SQLite.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 1024-65535</span></span><br><span class="line"><span class="comment"># Default (for MySQL):</span></span><br><span class="line"><span class="comment"># 说明：指定连接数据库的端口，默认 3306</span></span><br><span class="line">DBPort=3306</span><br><span class="line"><span class="comment">############ ADVANCED PARAMETERS ################</span></span><br><span class="line"><span class="comment"># 高级参数</span></span><br><span class="line"><span class="comment">### Option: StartPollers</span></span><br><span class="line"><span class="comment">#   Number of pre-forked instances of pollers.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 0-1000</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明; 初始化时，启动子进程数量，数量越多，则服务端吞吐能力越强，对系统资源消耗越大</span></span><br><span class="line">StartPollers=300</span><br><span class="line"><span class="comment">### Option: StartIPMIPollers</span></span><br><span class="line"><span class="comment">#   Number of pre-forked instances of IPMI pollers.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 0-1000</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># 说明: 主要用于 IPmi 技术用于获取硬件状态场景。若无相关监控项，建议设置为 0</span></span><br><span class="line"><span class="comment"># StartIPMIPollers=0</span></span><br><span class="line"><span class="comment">### Option: StartPollersUnreachable</span></span><br><span class="line"><span class="comment">#   Number of pre-forked instances of pollers for unreachable hosts (including IPMI and Java).</span></span><br><span class="line"><span class="comment">#   At least one poller for unreachable hosts must be running if regular, IPMI or Java pollers</span></span><br><span class="line"><span class="comment">#   are started.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 0-1000</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：默认情况下，ZABBIX 会启用指定进程用于探测某些不可达主机的（含 IPMI 场景）；若使用场景中含有代理端，建议保持默认；若直接 agent 较多，可视具体情况调整</span></span><br><span class="line">StartPollersUnreachable=50</span><br><span class="line"><span class="comment">### Option: StartTrappers</span></span><br><span class="line"><span class="comment">#   Number of pre-forked instances of trappers.</span></span><br><span class="line"><span class="comment">#   Trappers accept incoming connections from Zabbix sender, active agents and active proxies.</span></span><br><span class="line"><span class="comment">#   At least one trapper process must be running to display server availability and view queue</span></span><br><span class="line"><span class="comment">#   in the frontend.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 0-1000</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：用于设置诸如 SNMP STRAPPER 场景提交来的数据的接收进程数，若客户机 SNMP TRAPPER 技术较多，建议加大此参数值</span></span><br><span class="line">StartTrappers=50</span><br><span class="line"><span class="comment">### Option: StartPingers</span></span><br><span class="line"><span class="comment">#   Number of pre-forked instances of ICMP pingers.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 0-1000</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：用于设置启用 icmp 协议 PING 主机方式启动线程数量，若单台代理所管理机器超过 500 台，建议加大此数值</span></span><br><span class="line"><span class="comment"># StartPingers=10</span></span><br><span class="line"><span class="comment">### Option: StartDiscoverers</span></span><br><span class="line"><span class="comment">#   Number of pre-forked instances of discoverers.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 0-250</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：用于设置自动发现主机的线程数量，若单台代理所管理机器超过 500 台，可以考虑加大此数值（仅适用于直接 AGENT 场景）</span></span><br><span class="line">StartDiscoverers=15</span><br><span class="line"><span class="comment">### Option: StartHTTPPollers</span></span><br><span class="line"><span class="comment">#   Number of pre-forked instances of HTTP pollers.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 0-1000</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：用于设置 WEB 拨测监控线程数，可视具体情况增加或减少此数值。</span></span><br><span class="line"><span class="comment"># StartHTTPPollers=1</span></span><br><span class="line"><span class="comment">### Option: StartTimers</span></span><br><span class="line"><span class="comment">#   Number of pre-forked instances of timers.</span></span><br><span class="line"><span class="comment">#   Timers process time-based trigger functions and maintenance periods.</span></span><br><span class="line"><span class="comment">#   Only the first timer process handles the maintenance periods.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 1-1000</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：各实例计时器数量，主要用于触发器，标有维护标识的主机，但只第一个计时器用于计算维护标识主机。</span></span><br><span class="line"><span class="comment"># StartTimers=1</span></span><br><span class="line"><span class="comment">### Option: StartEscalators</span></span><br><span class="line"><span class="comment">#   Number of pre-forked instances of escalators.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 0-100</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：用于处理动作中的步骤的进程，zabbix 动作较多时建议调大。</span></span><br><span class="line">StartEscalators=30</span><br><span class="line"><span class="comment">### Option: JavaGateway</span></span><br><span class="line"><span class="comment">#   IP address (or hostname) of Zabbix Java gateway.</span></span><br><span class="line"><span class="comment">#   Only required if Java pollers are started.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：JAVAGATEWAY 场景下使用</span></span><br><span class="line">JavaGateway=10.238.0.180</span><br><span class="line"><span class="comment">### Option: JavaGatewayPort</span></span><br><span class="line"><span class="comment">#   Port that Zabbix Java gateway listens on.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 1024-32767</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：JAVAGATEWAY 场景下使用</span></span><br><span class="line">JavaGatewayPort=10052</span><br><span class="line"><span class="comment">### Option: StartJavaPollers</span></span><br><span class="line"><span class="comment">#   Number of pre-forked instances of Java pollers.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 0-1000</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：JAVAGATEWAY 场景下使用</span></span><br><span class="line">StartJavaPollers=30</span><br><span class="line"><span class="comment">### Option: StartVMwareCollectors</span></span><br><span class="line"><span class="comment">#   Number of pre-forked vmware collector instances.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 0-250</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：用于设置监控 VMWARE Esxi 主机实例时使用，若为 0 则不启用，若要监控 ESXI 主机，此值最少为 1 ；视监控 ESXI 数量设置对应数值</span></span><br><span class="line"><span class="comment"># StartVMwareCollectors=0</span></span><br><span class="line"><span class="comment">### Option: VMwareFrequency</span></span><br><span class="line"><span class="comment">#   How often Zabbix will connect to VMware service to obtain a new data.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 10-86400</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：代理端访问 VMWARE service 的频率，单位: 秒</span></span><br><span class="line"><span class="comment"># VMwareFrequency=60</span></span><br><span class="line"><span class="comment">### Option: VMwarePerfFrequency</span></span><br><span class="line"><span class="comment">#   How often Zabbix will connect to VMware service to obtain performance data.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 10-86400</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># VMwarePerfFrequency=60</span></span><br><span class="line"><span class="comment">### Option: VMwareCacheSize</span></span><br><span class="line"><span class="comment">#   Size of VMware cache, in bytes.</span></span><br><span class="line"><span class="comment">#   Shared memory size for storing VMware data.</span></span><br><span class="line"><span class="comment">#   Only used if VMware collectors are started.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 256K-2G</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：划出多少共享内存用于存储 VMWARE 数据</span></span><br><span class="line">VMwareCacheSize=256M</span><br><span class="line"><span class="comment">### Option: VMwareTimeout</span></span><br><span class="line"><span class="comment">#   Specifies how many seconds vmware collector waits for response from VMware service.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 1-300</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：等待 VMWare 返回数据的最长时间</span></span><br><span class="line">VMwareTimeout=10</span><br><span class="line"><span class="comment">### Option: SNMPTrapperFile</span></span><br><span class="line"><span class="comment">#   Temporary file used for passing data from SNMP trap daemon to the server.</span></span><br><span class="line"><span class="comment">#   Must be the same as in zabbix_trap_receiver.pl or SNMPTT configuration file.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：指定 SNMP TRAPPER 时的临时文件，用于代理端启用 SNMP TRAPPER 功能时使用</span></span><br><span class="line"><span class="comment"># SNMPTrapperFile=/tmp/zabbix_traps.tmp</span></span><br><span class="line"><span class="comment">### Option: StartSNMPTrapper</span></span><br><span class="line"><span class="comment">#   If 1, SNMP trapper process is started.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 0-1</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：是否启用 snmptrapper 功能 ，默认不启用 = 0，启用 = 1（配合参数 SNMPTrapperFile 使用）</span></span><br><span class="line"><span class="comment"># StartSNMPTrapper=0</span></span><br><span class="line"><span class="comment">### Option: ListenIP</span></span><br><span class="line"><span class="comment">#   List of comma delimited IP addresses that the trapper should listen on.</span></span><br><span class="line"><span class="comment">#   Trapper will listen on all network interfaces if this parameter is missing.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：启用 SNMPTRAPPER 里 ，接收端监听的 IP，此参数与 StartSNMPTrapper，SNMPTrapperFile 联合使用</span></span><br><span class="line"><span class="comment"># ListenIP=0.0.0.0</span></span><br><span class="line">ListenIP=10.238.0.180</span><br><span class="line"><span class="comment">### Option: HousekeepingFrequency</span></span><br><span class="line"><span class="comment">#   How often Zabbix will perform housekeeping procedure (in hours).</span></span><br><span class="line"><span class="comment">#   Housekeeping is removing outdated information from the database.</span></span><br><span class="line"><span class="comment">#   To prevent Housekeeper from being overloaded, no more than 4 times HousekeepingFrequency</span></span><br><span class="line"><span class="comment">#   hours of outdated information are deleted in one housekeeping cycle, for each item.</span></span><br><span class="line"><span class="comment">#   To lower load on server startup housekeeping is postponed for 30 minutes after server start.</span></span><br><span class="line"><span class="comment">#   With HousekeepingFrequency=0 the housekeeper can be only executed using the runtime control option.</span></span><br><span class="line"><span class="comment">#   In this case the period of outdated information deleted in one housekeeping cycle is 4 times the</span></span><br><span class="line"><span class="comment">#   period since the last housekeeping cycle, but not less than 4 hours and not greater than 4 days.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 0-24</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：多少小时清理一次代理端数据库的 history, alert, and alarms，以保持代理端数据库轻便，建议保持默认</span></span><br><span class="line">HousekeepingFrequency=24</span><br><span class="line"><span class="comment">### Option: MaxHousekeeperDelete</span></span><br><span class="line"><span class="comment">#   The table "housekeeper" contains "tasks" for housekeeping procedure in the format:</span></span><br><span class="line"><span class="comment">#   [housekeeperid], [tablename], [field], [value].</span></span><br><span class="line"><span class="comment">#   No more than 'MaxHousekeeperDelete' rows (corresponding to [tablename], [field], [value])</span></span><br><span class="line"><span class="comment">#   will be deleted per one task in one housekeeping cycle.</span></span><br><span class="line"><span class="comment">#   SQLite3 does not use this parameter, deletes all corresponding rows without a limit.</span></span><br><span class="line"><span class="comment">#   If set to 0 then no limit is used at all. In this case you must know what you are doing!</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 0-1000000</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明: 每个 HouseKeeper 任务删除的最大记录数，1.8.2 开始支持</span></span><br><span class="line">MaxHousekeeperDelete=1000000</span><br><span class="line"><span class="comment">### Option: SenderFrequency</span></span><br><span class="line"><span class="comment">#   How often Zabbix will try to send unsent alerts (in seconds).</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 5-3600</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明: 多少秒后重试发送失败的报警信息</span></span><br><span class="line">SenderFrequency=30</span><br><span class="line"><span class="comment">### Option: CacheSize</span></span><br><span class="line"><span class="comment">#   Size of configuration cache, in bytes.</span></span><br><span class="line"><span class="comment">#   Shared memory size for storing host, item and trigger data.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 128K-8G</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明; zabbix 初始化时占用多少系统共享内存用于存储配置信息，HOST,ITEM,TRIGGER 数据，视监控主机数量和监控项调整，建议调整到 32M 或者更大</span></span><br><span class="line">CacheSize=8G</span><br><span class="line"><span class="comment">### Option: CacheUpdateFrequency</span></span><br><span class="line"><span class="comment">#   How often Zabbix will perform update of configuration cache, in seconds.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 1-3600</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：zabbix 更新操作系统 CACHE 频率，若管理页面操作不频繁，可以考虑加大参数值</span></span><br><span class="line">CacheUpdateFrequency=300</span><br><span class="line"><span class="comment">### Option: StartDBSyncers</span></span><br><span class="line"><span class="comment">#   Number of pre-forked instances of DB Syncers.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 1-100</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明: 将采集数据从 CACHE 同步到数据库线程数量，视数据库服务器 I/O 繁忙情况，和数据库写能力调整。数值越大，写能力越强。对数据库服务器 I/O 压力越大。</span></span><br><span class="line">StartDBSyncers=20</span><br><span class="line"><span class="comment">### Option: HistoryCacheSize</span></span><br><span class="line"><span class="comment">#   Size of history cache, in bytes.</span></span><br><span class="line"><span class="comment">#   Shared memory size for storing history data.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 128K-2G</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：用于设置划分多少系统共享内存用于存储采集的历史数据，此数值越大，数据库读压力越小</span></span><br><span class="line">HistoryCacheSize=2048M</span><br><span class="line"><span class="comment">### Option: HistoryIndexCacheSize</span></span><br><span class="line"><span class="comment">#   Size of history index cache, in bytes.</span></span><br><span class="line"><span class="comment">#   Shared memory size for indexing history cache.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 128K-2G</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：3.0.0 开始支持，历史索引大小，一个监控项需要 100bytes 来存储</span></span><br><span class="line">HistoryIndexCacheSize=2048M</span><br><span class="line"><span class="comment">### Option: TrendCacheSize</span></span><br><span class="line"><span class="comment">#   Size of trend cache, in bytes.</span></span><br><span class="line"><span class="comment">#   Shared memory size for storing trends data.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 128K-2G</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：用于设置划分多少系统共享内存用于存储计算出来的趋势数据，此参数值从一定程度上可影响数据库读压力</span></span><br><span class="line">TrendCacheSize=512M</span><br><span class="line"><span class="comment">### Option: ValueCacheSize</span></span><br><span class="line"><span class="comment">#   Size of history value cache, in bytes.</span></span><br><span class="line"><span class="comment">#   Shared memory size for caching item history data requests.</span></span><br><span class="line"><span class="comment">#   Setting to 0 disables value cache.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 0,128K-64G</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：划出系统多少共享内存用于已请求的存储监控项信息，若监控项较多，建议加大此数值</span></span><br><span class="line">ValueCacheSize=16G</span><br><span class="line"><span class="comment">### Option: Timeout</span></span><br><span class="line"><span class="comment">#   Specifies how long we wait for agent, SNMP device or external check (in seconds).</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 1-30</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># Timeout=3</span></span><br><span class="line"><span class="comment"># 说明：与 AGNET\SNMP 设备和其它外部设备通信超时设置，单位为秒；若采集数据不完整或网络繁忙，或从管理页面发现客户端状态变化频繁，可以考虑加大此数值。注意若此数值加大，应该考虑参数 StartPollers 是否有相应加大的必要。</span></span><br><span class="line">Timeout=10</span><br><span class="line"><span class="comment">### Option: TrapperTimeout</span></span><br><span class="line"><span class="comment">#   Specifies how many seconds trapper may spend processing new data.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 1-300</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：启用 trapper 功能，用于进程等待超时设置。根据需要调整</span></span><br><span class="line">TrapperTimeout=50</span><br><span class="line"><span class="comment">### Option: UnreachablePeriod</span></span><br><span class="line"><span class="comment">#   After how many seconds of unreachability treat a host as unavailable.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 1-3600</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：当 AGNET 端处于不可用状态下，间隔多少秒后，尝试重新连接。建议根据具体情况设置。注意，若此数值过小，右 agent 端业务系统繁忙时，有可能造成报警信息误报</span></span><br><span class="line"><span class="comment"># UnreachablePeriod=45</span></span><br><span class="line"><span class="comment">### Option: UnavailableDelay</span></span><br><span class="line"><span class="comment">#   How often host is checked for availability during the unavailability period, in seconds.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 1-3600</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明: 当 AGENT 端处于可用状态下，间隔多少秒后，进行状态检查。若出现可正常采集数据，但管理页面 AGENT 状态不正常；若在网络，端口等均通畅情况下，AGENT 状态仍不正常，可以考虑加大此数值</span></span><br><span class="line"><span class="comment"># UnavailableDelay=60</span></span><br><span class="line"><span class="comment">### Option: UnreachableDelay</span></span><br><span class="line"><span class="comment">#   How often host is checked for availability during the unreachability period, in seconds.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 1-3600</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：当 agent 端处于不可达状态下，延迟多少秒后，进行重新尝试，建议保持默认，在 AGENT 接入调试阶段，可考虑减少此数值</span></span><br><span class="line"><span class="comment"># UnreachableDelay=15</span></span><br><span class="line"><span class="comment">### Option: AlertScriptsPath</span></span><br><span class="line"><span class="comment">#   Full path to location of custom alert scripts.</span></span><br><span class="line"><span class="comment">#   Default depends on compilation options.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：监控报警脚本路径，非研发人员不建议修改此参数值</span></span><br><span class="line"><span class="comment"># AlertScriptsPath=$&#123;datadir&#125;/zabbix/alertscripts</span></span><br><span class="line">AlertScriptsPath=/home/zabbix/bin</span><br><span class="line"><span class="comment">### Option: ExternalScripts</span></span><br><span class="line"><span class="comment">#   Full path to location of external scripts.</span></span><br><span class="line"><span class="comment">#   Default depends on compilation options.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：自定义脚本存储路径，非研发人员不建议修改此参数值</span></span><br><span class="line"><span class="comment"># ExternalScripts=$&#123;datadir&#125;/zabbix/externalscripts</span></span><br><span class="line"><span class="comment">### Option: FpingLocation</span></span><br><span class="line"><span class="comment">#   Location of fping.</span></span><br><span class="line"><span class="comment">#   Make sure that fping binary has root ownership and SUID flag set.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：IPv4 FPING 命令路径，仅 ROOT 可用。注意使用此命令时，应该确认此命令是否存在</span></span><br><span class="line">FpingLocation=/usr/sbin/fping</span><br><span class="line"><span class="comment">### Option: Fping6Location</span></span><br><span class="line"><span class="comment">#   Location of fping6.</span></span><br><span class="line"><span class="comment">#   Make sure that fping6 binary has root ownership and SUID flag set.</span></span><br><span class="line"><span class="comment">#   Make empty if your fping utility is capable to process IPv6 addresses.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：IPv6 FPING 命令路径，仅 ROOT 可用。注意使用此命令时，应该确认此命令是否存在</span></span><br><span class="line"><span class="comment"># Fping6Location=/usr/sbin/fping6</span></span><br><span class="line"><span class="comment">### Option: SSHKeyLocation</span></span><br><span class="line"><span class="comment">#   Location of public and private keys for SSH checks and actions.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：在服务端需要 SSH 到 AGENT 端且采用用 KEY 验证方式时使用。非研发人员，不建议修改或设置</span></span><br><span class="line"><span class="comment"># SSHKeyLocation=</span></span><br><span class="line"><span class="comment">### Option: LogSlowQueries</span></span><br><span class="line"><span class="comment">#   How long a database query may take before being logged (in milliseconds).</span></span><br><span class="line"><span class="comment">#   Only works if DebugLevel set to 3, 4 or 5.</span></span><br><span class="line"><span class="comment">#   0 - don't log slow queries.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 1-3600000</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明: 用于服务端数据库慢查询功能，单位是毫秒；1 毫秒 = 0.001 秒，若有服务端数据库监控慢查询的需求，可以视具体情况调整此数。</span></span><br><span class="line"><span class="comment"># LogSlowQueries=0</span></span><br><span class="line">LogSlowQueries=3000</span><br><span class="line"><span class="comment">### Option: TmpDir</span></span><br><span class="line"><span class="comment">#   Temporary directory.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：zabbix 服务端工作的临时目录</span></span><br><span class="line"><span class="comment"># TmpDir=/tmp</span></span><br><span class="line"><span class="comment">### Option: StartProxyPollers</span></span><br><span class="line"><span class="comment">#   Number of pre-forked instances of pollers for passive proxies.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 0-250</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明: 启用多少子进程与代理端通信，若代理端较多可考虑加大此数值</span></span><br><span class="line"><span class="comment"># StartProxyPollers=1</span></span><br><span class="line"><span class="comment">### Option: ProxyConfigFrequency</span></span><br><span class="line"><span class="comment">#   How often Zabbix Server sends configuration data to a Zabbix Proxy in seconds.</span></span><br><span class="line"><span class="comment">#   This parameter is used only for proxies in the passive mode.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 1-3600*24*7</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：zabbix 服务端将配置文件数据同步到代理端的频率，仅适用于代理端为被动模式情况下</span></span><br><span class="line"><span class="comment"># ProxyConfigFrequency=3600</span></span><br><span class="line"><span class="comment">### Option: ProxyDataFrequency</span></span><br><span class="line"><span class="comment">#   How often Zabbix Server requests history data from a Zabbix Proxy in seconds.</span></span><br><span class="line"><span class="comment">#   This parameter is used only for proxies in the passive mode.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Range: 1-3600</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：zabbix 服务端请求代理端采集的数据的频率，仅适用代理端为被动模式情况下</span></span><br><span class="line"><span class="comment"># ProxyDataFrequency=1</span></span><br><span class="line"><span class="comment">### Option: AllowRoot</span></span><br><span class="line"><span class="comment">#   Allow the server to run as'root'. If disabled and the server is started by'root', the server</span></span><br><span class="line"><span class="comment">#   will try to switch to the user specified by the User configuration option instead.</span></span><br><span class="line"><span class="comment">#   Has no effect if started under a regular user.</span></span><br><span class="line"><span class="comment">#   0 - do not allow 不允许</span></span><br><span class="line"><span class="comment">#   1 - allow 允许</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：是否允许以 root 身份运行服务端</span></span><br><span class="line">AllowRoot=1</span><br><span class="line"><span class="comment">### Option: User</span></span><br><span class="line"><span class="comment">#   Drop privileges to a specific, existing user on the system.</span></span><br><span class="line"><span class="comment">#   Only has effect if run as'root'and AllowRoot is disabled.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：非 root 运行的账号</span></span><br><span class="line"><span class="comment"># User=zabbix</span></span><br><span class="line"><span class="comment">### Option: Include</span></span><br><span class="line"><span class="comment">#   You may include individual files or all files in a directory in the configuration file.</span></span><br><span class="line"><span class="comment">#   Installing Zabbix will create include directory in /usr/local/etc, unless modified during the compile time.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：在一些情况下，软件的参数配置文件很长，为了方便管理，将配置文件切割成 N 个配置文件，但为了主配置参数文件的简洁，便会启用 INCLUDE 参数，以方便程序读取指定目录下的所有配置文件</span></span><br><span class="line"><span class="comment"># Include=</span></span><br><span class="line"><span class="comment"># Include=/usr/local/etc/zabbix_server.general.conf</span></span><br><span class="line"><span class="comment"># Include=/usr/local/etc/zabbix_server.conf.d/</span></span><br><span class="line"><span class="comment"># Include=/usr/local/etc/zabbix_server.conf.d/*.conf</span></span><br><span class="line"><span class="comment">### Option: SSLCertLocation</span></span><br><span class="line"><span class="comment">#   Location of SSL client certificates.</span></span><br><span class="line"><span class="comment">#   This parameter is used only in web monitoring.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：SSL 客户端认证文件，2.4 开始支持</span></span><br><span class="line"><span class="comment"># SSLCertLocation=$&#123;datadir&#125;/zabbix/ssl/certs</span></span><br><span class="line"><span class="comment">### Option: SSLKeyLocation</span></span><br><span class="line"><span class="comment">#   Location of private keys for SSL client certificates.</span></span><br><span class="line"><span class="comment">#   This parameter is used only in web monitoring.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：SSL 私钥文件目录，2.4 开始支持</span></span><br><span class="line"><span class="comment"># SSLKeyLocation=$&#123;datadir&#125;/zabbix/ssl/keys</span></span><br><span class="line"><span class="comment">### Option: SSLCALocation</span></span><br><span class="line"><span class="comment">#   Override the location of certificate authority (CA) files for SSL server certificate verification.</span></span><br><span class="line"><span class="comment">#   If not set, system-wide directory will be used.</span></span><br><span class="line"><span class="comment">#   This parameter is used only in web monitoring and SMTP authentication.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：SSL CA 钥文件目录，2.4 开始支持</span></span><br><span class="line"><span class="comment"># SSLCALocation=</span></span><br><span class="line"><span class="comment">####### LOADABLE MODULES #######</span></span><br><span class="line"><span class="comment"># 可加载的模块</span></span><br><span class="line"><span class="comment">### Option: LoadModulePath</span></span><br><span class="line"><span class="comment">#   Full path to location of server modules.</span></span><br><span class="line"><span class="comment">#   Default depends on compilation options.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 指定本地模块路径，非研发人员不建议修改</span></span><br><span class="line"><span class="comment"># LoadModulePath=$&#123;libdir&#125;/modules</span></span><br><span class="line"><span class="comment">### Option: LoadModule</span></span><br><span class="line"><span class="comment">#   Module to load at server startup. Modules are used to extend functionality of the server.</span></span><br><span class="line"><span class="comment">#   Format: LoadModule=&lt;module.so&gt;</span></span><br><span class="line"><span class="comment">#   The modules must be located in directory specified by LoadModulePath.</span></span><br><span class="line"><span class="comment">#   It is allowed to include multiple LoadModule parameters.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 指定本地模块路径，非研发人员不建议修改</span></span><br><span class="line"><span class="comment"># LoadModule=</span></span><br><span class="line"><span class="comment">####### TLS-RELATED PARAMETERS #######</span></span><br><span class="line"><span class="comment">#TLS 相关参数</span></span><br><span class="line"><span class="comment">### Option: TLSCAFile</span></span><br><span class="line"><span class="comment">#   Full pathname of a file containing the top-level CA(s) certificates for</span></span><br><span class="line"><span class="comment">#   peer certificate verification.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：TLS 证书文件</span></span><br><span class="line"><span class="comment"># TLSCAFile=</span></span><br><span class="line"><span class="comment">### Option: TLSCRLFile</span></span><br><span class="line"><span class="comment">#   Full pathname of a file containing revoked certificates.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：TLS 证书文件</span></span><br><span class="line"><span class="comment"># TLSCRLFile=</span></span><br><span class="line"><span class="comment">### Option: TLSCertFile</span></span><br><span class="line"><span class="comment">#   Full pathname of a file containing the server certificate or certificate chain.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：TLS 证书文件</span></span><br><span class="line"><span class="comment"># TLSCertFile=</span></span><br><span class="line"><span class="comment">### Option: TLSKeyFile</span></span><br><span class="line"><span class="comment">#   Full pathname of a file containing the server private key.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Mandatory: no</span></span><br><span class="line"><span class="comment"># Default:</span></span><br><span class="line"><span class="comment"># 说明：TLS 证书文件</span></span><br><span class="line"><span class="comment"># TLSKeyFile=</span></span><br></pre></td></tr></table></figure>  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/zabbix-faq/" data-title="Zabbix 常见问题整理 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/okr/" title="OKR 和 KPI">
+  <strong>上一篇：</strong><br/>
+  <span>
+  OKR 和 KPI</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/rps/"  title="RPS 和 RFS 网卡多队列性能调优实践">
+ <strong>下一篇：</strong><br/> 
+ <span>RPS 和 RFS 网卡多队列性能调优实践
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#官方文档"><span class="toc-number">3.</span> <span class="toc-text">官方文档</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FAQ"><span class="toc-number">4.</span> <span class="toc-text">FAQ</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#zabbix-server-conf-中英文解释"><span class="toc-number">5.</span> <span class="toc-text">zabbix_server.conf 中英文解释</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>185</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>18</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

@@ -1,0 +1,659 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>Redis 主从同步配置实践 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="Redis主备同步配置实践">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis 主从同步配置实践">
+<meta property="og:url" content="https://wsgzao.github.io/post/redis/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="Redis主备同步配置实践">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-11-19T07:19:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis 主从同步配置实践">
+<meta name="twitter:description" content="Redis主备同步配置实践">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/redis/" title="Redis 主从同步配置实践" itemprop="url">Redis 主从同步配置实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2019-09-04T06:59:49.000Z" itemprop="datePublished"> 发表于 2019-09-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis-简介"><span class="toc-number">3.</span> <span class="toc-text">Redis 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Documentation"><span class="toc-number">4.</span> <span class="toc-text">Documentation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Install"><span class="toc-number">5.</span> <span class="toc-text">Install</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Configuration"><span class="toc-number">6.</span> <span class="toc-text">Configuration</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#redis-conf-配置英文原版"><span class="toc-number">7.</span> <span class="toc-text">redis.conf 配置英文原版</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#redis-conf-配置中文翻译"><span class="toc-number">8.</span> <span class="toc-text">redis.conf 配置中文翻译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#生产环境配置"><span class="toc-number">9.</span> <span class="toc-text">生产环境配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#redis-conf-线上配置"><span class="toc-number">9.1.</span> <span class="toc-text">redis.conf 线上配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义脚本"><span class="toc-number">10.</span> <span class="toc-text">自定义脚本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">11.</span> <span class="toc-text">参考文章</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Redis 是一个高性能的 key-value 数据库，作为一个典型的内存数据库，高速读写性能并支持数据持久化是大多数人选择 Redis 的原因，当然 Redis 也有很多局限，即使现在升级至 6.0 在技术圈仍有很多不同的声音。Redis 监控可以通过 Keepalived 结合简单的脚本实现，也可以基于 Redis Sentinel 监控，如果需要横向扩展使用 Codis 或许是更加成熟稳定的方案。</p>
+<blockquote>
+<p>Redis 主备同步配置实践</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019 年 09 月 04 日 - 补充 redis.conf 主从模式生产环境配置<br>2018 年 11 月 29 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/redis/">https://wsgzao.github.io/post/redis/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<p>Redis - <a href="https://redis.io/" target="_blank" rel="noopener">https://redis.io/</a></p>
+<hr>
+<h2 id="Redis-简介"><a href="#Redis-简介" class="headerlink" title="Redis 简介"></a>Redis 简介</h2><p>Redis is often referred as a <em>data structures</em> server. What this means is that Redis provides access to mutable data structures via a set of commands, which are sent using a <em>server-client</em> model with TCP sockets and a simple protocol. So different processes can query and modify the same data structures in a shared way.</p>
+<p>Data structures implemented into Redis have a few special properties:</p>
+<ul>
+<li>Redis cares to store them on disk, even if they are always served and modified into the server memory. This means that Redis is fast, but that is also non-volatile.</li>
+<li>Implementation of data structures stress on memory efficiency, so data structures inside Redis will likely use less memory compared to the same data structure modeled using an high level programming language.</li>
+<li>Redis offers a number of features that are natural to find in a database, like replication, tunable levels of durability, cluster, high availability.</li>
+</ul>
+<p>Another good example is to think of Redis as a more complex version of memcached, where the operations are not just SETs and GETs, but operations to work with complex data types like Lists, Sets, ordered data structures, and so forth.</p>
+<p>If you want to know more, this is a list of selected starting points:</p>
+<ul>
+<li>Introduction to Redis data types. <a href="http://redis.io/topics/data-types-intro" target="_blank" rel="noopener">http://redis.io/topics/data-types-intro</a></li>
+<li>Try Redis directly inside your browser. <a href="http://try.redis.io" target="_blank" rel="noopener">http://try.redis.io</a></li>
+<li>The full list of Redis commands. <a href="http://redis.io/commands" target="_blank" rel="noopener">http://redis.io/commands</a></li>
+<li>There is much more inside the Redis official documentation. <a href="http://redis.io/documentation" target="_blank" rel="noopener">http://redis.io/documentation</a></li>
+</ul>
+<h2 id="Documentation"><a href="#Documentation" class="headerlink" title="Documentation"></a>Documentation</h2><blockquote>
+<p>Latest stable version tar ball</p>
+</blockquote>
+<p><a href="http://download.redis.io/redis-stable.tar.gz" target="_blank" rel="noopener">http://download.redis.io/redis-stable.tar.gz</a></p>
+<p><a href="http://download.redis.io/releases/redis-5.0.2.tar.gz" target="_blank" rel="noopener">http://download.redis.io/releases/redis-5.0.2.tar.gz</a></p>
+<p><a href="http://download.redis.io/releases/redis-3.2.10.tar.gz" target="_blank" rel="noopener">http://download.redis.io/releases/redis-3.2.10.tar.gz</a></p>
+<blockquote>
+<p>Browse source code</p>
+</blockquote>
+<p><a href="http://download.redis.io/redis-stable/" target="_blank" rel="noopener">http://download.redis.io/redis-stable/</a></p>
+<p><a href="http://download.redis.io/redis-stable/README.md" target="_blank" rel="noopener">http://download.redis.io/redis-stable/README.md</a></p>
+<h2 id="Install"><a href="#Install" class="headerlink" title="Install"></a>Install</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># download</span></span><br><span class="line">wget http://download.redis.io/redis-stable.tar.gz</span><br><span class="line">tar xf redis-stable.tar.gz</span><br><span class="line"><span class="built_in">cd</span> redis-stable</span><br><span class="line"><span class="comment"># check packages</span></span><br><span class="line">yum -y install gcc gcc-c++ tcl</span><br><span class="line"><span class="comment"># check version</span></span><br><span class="line">./src/redis-cli -v</span><br><span class="line">redis-cli 5.0.2</span><br><span class="line"><span class="comment"># start redis server</span></span><br><span class="line">./src/redis-server redis.conf</span><br><span class="line"><span class="comment"># test</span></span><br><span class="line">[root@localhost ~]<span class="comment"># ./redis-stable/src/redis-cli</span></span><br><span class="line">127.0.0.1:6379&gt; <span class="built_in">set</span> foo bar</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; get foo</span><br><span class="line"><span class="string">"bar"</span></span><br><span class="line">127.0.0.1:6379&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="Configuration"><a href="#Configuration" class="headerlink" title="Configuration"></a>Configuration</h2><blockquote>
+<p>不理解的配置参数可以参考官方文档或者下面的中文翻译</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># create directory</span></span><br><span class="line">mkdir -p /data/running/redis-6389</span><br><span class="line">mkdir -p /var/<span class="built_in">log</span>/redis/</span><br><span class="line"></span><br><span class="line"><span class="comment"># copy custom scripts</span></span><br><span class="line">-rwxr-xr-x 1 root root    266 Nov 28 19:11 change_redis.py</span><br><span class="line">-rwxr-xr-x 1 root root    323 Nov 28 19:11 check_redis.sh</span><br><span class="line">-rwxr-xr-x 1 root root     20 Nov 28 19:11 connect_redis.sh</span><br><span class="line">-rw-r--r-- 1 root root     74 Nov 28 19:11 keep_alived_state</span><br><span class="line">-rwxr-xr-x 1 root root    829 Nov 28 19:11 keepalived.state.sh</span><br><span class="line">-rwxr-xr-x 1 root root 173376 Nov 28 19:11 redis-cli</span><br><span class="line">-rw-r----- 1 root root  46666 Nov 28 19:11 redis.conf</span><br><span class="line">-rwxr-xr-x 1 root root 979464 Nov 28 19:11 redis-server</span><br><span class="line">-rwxr-xr-x 1 root root     74 Nov 28 19:11 start_redis.sh</span><br><span class="line">-rwxr-xr-x 1 root root     38 Nov 28 19:11 stop_redis.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># set custom values</span></span><br><span class="line">[root@sg-gop-10-71-12-78 redis-6389]<span class="comment"># grep -Ev "^$|#" redis.conf</span></span><br><span class="line">protected-mode no</span><br><span class="line">port 6389</span><br><span class="line">tcp-backlog 511</span><br><span class="line">timeout 0</span><br><span class="line">tcp-keepalive 300</span><br><span class="line">daemonize yes</span><br><span class="line">supervised no</span><br><span class="line">pidfile /var/run/redis_6389.pid</span><br><span class="line">loglevel notice</span><br><span class="line">logfile /var/<span class="built_in">log</span>/redis/redis-6389.log</span><br><span class="line">databases 16</span><br><span class="line">save 900 1</span><br><span class="line">save 300 10</span><br><span class="line">save 60 10000</span><br><span class="line">stop-writes-on-bgsave-error yes</span><br><span class="line">rdbcompression yes</span><br><span class="line">rdbchecksum yes</span><br><span class="line">dbfilename dump.rdb</span><br><span class="line">dir /data/running/redis-6389</span><br><span class="line">slave-serve-stale-data yes</span><br><span class="line">slave-read-only yes</span><br><span class="line">repl-diskless-sync no</span><br><span class="line">repl-diskless-sync-delay 5</span><br><span class="line">repl-disable-tcp-nodelay no</span><br><span class="line">slave-priority 100</span><br><span class="line">maxclients 50000</span><br><span class="line">maxmemory 400gb</span><br><span class="line">maxmemory-policy allkeys-lru</span><br><span class="line">appendonly yes</span><br><span class="line">appendfilename <span class="string">"appendonly.aof"</span></span><br><span class="line">appendfsync everysec</span><br><span class="line">no-appendfsync-on-rewrite no</span><br><span class="line">auto-aof-rewrite-percentage 100</span><br><span class="line">auto-aof-rewrite-min-size 64mb</span><br><span class="line">aof-load-truncated yes</span><br><span class="line">lua-time-limit 5000</span><br><span class="line">slowlog-log-slower-than 10000</span><br><span class="line">slowlog-max-len 128</span><br><span class="line">latency-monitor-threshold 0</span><br><span class="line">notify-keyspace-events <span class="string">""</span></span><br><span class="line"><span class="built_in">hash</span>-max-ziplist-entries 512</span><br><span class="line"><span class="built_in">hash</span>-max-ziplist-value 64</span><br><span class="line">list-max-ziplist-size -2</span><br><span class="line">list-compress-depth 0</span><br><span class="line"><span class="built_in">set</span>-max-intset-entries 512</span><br><span class="line">zset-max-ziplist-entries 128</span><br><span class="line">zset-max-ziplist-value 64</span><br><span class="line">hll-sparse-max-bytes 3000</span><br><span class="line">activerehashing yes</span><br><span class="line">client-output-buffer-limit normal 0 0 0</span><br><span class="line">client-output-buffer-limit slave 0 0 0</span><br><span class="line">client-output-buffer-limit pubsub 32mb 8mb 60</span><br><span class="line">hz 10</span><br><span class="line">aof-rewrite-incremental-fsync yes</span><br><span class="line"></span><br><span class="line"><span class="comment"># set slave</span></span><br><span class="line">telnet 127.0.0.1 6389</span><br><span class="line">slaveof 10.71.12.70 6389</span><br><span class="line"><span class="comment"># cancel slave</span></span><br><span class="line">slaveof no one</span><br><span class="line">info</span><br><span class="line"><span class="comment"># Replication</span></span><br><span class="line">role:master</span><br><span class="line">connected_slaves:1</span><br><span class="line">slave0:ip=10.71.12.71,port=6389,state=online,offset=2283,lag=1</span><br><span class="line">master_repl_offset:2283</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:2</span><br><span class="line">repl_backlog_histlen:2282</span><br><span class="line"><span class="comment"># Replication</span></span><br><span class="line">role:slave</span><br><span class="line">master_host:10.71.12.70</span><br><span class="line">master_port:6389</span><br><span class="line">master_link_status:up</span><br><span class="line">master_last_io_seconds_ago:5</span><br><span class="line">master_sync_in_progress:0</span><br><span class="line">slave_repl_offset:2059</span><br><span class="line">slave_priority:100</span><br><span class="line">slave_read_only:1</span><br><span class="line">connected_slaves:0</span><br><span class="line">master_repl_offset:0</span><br><span class="line">repl_backlog_active:0</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:0</span><br><span class="line">repl_backlog_histlen:0</span><br></pre></td></tr></table></figure>
+<h2 id="redis-conf-配置英文原版"><a href="#redis-conf-配置英文原版" class="headerlink" title="redis.conf 配置英文原版"></a>redis.conf 配置英文原版</h2><blockquote>
+<p>最简单的模式只需要修改 daemonize yes，然后备机使用 slaveof 命令设置即可</p>
+</blockquote>
+<p><a href="http://download.redis.io/redis-stable/redis.conf" target="_blank" rel="noopener">http://download.redis.io/redis-stable/redis.conf</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Redis 默认配置</span></span><br><span class="line">[root@localhost redis-stable]<span class="comment"># grep -Ev "^$|#" redis.conf</span></span><br><span class="line"><span class="built_in">bind</span> 127.0.0.1</span><br><span class="line">protected-mode yes</span><br><span class="line">port 6379</span><br><span class="line">tcp-backlog 511</span><br><span class="line">timeout 0</span><br><span class="line">tcp-keepalive 300</span><br><span class="line">daemonize no</span><br><span class="line">supervised no</span><br><span class="line">pidfile /var/run/redis_6379.pid</span><br><span class="line">loglevel notice</span><br><span class="line">logfile <span class="string">""</span></span><br><span class="line">databases 16</span><br><span class="line">always-show-logo yes</span><br><span class="line">save 900 1</span><br><span class="line">save 300 10</span><br><span class="line">save 60 10000</span><br><span class="line">stop-writes-on-bgsave-error yes</span><br><span class="line">rdbcompression yes</span><br><span class="line">rdbchecksum yes</span><br><span class="line">dbfilename dump.rdb</span><br><span class="line">dir ./</span><br><span class="line">replica-serve-stale-data yes</span><br><span class="line">replica-read-only yes</span><br><span class="line">repl-diskless-sync no</span><br><span class="line">repl-diskless-sync-delay 5</span><br><span class="line">repl-disable-tcp-nodelay no</span><br><span class="line">replica-priority 100</span><br><span class="line">lazyfree-lazy-eviction no</span><br><span class="line">lazyfree-lazy-expire no</span><br><span class="line">lazyfree-lazy-server-del no</span><br><span class="line">replica-lazy-flush no</span><br><span class="line">appendonly no</span><br><span class="line">appendfilename <span class="string">"appendonly.aof"</span></span><br><span class="line">appendfsync everysec</span><br><span class="line">no-appendfsync-on-rewrite no</span><br><span class="line">auto-aof-rewrite-percentage 100</span><br><span class="line">auto-aof-rewrite-min-size 64mb</span><br><span class="line">aof-load-truncated yes</span><br><span class="line">aof-use-rdb-preamble yes</span><br><span class="line">lua-time-limit 5000</span><br><span class="line">slowlog-log-slower-than 10000</span><br><span class="line">slowlog-max-len 128</span><br><span class="line">latency-monitor-threshold 0</span><br><span class="line">notify-keyspace-events <span class="string">""</span></span><br><span class="line"><span class="built_in">hash</span>-max-ziplist-entries 512</span><br><span class="line"><span class="built_in">hash</span>-max-ziplist-value 64</span><br><span class="line">list-max-ziplist-size -2</span><br><span class="line">list-compress-depth 0</span><br><span class="line"><span class="built_in">set</span>-max-intset-entries 512</span><br><span class="line">zset-max-ziplist-entries 128</span><br><span class="line">zset-max-ziplist-value 64</span><br><span class="line">hll-sparse-max-bytes 3000</span><br><span class="line">stream-node-max-bytes 4096</span><br><span class="line">stream-node-max-entries 100</span><br><span class="line">activerehashing yes</span><br><span class="line">client-output-buffer-limit normal 0 0 0</span><br><span class="line">client-output-buffer-limit replica 256mb 64mb 60</span><br><span class="line">client-output-buffer-limit pubsub 32mb 8mb 60</span><br><span class="line">hz 10</span><br><span class="line">dynamic-hz yes</span><br><span class="line">aof-rewrite-incremental-fsync yes</span><br><span class="line">rdb-save-incremental-fsync yes</span><br></pre></td></tr></table></figure>
+<h2 id="redis-conf-配置中文翻译"><a href="#redis-conf-配置中文翻译" class="headerlink" title="redis.conf 配置中文翻译"></a>redis.conf 配置中文翻译</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#redis.conf</span></span><br><span class="line"><span class="comment"># Redis configuration file example.</span></span><br><span class="line"><span class="comment"># ./redis-server /path/to/redis.conf</span></span><br><span class="line"></span><br><span class="line"><span class="comment">################################## INCLUDES ###################################</span></span><br><span class="line"><span class="comment"># 这在你有标准配置模板但是每个 redis 服务器又需要个性设置的时候很有用。</span></span><br><span class="line">include /path/to/local.conf</span><br><span class="line">include /path/to/other.conf</span><br><span class="line"></span><br><span class="line"><span class="comment">################################ GENERAL #####################################</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 是否在后台执行，yes：后台运行；no：不是后台运行（老版本默认）</span></span><br><span class="line">daemonize yes</span><br><span class="line"></span><br><span class="line"><span class="comment">#3.2 里的参数，是否开启保护模式，默认开启。要是配置里没有指定 bind 和密码。开启该参数后，redis 只会本地进行访问，拒绝外部访问。要是开启了密码   和 bind，可以开启。否   则最好关闭，设置为 no。</span></span><br><span class="line">protected-mode yes</span><br><span class="line"></span><br><span class="line"><span class="comment">#redis 的进程文件 </span></span><br><span class="line">pidfile /var/run/redis/redis-server.pid</span><br><span class="line"></span><br><span class="line"><span class="comment">#redis 监听的端口号。</span></span><br><span class="line">port 6379</span><br><span class="line"></span><br><span class="line"><span class="comment"># 此参数确定了 TCP 连接中已完成队列(完成三次握手之后) 的长度， 当然此值必须不大于 Linux 系统定义的 / proc/sys/net/core/somaxconn 值，默认是 511，而 Linux 的默认参数值是 128。当系统并发量大并且客户端速度缓慢的时候，可以将这二个参数一起参考设定。该内核参数默认值一般是 128，对于负载很大的服务程序来说大大的不够。一般会将它修改为 2048 或者更大。在 / etc/sysctl.conf 中添加: net.core.somaxconn = 2048，然后在终端中执行 sysctl -p。</span></span><br><span class="line">tcp-backlog 511</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定 redis 只接收来自于该 IP 地址的请求，如果不进行设置，那么将处理所有请求 </span></span><br><span class="line"><span class="built_in">bind</span> 127.0.0.1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置 unix socket 来让 redis 支持监听本地连接。</span></span><br><span class="line"><span class="comment"># unixsocket /var/run/redis/redis.sock</span></span><br><span class="line"><span class="comment"># 配置 unix socket 使用文件的权限</span></span><br><span class="line"><span class="comment"># unixsocketperm 700</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 此参数为设置客户端空闲超过 timeout，服务端会断开连接，为 0 则服务端不会主动断开连接，不能小于 0。</span></span><br><span class="line">timeout 0</span><br><span class="line"></span><br><span class="line"><span class="comment">#tcp keepalive 参数。如果设置不为 0，就使用配置 tcp 的 SO_KEEPALIVE 值，使用 keepalive 有两个好处: 检测挂掉的对端。降低中间设备出问题而导致网络看似连接却已经与对端端口的问题。在 Linux 内核中，设置了 keepalive，redis 会定时给对端发送 ack。检测到对端关闭需要两倍的设置值。</span></span><br><span class="line">tcp-keepalive 0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定了服务端日志的级别。级别包括：debug（很多信息，方便开发、测试），verbose（许多有用的信息，但是没有 debug 级别信息多），notice（适当的日志级别，适合生产环境），warn（只有非常重要的信息）</span></span><br><span class="line">loglevel notice</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定了记录日志的文件。空字符串的话，日志会打印到标准输出设备。后台运行的 redis 标准输出是 / dev/null。</span></span><br><span class="line">logfile /var/<span class="built_in">log</span>/redis/redis-server.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 是否打开记录 syslog 功能</span></span><br><span class="line"><span class="comment"># syslog-enabled no</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#syslog 的标识符。</span></span><br><span class="line"><span class="comment"># syslog-ident redis</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 日志的来源、设备</span></span><br><span class="line"><span class="comment"># syslog-facility local0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 数据库的数量，默认使用的数据库是 DB 0。可以通过”SELECT “命令选择一个 db</span></span><br><span class="line">databases 16</span><br><span class="line"></span><br><span class="line"><span class="comment">################################ SNAPSHOTTING ################################</span></span><br><span class="line"><span class="comment"># 快照配置</span></span><br><span class="line"><span class="comment"># 注释掉“save” 这一行配置项就可以让保存数据库功能失效 </span></span><br><span class="line"><span class="comment"># 设置 sedis 进行数据库镜像的频率。</span></span><br><span class="line"><span class="comment"># 900 秒（15 分钟）内至少 1 个 key 值改变（则进行数据库保存 -- 持久化） </span></span><br><span class="line"><span class="comment"># 300 秒（5 分钟）内至少 10 个 key 值改变（则进行数据库保存 -- 持久化） </span></span><br><span class="line"><span class="comment"># 60 秒（1 分钟）内至少 10000 个 key 值改变（则进行数据库保存 -- 持久化）</span></span><br><span class="line">save 900 1</span><br><span class="line">save 300 10</span><br><span class="line">save 60 10000</span><br><span class="line"></span><br><span class="line"><span class="comment"># 当 RDB 持久化出现错误后，是否依然进行继续进行工作，yes：不能进行工作，no：可以继续进行工作，可以通过 info 中的 rdb_last_bgsave_status 了解 RDB 持久化是否有错误</span></span><br><span class="line">stop-writes-on-bgsave-error yes</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用压缩 rdb 文件，rdb 文件压缩使用 LZF 压缩算法，yes：压缩，但是需要一些 cpu 的消耗。no：不压缩，需要更多的磁盘空间</span></span><br><span class="line">rdbcompression yes</span><br><span class="line"></span><br><span class="line"><span class="comment"># 是否校验 rdb 文件。从 rdb 格式的第五个版本开始，在 rdb 文件的末尾会带上 CRC64 的校验和。这跟有利于文件的容错性，但是在保存 rdb 文件的时候，会有大概 10% 的性能损耗，所以如果你追求高性能，可以关闭该配置。</span></span><br><span class="line">rdbchecksum yes</span><br><span class="line"></span><br><span class="line"><span class="comment">#rdb 文件的名称</span></span><br><span class="line">dbfilename dump.rdb</span><br><span class="line"></span><br><span class="line"><span class="comment"># 数据目录，数据库的写入会在这个目录。rdb、aof 文件也会写在这个目录</span></span><br><span class="line">dir /var/lib/redis</span><br><span class="line"></span><br><span class="line"><span class="comment">################################# REPLICATION #################################</span></span><br><span class="line"><span class="comment"># 复制选项，slave 复制对应的 master。</span></span><br><span class="line"><span class="comment"># slaveof &lt;masterip&gt; &lt;masterport&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果 master 设置了 requirepass，那么 slave 要连上 master，需要有 master 的密码才行。masterauth 就是用来配置 master 的密码，这样可以在连上 master 后进行认证。</span></span><br><span class="line"><span class="comment"># masterauth &lt;master-password&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 当从库同主机失去连接或者复制正在进行，从机库有两种运行方式：1) 如果 slave-serve-stale-data 设置为 yes(默认设置)，从库会继续响应客户端的请求。2) 如果 slave-serve-stale-data 设置为 no，除去 INFO 和 SLAVOF 命令之外的任何请求都会返回一个错误”SYNC with master in progress”。</span></span><br><span class="line">slave-serve-stale-data yes</span><br><span class="line"></span><br><span class="line"><span class="comment"># 作为从服务器，默认情况下是只读的（yes），可以修改成 NO，用于写（不建议）。</span></span><br><span class="line">slave-read-only yes</span><br><span class="line"></span><br><span class="line"><span class="comment"># 是否使用 socket 方式复制数据。目前 redis 复制提供两种方式，disk 和 socket。如果新的 slave 连上来或者重连的 slave 无法部分同步，就会执行全量同步，master 会生成 rdb 文件。有 2 种方式：disk 方式是 master 创建一个新的进程把 rdb 文件保存到磁盘，再把磁盘上的 rdb 文件传递给 slave。socket 是 master 创建一个新的进程，直接把 rdb 文件以 socket 的方式发给 slave。disk 方式的时候，当一个 rdb 保存的过程中，多个 slave 都能共享这个 rdb 文件。socket 的方式就的一个个 slave 顺序复制。在磁盘速度缓慢，网速快的情况下推荐用 socket 方式。</span></span><br><span class="line">repl-diskless-sync no</span><br><span class="line"></span><br><span class="line"><span class="comment">#diskless 复制的延迟时间，防止设置为 0。一旦复制开始，节点不会再接收新 slave 的复制请求直到下一个 rdb 传输。所以最好等待一段时间，等更多的 slave 连上来。</span></span><br><span class="line">repl-diskless-sync-delay 5</span><br><span class="line"></span><br><span class="line"><span class="comment">#slave 根据指定的时间间隔向服务器发送 ping 请求。时间间隔可以通过 repl_ping_slave_period 来设置，默认 10 秒。</span></span><br><span class="line"><span class="comment"># repl-ping-slave-period 10</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 复制连接超时时间。master 和 slave 都有超时时间的设置。master 检测到 slave 上次发送的时间超过 repl-timeout，即认为 slave 离线，清除该 slave 信息。slave 检测到上次和 master 交互的时间超过 repl-timeout，则认为 master 离线。需要注意的是 repl-timeout 需要设置一个比 repl-ping-slave-period 更大的值，不然会经常检测到超时。</span></span><br><span class="line"><span class="comment"># repl-timeout 60</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 是否禁止复制 tcp 链接的 tcp nodelay 参数，可传递 yes 或者 no。默认是 no，即使用 tcp nodelay。如果 master 设置了 yes 来禁止 tcp nodelay 设置，在把数据复制给 slave 的时候，会减少包的数量和更小的网络带宽。但是这也可能带来数据的延迟。默认我们推荐更小的延迟，但是在数据量传输很大的场景下，建议选择 yes。</span></span><br><span class="line">repl-disable-tcp-nodelay no</span><br><span class="line"></span><br><span class="line"><span class="comment"># 复制缓冲区大小，这是一个环形复制缓冲区，用来保存最新复制的命令。这样在 slave 离线的时候，不需要完全复制 master 的数据，如果可以执行部分同步，只需要把缓冲区的部分数据复制给 slave，就能恢复正常复制状态。缓冲区的大小越大，slave 离线的时间可以更长，复制缓冲区只有在有 slave 连接的时候才分配内存。没有 slave 的一段时间，内存会被释放出来，默认 1m。</span></span><br><span class="line"><span class="comment"># repl-backlog-size 5mb</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#master 没有 slave 一段时间会释放复制缓冲区的内存，repl-backlog-ttl 用来设置该时间长度。单位为秒。</span></span><br><span class="line"><span class="comment"># repl-backlog-ttl 3600</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 当 master 不可用，Sentinel 会根据 slave 的优先级选举一个 master。最低的优先级的 slave，当选 master。而配置成 0，永远不会被选举。</span></span><br><span class="line">slave-priority 100</span><br><span class="line"></span><br><span class="line"><span class="comment">#redis 提供了可以让 master 停止写入的方式，如果配置了 min-slaves-to-write，健康的 slave 的个数小于 N，mater 就禁止写入。master 最少得有多少个健康的 slave 存活才能执行写命令。这个配置虽然不能保证 N 个 slave 都一定能接收到 master 的写操作，但是能避免没有足够健康的 slave 的时候，master 不能写入来避免数据丢失。设置为 0 是关闭该功能。</span></span><br><span class="line"><span class="comment"># min-slaves-to-write 3</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 延迟小于 min-slaves-max-lag 秒的 slave 才认为是健康的 slave。</span></span><br><span class="line"><span class="comment"># min-slaves-max-lag 10</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置 1 或另一个设置为 0 禁用这个特性。</span></span><br><span class="line"><span class="comment"># Setting one or the other to 0 disables the feature.</span></span><br><span class="line"><span class="comment"># By default min-slaves-to-write is set to 0 (feature disabled) and</span></span><br><span class="line"><span class="comment"># min-slaves-max-lag is set to 10.</span></span><br><span class="line"></span><br><span class="line"><span class="comment">################################## SECURITY ###################################</span></span><br><span class="line"><span class="comment">#requirepass 配置可以让用户使用 AUTH 命令来认证密码，才能使用其他命令。这让 redis 可以使用在不受信任的网络中。为了保持向后的兼容性，可以注释该命令，因为大部分用户也不需要认证。使用 requirepass 的时候需要注意，因为 redis 太快了，每秒可以认证 15w 次密码，简单的密码很容易被攻破，所以最好使用一个更复杂的密码。</span></span><br><span class="line"><span class="comment"># requirepass foobared</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 把危险的命令给修改成其他名称。比如 CONFIG 命令可以重命名为一个很难被猜到的命令，这样用户不能使用，而内部工具还能接着使用。</span></span><br><span class="line"><span class="comment"># rename-command CONFIG b840fc02d524045429941cc15f59e41cb7be6c52</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置成一个空的值，可以禁止一个命令</span></span><br><span class="line"><span class="comment"># rename-command CONFIG ""</span></span><br><span class="line"><span class="comment">################################### LIMITS ####################################</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置能连上 redis 的最大客户端连接数量。默认是 10000 个客户端连接。由于 redis 不区分连接是客户端连接还是内部打开文件或者和 slave 连接等，所以 maxclients 最小建议设置到 32。如果超过了 maxclients，redis 会给新的连接发送’max number of clients reached’，并关闭连接。</span></span><br><span class="line"><span class="comment"># maxclients 10000</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#redis 配置的最大内存容量。当内存满了，需要配合 maxmemory-policy 策略进行处理。注意 slave 的输出缓冲区是不计算在 maxmemory 内的。所以为了防止主机内存使用完，建议设置的 maxmemory 需要更小一些。</span></span><br><span class="line"><span class="comment"># maxmemory &lt;bytes&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 内存容量超过 maxmemory 后的处理策略。</span></span><br><span class="line"><span class="comment">#volatile-lru：利用 LRU 算法移除设置过过期时间的 key。</span></span><br><span class="line"><span class="comment">#volatile-random：随机移除设置过过期时间的 key。</span></span><br><span class="line"><span class="comment">#volatile-ttl：移除即将过期的 key，根据最近过期时间来删除（辅以 TTL）</span></span><br><span class="line"><span class="comment">#allkeys-lru：利用 LRU 算法移除任何 key。</span></span><br><span class="line"><span class="comment">#allkeys-random：随机移除任何 key。</span></span><br><span class="line"><span class="comment">#noeviction：不移除任何 key，只是返回一个写错误。</span></span><br><span class="line"><span class="comment"># 上面的这些驱逐策略，如果 redis 没有合适的 key 驱逐，对于写命令，还是会返回错误。redis 将不再接收写请求，只接收 get 请求。写命令包括：set setnx setex append incr decr rpush lpush rpushx lpushx linsert lset rpoplpush sadd sinter sinterstore sunion sunionstore sdiff sdiffstore zadd zincrby zunionstore zinterstore hset hsetnx hmset hincrby incrby decrby getset mset msetnx exec sort。</span></span><br><span class="line"><span class="comment"># maxmemory-policy noeviction</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#lru 检测的样本数。使用 lru 或者 ttl 淘汰算法，从需要淘汰的列表中随机选择 sample 个 key，选出闲置时间最长的 key 移除。</span></span><br><span class="line"><span class="comment"># maxmemory-samples 5</span></span><br><span class="line"></span><br><span class="line"><span class="comment">############################## APPEND ONLY MODE ###############################</span></span><br><span class="line"><span class="comment"># 默认 redis 使用的是 rdb 方式持久化，这种方式在许多应用中已经足够用了。但是 redis 如果中途宕机，会导致可能有几分钟的数据丢失，根据 save 来策略进行持久化，Append Only File 是另一种持久化方式，可以提供更好的持久化特性。Redis 会把每次写入的数据在接收后都写入 appendonly.aof 文件，每次启动时 Redis 都会先把这个文件的数据读入内存里，先忽略 RDB 文件。</span></span><br><span class="line">appendonly no</span><br><span class="line"></span><br><span class="line"><span class="comment">#aof 文件名</span></span><br><span class="line">appendfilename <span class="string">"appendonly.aof"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#aof 持久化策略的配置</span></span><br><span class="line"><span class="comment">#no 表示不执行 fsync，由操作系统保证数据同步到磁盘，速度最快。</span></span><br><span class="line"><span class="comment">#always 表示每次写入都执行 fsync，以保证数据同步到磁盘。</span></span><br><span class="line"><span class="comment">#everysec 表示每秒执行一次 fsync，可能会导致丢失这 1s 数据。</span></span><br><span class="line">appendfsync everysec</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在 aof 重写或者写入 rdb 文件的时候，会执行大量 IO，此时对于 everysec 和 always 的 aof 模式来说，执行 fsync 会造成阻塞过长时间，no-appendfsync-on-rewrite 字段设置为默认设置为 no。如果对延迟要求很高的应用，这个字段可以设置为 yes，否则还是设置为 no，这样对持久化特性来说这是更安全的选择。设置为 yes 表示 rewrite 期间对新写操作不 fsync, 暂时存在内存中, 等 rewrite 完成后再写入，默认为 no，建议 yes。Linux 的默认 fsync 策略是 30 秒。可能丢失 30 秒数据。</span></span><br><span class="line">no-appendfsync-on-rewrite no</span><br><span class="line"></span><br><span class="line"><span class="comment">#aof 自动重写配置。当目前 aof 文件大小超过上一次重写的 aof 文件大小的百分之多少进行重写，即当 aof 文件增长到一定大小的时候 Redis 能够调用 bgrewriteaof 对日志文件进行重写。当前 AOF 文件大小是上次日志重写得到 AOF 文件大小的二倍（设置为 100）时，自动启动新的日志重写过程。</span></span><br><span class="line">auto-aof-rewrite-percentage 100</span><br><span class="line"><span class="comment"># 设置允许重写的最小 aof 文件大小，避免了达到约定百分比但尺寸仍然很小的情况还要重写</span></span><br><span class="line">auto-aof-rewrite-min-size 64mb</span><br><span class="line"></span><br><span class="line"><span class="comment">#aof 文件可能在尾部是不完整的，当 redis 启动的时候，aof 文件的数据被载入内存。重启可能发生在 redis 所在的主机操作系统宕机后，尤其在 ext4 文件系统没有加上 data=ordered 选项（redis 宕机或者异常终止不会造成尾部不完整现象。）出现这种现象，可以选择让 redis 退出，或者导入尽可能多的数据。如果选择的是 yes，当截断的 aof 文件被导入的时候，会自动发布一个 log 给客户端然后 load。如果是 no，用户必须手动 redis-check-aof 修复 AOF 文件才可以。</span></span><br><span class="line">aof-load-truncated yes</span><br><span class="line"></span><br><span class="line"><span class="comment">################################ LUA SCRIPTING ###############################</span></span><br><span class="line"><span class="comment"># 如果达到最大时间限制（毫秒），redis 会记个 log，然后返回 error。当一个脚本超过了最大时限。只有 SCRIPT KILL 和 SHUTDOWN NOSAVE 可以用。第一个可以杀没有调 write 命令的东西。要是已经调用了 write，只能用第二个命令杀。</span></span><br><span class="line">lua-time-limit 5000</span><br><span class="line"></span><br><span class="line"><span class="comment">################################ REDIS CLUSTER ###############################</span></span><br><span class="line"><span class="comment"># 集群开关，默认是不开启集群模式。</span></span><br><span class="line"><span class="comment"># cluster-enabled yes</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 集群配置文件的名称，每个节点都有一个集群相关的配置文件，持久化保存集群的信息。这个文件并不需要手动配置，这个配置文件有 Redis 生成并更新，每个 Redis 集群节点需要一个单独的配置文件，请确保与实例运行的系统中配置文件名称不冲突</span></span><br><span class="line"><span class="comment"># cluster-config-file nodes-6379.conf</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 节点互连超时的阀值。集群节点超时毫秒数</span></span><br><span class="line"><span class="comment"># cluster-node-timeout 15000</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 在进行故障转移的时候，全部 slave 都会请求申请为 master，但是有些 slave 可能与 master 断开连接一段时间了，导致数据过于陈旧，这样的 slave 不应该被提升为 master。该参数就是用来判断 slave 节点与 master 断线的时间是否过长。判断方法是：</span></span><br><span class="line"><span class="comment"># 比较 slave 断开连接的时间和(node-timeout * slave-validity-factor) + repl-ping-slave-period</span></span><br><span class="line"><span class="comment"># 如果节点超时时间为三十秒, 并且 slave-validity-factor 为 10, 假设默认的 repl-ping-slave-period 是 10 秒，即如果超过 310 秒 slave 将不会尝试进行故障转移 </span></span><br><span class="line"><span class="comment"># cluster-slave-validity-factor 10</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#master 的 slave 数量大于该值，slave 才能迁移到其他孤立 master 上，如这个参数若被设为 2，那么只有当一个主节点拥有 2 个可工作的从节点时，它的一个从节点会尝试迁移。</span></span><br><span class="line"><span class="comment"># cluster-migration-barrier 1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认情况下，集群全部的 slot 有节点负责，集群状态才为 ok，才能提供服务。设置为 no，可以在 slot 没有全部分配的时候提供服务。不建议打开该配置，这样会造成分区的时候，小分区的 master 一直在接受写请求，而造成很长时间数据不一致。</span></span><br><span class="line"><span class="comment"># cluster-require-full-coverage yes</span></span><br><span class="line"></span><br><span class="line"><span class="comment">################################## SLOW LOG ###################################</span></span><br><span class="line"><span class="comment">###slog log 是用来记录 redis 运行中执行比较慢的命令耗时。当命令的执行超过了指定时间，就记录在 slow log 中，slog log 保存在内存中，所以没有 IO 操作。</span></span><br><span class="line"><span class="comment"># 执行时间比 slowlog-log-slower-than 大的请求记录到 slowlog 里面，单位是微秒，所以 1000000 就是 1 秒。注意，负数时间会禁用慢查询日志，而 0 则会强制记录所有命令。</span></span><br><span class="line">slowlog-log-slower-than 10000</span><br><span class="line"></span><br><span class="line"><span class="comment"># 慢查询日志长度。当一个新的命令被写进日志的时候，最老的那个记录会被删掉。这个长度没有限制。只要有足够的内存就行。你可以通过 SLOWLOG RESET 来释放内存。</span></span><br><span class="line">slowlog-max-len 128</span><br><span class="line"></span><br><span class="line"><span class="comment">################################ LATENCY MONITOR ##############################</span></span><br><span class="line"><span class="comment"># 延迟监控功能是用来监控 redis 中执行比较缓慢的一些操作，用 LATENCY 打印 redis 实例在跑命令时的耗时图表。只记录大于等于下边设置的值的操作。0 的话，就是关闭监视。默认延迟监控功能是关闭的，如果你需要打开，也可以通过 CONFIG SET 命令动态设置。</span></span><br><span class="line">latency-monitor-threshold 0</span><br><span class="line"></span><br><span class="line"><span class="comment">############################# EVENT NOTIFICATION ##############################</span></span><br><span class="line"><span class="comment"># 键空间通知使得客户端可以通过订阅频道或模式，来接收那些以某种方式改动了 Redis 数据集的事件。因为开启键空间通知功能需要消耗一些 CPU ，所以在默认配置下，该功能处于关闭状态。</span></span><br><span class="line"><span class="comment">#notify-keyspace-events 的参数可以是以下字符的任意组合，它指定了服务器该发送哪些类型的通知：</span></span><br><span class="line"><span class="comment">##K 键空间通知，所有通知以 __keyspace@__ 为前缀</span></span><br><span class="line"><span class="comment">##E 键事件通知，所有通知以 __keyevent@__ 为前缀</span></span><br><span class="line"><span class="comment">##g DEL 、 EXPIRE 、 RENAME 等类型无关的通用命令的通知</span></span><br><span class="line"><span class="comment">##$ 字符串命令的通知</span></span><br><span class="line"><span class="comment">##l 列表命令的通知</span></span><br><span class="line"><span class="comment">##s 集合命令的通知</span></span><br><span class="line"><span class="comment">##h 哈希命令的通知</span></span><br><span class="line"><span class="comment">##z 有序集合命令的通知</span></span><br><span class="line"><span class="comment">##x 过期事件：每当有过期键被删除时发送</span></span><br><span class="line"><span class="comment">##e 驱逐(evict) 事件：每当有键因为 maxmemory 政策而被删除时发送</span></span><br><span class="line"><span class="comment">##A 参数 g$lshzxe 的别名</span></span><br><span class="line"><span class="comment"># 输入的参数中至少要有一个 K 或者 E，否则的话，不管其余的参数是什么，都不会有任何 通知被分发。详细使用可以参考 http://redis.io/topics/notifications</span></span><br><span class="line"></span><br><span class="line">notify-keyspace-events <span class="string">""</span></span><br><span class="line"></span><br><span class="line"><span class="comment">############################### ADVANCED CONFIG ###############################</span></span><br><span class="line"><span class="comment"># 数据量小于等于 hash-max-ziplist-entries 的用 ziplist，大于 hash-max-ziplist-entries 用 hash</span></span><br><span class="line"><span class="built_in">hash</span>-max-ziplist-entries 512</span><br><span class="line"><span class="comment">#value 大小小于等于 hash-max-ziplist-value 的用 ziplist，大于 hash-max-ziplist-value 用 hash。</span></span><br><span class="line"><span class="built_in">hash</span>-max-ziplist-value 64</span><br><span class="line"></span><br><span class="line"><span class="comment"># 数据量小于等于 list-max-ziplist-entries 用 ziplist，大于 list-max-ziplist-entries 用 list。</span></span><br><span class="line">list-max-ziplist-entries 512</span><br><span class="line"><span class="comment">#value 大小小于等于 list-max-ziplist-value 的用 ziplist，大于 list-max-ziplist-value 用 list。</span></span><br><span class="line">list-max-ziplist-value 64</span><br><span class="line"></span><br><span class="line"><span class="comment"># 数据量小于等于 set-max-intset-entries 用 iniset，大于 set-max-intset-entries 用 set。</span></span><br><span class="line"><span class="built_in">set</span>-max-intset-entries 512</span><br><span class="line"></span><br><span class="line"><span class="comment"># 数据量小于等于 zset-max-ziplist-entries 用 ziplist，大于 zset-max-ziplist-entries 用 zset。</span></span><br><span class="line">zset-max-ziplist-entries 128</span><br><span class="line"><span class="comment">#value 大小小于等于 zset-max-ziplist-value 用 ziplist，大于 zset-max-ziplist-value 用 zset。</span></span><br><span class="line">zset-max-ziplist-value 64</span><br><span class="line"></span><br><span class="line"><span class="comment">#value 大小小于等于 hll-sparse-max-bytes 使用稀疏数据结构（sparse），大于 hll-sparse-max-bytes 使用稠密的数据结构（dense）。一个比 16000 大的 value 是几乎没用的，建议的 value 大概为 3000。如果对 CPU 要求不高，对空间要求较高的，建议设置到 10000 左右。</span></span><br><span class="line">hll-sparse-max-bytes 3000</span><br><span class="line"></span><br><span class="line"><span class="comment">#Redis 将在每 100 毫秒时使用 1 毫秒的 CPU 时间来对 redis 的 hash 表进行重新 hash，可以降低内存的使用。当你的使用场景中，有非常严格的实时性需要，不能够接受 Redis 时不时的对请求有 2 毫秒的延迟的话，把这项配置为 no。如果没有这么严格的实时性要求，可以设置为 yes，以便能够尽可能快的释放内存。</span></span><br><span class="line">activerehashing yes</span><br><span class="line"></span><br><span class="line"><span class="comment">## 对客户端输出缓冲进行限制可以强迫那些不从服务器读取数据的客户端断开连接，用来强制关闭传输缓慢的客户端。</span></span><br><span class="line"><span class="comment"># 对于 normal client，第一个 0 表示取消 hard limit，第二个 0 和第三个 0 表示取消 soft limit，normal client 默认取消限制，因为如果没有寻问，他们是不会接收数据的。</span></span><br><span class="line">client-output-buffer-limit normal 0 0 0</span><br><span class="line"><span class="comment"># 对于 slave client 和 MONITER client，如果 client-output-buffer 一旦超过 256mb，又或者超过 64mb 持续 60 秒，那么服务器就会立即断开客户端连接。</span></span><br><span class="line">client-output-buffer-limit slave 256mb 64mb 60</span><br><span class="line"><span class="comment"># 对于 pubsub client，如果 client-output-buffer 一旦超过 32mb，又或者超过 8mb 持续 60 秒，那么服务器就会立即断开客户端连接。</span></span><br><span class="line">client-output-buffer-limit pubsub 32mb 8mb 60</span><br><span class="line"></span><br><span class="line"><span class="comment">#redis 执行任务的频率为 1s 除以 hz。</span></span><br><span class="line">hz 10</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在 aof 重写的时候，如果打开了 aof-rewrite-incremental-fsync 开关，系统会每 32MB 执行一次 fsync。这对于把文件写入磁盘是有帮助的，可以避免过大的延迟峰值。</span></span><br><span class="line">aof-rewrite-incremental-fsync yes</span><br></pre></td></tr></table></figure>
+<h2 id="生产环境配置"><a href="#生产环境配置" class="headerlink" title="生产环境配置"></a>生产环境配置</h2><p>To configure a master-slave redis with optimum performance, here are some suggestions:</p>
+<ul>
+<li>Kernel Configure:<ul>
+<li>Make sure to set the Linux kernel overcommit memory setting to 1. Add <code>vm.overcommit_memory = 1</code> to <code>/etc/sysctl.conf</code> and then reboot or run the command <code>sysctl vm.overcommit_memory=1</code> for this to take effect immediately.This make redis to consider server always have enough memory to fork.</li>
+<li>Make sure to disable Linux kernel feature <em>transparent huge pages</em>, it will affect greatly both memory usage and latency in a negative way. This is accomplished with the following command: <code>echo never &gt; /sys/kernel/mm/transparent_hugepage/enabled</code>. It will change memory page size from 4kb to 2M, increase memory usage on copy-on-write. <a href="https://docs.mongodb.com/manual/tutorial/transparent-huge-pages/#red-hat-centos-7" target="_blank" rel="noopener">https://docs.mongodb.com/manual/tutorial/transparent-huge-pages/#red-hat-centos-7</a></li>
+</ul>
+</li>
+<li><p>Common redis:</p>
+<ul>
+<li><strong>maxclients 50000</strong></li>
+<li><strong>tcp-keepalive 300</strong>, enabled to check tcp dead connections</li>
+<li><strong>daemonize yes</strong>, not using systemd to manage</li>
+<li><strong>maxmemory=70%</strong> of physical memory, leave enough safe space for forking to do background save or full replication. Since remain memory can be used for accumulate changes(which cause copy-on-write) during background save or AOF rewrite.</li>
+<li><strong>stop-writes-on-bgsave-error no</strong>, to allow client write even on failure of rdb background save, increase robustness of redis master.</li>
+<li><strong>repl-backlog-size 1gb</strong>. should be determined by the write LOAD of clients, the default is 1mb, we can raise it to 1gb.</li>
+<li><strong>repl-backlog-ttl 0</strong>,never release backlog buffer</li>
+<li><strong>client-output-buffer-limit slave <maxmemory> 0 0</maxmemory></strong>, disable soft limit, set hardlimit same as maxmemory size, if set this to unlimited, and slave is blocking, will used up all memory and force master to evict all keys.</li>
+<li><strong>maxmemory-policy volatile-lru</strong>, only volatile keys will be evicted.</li>
+<li><strong>appendfsync everysec</strong>，if both master and slave crash due to power shortage, we can ensure only lost 1 second data in slave.</li>
+<li><strong>no-appendfsync-on-rewrite yes</strong>, make sure slave would be not blocking by rewrite process if try to write AOF log, so slave can follow master closely, we prefer availability to durability.</li>
+<li><strong>aof-load-truncated yes</strong>, let redis fix truncated error by itself.</li>
+<li>The repl_backlog is only allocated once there is at least a replica connected.</li>
+<li>If slave disconnected from master and write changes exceed repl-backlog-size. The master will do a background save, which will block all clients when forking which utilize copy-on-write to allocated memory if changed during dump, it may not double the memory usage if memory page size is small and load not too high.</li>
+<li>No need to enable repl-diskless-sync , it also requires fork, but only will write to socket instead of disk.</li>
+<li><p>can change python logic code to use hash type for kv type, such as redis tokens, it can reduce memory profoundly</p>
+<ul>
+<li><p>hash-max-ziplist-value 64</p>
+</li>
+<li><p>hash-max-ziplist-entries 512</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Redis master</p>
+<ul>
+<li><strong>save “”</strong></li>
+<li><strong>appendonly no</strong></li>
+<li>disable RDB and AOF, since process forking  caused by RDB and AOF will block all commands. INFO command to check fork time for each gigabytes: latest_fork_usec:<strong>2568287us</strong> / used_memory_human: <strong>76.02G</strong> =<strong>33.784ms</strong>, for each gigabyte, it may take 33ms to fork</li>
+</ul>
+</li>
+<li><p>Redis slave:</p>
+<ul>
+<li><p>enable RDB dump.</p>
+<ul>
+<li><strong>save 900 1</strong><br><strong>save 300 10</strong><br><strong>save 60 10000</strong></li>
+</ul>
+</li>
+<li><p>enable AOF：</p>
+<ul>
+<li><strong>appendonly yes</strong></li>
+</ul>
+</li>
+<li>be cautious if master is empty, the slaveof can wipe out all slave keys.</li>
+</ul>
+</li>
+<li>Fail-over<ul>
+<li>config set <strong>save “”</strong> -- disable RDB in master</li>
+<li>config set <strong>appendonly no</strong> -- disable AOF in master</li>
+<li>take note on latest_fork_usec:5934556, this means redis master will be blocked for 5.9 seconds, and if keepalived healthy check mistakenly consider this as downtime, its VIP will failover to slave which cause the current syncing slave become master, in this case, do not empty slave when trying to sync with master which may cause empty ‘<em>master</em>‘ at the moment.</li>
+<li>When slave try to sync with master, remember to set keepalived fail count to be much bigger number, to prevent keepalived falsely to do unwanted failover.</li>
+<li>If AOF enabled, redis will ignore dump.rdb file during initial loading.</li>
+<li>On instance, where only one redis, can use service keepalived restart to failover, but if with two or more instance, it has to stop_redis.sh to let keepalived failover to another instance</li>
+<li><strong>Never stop_redis.sh on master, it may lost all data if appendonly.aof is empty, and cause long init loading time if data set is bigger!</strong></li>
+</ul>
+</li>
+</ul>
+<h3 id="redis-conf-线上配置"><a href="#redis-conf-线上配置" class="headerlink" title="redis.conf 线上配置"></a>redis.conf 线上配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">[root@sg-gop-10-71-12-77 redis-6389]<span class="comment"># grep -Ev '^$|#' redis.conf</span></span><br><span class="line">protected-mode no</span><br><span class="line">port 6389</span><br><span class="line">tcp-backlog 511</span><br><span class="line">timeout 0</span><br><span class="line">tcp-keepalive 300</span><br><span class="line">daemonize yes</span><br><span class="line">supervised no</span><br><span class="line">pidfile /var/run/redis_6389.pid</span><br><span class="line">loglevel notice</span><br><span class="line">logfile /var/<span class="built_in">log</span>/redis/redis-6389.log</span><br><span class="line">databases 16</span><br><span class="line">save 900 1</span><br><span class="line">save 300 10</span><br><span class="line">save 60 10000</span><br><span class="line">stop-writes-on-bgsave-error no</span><br><span class="line">rdbcompression yes</span><br><span class="line">rdbchecksum yes</span><br><span class="line">dbfilename dump.rdb</span><br><span class="line">dir /data/running/redis-6389</span><br><span class="line">slave-serve-stale-data yes</span><br><span class="line">slave-read-only yes</span><br><span class="line">repl-diskless-sync no</span><br><span class="line">repl-diskless-sync-delay 5</span><br><span class="line">repl-disable-tcp-nodelay no</span><br><span class="line">repl-backlog-size 1gb</span><br><span class="line">repl-backlog-ttl 0</span><br><span class="line">slave-priority 100</span><br><span class="line">maxclients 50000</span><br><span class="line">maxmemory 700gb</span><br><span class="line">maxmemory-policy volatile-lru</span><br><span class="line">appendonly no</span><br><span class="line">appendfilename <span class="string">"appendonly.aof"</span></span><br><span class="line">appendfsync everysec</span><br><span class="line">no-appendfsync-on-rewrite yes</span><br><span class="line">auto-aof-rewrite-percentage 100</span><br><span class="line">auto-aof-rewrite-min-size 64mb</span><br><span class="line">aof-load-truncated yes</span><br><span class="line">lua-time-limit 5000</span><br><span class="line">slowlog-log-slower-than 10000</span><br><span class="line">slowlog-max-len 128</span><br><span class="line">latency-monitor-threshold 0</span><br><span class="line">notify-keyspace-events <span class="string">""</span></span><br><span class="line"><span class="built_in">hash</span>-max-ziplist-entries 512</span><br><span class="line"><span class="built_in">hash</span>-max-ziplist-value 64</span><br><span class="line">list-max-ziplist-size -2</span><br><span class="line">list-compress-depth 0</span><br><span class="line"><span class="built_in">set</span>-max-intset-entries 512</span><br><span class="line">zset-max-ziplist-entries 128</span><br><span class="line">zset-max-ziplist-value 64</span><br><span class="line">hll-sparse-max-bytes 3000</span><br><span class="line">activerehashing yes</span><br><span class="line">client-output-buffer-limit normal 0 0 0</span><br><span class="line">client-output-buffer-limit slave 700gb 0 0</span><br><span class="line">client-output-buffer-limit pubsub 32mb 8mb 60</span><br><span class="line">hz 10</span><br><span class="line">aof-rewrite-incremental-fsync yes</span><br></pre></td></tr></table></figure>
+<h2 id="自定义脚本"><a href="#自定义脚本" class="headerlink" title="自定义脚本"></a>自定义脚本</h2><blockquote>
+<p>使用 keepalived 做最基本的高可用</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><span class="line">[root@sg-gop-10-71-12-78 redis-6389]<span class="comment"># cat start_redis.sh</span></span><br><span class="line">/data/running/redis-6389/redis-server /data/running/redis-6389/redis.conf</span><br><span class="line"></span><br><span class="line">[root@sg-gop-10-71-12-78 redis-6389]<span class="comment"># cat connect_redis.sh</span></span><br><span class="line">./redis-cli -p 6389</span><br><span class="line"></span><br><span class="line">[root@sg-gop-10-71-12-78 redis-6389]<span class="comment"># cat stop_redis.sh</span></span><br><span class="line"><span class="built_in">kill</span> -9 `cat /var/run/redis_6389.pid`</span><br><span class="line"></span><br><span class="line">[root@sg-gop-10-71-12-78 redis-6389]<span class="comment"># cat check_redis.sh</span></span><br><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># Check if redis is running, return 1 if not.</span></span><br><span class="line"><span class="comment"># Used by keepalived to initiate a failover in case redis is down</span></span><br><span class="line"></span><br><span class="line">REDIS_STATUS=$(telnet 127.0.0.1 6389 &lt; /dev/null | grep <span class="string">"Connected"</span> )</span><br><span class="line"><span class="keyword">if</span> [ <span class="string">"<span class="variable">$REDIS_STATUS</span>"</span> != <span class="string">""</span> ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">  <span class="built_in">exit</span> 0</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">  logger <span class="string">"REDIS is NOT running. Setting keepalived state to FAULT."</span></span><br><span class="line">  <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">[root@sg-gop-10-71-12-78 redis-6389]<span class="comment"># cat change_redis.py</span></span><br><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"></span><br><span class="line">import redis</span><br><span class="line">import re</span><br><span class="line">import sys</span><br><span class="line"></span><br><span class="line"><span class="comment">#main</span></span><br><span class="line">status=sys.argv[1]</span><br><span class="line">r = redis.StrictRedis(host=<span class="string">'localhost'</span>, port=6389, db=0)</span><br><span class="line"><span class="built_in">print</span> r.info().get(<span class="string">"role"</span>)</span><br><span class="line"><span class="keyword">if</span> status == <span class="string">'master'</span>:</span><br><span class="line">        r.slaveof()</span><br><span class="line">        r.config_set(<span class="string">"save"</span>, <span class="string">""</span>)</span><br><span class="line"><span class="built_in">print</span> r.info().get(<span class="string">"role"</span>)</span><br><span class="line"></span><br><span class="line">[root@sg-gop-10-71-12-78 redis-6389]<span class="comment"># cat keepalived.state.sh</span></span><br><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">TYPE=<span class="variable">$1</span> <span class="comment">#GROUP or INSTANCE</span></span><br><span class="line">NAME=<span class="variable">$2</span> <span class="comment">#name of group or instance</span></span><br><span class="line">STATE=<span class="variable">$3</span> <span class="comment">#MASTER, BACKUP FAULT</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">case</span> <span class="variable">$STATE</span> <span class="keyword">in</span></span><br><span class="line">        <span class="string">"MASTER"</span>) <span class="built_in">echo</span> $(date)<span class="string">':'</span><span class="variable">$STATE</span> &gt;&gt; /data/running/redis-6389/keep_alived_state <span class="comment">#Become redis master</span></span><br><span class="line">                  python /data/running/redis-6389/change_redis.py master</span><br><span class="line">                  <span class="built_in">exit</span> 0</span><br><span class="line">                  ;;</span><br><span class="line">        <span class="string">"BACKUP"</span>) <span class="built_in">echo</span> $(date)<span class="string">':'</span><span class="variable">$STATE</span> &gt;&gt; /data/running/redis-6389/keep_alived_state <span class="comment">#Become redis slave</span></span><br><span class="line">                  python /data/running/redis-6389/change_redis.py slave</span><br><span class="line">                  <span class="built_in">exit</span> 0</span><br><span class="line">                  ;;</span><br><span class="line">        <span class="string">"FAULT"</span>)  <span class="built_in">echo</span> $(date)<span class="string">':'</span><span class="variable">$STATE</span> &gt;&gt; /data/running/redis-6389/keep_alived_state <span class="comment">#restart and become redis slave</span></span><br><span class="line">                  <span class="built_in">exit</span> 0</span><br><span class="line">                  ;;</span><br><span class="line">        *)        <span class="built_in">echo</span> <span class="string">"unknown state"</span></span><br><span class="line">                  <span class="built_in">exit</span> 1</span><br><span class="line">                  ;;</span><br><span class="line"><span class="keyword">esac</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@sg-gop-10-71-12-77 wangao]<span class="comment"># cat /etc/keepalived/keepalived.conf</span></span><br><span class="line">vrrp_script check_redis &#123;</span><br><span class="line">    script <span class="string">"/data/running/redis-6389/check_redis.sh"</span></span><br><span class="line">    interval 2</span><br><span class="line">    fall 2</span><br><span class="line">    rise 2</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_sync_group NC-MAIN-HA &#123;</span><br><span class="line">    group &#123;</span><br><span class="line">        NC-MAIN-HA-PRI</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance NC-MAIN-HA-PRI &#123;</span><br><span class="line">    state BACKUP</span><br><span class="line">    interface bond0</span><br><span class="line">    virtual_router_id 77</span><br><span class="line">    priority 100</span><br><span class="line">    advert_int 1</span><br><span class="line">    nopreempt</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        10.71.13.77/23 dev bond0</span><br><span class="line">    &#125;</span><br><span class="line">    track_script &#123;</span><br><span class="line">        check_redis</span><br><span class="line">    &#125;</span><br><span class="line">    notify /data/running/redis-6389/keepalived.state.sh</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Keepalived 切换逻辑代码已经分享至 GitHub</p>
+<p><a href="https://github.com/wsgzao/redis" target="_blank" rel="noopener">https://github.com/wsgzao/redis</a></p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://juejin.im/post/6844903864521474055" target="_blank" rel="noopener">Redis，提升服务器性能的一把瑞士军刀</a></p>
+<p><a href="https://juejin.im/post/6844903870536089607" target="_blank" rel="noopener">后端开发应该掌握的 Redis 基础</a></p>
+<p><a href="https://juejin.im/post/6844903874927525902" target="_blank" rel="noopener">10 分钟彻底理解 Redis 的持久化机制：RDB 和 AOF</a></p>
+<p><a href="https://juejin.im/post/6844903880745025543" target="_blank" rel="noopener">Redis 主从复制机制详解</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/redis/" data-title="Redis 主从同步配置实践 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/vim/" title="Vim 从小白到入门">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Vim 从小白到入门</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/lvs-tun/"  title="LVS-TUN 原理介绍和配置实践">
+ <strong>下一篇：</strong><br/> 
+ <span>LVS-TUN 原理介绍和配置实践
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis-简介"><span class="toc-number">3.</span> <span class="toc-text">Redis 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Documentation"><span class="toc-number">4.</span> <span class="toc-text">Documentation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Install"><span class="toc-number">5.</span> <span class="toc-text">Install</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Configuration"><span class="toc-number">6.</span> <span class="toc-text">Configuration</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#redis-conf-配置英文原版"><span class="toc-number">7.</span> <span class="toc-text">redis.conf 配置英文原版</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#redis-conf-配置中文翻译"><span class="toc-number">8.</span> <span class="toc-text">redis.conf 配置中文翻译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#生产环境配置"><span class="toc-number">9.</span> <span class="toc-text">生产环境配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#redis-conf-线上配置"><span class="toc-number">9.1.</span> <span class="toc-text">redis.conf 线上配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义脚本"><span class="toc-number">10.</span> <span class="toc-text">自定义脚本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">11.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>185</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>18</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

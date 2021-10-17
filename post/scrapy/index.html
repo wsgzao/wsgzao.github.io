@@ -1,0 +1,676 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>Python 爬虫框架 Scrapy 入门与实践之爬取豆瓣电影 Top250 榜单 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="Python爬虫框架Scrapy入门与实践之爬取豆瓣电影Top250榜单">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python 爬虫框架 Scrapy 入门与实践之爬取豆瓣电影 Top250 榜单">
+<meta property="og:url" content="https://wsgzao.github.io/post/scrapy/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="Python爬虫框架Scrapy入门与实践之爬取豆瓣电影Top250榜单">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/7207510dgy1g0oavg4q11j20jg0dqdi2.jpg">
+<meta property="og:updated_time" content="2019-03-07T08:01:23.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python 爬虫框架 Scrapy 入门与实践之爬取豆瓣电影 Top250 榜单">
+<meta name="twitter:description" content="Python爬虫框架Scrapy入门与实践之爬取豆瓣电影Top250榜单">
+<meta name="twitter:image" content="https://ws4.sinaimg.cn/large/7207510dgy1g0oavg4q11j20jg0dqdi2.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/scrapy/" title="Python 爬虫框架 Scrapy 入门与实践之爬取豆瓣电影 Top250 榜单" itemprop="url">Python 爬虫框架 Scrapy 入门与实践之爬取豆瓣电影 Top250 榜单</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2019-03-02T07:59:49.000Z" itemprop="datePublished"> 发表于 2019-03-02</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是爬虫？"><span class="toc-number">3.</span> <span class="toc-text">什么是爬虫？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Python-爬虫的原理"><span class="toc-number">4.</span> <span class="toc-text">Python 爬虫的原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#爬虫的基本流程"><span class="toc-number">4.1.</span> <span class="toc-text">爬虫的基本流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是-Request-Response"><span class="toc-number">4.2.</span> <span class="toc-text">什么是 Request,Response</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#能爬取什么样的数据"><span class="toc-number">4.3.</span> <span class="toc-text">能爬取什么样的数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#如何解析数据"><span class="toc-number">4.4.</span> <span class="toc-text">如何解析数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关于抓取的页面数据和浏览器里看到的不一样的问题"><span class="toc-number">4.5.</span> <span class="toc-text">关于抓取的页面数据和浏览器里看到的不一样的问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#怎样保存数据"><span class="toc-number">4.6.</span> <span class="toc-text">怎样保存数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Scrapy-简介"><span class="toc-number">5.</span> <span class="toc-text">Scrapy 简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Scrapy-架构"><span class="toc-number">5.1.</span> <span class="toc-text">Scrapy 架构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Scrapy-爬取豆瓣电影-Top250-榜单"><span class="toc-number">6.</span> <span class="toc-text">Scrapy 爬取豆瓣电影 Top250 榜单</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建项目"><span class="toc-number">6.1.</span> <span class="toc-text">创建项目</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#观察页面结构"><span class="toc-number">6.2.</span> <span class="toc-text">观察页面结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#声明-Item"><span class="toc-number">6.3.</span> <span class="toc-text">声明 Item</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编写爬虫程序"><span class="toc-number">6.4.</span> <span class="toc-text">编写爬虫程序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#运行爬虫"><span class="toc-number">6.5.</span> <span class="toc-text">运行爬虫</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结尾"><span class="toc-number">7.</span> <span class="toc-text">结尾</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>爬虫就是请求网站并提取数据的自动化程序，其中请求，提取，自动化是爬虫的关键。Python 作为一款出色的胶水语言自然成为了很多爬虫爱好者的首选，而使用 Python 开发的爬虫框架 Scrapy 当属目前最热门的解决方案之一。本文记录了目前网络上比较经典的 Scrapy 爬取豆瓣电影 Top250 榜单实践过程，作为 Python 爬虫框架 Scrapy 的入门案例。</p>
+<blockquote>
+<p>Python 爬虫框架 Scrapy 入门与实践之爬取豆瓣电影 Top250 榜单</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019 年 03 月 02 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/scrapy/">https://wsgzao.github.io/post/scrapy/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<p>Scrapy - <a href="https://scrapy.org/" target="_blank" rel="noopener">https://scrapy.org/</a></p>
+<hr>
+<h2 id="什么是爬虫？"><a href="#什么是爬虫？" class="headerlink" title="什么是爬虫？"></a>什么是爬虫？</h2><p>网络爬虫（又被称为网页蜘蛛，网络机器人，在 FOAF 社区中间，更经常的称为网页追逐者），是一种按照一定的规则，自动地抓取万维网信息的程序或者脚本。另外一些不常使用的名字还有蚂蚁、自动索引、模拟程序或者蠕虫。</p>
+<p>其实通俗的讲就是通过程序去获取 web 页面上自己想要的数据，也就是自动抓取数据</p>
+<p>爬虫可以做什么？<br>你可以爬去妹子的图片，爬取自己想看看的视频。。等等你想要爬取的数据，只要你能通过浏览器访问的数据都可以通过爬虫获取</p>
+<p>爬虫的本质是什么？<br>模拟浏览器打开网页，获取网页中我们想要的那部分数据</p>
+<p>浏览器打开网页的过程：<br>当你在浏览器中输入地址后，经过 DNS 服务器找到服务器主机，向服务器发送一个请求，服务器经过解析后发送给用户浏览器结果，包括 html,js,css 等文件内容，浏览器解析出来最后呈现给用户在浏览器上看到的结果</p>
+<p>所以用户看到的浏览器的结果就是由 HTML 代码构成的，我们爬虫就是为了获取这些内容，通过分析和过滤 html 代码，从中获取我们想要资源（文本，图片，视频…..）</p>
+<h2 id="Python-爬虫的原理"><a href="#Python-爬虫的原理" class="headerlink" title="Python 爬虫的原理"></a>Python 爬虫的原理</h2><h3 id="爬虫的基本流程"><a href="#爬虫的基本流程" class="headerlink" title="爬虫的基本流程"></a>爬虫的基本流程</h3><p>发起请求<br>通过 HTTP 库向目标站点发起请求，也就是发送一个 Request，请求可以包含额外的 header 等信息，等待服务器响应</p>
+<p>获取响应内容<br>如果服务器能正常响应，会得到一个 Response，Response 的内容便是所要获取的页面内容，类型可能是 HTML,Json 字符串，二进制数据（图片或者视频）等类型</p>
+<p>解析内容<br>得到的内容可能是 HTML, 可以用正则表达式，页面解析库进行解析，可能是 Json, 可以直接转换为 Json 对象解析，可能是二进制数据，可以做保存或者进一步的处理</p>
+<p>保存数据<br>保存形式多样，可以存为文本，也可以保存到数据库，或者保存特定格式的文件</p>
+<h3 id="什么是-Request-Response"><a href="#什么是-Request-Response" class="headerlink" title="什么是 Request,Response"></a>什么是 Request,Response</h3><p>浏览器发送消息给网址所在的服务器，这个过程就叫做 HTPP Request</p>
+<p>服务器收到浏览器发送的消息后，能够根据浏览器发送消息的内容，做相应的处理，然后把消息回传给浏览器，这个过程就是 HTTP Response</p>
+<p>浏览器收到服务器的 Response 信息后，会对信息进行相应的处理，然后展示</p>
+<blockquote>
+<p>Request 中包含什么？</p>
+</blockquote>
+<p><strong> 请求方式 </strong></p>
+<p>主要有：GET/POST 两种类型常用，另外还有 HEAD/PUT/DELETE/OPTIONS<br>GET 和 POST 的区别就是：请求的数据 GET 是在 url 中，POST 则是存放在头部</p>
+<p>GET: 向指定的资源发出 “显示” 请求。使用 GET 方法应该只用在读取数据，而不应当被用于产生 “副作用” 的操作中，例如在 Web Application 中。其中一个原因是 GET 可能会被网络蜘蛛等随意访问</p>
+<p>POST: 向指定资源提交数据，请求服务器进行处理（例如提交表单或者上传文件）。数据被包含在请求本文中。这个请求可能会创建新的资源或修改现有资源，或二者皆有。</p>
+<p>HEAD：与 GET 方法一样，都是向服务器发出指定资源的请求。只不过服务器将不传回资源的本文部分。它的好处在于，使用这个方法可以在不必传输全部内容的情况下，就可以获取其中 “关于该资源的信息”（元信息或称元数据）。</p>
+<p>PUT：向指定资源位置上传其最新内容。</p>
+<p>OPTIONS：这个方法可使服务器传回该资源所支持的所有 HTTP 请求方法。用 ‘*’ 来代替资源名称，向 Web 服务器发送 OPTIONS 请求，可以测试服务器功能是否正常运作。</p>
+<p>DELETE：请求服务器删除 Request-URI 所标识的资源。</p>
+<p><strong> 请求 URL</strong></p>
+<p>URL，即统一资源定位符，也就是我们说的网址，统一资源定位符是对可以从互联网上得到的资源的位置和访问方法的一种简洁的表示，是互联网上标准资源的地址。互联网上的每个文件都有一个唯一的 URL，它包含的信息指出文件的位置以及浏览器应该怎么处理它。</p>
+<p>URL 的格式由三个部分组成：<br>第一部分是协议 (或称为服务方式)。<br>第二部分是存有该资源的主机 IP 地址 (有时也包括端口号)。<br>第三部分是主机资源的具体地址，如目录和文件名等。</p>
+<p>爬虫爬取数据时必须要有一个目标的 URL 才可以获取数据，因此，它是爬虫获取数据的基本依据。</p>
+<p><strong> 请求头 </strong></p>
+<p>包含请求时的头部信息，如 User-Agent,Host,Cookies 等信息</p>
+<p><strong> 请求体 </strong><br>请求是携带的数据，如提交表单数据时候的表单数据（POST）</p>
+<blockquote>
+<p>Response 中包含了什么</p>
+</blockquote>
+<p>所有 HTTP 响应的第一行都是状态行，依次是当前 HTTP 版本号，3 位数字组成的状态代码，以及描述状态的短语，彼此由空格分隔。</p>
+<p><strong> 响应状态 </strong></p>
+<p>有多种响应状态，如：200 代表成功，301 跳转，404 找不到页面，502 服务器错误</p>
+<p>1xx 消息 —— 请求已被服务器接收，继续处理<br>2xx 成功 —— 请求已成功被服务器接收、理解、并接受<br>3xx 重定向 —— 需要后续操作才能完成这一请求<br>4xx 请求错误 —— 请求含有词法错误或者无法被执行<br>5xx 服务器错误 —— 服务器在处理某个正确请求时发生错误 </p>
+<p>常见代码：<br>200 OK 请求成功<br>301 目标永久性转移<br>302 目标暂时性转移<br>400 Bad Request 客户端请求有语法错误，不能被服务器所理解<br>401 Unauthorized 请求未经授权，这个状态代码必须和 WWW-Authenticate 报头域一起使用<br>403 Forbidden 服务器收到请求，但是拒绝提供服务<br>404 Not Found 请求资源不存在，eg：输入了错误的 URL<br>500 Internal Server Error 服务器发生不可预期的错误<br>503 Server Unavailable 服务器当前不能处理客户端的请求，一段时间后可能恢复正常 </p>
+<p><strong> 响应头 </strong></p>
+<p>如内容类型，类型的长度，服务器信息，设置 Cookie</p>
+<p><strong> 响应体 </strong></p>
+<p>最主要的部分，包含请求资源的内容，如网页 HTMl, 图片，二进制数据等</p>
+<h3 id="能爬取什么样的数据"><a href="#能爬取什么样的数据" class="headerlink" title="能爬取什么样的数据"></a>能爬取什么样的数据</h3><p>网页文本：如 HTML 文档，Json 格式化文本等<br>图片：获取到的是二进制文件，保存为图片格式<br>视频：同样是二进制文件<br>其他：只要请求到的，都可以获取</p>
+<h3 id="如何解析数据"><a href="#如何解析数据" class="headerlink" title="如何解析数据"></a>如何解析数据</h3><p>直接处理<br>Json 解析<br>正则表达式处理<br>BeautifulSoup 解析处理<br>PyQuery 解析处理<br>XPath 解析处理</p>
+<h3 id="关于抓取的页面数据和浏览器里看到的不一样的问题"><a href="#关于抓取的页面数据和浏览器里看到的不一样的问题" class="headerlink" title="关于抓取的页面数据和浏览器里看到的不一样的问题"></a>关于抓取的页面数据和浏览器里看到的不一样的问题</h3><p>出现这种情况是因为，很多网站中的数据都是通过 js，ajax 动态加载的，所以直接通过 get 请求获取的页面和浏览器显示的不同。</p>
+<p>如何解决 js 渲染的问题？</p>
+<p>分析 ajax<br>Selenium/webdriver<br>Splash<br>PyV8,Ghost.py</p>
+<h3 id="怎样保存数据"><a href="#怎样保存数据" class="headerlink" title="怎样保存数据"></a>怎样保存数据</h3><p>文本：纯文本，Json,Xml 等</p>
+<p>关系型数据库：如 mysql,oracle,sql server 等结构化数据库</p>
+<p>非关系型数据库：MongoDB,Redis 等 key-value 形式存储</p>
+<h2 id="Scrapy-简介"><a href="#Scrapy-简介" class="headerlink" title="Scrapy 简介"></a>Scrapy 简介</h2><p>Scrapy is an application framework for crawling web sites and extracting structured data which can be used for a wide range of useful applications, like data mining, information processing or historical archival.</p>
+<p>Scrapy 是一个为了爬取网站数据，提取结构性数据而编写的应用框架。 可以应用在包括数据挖掘，信息处理或存储历史数据等一系列的程序中。</p>
+<p>Scrapy Tutorial<br><a href="https://docs.scrapy.org/en/latest/intro/overview.html" target="_blank" rel="noopener">https://docs.scrapy.org/en/latest/intro/overview.html</a></p>
+<h3 id="Scrapy-架构"><a href="#Scrapy-架构" class="headerlink" title="Scrapy 架构"></a>Scrapy 架构</h3><p><img src="https://ws4.sinaimg.cn/large/7207510dgy1g0oavg4q11j20jg0dqdi2.jpg" alt></p>
+<p><strong>Scrapy Engine</strong><br>引擎负责控制数据流在系统中所有组件中流动，并在相应动作发生时触发事件。 详细内容查看下面的数据流 (Data Flow) 部分。</p>
+<p>此组件相当于爬虫的 “大脑”，是整个爬虫的调度中心。</p>
+<p><strong> 调度器 (Scheduler)</strong><br>调度器从引擎接受 request 并将他们入队，以便之后引擎请求他们时提供给引擎。</p>
+<p>初始的爬取 URL 和后续在页面中获取的待爬取的 URL 将放入调度器中，等待爬取。同时调度器会自动去除重复的 URL（如果特定的 URL 不需要去重也可以通过设置实现，如 post 请求的 URL）</p>
+<p><strong> 下载器 (Downloader)</strong><br>下载器负责获取页面数据并提供给引擎，而后提供给 spider。</p>
+<p><strong>Spiders</strong><br>Spider 是 Scrapy 用户编写用于分析 response 并提取 item (即获取到的 item) 或额外跟进的 URL 的类。 每个 spider 负责处理一个特定 (或一些) 网站。</p>
+<p><strong>Item Pipeline</strong><br>Item Pipeline 负责处理被 spider 提取出来的 item。典型的处理有清理、 验证及持久化 (例如存取到数据库中)。</p>
+<p>当页面被爬虫解析所需的数据存入 Item 后，将被发送到项目管道 (Pipeline)，并经过几个特定的次序处理数据，最后存入本地文件或存入数据库。</p>
+<p><strong> 下载器中间件 (Downloader middlewares)</strong><br>下载器中间件是在引擎及下载器之间的特定钩子 (specific hook)，处理 Downloader 传递给引擎的 response。 其提供了一个简便的机制，通过插入自定义代码来扩展 Scrapy 功能。</p>
+<p>通过设置下载器中间件可以实现爬虫自动更换 user-agent、IP 等功能。</p>
+<p><strong>Spider 中间件 (Spider middlewares)</strong><br>Spider 中间件是在引擎及 Spider 之间的特定钩子 (specific hook)，处理 spider 的输入 (response) 和输出 (items 及 requests)。 其提供了一个简便的机制，通过插入自定义代码来扩展 Scrapy 功能。</p>
+<p><strong> 数据流 (Data flow)</strong></p>
+<ol>
+<li>引擎打开一个网站 (open a domain)，找到处理该网站的 Spider 并向该 spider 请求第一个要爬取的 URL (s)。</li>
+<li>引擎从 Spider 中获取到第一个要爬取的 URL 并在调度器 (Scheduler) 以 Request 调度。</li>
+<li>引擎向调度器请求下一个要爬取的 URL。</li>
+<li>调度器返回下一个要爬取的 URL 给引擎，引擎将 URL 通过下载中间件 (请求 (request) 方向) 转发给下载器 (Downloader)。</li>
+<li>一旦页面下载完毕，下载器生成一个该页面的 Response，并将其通过下载中间件 (返回 (response) 方向) 发送给引擎。</li>
+<li>引擎从下载器中接收到 Response 并通过 Spider 中间件 (输入方向) 发送给 Spider 处理。</li>
+<li>Spider 处理 Response 并返回爬取到的 Item 及 (跟进的) 新的 Request 给引擎。</li>
+<li>引擎将 (Spider 返回的) 爬取到的 Item 给 Item Pipeline，将 (Spider 返回的) Request 给调度器。</li>
+<li>(从第二步) 重复直到调度器中没有更多地 request，引擎关闭该网站。</li>
+</ol>
+<h2 id="Scrapy-爬取豆瓣电影-Top250-榜单"><a href="#Scrapy-爬取豆瓣电影-Top250-榜单" class="headerlink" title="Scrapy 爬取豆瓣电影 Top250 榜单"></a>Scrapy 爬取豆瓣电影 Top250 榜单</h2><p><a href="https://docs.scrapy.org/en/latest/intro/tutorial.html" target="_blank" rel="noopener">https://docs.scrapy.org/en/latest/intro/tutorial.html</a></p>
+<p>工具和环境</p>
+<ol>
+<li>语言: Python 3.7</li>
+<li>IDE: Pycharm</li>
+<li>爬虫框架：Scrapy</li>
+<li>浏览器: Google Chrome</li>
+<li>浏览器插件: XPath Helper</li>
+</ol>
+<h3 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h3><p>在开始爬取之前，首先要创建一个新的 Scrapy 项目。这里以爬取豆瓣电影 Top250 为例，进入你打算存储代码的目录中，运行下列命令:</p>
+<pre><code>scrapy startproject douban
+</code></pre><p>该命令将会创建包含下列内容的 douban 目录:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">douban</span><br><span class="line">|-- __init__.py</span><br><span class="line">|-- __pycache__</span><br><span class="line">|   |-- __init__.cpython-37.pyc</span><br><span class="line">|   |-- items.cpython-37.pyc</span><br><span class="line">|   |-- pipelines.cpython-37.pyc</span><br><span class="line">|   `-- settings.cpython-37.pyc</span><br><span class="line">|-- items.py</span><br><span class="line">|-- middlewares.py</span><br><span class="line">|-- pipelines.py</span><br><span class="line">|-- settings.py</span><br><span class="line">`-- spiders</span><br><span class="line">    |-- __init__.py</span><br><span class="line">    |-- __pycache__</span><br><span class="line">    |   |-- __init__.cpython-37.pyc</span><br><span class="line">    |   `-- douban_spider.cpython-37.pyc</span><br><span class="line">    `-- douban_spider.py</span><br><span class="line"></span><br><span class="line">3 directories, 13 files</span><br></pre></td></tr></table></figure>
+<p>这些文件分别是:</p>
+<ul>
+<li>scrapy.cfg: 项目的配置文件。</li>
+<li>douban/: 该项目的 python 模块。之后您将在此加入代码。</li>
+<li>douban/items.py: 项目中的 item 文件。定义我们所要爬取的信息的相关属性。</li>
+<li>douban/pipelines.py: 项目中的 pipelines 文件。当数据被爬虫爬取下来后，它会被发送到 item pipelines 中，每个 item pipelines 组件（有时称为 “项目管道”）是一个实现简单方法的 Python 类。他们收到一个项目并对其执行操作，还决定该项目是否应该继续通过管道或被丢弃并且不再被处理。</li>
+<li>douban/settings.py: 项目的设置文件。</li>
+<li>douban/spiders/: 放置 spider 代码的目录。</li>
+</ul>
+<h3 id="观察页面结构"><a href="#观察页面结构" class="headerlink" title="观察页面结构"></a>观察页面结构</h3><p>首先我们打开豆瓣电影 TOP250 的页面，通过观察页面决定让我们的爬虫获取每一部电影的排名、电影名称、评分和评分的人数。<br><a href="https://movie.douban.com/top250" target="_blank" rel="noopener">https://movie.douban.com/top250</a></p>
+<p>运行 Chrome F12 开发者工具，使用选取工具选取整个电影的信息，可以发现，所有的信息都是放在单独的一个 li 标签中的，而且在 li 下还有一个 class 为 item 的 div 包裹着所有的信息。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"item"</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"pic"</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">em</span> <span class="attr">class</span>=<span class="string">""</span>&gt;</span>1<span class="tag">&lt;/<span class="name">em</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"https://movie.douban.com/subject/1292052/"</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">img</span> <span class="attr">width</span>=<span class="string">"100"</span> <span class="attr">alt</span>=<span class="string">" 肖申克的救赎 "</span> <span class="attr">src</span>=<span class="string">"https://img3.doubanio.com/view/photo/s_ratio_poster/public/p480747492.webp"</span> <span class="attr">class</span>=<span class="string">""</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"info"</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"hd"</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"https://movie.douban.com/subject/1292052/"</span> <span class="attr">class</span>=<span class="string">""</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"title"</span>&gt;</span> 肖申克的救赎 < span class="tag">&lt;/<span class="name">span</span>&gt;</span><br><span class="line">                                    <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"title"</span>&gt;</span><span class="symbol">&amp;nbsp;</span>/<span class="symbol">&amp;nbsp;</span>The Shawshank Redemption<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">                                <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"other"</span>&gt;</span><span class="symbol">&amp;nbsp;</span>/<span class="symbol">&amp;nbsp;</span> 月黑高飞 (港)  /  刺激 1995 (台)<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">                            <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"playable"</span>&gt;</span>[可播放]<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"bd"</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">p</span> <span class="attr">class</span>=<span class="string">""</span>&gt;</span></span><br><span class="line">                            导演：弗兰克・德拉邦特 Frank Darabont<span class="symbol">&amp;nbsp;</span><span class="symbol">&amp;nbsp;</span><span class="symbol">&amp;nbsp;</span> 主演：蒂姆・罗宾斯 Tim Robbins /...<span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">                            1994<span class="symbol">&amp;nbsp;</span>/<span class="symbol">&amp;nbsp;</span> 美国 < span class="symbol">&amp;nbsp;</span>/<span class="symbol">&amp;nbsp;</span> 犯罪 剧情 <br><span class="line">                        <span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line">                        </span><br><span class="line">                        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"star"</span>&gt;</span></span><br><span class="line">                                <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"rating5-t"</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">                                <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"rating_num"</span> <span class="attr">property</span>=<span class="string">"v:average"</span>&gt;</span>9.6<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">                                <span class="tag">&lt;<span class="name">span</span> <span class="attr">property</span>=<span class="string">"v:best"</span> <span class="attr">content</span>=<span class="string">"10.0"</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">                                <span class="tag">&lt;<span class="name">span</span>&gt;</span>1338863 人评价 < span class="tag">&lt;/<span class="name">span</span>&gt;</span><br><span class="line">                        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line">                            <span class="tag">&lt;<span class="name">p</span> <span class="attr">class</span>=<span class="string">"quote"</span>&gt;</span></span><br><span class="line">                                <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"inq"</span>&gt;</span> 希望让人自由。<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="声明-Item"><a href="#声明-Item" class="headerlink" title="声明 Item"></a>声明 Item</h3><p>什么是 Items 呢？官方文档 Items 定义如下：</p>
+<p>爬取的主要目标就是从非结构性的数据源提取结构性数据，例如网页。 Scrapy spider 可以以 python 的 dict 来返回提取的数据。虽然 dict 很方便，并且用起来也熟悉，但是其缺少结构性，容易打错字段的名字或者返回不一致的数据，尤其在具有多个 spider 的大项目中。</p>
+<p>为了定义常用的输出数据，Scrapy 提供了 Item 类。 Item 对象是种简单的容器，保存了爬取到得数据。 其提供了 类似于词典 (dictionary-like) 的 API 以及用于声明可用字段的简单语法。</p>
+<p>许多 Scrapy 组件使用了 Item 提供的额外信息: exporter 根据 Item 声明的字段来导出数据、 序列化可以通过 Item 字段的元数据 (metadata) 来定义、 trackref 追踪 Item 实例来帮助寻找内存泄露 (see 使用 trackref 调试内存泄露) 等等。</p>
+<p>Item 使用简单的 class 定义语法以及 Field 对象来声明。我们打开 spider 目录下的 items.py 文件写入下列代码声明 Item：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Define here the models for your scraped items</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># See documentation in:</span></span><br><span class="line"><span class="comment"># https://doc.scrapy.org/en/latest/topics/items.html</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> scrapy</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DoubanItem</span><span class="params">(scrapy.Item)</span>:</span></span><br><span class="line">    <span class="comment"># define the fields for your item here like:</span></span><br><span class="line">    <span class="comment"># name = scrapy.Field()</span></span><br><span class="line">    serial_number = scrapy.Field()</span><br><span class="line">    movie_name = scrapy.Field()</span><br><span class="line">    introduce = scrapy.Field()</span><br><span class="line">    star = scrapy.Field()</span><br><span class="line">    evaluate = scrapy.Field()</span><br><span class="line">    describe = scrapy.Field()</span><br></pre></td></tr></table></figure>
+<h3 id="编写爬虫程序"><a href="#编写爬虫程序" class="headerlink" title="编写爬虫程序"></a>编写爬虫程序</h3><p>在编写代码前我们可以通过修改 settings.py 文件调整 user-agent 和其它参数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Scrapy settings for douban project</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># For simplicity, this file contains only settings considered important or</span></span><br><span class="line"><span class="comment"># commonly used. You can find more settings consulting the documentation:</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#     https://doc.scrapy.org/en/latest/topics/settings.html</span></span><br><span class="line"><span class="comment">#     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html</span></span><br><span class="line"><span class="comment">#     https://doc.scrapy.org/en/latest/topics/spider-middleware.html</span></span><br><span class="line"></span><br><span class="line">BOT_NAME = <span class="string">'douban'</span></span><br><span class="line"></span><br><span class="line">SPIDER_MODULES = [<span class="string">'douban.spiders'</span>]</span><br><span class="line">NEWSPIDER_MODULE = <span class="string">'douban.spiders'</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Crawl responsibly by identifying yourself (and your website) on the user-agent</span></span><br><span class="line">USER_AGENT = <span class="string">'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Obey robots.txt rules</span></span><br><span class="line">ROBOTSTXT_OBEY = <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Configure a delay for requests for the same website (default: 0)</span></span><br><span class="line"><span class="comment"># See https://doc.scrapy.org/en/latest/topics/settings.html#download-delay</span></span><br><span class="line"><span class="comment"># See also autothrottle settings and docs</span></span><br><span class="line">DOWNLOAD_DELAY = <span class="number">0.5</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Configure item pipelines</span></span><br><span class="line"><span class="comment"># See https://doc.scrapy.org/en/latest/topics/item-pipeline.html</span></span><br><span class="line">ITEM_PIPELINES = &#123;</span><br><span class="line">   <span class="string">'douban.pipelines.DoubanPipeline'</span>: <span class="number">300</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">mongo_host = <span class="string">'127.0.0.1'</span></span><br><span class="line">mongo_port = <span class="number">27017</span></span><br><span class="line">mongo_db_name = <span class="string">'douban'</span></span><br><span class="line">mongo_db_collection = <span class="string">'douban_movie'</span></span><br></pre></td></tr></table></figure>
+<p>在 spiders 文件夹下创建 douban_spider.py 文件</p>
+<p>在我们编写爬虫之前，先了解一下 scrapy 的爬取机制，scrapy 提取数据有自己的一套机制。它们被称作选择器 (seletors)，因为他们通过特定的 XPath 或者 CSS 表达式来 “选择” HTML 文件中的某个部分。</p>
+<p>Xpath 学习教程<br><a href="http://www.w3school.com.cn/xpath/index.asp" target="_blank" rel="noopener">http://www.w3school.com.cn/xpath/index.asp</a></p>
+<p>XPath Helper<br><a href="https://chrome.google.com/webstore/detail/xpath-helper/hgimnogjllphhhkhlmebbmlgjoejdpjl" target="_blank" rel="noopener">https://chrome.google.com/webstore/detail/xpath-helper/hgimnogjllphhhkhlmebbmlgjoejdpjl</a></p>
+<p>Scrapy xpath-tutorial<br><a href="https://doc.scrapy.org/en/xpath-tutorial/topics/xpath-tutorial.html" target="_blank" rel="noopener">https://doc.scrapy.org/en/xpath-tutorial/topics/xpath-tutorial.html</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> scrapy</span><br><span class="line"><span class="keyword">from</span> douban.items <span class="keyword">import</span> DoubanItem</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DoubanSpiderSpider</span><span class="params">(scrapy.Spider)</span>:</span></span><br><span class="line">    name = <span class="string">'douban_spider'</span></span><br><span class="line">    allowed_domains = [<span class="string">'movie.douban.com'</span>]</span><br><span class="line">    start_urls = [<span class="string">'https://movie.douban.com/top250'</span>]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">parse</span><span class="params">(self, response)</span>:</span></span><br><span class="line">        movie_list = response.xpath(<span class="string">"//div[@class='article']//ol[@class='grid_view']/li"</span>)</span><br><span class="line">        <span class="keyword">for</span> i_item <span class="keyword">in</span> movie_list:</span><br><span class="line">            douban_item = DoubanItem()</span><br><span class="line">            douban_item[<span class="string">'serial_number'</span>] = i_item.xpath(<span class="string">".//div[@class='item']//em/text()"</span>).extract_first()</span><br><span class="line">            douban_item[<span class="string">'movie_name'</span>] = i_item.xpath(<span class="string">".//div[@class='info']/div[@class='hd']/a/span[1]/text()"</span>).extract_first()</span><br><span class="line">            content = i_item.xpath(<span class="string">".//div[@class='info']//div[@class='bd']/p[1]/text()"</span>).extract()</span><br><span class="line">            <span class="keyword">for</span> i_content <span class="keyword">in</span> content:</span><br><span class="line">                content_s = <span class="string">""</span>.join(i_content.split())</span><br><span class="line">                douban_item[<span class="string">'introduce'</span>] = content_s</span><br><span class="line">            douban_item[<span class="string">'star'</span>] =  i_item.xpath(<span class="string">".//span[@class='rating_num']/text()"</span>).extract_first()</span><br><span class="line">            douban_item[<span class="string">'evaluate'</span>] = i_item.xpath(<span class="string">".//div[@class='star']//span[4]/text()"</span>).extract_first()</span><br><span class="line">            douban_item[<span class="string">'describe'</span>] = i_item.xpath(<span class="string">".//p[@class='quote']//span/text()"</span>).extract_first()</span><br><span class="line">            <span class="keyword">yield</span> douban_item</span><br><span class="line">        next_link = response.xpath(<span class="string">"//span[@class='next']/link/@href"</span>).extract()</span><br><span class="line">        <span class="keyword">if</span> next_link:</span><br><span class="line">            next_link = next_link[<span class="number">0</span>]</span><br><span class="line">            <span class="keyword">yield</span> scrapy.Request(<span class="string">"https://movie.douban.com/top250"</span>+next_link,callback=self.parse)</span><br></pre></td></tr></table></figure>
+<p>自动翻页<br>先别急着高兴，你难道没有发现一个问题吗？这样的话我们还是只能爬到当前页的 25 个电影的内容。怎么样才能把剩下的也一起爬下来呢？</p>
+<p>实现自动翻页一般有两种方法：</p>
+<ol>
+<li>在页面中找到下一页的地址；</li>
+<li>自己根据 URL 的变化规律构造所有页面地址。</li>
+</ol>
+<p>一般情况下我们使用第一种方法，第二种方法适用于页面的下一页地址为 JS 加载的情况。这次我们只说第一种方法。</p>
+<p>首先利用 Chrome 浏览器的开发者工具找到下一页的地址，然后在解析该页面时获取下一页的地址并将地址交给调度器 (Scheduler)</p>
+<h3 id="运行爬虫"><a href="#运行爬虫" class="headerlink" title="运行爬虫"></a>运行爬虫</h3><p>scrapy crawl douban_spider</p>
+<p>scrapy crawl douban_spider -o douban.csv</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">(venv)  wangao@wangao-MAC  ~/Documents/git/wangao/python3/scrapy/douban  python -V</span><br><span class="line">Python 3.7.1</span><br><span class="line">(venv)  wangao@wangao-MAC  ~/Documents/git/wangao/python3/scrapy/douban  scrapy crawl douban_spider -o douban.csv</span><br><span class="line">2019-03-02 15:37:56 [scrapy.utils.log] INFO: Scrapy 1.5.1 started (bot: douban)</span><br><span class="line">2019-03-02 15:37:56 [scrapy.utils.log] INFO: Versions: lxml 4.2.5.0, libxml2 2.9.8, cssselect 1.0.3, parsel 1.5.1, w3lib 1.19.0, Twisted 18.9.0, Python 3.7.1 (default, Nov  6 2018, 18:46:03) - [Clang 10.0.0 (clang-1000.11.45.5)], pyOpenSSL 18.0.0 (OpenSSL 1.1.0j  20 Nov 2018), cryptography 2.4.2, Platform Darwin-18.2.0-x86_64-i386-64bit</span><br><span class="line">2019-03-02 15:37:56 [scrapy.crawler] INFO: Overridden settings: &#123;<span class="string">'BOT_NAME'</span>: <span class="string">'douban'</span>, <span class="string">'DOWNLOAD_DELAY'</span>: 0.5, <span class="string">'FEED_FORMAT'</span>: <span class="string">'csv'</span>, <span class="string">'FEED_URI'</span>: <span class="string">'douban.csv'</span>, <span class="string">'NEWSPIDER_MODULE'</span>: <span class="string">'douban.spiders'</span>, <span class="string">'SPIDER_MODULES'</span>: [<span class="string">'douban.spiders'</span>], <span class="string">'USER_AGENT'</span>: <span class="string">'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36'</span>&#125;</span><br><span class="line">2019-03-02 15:37:56 [scrapy.middleware] INFO: Enabled extensions:</span><br><span class="line">[<span class="string">'scrapy.extensions.corestats.CoreStats'</span>,</span><br><span class="line"> <span class="string">'scrapy.extensions.telnet.TelnetConsole'</span>,</span><br><span class="line"> <span class="string">'scrapy.extensions.memusage.MemoryUsage'</span>,</span><br><span class="line"> <span class="string">'scrapy.extensions.feedexport.FeedExporter'</span>,</span><br><span class="line"> <span class="string">'scrapy.extensions.logstats.LogStats'</span>]</span><br><span class="line">2019-03-02 15:37:56 [scrapy.middleware] INFO: Enabled downloader middlewares:</span><br><span class="line">[<span class="string">'scrapy.downloadermiddlewares.httpauth.HttpAuthMiddleware'</span>,</span><br><span class="line"> <span class="string">'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware'</span>,</span><br><span class="line"> <span class="string">'scrapy.downloadermiddlewares.defaultheaders.DefaultHeadersMiddleware'</span>,</span><br><span class="line"> <span class="string">'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware'</span>,</span><br><span class="line"> <span class="string">'scrapy.downloadermiddlewares.retry.RetryMiddleware'</span>,</span><br><span class="line"> <span class="string">'scrapy.downloadermiddlewares.redirect.MetaRefreshMiddleware'</span>,</span><br><span class="line"> <span class="string">'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware'</span>,</span><br><span class="line"> <span class="string">'scrapy.downloadermiddlewares.redirect.RedirectMiddleware'</span>,</span><br><span class="line"> <span class="string">'scrapy.downloadermiddlewares.cookies.CookiesMiddleware'</span>,</span><br><span class="line"> <span class="string">'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware'</span>,</span><br><span class="line"> <span class="string">'scrapy.downloadermiddlewares.stats.DownloaderStats'</span>]</span><br><span class="line">2019-03-02 15:37:56 [scrapy.middleware] INFO: Enabled spider middlewares:</span><br><span class="line">[<span class="string">'scrapy.spidermiddlewares.httperror.HttpErrorMiddleware'</span>,</span><br><span class="line"> <span class="string">'scrapy.spidermiddlewares.offsite.OffsiteMiddleware'</span>,</span><br><span class="line"> <span class="string">'scrapy.spidermiddlewares.referer.RefererMiddleware'</span>,</span><br><span class="line"> <span class="string">'scrapy.spidermiddlewares.urllength.UrlLengthMiddleware'</span>,</span><br><span class="line"> <span class="string">'scrapy.spidermiddlewares.depth.DepthMiddleware'</span>]</span><br><span class="line">2019-03-02 15:37:56 [scrapy.middleware] INFO: Enabled item pipelines:</span><br><span class="line">[<span class="string">'douban.pipelines.DoubanPipeline'</span>]</span><br><span class="line">2019-03-02 15:37:56 [scrapy.core.engine] INFO: Spider opened</span><br><span class="line">2019-03-02 15:37:56 [scrapy.extensions.logstats] INFO: Crawled 0 pages (at 0 pages/min), scraped 0 items (at 0 items/min)</span><br><span class="line">2019-03-02 15:37:56 [scrapy.extensions.telnet] DEBUG: Telnet console listening on 127.0.0.1:6023</span><br><span class="line">^C2019-03-02 15:37:56 [scrapy.crawler] INFO: Received SIGINT, shutting down gracefully. Send again to force </span><br><span class="line">2019-03-02 15:37:56 [scrapy.core.engine] INFO: Closing spider (shutdown)</span><br><span class="line">2019-03-02 15:37:58 [scrapy.core.engine] DEBUG: Crawled (200) &lt;GET https://movie.douban.com/top250&gt; (referer: None)</span><br><span class="line">2019-03-02 15:37:58 [scrapy.core.scraper] DEBUG: Scraped from &lt;200 https://movie.douban.com/top250&gt;</span><br><span class="line">&#123;<span class="string">'describe'</span>: <span class="string">'希望让人自由。'</span>,</span><br><span class="line"> <span class="string">'evaluate'</span>: <span class="string">'1338863 人评价'</span>,</span><br><span class="line"> <span class="string">'introduce'</span>: <span class="string">'1994 / 美国 / 犯罪剧情'</span>,</span><br><span class="line"> <span class="string">'movie_name'</span>: <span class="string">'肖申克的救赎'</span>,</span><br><span class="line"> <span class="string">'serial_number'</span>: <span class="string">'1'</span>,</span><br><span class="line"> <span class="string">'star'</span>: <span class="string">'9.6'</span>&#125;</span><br><span class="line">2019-03-02 15:37:58 [scrapy.core.scraper] DEBUG: Scraped from &lt;200 https://movie.douban.com/top250&gt;</span><br><span class="line">&#123;<span class="string">'describe'</span>: <span class="string">'风华绝代。'</span>,</span><br><span class="line"> <span class="string">'evaluate'</span>: <span class="string">'989216 人评价'</span>,</span><br><span class="line"> <span class="string">'introduce'</span>: <span class="string">'1993 / 中国大陆香港 / 剧情爱情同性'</span>,</span><br><span class="line"> <span class="string">'movie_name'</span>: <span class="string">'霸王别姬'</span>,</span><br><span class="line"> <span class="string">'serial_number'</span>: <span class="string">'2'</span>,</span><br><span class="line"> <span class="string">'star'</span>: <span class="string">'9.6'</span>&#125;</span><br><span class="line">2019-03-02 15:37:58 [scrapy.core.scraper] DEBUG: Scraped from &lt;200 https://movie.douban.com/top250&gt;</span><br><span class="line">&#123;<span class="string">'describe'</span>: <span class="string">'怪蜀黍和小萝莉不得不说的故事。'</span>,</span><br><span class="line"> <span class="string">'evaluate'</span>: <span class="string">'1225142 人评价'</span>,</span><br><span class="line"> <span class="string">'introduce'</span>: <span class="string">'1994 / 法国 / 剧情动作犯罪'</span>,</span><br><span class="line"> <span class="string">'movie_name'</span>: <span class="string">'这个杀手不太冷'</span>,</span><br><span class="line"> <span class="string">'serial_number'</span>: <span class="string">'3'</span>,</span><br><span class="line"> <span class="string">'star'</span>: <span class="string">'9.4'</span>&#125;</span><br><span class="line">2019-03-02 15:37:58 [scrapy.core.scraper] DEBUG: Scraped from &lt;200 https://movie.douban.com/top250&gt;</span><br><span class="line">&#123;<span class="string">'describe'</span>: <span class="string">'一部美国近现代史。'</span>,</span><br><span class="line"> <span class="string">'evaluate'</span>: <span class="string">'1054616 人评价'</span>,</span><br><span class="line"> <span class="string">'introduce'</span>: <span class="string">'1994 / 美国 / 剧情爱情'</span>,</span><br><span class="line"> <span class="string">'movie_name'</span>: <span class="string">'阿甘正传'</span>,</span><br><span class="line"> <span class="string">'serial_number'</span>: <span class="string">'4'</span>,</span><br><span class="line"> <span class="string">'star'</span>: <span class="string">'9.4'</span>&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">describe,evaluate,introduce,movie_name,serial_number,star</span><br><span class="line"> 希望让人自由。,1338863 人评价, 1994 / 美国 / 犯罪剧情, 肖申克的救赎, 1,9.6</span><br><span class="line"> 风华绝代。,989216 人评价, 1993 / 中国大陆香港 / 剧情爱情同性, 霸王别姬, 2,9.6</span><br><span class="line"> 怪蜀黍和小萝莉不得不说的故事。,1224747 人评价, 1994 / 法国 / 剧情动作犯罪, 这个杀手不太冷, 3,9.4</span><br><span class="line"> 一部美国近现代史。,1054616 人评价, 1994 / 美国 / 剧情爱情, 阿甘正传, 4,9.4</span><br><span class="line"> 最美的谎言。,617064 人评价, 1997 / 意大利 / 剧情喜剧爱情战争, 美丽人生, 5,9.5</span><br><span class="line"> 失去的才是永恒的。 ,993900 人评价, 1997 / 美国 / 剧情爱情灾难, 泰坦尼克号, 6,9.3</span><br><span class="line"> 最好的宫崎骏，最好的久石让。 ,981959 人评价, 2001 / 日本 / 剧情动画奇幻, 千与千寻, 7,9.3</span><br><span class="line"> 拯救一个人，就是拯救整个世界。,550815 人评价, 1993 / 美国 / 剧情历史战争, 辛德勒的名单, 8,9.5</span><br><span class="line"> 诺兰给了我们一场无法盗取的梦。,1067442 人评价, 2010 / 美国英国 / 剧情科幻悬疑冒险, 盗梦空间, 9,9.3</span><br></pre></td></tr></table></figure>
+<h2 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h2><p>Scrapy 爬虫框架掌握好可以事半功倍，但是遇到简单的需求未必需要使用框架去解决。关于 IP 代理中间件，写入数据库，Web 前台展示等需求都是非常值得延伸的内容，希望大家通过爬虫豆瓣电影 Top250 这个入门项目开个学习的好头。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/scrapy/" data-title="Python 爬虫框架 Scrapy 入门与实践之爬取豆瓣电影 Top250 榜单 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/chinese-copywriting-guidelines/" title="中文文案排版指北">
+  <strong>上一篇：</strong><br/>
+  <span>
+  中文文案排版指北</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/tcpdump/"  title="tcpdump 抓包使用小结">
+ <strong>下一篇：</strong><br/> 
+ <span>tcpdump 抓包使用小结
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是爬虫？"><span class="toc-number">3.</span> <span class="toc-text">什么是爬虫？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Python-爬虫的原理"><span class="toc-number">4.</span> <span class="toc-text">Python 爬虫的原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#爬虫的基本流程"><span class="toc-number">4.1.</span> <span class="toc-text">爬虫的基本流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是-Request-Response"><span class="toc-number">4.2.</span> <span class="toc-text">什么是 Request,Response</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#能爬取什么样的数据"><span class="toc-number">4.3.</span> <span class="toc-text">能爬取什么样的数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#如何解析数据"><span class="toc-number">4.4.</span> <span class="toc-text">如何解析数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关于抓取的页面数据和浏览器里看到的不一样的问题"><span class="toc-number">4.5.</span> <span class="toc-text">关于抓取的页面数据和浏览器里看到的不一样的问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#怎样保存数据"><span class="toc-number">4.6.</span> <span class="toc-text">怎样保存数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Scrapy-简介"><span class="toc-number">5.</span> <span class="toc-text">Scrapy 简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Scrapy-架构"><span class="toc-number">5.1.</span> <span class="toc-text">Scrapy 架构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Scrapy-爬取豆瓣电影-Top250-榜单"><span class="toc-number">6.</span> <span class="toc-text">Scrapy 爬取豆瓣电影 Top250 榜单</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建项目"><span class="toc-number">6.1.</span> <span class="toc-text">创建项目</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#观察页面结构"><span class="toc-number">6.2.</span> <span class="toc-text">观察页面结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#声明-Item"><span class="toc-number">6.3.</span> <span class="toc-text">声明 Item</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编写爬虫程序"><span class="toc-number">6.4.</span> <span class="toc-text">编写爬虫程序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#运行爬虫"><span class="toc-number">6.5.</span> <span class="toc-text">运行爬虫</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结尾"><span class="toc-number">7.</span> <span class="toc-text">结尾</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>185</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>18</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

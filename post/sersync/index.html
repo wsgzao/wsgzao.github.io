@@ -1,0 +1,585 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>sersync 基于 rsync+inotify 实现数据实时同步 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="可靠高效的数据实时同步方式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sersync 基于 rsync+inotify 实现数据实时同步">
+<meta property="og:url" content="https://wsgzao.github.io/post/sersync/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="可靠高效的数据实时同步方式">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.v2ex.co/27qp456L.png">
+<meta property="og:updated_time" content="2017-02-10T02:00:57.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="sersync 基于 rsync+inotify 实现数据实时同步">
+<meta name="twitter:description" content="可靠高效的数据实时同步方式">
+<meta name="twitter:image" content="https://i.v2ex.co/27qp456L.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/sersync/" title="sersync 基于 rsync+inotify 实现数据实时同步" itemprop="url">sersync 基于 rsync+inotify 实现数据实时同步</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2015-08-14T05:18:44.000Z" itemprop="datePublished"> 发表于 2015-08-14</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#原理"><span class="toc-number">3.</span> <span class="toc-text">原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#角色"><span class="toc-number">4.</span> <span class="toc-text">角色</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#服务器-B"><span class="toc-number">4.1.</span> <span class="toc-text">服务器 B</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#服务器-A"><span class="toc-number">4.2.</span> <span class="toc-text">服务器 A</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GitHub-源码仓库"><span class="toc-number">5.</span> <span class="toc-text">GitHub 源码仓库</span></a></li></ol>
+		
+		</div>
+		 -->
+		<p><img src="//i.v2ex.co/27qp456L.png" alt></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>提到数据同步就必然会谈到 <code>rsync</code>，一般简单的服务器数据传输会使用 <code>ftp/sftp</code> 等方式，但是这样的方式效率不高，不支持差异化增量同步也不支持实时传输。针对数据实时同步需求大多数人会选择 <code>rsync+inotify-tools</code> 的解决方案，但是这样的方案也存在一些缺陷（文章中会具体指出），<code>sersync</code> 是国人基于前两者开发的工具，不仅保留了优点同时还强化了实时监控，文件过滤，简化配置等功能，帮助用户提高运行效率，节省时间和网络资源。</p>
+<blockquote>
+<p>可靠高效的数据实时同步方式</p>
+</blockquote>
+<hr>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2015 年 08 月 14 日 - 更新 GitHub 源码安装包<br>2015 年 08 月 13 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/sersync/">https://wsgzao.github.io/post/sersync/</a></p>
+<p>扩展阅读</p>
+<p>基于 rsync+sersync 的服务器文件同步实战 - <a href="http://www.markdream.com/technologies/server/syncfile-by-rsync.shtml" target="_blank" rel="noopener">http://www.markdream.com/technologies/server/syncfile-by-rsync.shtml</a><br>通过 rsync sersync 实现高效的数据实时同步架构 - <a href="https://www.cnhzz.com/rsync_sersync/" target="_blank" rel="noopener">https://www.cnhzz.com/rsync_sersync/</a><br>Rsync+sersync 实现数据实时同步 - <a href="http://www.cnblogs.com/wjoyxt/p/4581410.html" target="_blank" rel="noopener">http://www.cnblogs.com/wjoyxt/p/4581410.html</a><br>rsync - <a href="https://rsync.samba.org/" target="_blank" rel="noopener">https://rsync.samba.org/</a><br>inotify-tools - <a href="https://github.com/rvoicilas/inotify-tools" target="_blank" rel="noopener">https://github.com/rvoicilas/inotify-tools</a><br>sersync - <a href="http://code.google.com/p/sersync/" target="_blank" rel="noopener">http://code.google.com/p/sersync/</a></p>
+<hr>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><blockquote>
+<p>Synchronize files and folders between servers -using inotiy and rsync with c++ 服务器实时同步文件，服务器镜像解决方案</p>
+</blockquote>
+<p><code>sersync</code> 主要用于服务器同步，web 镜像等功能。基于 boost1.43.0,inotify api,rsync command. 开发。目前使用的比较多的同步解决方案是 <code>inotify-tools+rsync</code> ，另外一个是 google 开源项目 <code>Openduckbill</code>（依赖于 inotify- tools），这两个都是基于脚本语言编写的。相比较上面两个项目，本项目优点是：</p>
+<ol>
+<li>sersync 是使用 c++ 编写，而且对 linux 系统文件系统产生的临时文件和重复的文件操作进行过滤（详细见附录，这个过滤脚本程序没有实现），所以在结合 rsync 同步的时候，节省了运行时耗和网络资源。因此更快。</li>
+<li>相比较上面两个项目，sersync 配置起来很简单，其中 bin 目录下已经有基本上静态编译的 2 进制文件，配合 bin 目录下的 xml 配置文件直接使用即可。</li>
+<li>另外本项目相比较其他脚本开源项目，使用多线程进行同步，尤其在同步较大文件时，能够保证多个服务器实时保持同步状态。</li>
+<li>本项目有出错处理机制，通过失败队列对出错的文件重新同步，如果仍旧失败，则按设定时长对同步失败的文件重新同步。</li>
+<li>本项目自带 crontab 功能，只需在 xml 配置文件中开启，即可按您的要求，隔一段时间整体同步一次。无需再额外配置 crontab 功能。</li>
+<li>本项目 socket 与 http 插件扩展，满足您二次开发的需要。</li>
+</ol>
+<blockquote>
+<p>针对上图的设计架构，这里做几点说明，来帮助大家阅读和理解该图</p>
+</blockquote>
+<p>1 ) <code>线程组线程</code> 是等待线程队列的守护线程，当事件队列中有事件产生的时候，线程组守护线程就会逐个唤醒同步线程。当队列中 Inotify 事件较多的时候，同步线程就会被全部唤醒一起工作。这样设计的目的是为了能够同时处理多个 Inotify 事件，从而提升服务器的并发同步能力。同步线程的最佳数量 = 核数 x 2 + 2。<br>2 ) 那么之所以称之为 <code>线程组线程</code>，是因为每个线程在工作的时候，会根据服务器上新写入文件的数量去建立子线程，子线程可以保证所有的文件与各个服务器同时同步。当要同步的文件较大的时候，这样的设计可以保证每个远程服务器都可以同时获得需要同步的文件。<br>3 ) 服务线程的作用有三个：</p>
+<ul>
+<li>处理同步失败的文件，将这些文件再次同步，对于再次同步失败的文件会生成 rsync_fail_log.sh 脚本，记录失败的事件。</li>
+<li>每隔 10 个小时执行 rsync_fail_log.sh 脚本一次，同时清空脚本。</li>
+<li>crontab 功能，可以每隔一定时间，将所有路径整体同步一次。</li>
+</ul>
+<p>4 ) <code>过滤队列</code> 的建立是为了过滤短时间内产生的重复的 inotify 信息，例如在删除文件夹的时候，inotify 就会同时产生删除文件夹里的文件与删除文件夹的事件，通过过滤队列，当删除文件夹事件产生的时候，会将之前加入队列的删除文件的事件全部过滤掉，这样只产生一条删除文件夹的事件，从而减轻了同步的负担。同时对于修改文件的操作的时候，会产生临时文件的重复操作。</p>
+<h2 id="角色"><a href="#角色" class="headerlink" title="角色"></a>角色</h2><blockquote>
+<p>注意主从配置的区别，记得调整 SELinux 和防火墙</p>
+</blockquote>
+<p>iptables 配置实践 - <a href="https://wsgzao.github.io/post/iptables/">https://wsgzao.github.io/post/iptables/</a><br>LTMP 手动编译安装以及全自动化部署实践 - <a href="https://wsgzao.github.io/post/ltmp/">https://wsgzao.github.io/post/ltmp/</a></p>
+<ol>
+<li>服务器 A（主服务器）</li>
+<li>服务器 B（从服务器 / 备份服务器）</li>
+<li>rsync 默认 TCP 端口为 873</li>
+</ol>
+<h3 id="服务器-B"><a href="#服务器-B" class="headerlink" title="服务器 B"></a>服务器 B</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在服务器 B 上安装 rsync</span></span><br><span class="line"><span class="built_in">cd</span> /app/<span class="built_in">local</span></span><br><span class="line">wget  http://rsync.samba.org/ftp/rsync/src/rsync-3.1.1.tar.gz</span><br><span class="line">tar zxf rsync-3.1.1.tar.gz</span><br><span class="line"><span class="built_in">cd</span> rsync-3.1.1</span><br><span class="line">./configure</span><br><span class="line">make &amp;&amp; make install</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置 rsync 的配置文件 </span></span><br><span class="line">vi /etc/rsyncd.conf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 服务器 B 上的 rsyncd.conf 文件内容</span></span><br><span class="line">uid=root</span><br><span class="line">gid=root</span><br><span class="line"><span class="comment"># 最大连接数</span></span><br><span class="line">max connections=36000</span><br><span class="line"><span class="comment"># 默认为 true，修改为 no，增加对目录文件软连接的备份 </span></span><br><span class="line">use chroot=no</span><br><span class="line"><span class="comment"># 定义日志存放位置</span></span><br><span class="line"><span class="built_in">log</span> file=/var/<span class="built_in">log</span>/rsyncd.log</span><br><span class="line"><span class="comment"># 忽略无关错误</span></span><br><span class="line">ignore errors = yes</span><br><span class="line"><span class="comment"># 设置 rsync 服务端文件为读写权限</span></span><br><span class="line"><span class="built_in">read</span> only = no </span><br><span class="line"><span class="comment"># 认证的用户名与系统帐户无关在认证文件做配置，如果没有这行则表明是匿名</span></span><br><span class="line">auth users = rsync</span><br><span class="line"><span class="comment"># 密码认证文件，格式(虚拟用户名: 密码）</span></span><br><span class="line">secrets file = /etc/rsync.pass</span><br><span class="line"><span class="comment"># 这里是认证的模块名，在 client 端需要指定，可以设置多个模块和路径</span></span><br><span class="line">[rsync]</span><br><span class="line"><span class="comment"># 自定义注释</span></span><br><span class="line">comment  = rsync</span><br><span class="line"><span class="comment"># 同步到 B 服务器的文件存放的路径</span></span><br><span class="line">path=/app/data/site/</span><br><span class="line">[img]</span><br><span class="line">comment  = img</span><br><span class="line">path=/app/data/site/img</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 rsync 认证文件  可以设置多个，每行一个用户名: 密码，注意中间以“:” 分割</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"rsync:rsync"</span> &gt; /etc/rsync.pass</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置文件所有者读取、写入权限</span></span><br><span class="line">chmod 600 /etc/rsyncd.conf  </span><br><span class="line">chmod 600 /etc/rsync.pass  </span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动服务器 B 上的 rsync 服务</span></span><br><span class="line"><span class="comment">#rsync --daemon -v</span></span><br><span class="line">rsync --daemon</span><br><span class="line"></span><br><span class="line"><span class="comment"># 监听端口 873</span></span><br><span class="line">netstat -an | grep 873</span><br><span class="line">lsof -i tcp:873</span><br><span class="line"></span><br><span class="line">COMMAND   PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME</span><br><span class="line">rsync   31445 root    4u  IPv4 443872      0t0  TCP *:rsync (LISTEN)</span><br><span class="line">rsync   31445 root    5u  IPv6 443873      0t0  TCP *:rsync (LISTEN)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置 rsync 为服务启动项（可选）</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"/usr/local/bin/rsync --daemon"</span> &gt;&gt; /etc/rc.local</span><br><span class="line"></span><br><span class="line"><span class="comment"># 要 Kill rsync 进程，不要用 kill -HUP &#123;PID&#125; 的方式重启进程，以下 3 种方式任选</span></span><br><span class="line"><span class="comment">#ps -ef|grep rsync|grep -v grep|awk '&#123;print $2&#125;'|xargs kill -9</span></span><br><span class="line"><span class="comment">#cat /var/run/rsyncd.pid | xargs kill -9</span></span><br><span class="line">pkill rsync</span><br><span class="line"><span class="comment"># 再次启动</span></span><br><span class="line">/usr/<span class="built_in">local</span>/bin/rsync --daemon</span><br></pre></td></tr></table></figure>
+<h3 id="服务器-A"><a href="#服务器-A" class="headerlink" title="服务器 A"></a>服务器 A</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 rsync</span></span><br><span class="line"><span class="built_in">cd</span> /app/<span class="built_in">local</span></span><br><span class="line">wget  http://rsync.samba.org/ftp/rsync/src/rsync-3.1.1.tar.gz</span><br><span class="line">tar zxf rsync-3.1.1.tar.gz</span><br><span class="line"><span class="built_in">cd</span> rsync-3.1.1</span><br><span class="line">./configure</span><br><span class="line">make &amp;&amp; make install</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 inotify-tools</span></span><br><span class="line"><span class="built_in">cd</span> /app/<span class="built_in">local</span></span><br><span class="line">wget http://github.com/downloads/rvoicilas/inotify-tools/inotify-tools-3.14.tar.gz</span><br><span class="line">tar zxf inotify-tools-3.14.tar.gz</span><br><span class="line"><span class="built_in">cd</span> inotify-tools-3.14</span><br><span class="line">./configure --prefix=/app/<span class="built_in">local</span>/inotify </span><br><span class="line">make &amp;&amp; make install</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 sersync</span></span><br><span class="line"><span class="built_in">cd</span> /app/<span class="built_in">local</span></span><br><span class="line">wget https://sersync.googlecode.com/files/sersync2.5.4_64bit_binary_stable_final.tar.gz</span><br><span class="line">tar zxf sersync2.5.4_64bit_binary_stable_final.tar.gz</span><br><span class="line">mv /app/<span class="built_in">local</span>/GNU-Linux-x86/ /app/<span class="built_in">local</span>/sersync</span><br><span class="line"><span class="built_in">cd</span> /app/<span class="built_in">local</span>/sersync</span><br><span class="line"><span class="comment"># 配置下密码文件，因为这个密码是要访问服务器 B 需要的密码和上面服务器 B 的密码必须一致</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"rsync"</span> &gt; /app/<span class="built_in">local</span>/sersync/user.pass</span><br><span class="line"><span class="comment"># 修改权限</span></span><br><span class="line">chmod 600 /app/<span class="built_in">local</span>/sersync/user.pass</span><br><span class="line"><span class="comment"># 修改 confxml.conf</span></span><br><span class="line">vi /app/<span class="built_in">local</span>/sersync/confxml.xml</span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span> <span class="attr">version</span>=<span class="string">"2.5"</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">host</span> <span class="attr">hostip</span>=<span class="string">"localhost"</span> <span class="attr">port</span>=<span class="string">"8008"</span>&gt;</span><span class="tag">&lt;/<span class="name">host</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">debug</span> <span class="attr">start</span>=<span class="string">"true"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">fileSystem</span> <span class="attr">xfs</span>=<span class="string">"false"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">filter</span> <span class="attr">start</span>=<span class="string">"false"</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">exclude</span> <span class="attr">expression</span>=<span class="string">"(.*)\.php"</span>&gt;</span><span class="tag">&lt;/<span class="name">exclude</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">exclude</span> <span class="attr">expression</span>=<span class="string">"^data/*"</span>&gt;</span><span class="tag">&lt;/<span class="name">exclude</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">filter</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">inotify</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">delete</span> <span class="attr">start</span>=<span class="string">"true"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">createFolder</span> <span class="attr">start</span>=<span class="string">"true"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">createFile</span> <span class="attr">start</span>=<span class="string">"false"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">closeWrite</span> <span class="attr">start</span>=<span class="string">"true"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">moveFrom</span> <span class="attr">start</span>=<span class="string">"true"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">moveTo</span> <span class="attr">start</span>=<span class="string">"true"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">attrib</span> <span class="attr">start</span>=<span class="string">"false"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">modify</span> <span class="attr">start</span>=<span class="string">"false"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">inotify</span>&gt;</span></span><br><span class="line"> </span><br><span class="line"> <span class="tag">&lt;<span class="name">sersync</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">localpath</span> <span class="attr">watch</span>=<span class="string">"/home/"</span>&gt;</span> <span class="comment">&lt;!-- 这里填写服务器 A 要同步的文件夹路径 --&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">remote</span> <span class="attr">ip</span>=<span class="string">"8.8.8.8"</span> <span class="attr">name</span>=<span class="string">"rsync"</span>/&gt;</span> <span class="comment">&lt;!-- 这里填写服务器 B 的 IP 地址和模块名 --&gt;</span></span><br><span class="line"> <span class="comment">&lt;!--&lt;remote ip="192.168.28.39" name="tongbu"/&gt;--&gt;</span></span><br><span class="line"> <span class="comment">&lt;!--&lt;remote ip="192.168.28.40" name="tongbu"/&gt;--&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">localpath</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">rsync</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">commonParams</span> <span class="attr">params</span>=<span class="string">"-artuz"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">auth</span> <span class="attr">start</span>=<span class="string">"true"</span> <span class="attr">users</span>=<span class="string">"rsync"</span> <span class="attr">passwordfile</span>=<span class="string">"/app/local/sersync/user.pass"</span>/&gt;</span> <span class="comment">&lt;!-- rsync + 密码文件 这里填写服务器 B 的认证信息 --&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">userDefinedPort</span> <span class="attr">start</span>=<span class="string">"false"</span> <span class="attr">port</span>=<span class="string">"874"</span>/&gt;</span><span class="comment">&lt;!-- port=874 --&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">timeout</span> <span class="attr">start</span>=<span class="string">"false"</span> <span class="attr">time</span>=<span class="string">"100"</span>/&gt;</span><span class="comment">&lt;!-- timeout=100 --&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">ssh</span> <span class="attr">start</span>=<span class="string">"false"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">rsync</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">failLog</span> <span class="attr">path</span>=<span class="string">"/tmp/rsync_fail_log.sh"</span> <span class="attr">timeToExecute</span>=<span class="string">"60"</span>/&gt;</span><span class="comment">&lt;!--default every 60mins execute once--&gt;</span><span class="comment">&lt;!-- 修改失败日志记录（可选）--&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">crontab</span> <span class="attr">start</span>=<span class="string">"false"</span> <span class="attr">schedule</span>=<span class="string">"600"</span>&gt;</span><span class="comment">&lt;!--600mins--&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">crontabfilter</span> <span class="attr">start</span>=<span class="string">"false"</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">exclude</span> <span class="attr">expression</span>=<span class="string">"*.php"</span>&gt;</span><span class="tag">&lt;/<span class="name">exclude</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">exclude</span> <span class="attr">expression</span>=<span class="string">"info/*"</span>&gt;</span><span class="tag">&lt;/<span class="name">exclude</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">crontabfilter</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">crontab</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">plugin</span> <span class="attr">start</span>=<span class="string">"false"</span> <span class="attr">name</span>=<span class="string">"command"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">sersync</span>&gt;</span></span><br><span class="line"> </span><br><span class="line"> <span class="comment">&lt;!-- 下面这些有关于插件你可以忽略了 --&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">plugin</span> <span class="attr">name</span>=<span class="string">"command"</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">param</span> <span class="attr">prefix</span>=<span class="string">"/bin/sh"</span> <span class="attr">suffix</span>=<span class="string">""</span> <span class="attr">ignoreError</span>=<span class="string">"true"</span>/&gt;</span> <span class="comment">&lt;!--prefix /opt/tongbu/mmm.sh suffix--&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">filter</span> <span class="attr">start</span>=<span class="string">"false"</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">include</span> <span class="attr">expression</span>=<span class="string">"(.*)\.php"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">include</span> <span class="attr">expression</span>=<span class="string">"(.*)\.sh"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">filter</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line"> </span><br><span class="line"> <span class="tag">&lt;<span class="name">plugin</span> <span class="attr">name</span>=<span class="string">"socket"</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">localpath</span> <span class="attr">watch</span>=<span class="string">"/home/demo"</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">deshost</span> <span class="attr">ip</span>=<span class="string">"210.36.158.xxx"</span> <span class="attr">port</span>=<span class="string">"8009"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">localpath</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">plugin</span> <span class="attr">name</span>=<span class="string">"refreshCDN"</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">localpath</span> <span class="attr">watch</span>=<span class="string">"/data0/htdocs/cdn.markdream.com/site/"</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">cdninfo</span> <span class="attr">domainname</span>=<span class="string">"cdn.chinacache.com"</span> <span class="attr">port</span>=<span class="string">"80"</span> <span class="attr">username</span>=<span class="string">"xxxx"</span> <span class="attr">passwd</span>=<span class="string">"xxxx"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">sendurl</span> <span class="attr">base</span>=<span class="string">"http://cdn.markdream.com/cms"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">regexurl</span> <span class="attr">regex</span>=<span class="string">"false"</span> <span class="attr">match</span>=<span class="string">"cdn.markdream.com/site([/a-zA-Z0-9]*).cdn.markdream.com/images"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">localpath</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 运行 sersync</span></span><br><span class="line">nohup /app/<span class="built_in">local</span>/sersync/sersync2 -r -d -o /app/<span class="built_in">local</span>/sersync/confxml.xml &gt;/app/<span class="built_in">local</span>/sersync/rsync.log 2&gt;&amp;1 &amp;</span><br><span class="line">nohup /app/<span class="built_in">local</span>/sersync/sersync2 -r -d -o /app/<span class="built_in">local</span>/sersync/img.xml &gt;/app/<span class="built_in">local</span>/sersync/img.log 2&gt;&amp;1 &amp;</span><br><span class="line"></span><br><span class="line">-d: 启用守护进程模式</span><br><span class="line">-r: 在监控前，将监控目录与远程主机用 rsync 命令推送一遍</span><br><span class="line">-n: 指定开启守护线程的数量，默认为 10 个</span><br><span class="line">-o: 指定配置文件，默认使用 confxml.xml 文件</span><br></pre></td></tr></table></figure>
+<h2 id="GitHub-源码仓库"><a href="#GitHub-源码仓库" class="headerlink" title="GitHub 源码仓库"></a>GitHub 源码仓库</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">file://E:\sersync   (0 folders, 3 files, 1.88 MB, 1.88 MB <span class="keyword">in</span> total.)</span><br><span class="line">    inotify-tools-3.14.tar.gz 350.36 KB</span><br><span class="line">    rsync-3.1.1.tar.gz    869.26 KB</span><br><span class="line">    sersync2.5.4_64bit_binary_stable_final.tar.gz 710.24 KB</span><br></pre></td></tr></table></figure>
+<p>sersync - <a href="https://github.com/wsgzao/sersync" target="_blank" rel="noopener">https://github.com/wsgzao/sersync</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/sersync/" data-title="sersync 基于 rsync+inotify 实现数据实时同步 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/ltmp/" title="LTMP 手动编译安装以及全自动化部署实践">
+  <strong>上一篇：</strong><br/>
+  <span>
+  LTMP 手动编译安装以及全自动化部署实践</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/xtrabackup/"  title="XtraBackup 不停机不锁表搭建 MySQL 主从同步实践">
+ <strong>下一篇：</strong><br/> 
+ <span>XtraBackup 不停机不锁表搭建 MySQL 主从同步实践
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#原理"><span class="toc-number">3.</span> <span class="toc-text">原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#角色"><span class="toc-number">4.</span> <span class="toc-text">角色</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#服务器-B"><span class="toc-number">4.1.</span> <span class="toc-text">服务器 B</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#服务器-A"><span class="toc-number">4.2.</span> <span class="toc-text">服务器 A</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GitHub-源码仓库"><span class="toc-number">5.</span> <span class="toc-text">GitHub 源码仓库</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>185</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>18</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

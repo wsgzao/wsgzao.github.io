@@ -1,0 +1,569 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>macOS 使用 homebrew-bundle 优雅的备份和恢复软件列表 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="macOS使用homebrew-bundle优雅的备份和恢复软件列表">
+<meta property="og:type" content="article">
+<meta property="og:title" content="macOS 使用 homebrew-bundle 优雅的备份和恢复软件列表">
+<meta property="og:url" content="https://wsgzao.github.io/post/homebrew-bundle/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="macOS使用homebrew-bundle优雅的备份和恢复软件列表">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-27T10:36:06.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="macOS 使用 homebrew-bundle 优雅的备份和恢复软件列表">
+<meta name="twitter:description" content="macOS使用homebrew-bundle优雅的备份和恢复软件列表">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/homebrew-bundle/" title="macOS 使用 homebrew-bundle 优雅的备份和恢复软件列表" itemprop="url">macOS 使用 homebrew-bundle 优雅的备份和恢复软件列表</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2018-11-07T06:59:49.000Z" itemprop="datePublished"> 发表于 2018-11-07</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Time-Machine"><span class="toc-number">3.</span> <span class="toc-text">Time Machine</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#homebrew-bundle"><span class="toc-number">4.</span> <span class="toc-text">homebrew-bundle</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#homebrew-bundle-如何备份"><span class="toc-number">4.1.</span> <span class="toc-text">homebrew-bundle 如何备份</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#homebrew-bundle-如何恢复"><span class="toc-number">4.2.</span> <span class="toc-text">homebrew-bundle 如何恢复</span></a></li></ol></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>每个人都会积累一套自己习惯使用的 App。如果平时习惯使用 Time Machine 备份，那么在重装系统时，直接用它还原倒是一个不错的办法，不必再手动安装一个个 App。但是有些时候，我们可能想要一个更加「干净」的新系统，此时就需要依次手动安装。这显然不是个高效、省心的方法，可能还需要一个个回忆之前用的 App。这时候，我们往往希望有一份属于自己的 App 清单，最好还能在重装时一键安装，省心省力。无论是 Windows 还是 macOS 下我们都希望实现一键装机，而 homebrew-bundle 正是这样一款 Mac 下的备份恢复利器。</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018 年 11 月 07 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/homebrew-bundle/">https://wsgzao.github.io/post/homebrew-bundle/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<p>定期自动云备份 macOS 软件列表，维护一份属于自己的必备 App 清单 - <a href="https://sspai.com/post/43265" target="_blank" rel="noopener">https://sspai.com/post/43265</a><br>狡兔三窟——云备份软件列表与相应配置，补充 Time Machine - <a href="https://sspai.com/post/43479" target="_blank" rel="noopener">https://sspai.com/post/43479</a><br><a href="https://segmentfault.com/a/1190000002432158" target="_blank" rel="noopener">开发必备：Mackup 将你的开发工具配置同步到云端</a><br><a href="https://sspai.com/post/40276" target="_blank" rel="noopener">备份 macOS 各类软件，不如试试这种操作</a></p>
+<hr>
+<h2 id="Time-Machine"><a href="#Time-Machine" class="headerlink" title="Time Machine"></a>Time Machine</h2><p>macOS 自带的 Time Machine 无疑是备份与还原的利器。无论是重装系统，还是新机配置，Time Machine 用起来都十分方便、省心。但是它存在以下不足：</p>
+<ol>
+<li>如果直接在本机硬盘上备份，Time Machine 动辄百 G 的硬盘占用，令小硬盘电脑用户望而却步。而且一般情况下，电脑内只有一块硬盘，如果系统和备份在同一硬盘上，那么硬盘挂了就两者皆挂。</li>
+<li>如果使用网络备份，带宽和网络空间费用可能都是问题。</li>
+<li>如果使用 NAS 或者使用树莓派架设 Time Capsule，则需要有一定的计算机相关基础和折腾能力。</li>
+</ol>
+<p>即使上述情况对你来说都不是问题，多一种备份方式也是多一份安全和保障。</p>
+<h2 id="homebrew-bundle"><a href="#homebrew-bundle" class="headerlink" title="homebrew-bundle"></a>homebrew-bundle</h2><blockquote>
+<p>Bundler for non-Ruby dependencies from Homebrew</p>
+</blockquote>
+<p>homebrew-bundle - <a href="https://github.com/Homebrew/homebrew-bundle" target="_blank" rel="noopener">https://github.com/Homebrew/homebrew-bundle</a></p>
+<ol>
+<li>Mac 上非常常用的包管理器 Homebrew, 我们经常用它来安装其他的软件包</li>
+<li>还有 Homebrew-cask, 可以用来安装图形界面的 App</li>
+<li>homebrew-bundle 类似 node 中的 package.json 或者 Cocoapods 中的 Podfile</li>
+<li>我们将需要的包和 App, 声明在一个 Brewfile 中, 然后执行 brew bundle 即可安装所有包</li>
+</ol>
+<h3 id="homebrew-bundle-如何备份"><a href="#homebrew-bundle-如何备份" class="headerlink" title="homebrew-bundle 如何备份"></a>homebrew-bundle 如何备份</h3><p>备份列表包含:</p>
+<ol>
+<li>brew tap 中的软件库</li>
+<li>brew 安装的命令行工具</li>
+<li>brew cask 安装的 App</li>
+<li>Mac App Store 安装的 App</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 执行 brew bundle dump 备份命令 </span></span><br><span class="line">brew bundle dump --describe --force --file=<span class="string">"~/Desktop/Brewfile"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 参数说明 </span></span><br><span class="line">--describe：为列表中的命令行工具加上说明性文字。</span><br><span class="line">--force：直接覆盖之前生成的 Brewfile 文件。如果没有该参数，则询问你是否覆盖。</span><br><span class="line">--file=<span class="string">"~/Desktop/Brewfile"</span>：在指定位置生成文件。如果没有该参数，则在当前目录生成 Brewfile 文件。</span><br><span class="line"></span><br><span class="line"><span class="comment"># 该命令会在桌面上生成 Brewfile 文件，双击打开查看，其内容类似于 </span></span><br><span class="line"></span><br><span class="line"><span class="comment">## 该部分是 brew 中的 tap，相当于一个个软件库 </span></span><br><span class="line">tap <span class="string">"homebrew/bundle"</span></span><br><span class="line">tap <span class="string">"homebrew/cask"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## 该部分是 brew 安装的命令行工具 </span></span><br><span class="line"><span class="comment"># Mac App Store command-line interface</span></span><br><span class="line">brew <span class="string">"mas"</span></span><br><span class="line"><span class="comment"># UNIX shell (command interpreter)</span></span><br><span class="line">brew <span class="string">"zsh"</span></span><br><span class="line"><span class="comment"># Fish shell like syntax highlighting for zsh</span></span><br><span class="line">brew <span class="string">"zsh-syntax-highlighting"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## 该部分是 brew cask 安装的 app</span></span><br><span class="line">cask <span class="string">"mounty"</span></span><br><span class="line">cask <span class="string">"dteoh/sqa/slowquitapps"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## 该部分是 Mac App Store 安装的 app</span></span><br><span class="line">mas <span class="string">"ting_en"</span>, id: 734383760</span><br><span class="line">mas <span class="string">"Xcode"</span>, id: 497799835</span><br></pre></td></tr></table></figure>
+<h3 id="homebrew-bundle-如何恢复"><a href="#homebrew-bundle-如何恢复" class="headerlink" title="homebrew-bundle 如何恢复"></a>homebrew-bundle 如何恢复</h3><blockquote>
+<p>通过备份的软件列表文件批量安装软件</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 Homebrew</span></span><br><span class="line">/usr/bin/ruby -e <span class="string">"<span class="variable">$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)</span>"</span></span><br><span class="line"><span class="comment"># 安装 mas</span></span><br><span class="line">brew install mas</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量安装软件 </span></span><br><span class="line">brew bundle --file=<span class="string">"~/Desktop/Brewfile"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 这里分享一份自己的真实备份文件 </span></span><br><span class="line">wangao@wangao-MAC ~/Desktop <span class="comment"># cat Brewfile</span></span><br><span class="line">tap <span class="string">"buo/cask-upgrade"</span></span><br><span class="line">tap <span class="string">"dteoh/sqa"</span></span><br><span class="line">tap <span class="string">"homebrew/bundle"</span></span><br><span class="line">tap <span class="string">"homebrew/cask"</span></span><br><span class="line">tap <span class="string">"homebrew/core"</span></span><br><span class="line">tap <span class="string">"homebrew/services"</span></span><br><span class="line"><span class="comment"># GNU compiler collection</span></span><br><span class="line">brew <span class="string">"gcc"</span></span><br><span class="line"><span class="comment"># Distributed revision control system</span></span><br><span class="line">brew <span class="string">"git"</span>, link: <span class="literal">false</span></span><br><span class="line"><span class="comment"># Improved top (interactive process viewer)</span></span><br><span class="line">brew <span class="string">"htop"</span></span><br><span class="line"><span class="comment"># Mac App Store command-line interface</span></span><br><span class="line">brew <span class="string">"mas"</span></span><br><span class="line"><span class="comment"># MySQL database connector for C applications</span></span><br><span class="line">brew <span class="string">"mysql-connector-c"</span></span><br><span class="line"><span class="comment"># Platform built on V8 to build network applications</span></span><br><span class="line">brew <span class="string">"node"</span></span><br><span class="line"><span class="comment"># Perl compatible regular expressions library</span></span><br><span class="line">brew <span class="string">"pcre"</span></span><br><span class="line"><span class="comment"># Password generator</span></span><br><span class="line">brew <span class="string">"pwgen"</span></span><br><span class="line"><span class="comment"># Interpreted, interactive, object-oriented programming language</span></span><br><span class="line">brew <span class="string">"python"</span></span><br><span class="line"><span class="comment"># Interpreted, interactive, object-oriented programming language</span></span><br><span class="line">brew <span class="string">"python@2"</span></span><br><span class="line">brew <span class="string">"sshpass"</span></span><br><span class="line"><span class="comment"># User interface to the TELNET protocol (built from macOS Sierra sources)</span></span><br><span class="line">brew <span class="string">"telnet"</span></span><br><span class="line"><span class="comment"># Display directories as trees (with optional color/HTML output)</span></span><br><span class="line">brew <span class="string">"tree"</span></span><br><span class="line"><span class="comment"># Internet file retriever</span></span><br><span class="line">brew <span class="string">"wget"</span></span><br><span class="line"><span class="comment"># UNIX shell (command interpreter)</span></span><br><span class="line">brew <span class="string">"zsh"</span></span><br><span class="line"><span class="comment"># Fish shell like syntax highlighting for zsh</span></span><br><span class="line">brew <span class="string">"zsh-syntax-highlighting"</span></span><br><span class="line">cask <span class="string">"java"</span></span><br><span class="line">cask <span class="string">"mounty"</span></span><br><span class="line">cask <span class="string">"xquartz"</span></span><br><span class="line">cask <span class="string">"dteoh/sqa/slowquitapps"</span></span><br><span class="line">mas <span class="string">"GarageBand"</span>, id: 682658836</span><br><span class="line">mas <span class="string">"iMovie"</span>, id: 408981434</span><br><span class="line">mas <span class="string">"Keynote"</span>, id: 409183694</span><br><span class="line">mas <span class="string">"Microsoft Remote Desktop"</span>, id: 1295203466</span><br><span class="line">mas <span class="string">"Numbers"</span>, id: 409203825</span><br><span class="line">mas <span class="string">"Pages"</span>, id: 409201541</span><br><span class="line">mas <span class="string">"ting_en"</span>, id: 734383760</span><br><span class="line">mas <span class="string">"Xcode"</span>, id: 497799835</span><br></pre></td></tr></table></figure>  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/homebrew-bundle/" data-title="macOS 使用 homebrew-bundle 优雅的备份和恢复软件列表 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/mariadb-upgrade/" title="CentOS7 平滑升级 MariaDB 5.5 到 10.x 新版本实践">
+  <strong>上一篇：</strong><br/>
+  <span>
+  CentOS7 平滑升级 MariaDB 5.5 到 10.x 新版本实践</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/zabbix-proxy/"  title="Zabbix Proxy 分布式监控安装和配置实践">
+ <strong>下一篇：</strong><br/> 
+ <span>Zabbix Proxy 分布式监控安装和配置实践
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Time-Machine"><span class="toc-number">3.</span> <span class="toc-text">Time Machine</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#homebrew-bundle"><span class="toc-number">4.</span> <span class="toc-text">homebrew-bundle</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#homebrew-bundle-如何备份"><span class="toc-number">4.1.</span> <span class="toc-text">homebrew-bundle 如何备份</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#homebrew-bundle-如何恢复"><span class="toc-number">4.2.</span> <span class="toc-text">homebrew-bundle 如何恢复</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>185</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>18</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

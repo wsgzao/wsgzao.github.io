@@ -1,0 +1,834 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>Nginx 基础知识从小白到入门 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="Nginx基础知识从小白到入门">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx 基础知识从小白到入门">
+<meta property="og:url" content="https://wsgzao.github.io/post/nginx/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="Nginx基础知识从小白到入门">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20191113180648.png">
+<meta property="og:updated_time" content="2020-02-26T09:55:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Nginx 基础知识从小白到入门">
+<meta name="twitter:description" content="Nginx基础知识从小白到入门">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20191113180648.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/nginx/" title="Nginx 基础知识从小白到入门" itemprop="url">Nginx 基础知识从小白到入门</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2020-02-25T06:59:49.000Z" itemprop="datePublished"> 发表于 2020-02-25</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nginx-基础知识"><span class="toc-number">3.</span> <span class="toc-text">Nginx 基础知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nginx-正向代理与反向代理"><span class="toc-number">4.</span> <span class="toc-text">nginx 正向代理与反向代理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nginx-基本配置"><span class="toc-number">5.</span> <span class="toc-text">nginx 基本配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#location-匹配规则"><span class="toc-number">6.</span> <span class="toc-text">location 匹配规则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nginx-日志"><span class="toc-number">7.</span> <span class="toc-text">nginx 日志</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#access-log-访问日志"><span class="toc-number">7.1.</span> <span class="toc-text">access_log 访问日志</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#error-log-错误日志"><span class="toc-number">7.2.</span> <span class="toc-text">error_log 错误日志</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nginx-负载均衡"><span class="toc-number">8.</span> <span class="toc-text">nginx 负载均衡</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nginx-常用命令"><span class="toc-number">9.</span> <span class="toc-text">nginx 常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">10.</span> <span class="toc-text">参考文章</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Nginx 现在几乎是众多大型网站的必用技术，大家应该都知道 <a href="https://www.nginx.com/blog/nginx-joins-f5/" target="_blank" rel="noopener">Nginx 被 F5 收购</a> 的大事件，章亦春也在专心维护 OpenResty 项目构建和谐家园，无论你选择 Nginx 还是 OpenResty，都需要对 Nginx 有一个比较全面的了解，日后才能做到事半功倍。本文以开发者必备的 Nginx 基础知识为主，在参考文章中罗列了目前比较优秀的 Nginx 和 OpenResty 参考教程，希望对大家有帮助。</p>
+<blockquote>
+<p>Nginx 基础知识从小白到入门</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2020 年 02 月 25 日 - 更新 nginx 基础知识<br>2019 年 11 月 12 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/nginx/">https://wsgzao.github.io/post/nginx/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<p><a href="https://nginx.org/" target="_blank" rel="noopener">nginx.org</a></p>
+<p><a href="https://www.nginx.com/" target="_blank" rel="noopener">NGINX Plus</a></p>
+<p><a href="https://openresty.org/" target="_blank" rel="noopener">OpenResty</a></p>
+<hr>
+<h2 id="Nginx-基础知识"><a href="#Nginx-基础知识" class="headerlink" title="Nginx 基础知识"></a>Nginx 基础知识</h2><blockquote>
+<p>Nginx 是什么？</p>
+</blockquote>
+<p>Nginx 是一个 web 服务器，主要处理客户端和服务器的请求分发。</p>
+<blockquote>
+<p>特点和优势</p>
+</blockquote>
+<ol>
+<li>高并发</li>
+<li>热部署</li>
+<li>快</li>
+<li>低功耗</li>
+<li>热部署</li>
+</ol>
+<blockquote>
+<p>使用和扩展</p>
+</blockquote>
+<p>开源免费的 Nginx 与商业版 Nginx Plus，与之对应的是免费 OpenResty 与商业版 OpenResty</p>
+<ul>
+<li>开源版 <a href="https://nginx.org/" target="_blank" rel="noopener">nginx.org</a></li>
+<li>商业版 <a href="https://www.nginx.com/" target="_blank" rel="noopener">NGINX Plus</a></li>
+<li>阿里巴巴 <a href="https://tengine.taobao.org/" target="_blank" rel="noopener">Tengine</a></li>
+<li>开源版 <a href="https://openresty.org/" target="_blank" rel="noopener">OpenResty</a></li>
+<li>商业版 <a href="https://openresty.com/" target="_blank" rel="noopener">OpenResty</a></li>
+</ul>
+<blockquote>
+<p>陶辉《深入理解 Nginx》作者在极客时间上的讲义 PDF 已经介绍的非常详细了，如果觉得课程不错可以选择购买尽量少走弯路</p>
+</blockquote>
+<p><a href="https://github.com/russelltao/geektime-nginx" target="_blank" rel="noopener">极客时间：nginx 核心知识 100 讲配置文件与代码分享</a></p>
+<h2 id="nginx-正向代理与反向代理"><a href="#nginx-正向代理与反向代理" class="headerlink" title="nginx 正向代理与反向代理"></a>nginx 正向代理与反向代理</h2><blockquote>
+<p>为了便于理解，首先先来了解一下一些基础知识，nginx 是一个高性能的反向代理服务器那么什么是反向代理呢？</p>
+</blockquote>
+<p>代理是在服务器和客户端之间假设的一层服务器，代理将接收客户端的请求并将它转发给服务器，然后将服务端的响应转发给客户端。</p>
+<p>不管是正向代理还是反向代理，实现的都是上面的功能。</p>
+<p>如果你对 <a href="https://wsgzao.github.io/post/osi/">OSI 七层模型与 TCP/IP 四层模型</a> 不是很熟悉可以再回顾下</p>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20191113180648.png" alt></p>
+<blockquote>
+<p>正向代理</p>
+</blockquote>
+<p>正向代理（forward）意思是一个位于客户端和原始服务器 (origin server) 之间的服务器，为了从原始服务器取得内容，客户端向代理发送一个请求并指定目标 (原始服务器)，然后代理向原始服务器转交请求并将获得的内容返回给客户端。</p>
+<p>正向代理是为我们服务的，即为客户端服务的，客户端可以根据正向代理访问到它本身无法访问到的服务器资源。</p>
+<p>正向代理对我们是透明的，对服务端是非透明的，即服务端并不知道自己收到的是来自代理的访问还是来自真实客户端的访问。</p>
+<blockquote>
+<p>反向代理</p>
+</blockquote>
+<p>反向代理（Reverse Proxy）方式是指以代理服务器来接受 internet 上的连接请求，然后将请求转发给内部网络上的服务器，并将从服务器上得到的结果返回给 internet 上请求连接的客户端，此时代理服务器对外就表现为一个反向代理服务器。</p>
+<p>反向代理是为服务端服务的，反向代理可以帮助服务器接收来自客户端的请求，帮助服务器做请求转发，负载均衡等。</p>
+<p>反向代理对服务端是透明的，对我们是非透明的，即我们并不知道自己访问的是代理服务器，而服务器知道反向代理在为他服务。</p>
+<h2 id="nginx-基本配置"><a href="#nginx-基本配置" class="headerlink" title="nginx 基本配置"></a>nginx 基本配置</h2><p>安装 nginx 时通常需要编译自己需要的模块，可以<a href="https://wsgzao.github.io/post/rpmbuild/">使用 rpmbuild 制作 Nginx 的 RPM 包</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">main                                # 全局配置</span><br><span class="line"></span><br><span class="line">events &#123;                            # nginx 工作模式配置</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">http &#123;                                # http 设置</span><br><span class="line">    ....</span><br><span class="line"></span><br><span class="line">    server &#123;                        # 服务器主机配置</span><br><span class="line">        ....</span><br><span class="line">        location &#123;                    # 路由配置</span><br><span class="line">            ....</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        location path &#123;</span><br><span class="line">            ....</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        location otherpath &#123;</span><br><span class="line">            ....</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    server &#123;</span><br><span class="line">        ....</span><br><span class="line"></span><br><span class="line">        location &#123;</span><br><span class="line">            ....</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    upstream name &#123;                    # 负载均衡配置</span><br><span class="line">        ....</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果想要生成 nginx 规范配置，可以参考<a href="https://nginxconfig.io/" target="_blank" rel="noopener">nginxconfig.io</a></p>
+<p>下面是 <code>nginx</code> 一些配置中常用的内置全局变量，你可以在配置的任何位置使用它们。</p>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$host</code></td>
+<td>请求信息中的 <code>Host</code>，如果请求中没有 <code>Host</code> 行，则等于设置的服务器名</td>
+</tr>
+<tr>
+<td><code>$request_method</code></td>
+<td>客户端请求类型，如 <code>GET</code>、<code>POST</code></td>
+</tr>
+<tr>
+<td><code>$remote_addr</code></td>
+<td>客户端的 <code>IP</code> 地址</td>
+</tr>
+<tr>
+<td><code>$args</code></td>
+<td>请求中的参数</td>
+</tr>
+<tr>
+<td><code>$content_length</code></td>
+<td>请求头中的 <code>Content-length</code> 字段</td>
+</tr>
+<tr>
+<td><code>$http_user_agent</code></td>
+<td>客户端 agent 信息</td>
+</tr>
+<tr>
+<td><code>$http_cookie</code></td>
+<td>客户端 cookie 信息</td>
+</tr>
+<tr>
+<td><code>$remote_addr</code></td>
+<td>客户端的 IP 地址</td>
+</tr>
+<tr>
+<td><code>$remote_port</code></td>
+<td>客户端的端口</td>
+</tr>
+<tr>
+<td><code>$server_protocol</code></td>
+<td>请求使用的协议，如 <code>HTTP/1.0</code>、<code>HTTP/1.1\</code></td>
+</tr>
+<tr>
+<td><code>$server_addr</code></td>
+<td>服务器地址</td>
+</tr>
+<tr>
+<td><code>$server_name</code></td>
+<td>服务器名称</td>
+</tr>
+<tr>
+<td><code>$server_port</code></td>
+<td>服务器的端口号</td>
+</tr>
+</tbody>
+</table>
+<h2 id="location-匹配规则"><a href="#location-匹配规则" class="headerlink" title="location 匹配规则"></a>location 匹配规则</h2><p>语法规则：<code>location [=|~|~*|^~] /uri/ { … }</code></p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>location = /uri</td>
+<td>\= 表示精确匹配，只有完全匹配上才能生效</td>
+</tr>
+<tr>
+<td>location ^~ /uri</td>
+<td>^~ 开头对 URL 路径进行前缀匹配，并且在正则之前。</td>
+</tr>
+<tr>
+<td>location ~ pattern</td>
+<td>开头表示区分大小写的正则匹配</td>
+</tr>
+<tr>
+<td>location ~* pattern</td>
+<td>开头表示不区分大小写的正则匹配</td>
+</tr>
+<tr>
+<td>location /uri</td>
+<td>不带任何修饰符，也表示前缀匹配，但是在正则匹配之后</td>
+</tr>
+<tr>
+<td>location /</td>
+<td>通用匹配，任何未匹配到其它 location 的请求都会匹配到，相当于 switch 中的 default</td>
+</tr>
+</tbody>
+</table>
+<p>前缀匹配时，Nginx 不对 url 做编码，因此请求为 <code>/static/20%/aa</code>，可以被规则 <code>^~ /static/ /aa</code> 匹配到（注意是空格）</p>
+<p>多个 location 配置的情况下匹配顺序为:</p>
+<ul>
+<li>首先精确匹配 <code>=</code></li>
+<li>其次前缀匹配 <code>^~</code></li>
+<li>其次是按文件中顺序的正则匹配</li>
+<li>然后匹配不带任何修饰的前缀匹配。</li>
+<li>最后是交给 <code>/</code> 通用匹配</li>
+<li>当有匹配成功时候，停止匹配，按当前匹配规则处理请求</li>
+</ul>
+<p>意：前缀匹配，如果有包含关系时，按最大匹配原则进行匹配。比如在前缀匹配：<code>location /dir01</code> 与 <code>location /dir01/dir02</code>，如有请求 <code>http://localhost/dir01/dir02/file</code> 将最终匹配到 <code>location /dir01/dir02</code></p>
+<p>例子，有如下匹配规则：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">location = / &#123;</span><br><span class="line">   <span class="built_in">echo</span> <span class="string">"规则 A"</span>;</span><br><span class="line">&#125;</span><br><span class="line">location = /login &#123;</span><br><span class="line">   <span class="built_in">echo</span> <span class="string">"规则 B"</span>;</span><br><span class="line">&#125;</span><br><span class="line">location ^~ /static/ &#123;</span><br><span class="line">   <span class="built_in">echo</span> <span class="string">"规则 C"</span>;</span><br><span class="line">&#125;</span><br><span class="line">location ^~ /static/files &#123;</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"规则 X"</span>;</span><br><span class="line">&#125;</span><br><span class="line">location ~ \.(gif|jpg|png|js|css)$ &#123;</span><br><span class="line">   <span class="built_in">echo</span> <span class="string">"规则 D"</span>;</span><br><span class="line">&#125;</span><br><span class="line">location ~* \.png$ &#123;</span><br><span class="line">   <span class="built_in">echo</span> <span class="string">"规则 E"</span>;</span><br><span class="line">&#125;</span><br><span class="line">location /img &#123;</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"规则 Y"</span>;</span><br><span class="line">&#125;</span><br><span class="line">location / &#123;</span><br><span class="line">   <span class="built_in">echo</span> <span class="string">"规则 F"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么产生的效果如下：</p>
+<ul>
+<li>访问根目录 <code>/</code>，比如 <code>http://localhost/</code> 将匹配 <code>规则 A</code></li>
+<li>访问 <code>http://localhost/login</code> 将匹配 <code>规则 B</code>，<code>http://localhost/register</code> 则匹配 <code>规则 F</code></li>
+<li>访问 <code>http://localhost/static/a.html</code> 将匹配 <code>规则 C</code></li>
+<li>访问 <code>http://localhost/static/files/a.exe</code> 将匹配 <code>规则 X</code>，虽然 <code>规则 C</code> 也能匹配到，但因为最大匹配原则，最终选中了 <code>规则 X</code>。你可以测试下，去掉规则 X ，则当前 URL 会匹配上 <code>规则 C</code>。</li>
+<li>访问 <code>http://localhost/a.gif</code>, <code>http://localhost/b.jpg</code> 将匹配 <code>规则 D</code> 和 <code>规则 E</code> ，但是 <code>规则 D</code> 顺序优先，<code>规则 E</code> 不起作用，而 <code>http://localhost/static/c.png</code> 则优先匹配到 <code>规则 C</code></li>
+<li>访问 <code>http://localhost/a.PNG</code> 则匹配 <code>规则 E</code> ，而不会匹配 <code>规则 D</code> ，因为 <code>规则 E</code> 不区分大小写。</li>
+<li>访问 <code>http://localhost/img/a.gif</code> 会匹配上 <code>规则 D</code>, 虽然 <code>规则 Y</code> 也可以匹配上，但是因为正则匹配优先，而忽略了 <code>规则 Y</code>。</li>
+<li>访问 <code>http://localhost/img/a.tiff</code> 会匹配上 <code>规则 Y</code>。</li>
+</ul>
+<p>访问 <code>http://localhost/category/id/1111</code> 则最终匹配到规则 F ，因为以上规则都不匹配，这个时候应该是 Nginx 转发请求给后端应用服务器，比如 FastCGI（php），tomcat（jsp），Nginx 作为反向代理服务器存在。</p>
+<p><a href="https://juejin.im/post/5c89f96f518825573a5e630b" target="_blank" rel="noopener">理解 Nginx 中 Server 和 Location 的匹配逻辑</a></p>
+<h2 id="nginx-日志"><a href="#nginx-日志" class="headerlink" title="nginx 日志"></a>nginx 日志</h2><p>Nginx 日志主要有两种：access_log(访问日志) 和 error_log(错误日志)。</p>
+<h3 id="access-log-访问日志"><a href="#access-log-访问日志" class="headerlink" title="access_log 访问日志"></a>access_log 访问日志</h3><p>access_log 主要记录客户端访问 Nginx 的每一个请求，格式可以自定义。通过 access_log 你可以得到用户地域来源、跳转来源、使用终端、某个 URL 访问量等相关信息。</p>
+<p>log_format 指令用于定义日志的格式，语法: <code>log_format name string;</code> 其中 name 表示格式名称，string 表示定义的格式字符串。log_format 有一个默认的无需设置的组合日志格式。</p>
+<p>默认的无需设置的组合日志格式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">log_format combined &apos;$remote_addr - $remote_user  [$time_local]  &apos;</span><br><span class="line">                    &apos; &quot;$request&quot;  $status  $body_bytes_sent  &apos;</span><br><span class="line">                    &apos; &quot;$http_referer&quot;  &quot;$http_user_agent&quot; &apos;;</span><br></pre></td></tr></table></figure>
+<p>access_log 指令用来指定访问日志文件的存放路径（包含日志文件名）、格式和缓存大小，语法：<code>access_log path [format_name [buffer=size | off]];</code> 其中 path 表示访问日志存放路径，format_name 表示访问日志格式名称，buffer 表示缓存大小，off 表示关闭访问日志。</p>
+<p>log_format 使用示例：在 access.log 中记录客户端 IP 地址、请求状态和请求时间</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">log_format myformat &apos;$remote_addr  $status  $time_local&apos;;</span><br><span class="line">access_log logs/access.log  myformat;</span><br></pre></td></tr></table></figure>
+<p>需要注意的是：log_format 配置必须放在 http 内，否则会出现警告。Nginx 进程设置的用户和组必须对日志路径有创建文件的权限，否则，会报错。</p>
+<p>定义日志使用的字段及其作用：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$remote_addr 与 $http_x_forwarded_for</td>
+<td>记录客户端 IP 地址</td>
+</tr>
+<tr>
+<td>$remote_user</td>
+<td>记录客户端用户名称</td>
+</tr>
+<tr>
+<td>$request</td>
+<td>记录请求的 URI 和 HTTP 协议</td>
+</tr>
+<tr>
+<td>$status</td>
+<td>记录请求状态</td>
+</tr>
+<tr>
+<td>$body_bytes_sent</td>
+<td>发送给客户端的字节数，不包括响应头的大小</td>
+</tr>
+<tr>
+<td>$bytes_sent</td>
+<td>发送给客户端的总字节数</td>
+</tr>
+<tr>
+<td>$connection</td>
+<td>连接的序列号</td>
+</tr>
+<tr>
+<td>$connection_requests</td>
+<td>当前通过一个连接获得的请求数量</td>
+</tr>
+<tr>
+<td>$msec</td>
+<td>日志写入时间。单位为秒，精度是毫秒</td>
+</tr>
+<tr>
+<td>$pipe</td>
+<td>如果请求是通过 HTTP 流水线 (pipelined) 发送，pipe 值为“p”，否则为“.”</td>
+</tr>
+<tr>
+<td>$http_referer</td>
+<td>记录从哪个页面链接访问过来的</td>
+</tr>
+<tr>
+<td>$http_user_agent</td>
+<td>记录客户端浏览器相关信息</td>
+</tr>
+<tr>
+<td>$request_length</td>
+<td>请求的长度（包括请求行，请求头和请求正文）</td>
+</tr>
+<tr>
+<td>$request_time</td>
+<td>请求处理时间，单位为秒，精度毫秒</td>
+</tr>
+<tr>
+<td>$time_iso8601</td>
+<td>ISO8601 标准格式下的本地时间</td>
+</tr>
+<tr>
+<td>$time_local</td>
+<td>记录访问时间与时区</td>
+</tr>
+</tbody>
+</table>
+<h3 id="error-log-错误日志"><a href="#error-log-错误日志" class="headerlink" title="error_log 错误日志"></a>error_log 错误日志</h3><p>error_log 主要记录客户端访问 Nginx 出错时的日志，格式不支持自定义。通过查看错误日志，你可以得到系统某个服务或 server 的性能瓶颈等。因此，将日志利用好，你可以得到很多有价值的信息。</p>
+<p>error_log 指令用来指定错误日志，语法: <code>error_log path [level]</code>; 其中 path 表示错误日志存放路径，level 表示错误日志等级，日志等级包括 debug、info、notice、warn、error、crit、alert、emerg，从左至右，日志详细程度逐级递减，即 debug 最详细，emerg 最少，默认为 error。</p>
+<p>注意：<code>error_log off</code> 并不能关闭错误日志记录，此时日志信息会被写入到文件名为 off 的文件当中。如果要关闭错误日志记录，可以使用如下配置：</p>
+<p>Linux 系统把存储位置设置为空设备</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">error_log /dev/null;</span><br><span class="line"></span><br><span class="line">http &#123;</span><br><span class="line">    # ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Windows 系统把存储位置设置为空设备</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">error_log nul;</span><br><span class="line"></span><br><span class="line">http &#123;</span><br><span class="line">    # ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>另外 Linux 系统可以使用 tail 命令方便的查阅正在改变的文件, tail -f filename 会把 filename 里最尾部的内容显示在屏幕上, 并且不断刷新, 使你看到最新的文件内容。Windows 系统没有这个命令，你可以在网上找到动态查看文件的工具。</p>
+<h2 id="nginx-负载均衡"><a href="#nginx-负载均衡" class="headerlink" title="nginx 负载均衡"></a>nginx 负载均衡</h2><p>Upstream 指定后端服务器地址列表，在 server 中拦截响应请求，并将请求转发到 Upstream 中配置的服务器列表。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">upstream balanceServer &#123;</span><br><span class="line">    server 10.1.22.33:12345;</span><br><span class="line">    server 10.1.22.34:12345;</span><br><span class="line">    server 10.1.22.35:12345;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">    server_name  fe.server.com;</span><br><span class="line">    listen 80;</span><br><span class="line">    location /api &#123;</span><br><span class="line">        proxy_pass http://balanceServer;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的配置只是指定了 nginx 需要转发的服务端列表，并没有指定分配策略。</p>
+<p>默认情况下采用的是轮询策略，将所有客户端请求轮询分配给服务端。这种策略是可以正常工作的，但是如果其中某一台服务器压力太大，出现延迟，会影响所有分配在这台服务器下的用户。</p>
+<h2 id="nginx-常用命令"><a href="#nginx-常用命令" class="headerlink" title="nginx 常用命令"></a>nginx 常用命令</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 快速关闭 Nginx，可能不保存相关信息，并迅速终止 web 服务</span></span><br><span class="line">nginx -s stop</span><br><span class="line"><span class="comment"># 平稳关闭 Nginx，保存相关信息，有安排的结束 web 服务</span></span><br><span class="line">nginx -s quit</span><br><span class="line"><span class="comment"># 因改变了 Nginx 相关配置，需要重新加载配置而重载</span></span><br><span class="line">nginx -s reload</span><br><span class="line"><span class="comment"># 重新打开日志文件</span></span><br><span class="line">nginx -s reopen</span><br><span class="line"><span class="comment"># 为 Nginx 指定一个配置文件，来代替缺省的</span></span><br><span class="line">nginx -c filename</span><br><span class="line"><span class="comment"># 不运行，而仅仅测试配置文件。nginx 将检查配置文件的语法的正确性，并尝试打开配置文件中所引用到的文件</span></span><br><span class="line">nginx -t</span><br><span class="line"><span class="comment">#  显示 nginx 的版本</span></span><br><span class="line">nginx -v</span><br><span class="line"><span class="comment"># 显示 nginx 的版本，编译器版本和配置参数</span></span><br><span class="line">nginx -V</span><br><span class="line"><span class="comment"># 格式换显示 nginx 配置参数</span></span><br><span class="line">2&gt;&amp;1 nginx -V | xargs -n1</span><br><span class="line">2&gt;&amp;1 nginx -V | xargs -n1 | grep lua</span><br></pre></td></tr></table></figure>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><blockquote>
+<p>以上内容只是 nginx 的冰山一角，我个人推荐大家跟着官方文档或者类似极客时间的教程学习，可以少走很多弯路</p>
+</blockquote>
+<p><a href="https://nginx.org/en/docs/" target="_blank" rel="noopener">nginx documentation</a></p>
+<p><a href="http://www.conardli.top/blog/article/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E8%80%85%E5%BF%85%E5%A4%87%E7%9A%84nginx%E7%9F%A5%E8%AF%86.html" target="_blank" rel="noopener">前端开发者必备的 nginx 知识</a></p>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzA4Nzg5Nzc5OA==&amp;mid=2651674303&amp;idx=1&amp;sn=b34cbf009aac5f901ce81a65df06359f&amp;chksm=8bcb9516bcbc1c006ff36cd7a8a83d40c7b24143d0c76fc15f61bbb2c210355615125aa95d94&amp;mpshare=1&amp;scene=1&amp;srcid=1031DJIgeaaQj5fafJbAc3mg#rd" target="_blank" rel="noopener">百万并发下 Nginx 的优化之道</a></p>
+<p><a href="http://openresty.org/download/agentzh-nginx-tutorials-zhcn.html" target="_blank" rel="noopener">agentzh 的 Nginx 教程</a></p>
+<p><a href="https://moonbingbing.gitbooks.io/openresty-best-practices/content/index.html" target="_blank" rel="noopener">OpenResty 最佳实践</a></p>
+<blockquote>
+<p>以下为极客时间专栏</p>
+</blockquote>
+<p><a href="https://time.geekbang.org/course/intro/138" target="_blank" rel="noopener">Nginx 核心知识 100 讲</a></p>
+<p><a href="https://github.com/russelltao/geektime-nginx" target="_blank" rel="noopener">极客时间：nginx 核心知识 100 讲配置文件与代码分享</a></p>
+<p><a href="https://time.geekbang.org/column/intro/186" target="_blank" rel="noopener">OpenResty 从入门到实战</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/nginx/" data-title="Nginx 基础知识从小白到入门 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/nginx-default-server/" title="Nginx 禁止未绑定域名或 IP 访问 80 和 443 端口实践小结">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Nginx 禁止未绑定域名或 IP 访问 80 和 443 端口实践小结</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/jinja/"  title="模板引擎 Jinja2 语法介绍">
+ <strong>下一篇：</strong><br/> 
+ <span>模板引擎 Jinja2 语法介绍
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nginx-基础知识"><span class="toc-number">3.</span> <span class="toc-text">Nginx 基础知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nginx-正向代理与反向代理"><span class="toc-number">4.</span> <span class="toc-text">nginx 正向代理与反向代理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nginx-基本配置"><span class="toc-number">5.</span> <span class="toc-text">nginx 基本配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#location-匹配规则"><span class="toc-number">6.</span> <span class="toc-text">location 匹配规则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nginx-日志"><span class="toc-number">7.</span> <span class="toc-text">nginx 日志</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#access-log-访问日志"><span class="toc-number">7.1.</span> <span class="toc-text">access_log 访问日志</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#error-log-错误日志"><span class="toc-number">7.2.</span> <span class="toc-text">error_log 错误日志</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nginx-负载均衡"><span class="toc-number">8.</span> <span class="toc-text">nginx 负载均衡</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nginx-常用命令"><span class="toc-number">9.</span> <span class="toc-text">nginx 常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">10.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>185</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>18</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

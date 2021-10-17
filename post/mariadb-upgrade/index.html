@@ -1,0 +1,555 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>CentOS7 平滑升级 MariaDB 5.5 到 10.x 新版本实践 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="CentOS7平滑升级MariaDB 5.5到10.x新版本实践">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CentOS7 平滑升级 MariaDB 5.5 到 10.x 新版本实践">
+<meta property="og:url" content="https://wsgzao.github.io/post/mariadb-upgrade/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="CentOS7平滑升级MariaDB 5.5到10.x新版本实践">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-11-15T03:43:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CentOS7 平滑升级 MariaDB 5.5 到 10.x 新版本实践">
+<meta name="twitter:description" content="CentOS7平滑升级MariaDB 5.5到10.x新版本实践">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/mariadb-upgrade/" title="CentOS7 平滑升级 MariaDB 5.5 到 10.x 新版本实践" itemprop="url">CentOS7 平滑升级 MariaDB 5.5 到 10.x 新版本实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2018-11-14T06:59:49.000Z" itemprop="datePublished"> 发表于 2018-11-14</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#备份数据库"><span class="toc-number">3.</span> <span class="toc-text">备份数据库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加-MariaDB-Yum-库"><span class="toc-number">4.</span> <span class="toc-text">添加 MariaDB Yum 库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#升级已有数据库"><span class="toc-number">5.</span> <span class="toc-text">升级已有数据库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MariaDB-官方升级文档"><span class="toc-number">6.</span> <span class="toc-text">MariaDB 官方升级文档</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>自从 CentOS 7 开始，自带的数据库就变成 MariaDB 了，yum 安装之后的默认版本是 5.5，但是这个数据版本已经比较老了，无论是安装全新的 Percona 还是升级 MariaDB 第一步始终是不要忘记备份。</p>
+<blockquote>
+<p>CentOS7 平滑升级 MariaDB 5.5 到 10.x 新版本实践</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018 年 11 月 14 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/mariadb-upgrade/">https://wsgzao.github.io/post/mariadb-upgrade/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<p>MariaDB - <a href="https://mariadb.org/" target="_blank" rel="noopener">https://mariadb.org/</a></p>
+<hr>
+<h2 id="备份数据库"><a href="#备份数据库" class="headerlink" title="备份数据库"></a>备份数据库</h2><blockquote>
+<p>重要的事情说三遍，备份，备份，备份</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 备份数据库，如果升级顺利是不要实施备份还原的 </span></span><br><span class="line">mysqldump -u root -p --all-databases &gt; alldb.sql</span><br><span class="line"><span class="comment"># 如果想保留自己的 my.cof 配置，则备份一下这个文件 </span></span><br><span class="line">cp /etc/my.cnf /etc/my.cnf.bak</span><br><span class="line"><span class="comment"># 停止数据库运行 </span></span><br><span class="line">systemctl stop mariadb</span><br><span class="line"><span class="comment"># 卸载 MariaDB 老版本 </span></span><br><span class="line">yum remove mariadb mariadb-server</span><br></pre></td></tr></table></figure>
+<h2 id="添加-MariaDB-Yum-库"><a href="#添加-MariaDB-Yum-库" class="headerlink" title="添加 MariaDB Yum 库"></a>添加 MariaDB Yum 库</h2><blockquote>
+<p>建议使用 MariaDB 官方推荐的 stable 稳定版，</p>
+</blockquote>
+<p><a href="https://downloads.mariadb.org/mariadb/" target="_blank" rel="noopener">https://downloads.mariadb.org/mariadb/</a><br><a href="http://yum.mariadb.org/" target="_blank" rel="noopener">http://yum.mariadb.org/</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 添加 MariaDB 官方源 </span></span><br><span class="line">vi /etc/yum.repos.d/MariaDB.repo</span><br><span class="line"></span><br><span class="line"><span class="comment"># MariaDB 10.3 CentOS repository list</span></span><br><span class="line"><span class="comment"># http://downloads.mariadb.org/mariadb/repositories/</span></span><br><span class="line">[mariadb]</span><br><span class="line">name = MariaDB</span><br><span class="line">baseurl = http://yum.mariadb.org/10.3/centos7-amd64</span><br><span class="line">gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB</span><br><span class="line">gpgcheck=1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 清除 yum 缓存 </span></span><br><span class="line">yum clean all </span><br><span class="line">yum makecache</span><br></pre></td></tr></table></figure>
+<h2 id="升级已有数据库"><a href="#升级已有数据库" class="headerlink" title="升级已有数据库"></a>升级已有数据库</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 MariaDB 新版本 </span></span><br><span class="line">yum install mariadb mariadb-server</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动新版 MariaDB</span></span><br><span class="line">systemctl start mariadb</span><br><span class="line"></span><br><span class="line"><span class="comment"># 升级已有数据库 </span></span><br><span class="line">mysql_upgrade -uroot -p </span><br><span class="line"></span><br><span class="line">[root@sg-gop-10-71-12-89 tmp]<span class="comment"># mysql_upgrade -uroot -p</span></span><br><span class="line">Enter password:</span><br><span class="line">Phase 1/7: Checking and upgrading mysql database</span><br><span class="line">Processing databases</span><br><span class="line">mysql</span><br><span class="line">mysql.columns_priv                                 OK</span><br><span class="line">mysql.db                                           OK</span><br><span class="line">mysql.event                                        OK</span><br><span class="line">mysql.func                                         OK</span><br><span class="line">mysql.help_category                                OK</span><br><span class="line">mysql.help_keyword                                 OK</span><br><span class="line">mysql.help_relation                                OK</span><br><span class="line">mysql.help_topic                                   OK</span><br><span class="line">mysql.host                                         OK</span><br><span class="line">mysql.ndb_binlog_index                             OK</span><br><span class="line">mysql.plugin                                       OK</span><br><span class="line">mysql.proc                                         OK</span><br><span class="line">mysql.procs_priv                                   OK</span><br><span class="line">mysql.proxies_priv                                 OK</span><br><span class="line">mysql.servers                                      OK</span><br><span class="line">mysql.tables_priv                                  OK</span><br><span class="line">mysql.time_zone                                    OK</span><br><span class="line">mysql.time_zone_leap_second                        OK</span><br><span class="line">mysql.time_zone_name                               OK</span><br><span class="line">mysql.time_zone_transition                         OK</span><br><span class="line">mysql.time_zone_transition_type                    OK</span><br><span class="line">mysql.user                                         OK</span><br><span class="line">Upgrading from a version before MariaDB-10.1</span><br><span class="line">Phase 2/7: Installing used storage engines</span><br><span class="line">Checking <span class="keyword">for</span> tables with unknown storage engine</span><br><span class="line">Phase 3/7: Fixing views</span><br><span class="line">Phase 4/7: Running <span class="string">'mysql_fix_privilege_tables'</span></span><br><span class="line">Phase 5/7: Fixing table and database names</span><br><span class="line">Phase 6/7: Checking and upgrading tables</span><br><span class="line">Processing databases</span><br><span class="line">information_schema</span><br><span class="line">performance_schema</span><br><span class="line">zabbix</span><br><span class="line">zabbix.acknowledges                                OK</span><br><span class="line">zabbix.actions                                     OK</span><br><span class="line">zabbix.alerts                                      OK</span><br><span class="line">zabbix.application_discovery                       OK</span><br><span class="line">zabbix.application_prototype                       OK</span><br><span class="line">zabbix.application_template                        OK</span><br><span class="line">zabbix.applications                                OK</span><br><span class="line">zabbix.auditlog                                    OK</span><br><span class="line">zabbix.auditlog_details                            OK</span><br><span class="line">zabbix.autoreg_host                                OK</span><br><span class="line">zabbix.conditions                                  OK</span><br><span class="line">zabbix.config                                      OK</span><br><span class="line">zabbix.corr_condition                              OK</span><br><span class="line">zabbix.corr_condition_group                        OK</span><br><span class="line">zabbix.corr_condition_tag                          OK</span><br><span class="line">zabbix.corr_condition_tagpair                      OK</span><br><span class="line">zabbix.corr_condition_tagvalue                     OK</span><br><span class="line">zabbix.corr_operation                              OK</span><br><span class="line">zabbix.correlation                                 OK</span><br><span class="line">zabbix.dashboard                                   OK</span><br><span class="line">zabbix.dashboard_user                              OK</span><br><span class="line">zabbix.dashboard_usrgrp                            OK</span><br><span class="line">zabbix.dbversion                                   OK</span><br><span class="line">zabbix.dchecks                                     OK</span><br><span class="line">zabbix.dhosts                                      OK</span><br><span class="line">zabbix.drules                                      OK</span><br><span class="line">zabbix.dservices                                   OK</span><br><span class="line">zabbix.escalations                                 OK</span><br><span class="line">zabbix.event_recovery                              OK</span><br><span class="line">zabbix.event_suppress                              OK</span><br><span class="line">zabbix.event_tag                                   OK</span><br><span class="line">zabbix.events                                      OK</span><br><span class="line">zabbix.expressions                                 OK</span><br><span class="line">zabbix.functions                                   OK</span><br><span class="line">zabbix.globalmacro                                 OK</span><br><span class="line">zabbix.globalvars                                  OK</span><br><span class="line">zabbix.graph_discovery                             OK</span><br><span class="line">zabbix.graph_theme                                 OK</span><br><span class="line">zabbix.graphs                                      OK</span><br><span class="line">zabbix.graphs_items                                OK</span><br><span class="line">zabbix.group_discovery                             OK</span><br><span class="line">zabbix.group_prototype                             OK</span><br><span class="line">zabbix.history                                     OK</span><br><span class="line">zabbix.history_log                                 OK</span><br><span class="line">zabbix.history_str                                 OK</span><br><span class="line">zabbix.history_text                                OK</span><br><span class="line">zabbix.history_uint                                OK</span><br><span class="line">zabbix.host_discovery                              OK</span><br><span class="line">zabbix.host_inventory                              OK</span><br><span class="line">zabbix.hostmacro                                   OK</span><br><span class="line">zabbix.hosts                                       OK</span><br><span class="line">zabbix.hosts_groups                                OK</span><br><span class="line">zabbix.hosts_templates                             OK</span><br><span class="line">zabbix.housekeeper                                 OK</span><br><span class="line">zabbix.hstgrp                                      OK</span><br><span class="line">zabbix.httpstep                                    OK</span><br><span class="line">zabbix.httpstep_field                              OK</span><br><span class="line">zabbix.httpstepitem                                OK</span><br><span class="line">zabbix.httptest                                    OK</span><br><span class="line">zabbix.httptest_field                              OK</span><br><span class="line">zabbix.httptestitem                                OK</span><br><span class="line">zabbix.icon_map                                    OK</span><br><span class="line">zabbix.icon_mapping                                OK</span><br><span class="line">zabbix.ids                                         OK</span><br><span class="line">zabbix.images                                      OK</span><br><span class="line">zabbix.interface                                   OK</span><br><span class="line">zabbix.interface_discovery                         OK</span><br><span class="line">zabbix.item_application_prototype                  OK</span><br><span class="line">zabbix.item_condition                              OK</span><br><span class="line">zabbix.item_discovery                              OK</span><br><span class="line">zabbix.item_preproc                                OK</span><br><span class="line">zabbix.items                                       OK</span><br><span class="line">zabbix.items_applications                          OK</span><br><span class="line">zabbix.maintenance_tag                             OK</span><br><span class="line">zabbix.maintenances                                OK</span><br><span class="line">zabbix.maintenances_groups                         OK</span><br><span class="line">zabbix.maintenances_hosts                          OK</span><br><span class="line">zabbix.maintenances_windows                        OK</span><br><span class="line">zabbix.mappings                                    OK</span><br><span class="line">zabbix.media                                       OK</span><br><span class="line">zabbix.media_type                                  OK</span><br><span class="line">zabbix.opcommand                                   OK</span><br><span class="line">zabbix.opcommand_grp                               OK</span><br><span class="line">zabbix.opcommand_hst                               OK</span><br><span class="line">zabbix.opconditions                                OK</span><br><span class="line">zabbix.operations                                  OK</span><br><span class="line">zabbix.opgroup                                     OK</span><br><span class="line">zabbix.opinventory                                 OK</span><br><span class="line">zabbix.opmessage                                   OK</span><br><span class="line">zabbix.opmessage_grp                               OK</span><br><span class="line">zabbix.opmessage_usr                               OK</span><br><span class="line">zabbix.optemplate                                  OK</span><br><span class="line">zabbix.problem                                     OK</span><br><span class="line">zabbix.problem_tag                                 OK</span><br><span class="line">zabbix.profiles                                    OK</span><br><span class="line">zabbix.proxy_autoreg_host                          OK</span><br><span class="line">zabbix.proxy_dhistory                              OK</span><br><span class="line">zabbix.proxy_history                               OK</span><br><span class="line">zabbix.regexps                                     OK</span><br><span class="line">zabbix.rights                                      OK</span><br><span class="line">zabbix.screen_user                                 OK</span><br><span class="line">zabbix.screen_usrgrp                               OK</span><br><span class="line">zabbix.screens                                     OK</span><br><span class="line">zabbix.screens_items                               OK</span><br><span class="line">zabbix.scripts                                     OK</span><br><span class="line">zabbix.service_alarms                              OK</span><br><span class="line">zabbix.services                                    OK</span><br><span class="line">zabbix.services_links                              OK</span><br><span class="line">zabbix.services_times                              OK</span><br><span class="line">zabbix.sessions                                    OK</span><br><span class="line">zabbix.slides                                      OK</span><br><span class="line">zabbix.slideshow_user                              OK</span><br><span class="line">zabbix.slideshow_usrgrp                            OK</span><br><span class="line">zabbix.slideshows                                  OK</span><br><span class="line">zabbix.sysmap_element_trigger                      OK</span><br><span class="line">zabbix.sysmap_element_url                          OK</span><br><span class="line">zabbix.sysmap_shape                                OK</span><br><span class="line">zabbix.sysmap_url                                  OK</span><br><span class="line">zabbix.sysmap_user                                 OK</span><br><span class="line">zabbix.sysmap_usrgrp                               OK</span><br><span class="line">zabbix.sysmaps                                     OK</span><br><span class="line">zabbix.sysmaps_elements                            OK</span><br><span class="line">zabbix.sysmaps_link_triggers                       OK</span><br><span class="line">zabbix.sysmaps_links                               OK</span><br><span class="line">zabbix.tag_filter                                  OK</span><br><span class="line">zabbix.task                                        OK</span><br><span class="line">zabbix.task_acknowledge                            OK</span><br><span class="line">zabbix.task_check_now                              OK</span><br><span class="line">zabbix.task_close_problem                          OK</span><br><span class="line">zabbix.task_remote_command                         OK</span><br><span class="line">zabbix.task_remote_command_result                  OK</span><br><span class="line">zabbix.timeperiods                                 OK</span><br><span class="line">zabbix.trends                                      OK</span><br><span class="line">zabbix.trends_uint                                 OK</span><br><span class="line">zabbix.trigger_depends                             OK</span><br><span class="line">zabbix.trigger_discovery                           OK</span><br><span class="line">zabbix.trigger_tag                                 OK</span><br><span class="line">zabbix.triggers                                    OK</span><br><span class="line">zabbix.users                                       OK</span><br><span class="line">zabbix.users_groups                                OK</span><br><span class="line">zabbix.usrgrp                                      OK</span><br><span class="line">zabbix.valuemaps                                   OK</span><br><span class="line">zabbix.widget                                      OK</span><br><span class="line">zabbix.widget_field                                OK</span><br><span class="line">Phase 7/7: Running <span class="string">'FLUSH PRIVILEGES'</span></span><br><span class="line">OK</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置服务自启动 </span></span><br><span class="line">systemctl <span class="built_in">enable</span> mariadb</span><br><span class="line"></span><br><span class="line"><span class="comment"># 登录数据库验证 </span></span><br><span class="line">mysql -uroot -p</span><br><span class="line"></span><br><span class="line"><span class="comment"># 升级过程遇到错误记得先查看日志分析 </span></span><br></pre></td></tr></table></figure>
+<h2 id="MariaDB-官方升级文档"><a href="#MariaDB-官方升级文档" class="headerlink" title="MariaDB 官方升级文档"></a>MariaDB 官方升级文档</h2><p>Upgrading from MariaDB 5.5 to MariaDB 10.0<br><a href="https://mariadb.com/kb/en/library/upgrading-from-mariadb-55-to-mariadb-100/" target="_blank" rel="noopener">https://mariadb.com/kb/en/library/upgrading-from-mariadb-55-to-mariadb-100/</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/mariadb-upgrade/" data-title="CentOS7 平滑升级 MariaDB 5.5 到 10.x 新版本实践 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/myip/" title="在命令行内获取公网 IP 的几种简单方法">
+  <strong>上一篇：</strong><br/>
+  <span>
+  在命令行内获取公网 IP 的几种简单方法</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/homebrew-bundle/"  title="macOS 使用 homebrew-bundle 优雅的备份和恢复软件列表">
+ <strong>下一篇：</strong><br/> 
+ <span>macOS 使用 homebrew-bundle 优雅的备份和恢复软件列表
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#备份数据库"><span class="toc-number">3.</span> <span class="toc-text">备份数据库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加-MariaDB-Yum-库"><span class="toc-number">4.</span> <span class="toc-text">添加 MariaDB Yum 库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#升级已有数据库"><span class="toc-number">5.</span> <span class="toc-text">升级已有数据库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MariaDB-官方升级文档"><span class="toc-number">6.</span> <span class="toc-text">MariaDB 官方升级文档</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>185</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>18</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

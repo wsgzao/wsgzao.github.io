@@ -1,0 +1,572 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>使用 parted 解决大于 2T 的磁盘分区 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="使用parted解决大于2T的磁盘分区">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 parted 解决大于 2T 的磁盘分区">
+<meta property="og:url" content="https://wsgzao.github.io/post/parted/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="使用parted解决大于2T的磁盘分区">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-01-25T02:37:57.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用 parted 解决大于 2T 的磁盘分区">
+<meta name="twitter:description" content="使用parted解决大于2T的磁盘分区">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/parted/" title="使用 parted 解决大于 2T 的磁盘分区" itemprop="url">使用 parted 解决大于 2T 的磁盘分区</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2019-01-24T06:59:49.000Z" itemprop="datePublished"> 发表于 2019-01-24</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#磁盘分区信息存储的两种形式"><span class="toc-number">3.</span> <span class="toc-text">磁盘分区信息存储的两种形式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是-MBR"><span class="toc-number">3.1.</span> <span class="toc-text">什么是 MBR</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是-GPT"><span class="toc-number">3.2.</span> <span class="toc-text">什么是 GPT</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小于-2T-的分区的管理"><span class="toc-number">4.</span> <span class="toc-text">小于 2T 的分区的管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#超过-2T-的分区的管理"><span class="toc-number">5.</span> <span class="toc-text">超过 2T 的分区的管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-parted"><span class="toc-number">6.</span> <span class="toc-text">使用 parted</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文档"><span class="toc-number">7.</span> <span class="toc-text">参考文档</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在 Linux 中，为磁盘分区通常使用 fdisk 和 parted 命令。通常情况下，使用 fdisk 可以满足日常的使用，但是它仅仅支持 2 TB 以下磁盘的分区，超出 2 TB 部分无法识别。而随着科技的进步，大容量硬盘已经步入我们的生活，10 TB 的 HDD 和 30 TB 的 SSD 也已面世，无论是家用还是商用领域 SSD 的容量和价格都更加充满吸引力。仅仅能识别 2 TB 的 fdisk 很明显无法满足需求了，于是乎 parted &amp; GPT 磁盘成为了绝佳的搭配。本文主要介绍使用 parted 为 MBR 以及 GPT 磁盘分区的方法，也算是作为备忘。</p>
+<blockquote>
+<p>使用 parted 解决大于 2T 的磁盘分区</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019 年 01 月 24 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/parted/">https://wsgzao.github.io/post/parted/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<p>Parted - <a href="https://www.gnu.org/software/parted/manual/" target="_blank" rel="noopener">https://www.gnu.org/software/parted/manual/</a></p>
+<hr>
+<h2 id="磁盘分区信息存储的两种形式"><a href="#磁盘分区信息存储的两种形式" class="headerlink" title="磁盘分区信息存储的两种形式"></a>磁盘分区信息存储的两种形式</h2><p>常见磁盘分区存储形式类型有两种：MBR(MSDOS) 和 GPT</p>
+<h3 id="什么是-MBR"><a href="#什么是-MBR" class="headerlink" title="什么是 MBR"></a>什么是 MBR</h3><p>MBR(Master Boot Record，主引导记录）。<br>MBR 是存在于驱动器最开始部分的一个特殊的启动扇区，一般叫它 0 扇区。它由 446B 的启动加载器（Windows 和 Linux 的不同），64B 的分区表，和 2B 用来存放区域的有效性标识 55AA，共 512B。</p>
+<blockquote>
+<p>MBR 分区最大只支持 2T</p>
+</blockquote>
+<p>分区表每 16B 标识一个分区，包括分区的活动状态标志、文件系统标识、起止柱面号、磁头号、扇区号、隐含扇区数目 (4 个字节)、分区总扇区数目(4 个字节) 等信息。<br>分区总扇区数目决定了这一分区的大小，一个扇区一般 512B，所以 4 个字节，32 位所能表示的最大扇区数为 2 的 32 次方，也就决定了一个分区的大小最大为 2T（ 2*<em>32 </em> 512 / 1024 / 1024 / 1024 /1024）。</p>
+<blockquote>
+<p>MBR 只支持最多 4 个主分区</p>
+</blockquote>
+<p>16B 标识一个分区，64B 就一共只能有 4 个分区，所以主分区最多只能有 4 个。一块磁盘如果要分多于 4 个分区，必须要分一个扩展分区，然后在扩展分区中再去划分逻辑分区。</p>
+<h3 id="什么是-GPT"><a href="#什么是-GPT" class="headerlink" title="什么是 GPT"></a>什么是 GPT</h3><p>GPT(GUID Partition Table)，这是最近几年逐渐流行起来的一种分区形式，如果要将使用 GPT 分区格式的磁盘作为系统盘，需要 UEFI BIOS 的支持，它才可以引导系统启动。UEFI 一种称为 Unified Extensible Firmware Interface(统一的可扩展的固件接口，它最终是为了取代 BIOS，目前市面上的 BIOS 大多已支持 UEFI。GPT 也是为了最终取代 MBR 的。<br>GPT 相比 MBR 的优点：</p>
+<ul>
+<li>分区容量可以大于 2T</li>
+<li>可以支持无限个主分区</li>
+<li>更为健壮。MBR 中分区信息和启动信息保存在一起而且只有一份，GPT 在整个磁盘上保存多份这个信息，并为它们提供 CRC 检验，当有数据损坏时，它能够进行恢复。</li>
+</ul>
+<h2 id="小于-2T-的分区的管理"><a href="#小于-2T-的分区的管理" class="headerlink" title="小于 2T 的分区的管理"></a>小于 2T 的分区的管理</h2><p>因为传统的 MBR 分区，支持的最大分区为 2T，也可以一定程度上等同于磁盘大小，必定 2T 以上的硬盘不是非常普及。在 CentOS 中可以使用 fdisk 指令进行管理。详细过程不在赘述。</p>
+<p>LVM 逻辑卷管理配置小结 - <a href="https://wsgzao.github.io/post/lvm/">https://wsgzao.github.io/post/lvm/</a></p>
+<h2 id="超过-2T-的分区的管理"><a href="#超过-2T-的分区的管理" class="headerlink" title="超过 2T 的分区的管理"></a>超过 2T 的分区的管理</h2><p>当 CentOS 中识别到有磁盘容量超过 2T 时，如果试图使用 fdisk 指令对其分区会有相应的警告提示，大致如下：</p>
+<pre><code>WARNING: GPT (GUID Partition Table) detected on &apos;/dev/sdb&apos;! The util fdisk doesn&apos;t support GPT. Use GNU Parted.
+</code></pre><p>明确提示需要使用 parted 进行管理，如果系统中没有这一指令，使用 <code>yum install -y parted</code> 进行安装即可。</p>
+<p>查看磁盘的分区情况 <code>parted -l</code> 会打印出系统识别到的所有磁盘的分区情况</p>
+<p>指定分区类型 <code>parted /dev/sdb</code> 先进入那块超过 2T 的磁盘的管理界面中。<br><code>mklabel gpt</code> parted 指令支持的分区类型选项：{aix|amiga|bsd|dvh|gpt|loop|mac|msdos|pc98|sun}，这里需要选择 gpt，msdos 即为传统的 MBR 分区方式。</p>
+<p>创建分区<br><code>mkpart {primary|extended|logical| [fs-type] start end</code> GPT 分区没有主分区数的限制，这里一般选择 primary 这一类型。GPT 支持的 fs-type 没有 fdisk 那么多，它支持的有：ext2、ext3、ext4、fat16、fat32、NTFSReiserFS、JFS、XFS、UFS、HFS、swap 这些文件系统格式。</p>
+<h2 id="使用-parted"><a href="#使用-parted" class="headerlink" title="使用 parted"></a>使用 parted</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用 lsblk,fdisk,df 等命令查看当前分区信息 </span></span><br><span class="line">lsblk</span><br><span class="line">fdisk -l</span><br><span class="line">df -TH</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 /dev/sdb1 为例</span></span><br><span class="line">parted /dev/sdb1</span><br><span class="line">parted (GNU parted) 3.1</span><br><span class="line">Welcome to GNU Parted! Type <span class="string">'help'</span> to view a list of commands.</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 help 查看帮助</span></span><br><span class="line">(parted) <span class="built_in">help</span></span><br><span class="line">  check NUMBER                             <span class="keyword">do</span> a simple check on the file system</span><br><span class="line">  cp [FROM-DEVICE] FROM-NUMBER TO-NUMBER   copy file system to another partition</span><br><span class="line">  <span class="built_in">help</span> [COMMAND]                           prints general <span class="built_in">help</span>, or <span class="built_in">help</span> on COMMAND</span><br><span class="line">  mklabel,mktable LABEL-TYPE               create a new disklabel (partition table)</span><br><span class="line">  mkfs NUMBER FS-TYPE                      make a FS-TYPE file system on partititon NUMBER</span><br><span class="line">  mkpart PART-TYPE [FS-TYPE] START END     make a partition</span><br><span class="line">  mkpartfs PART-TYPE FS-TYPE START END     make a partition with a file system</span><br><span class="line">  move NUMBER START END                    move partition NUMBER</span><br><span class="line">  name NUMBER NAME                         name partition NUMBER as NAME</span><br><span class="line">  <span class="built_in">print</span> [free|NUMBER|all]                  display the partition table, a partition, or all devices</span><br><span class="line">  quit                                     <span class="built_in">exit</span> program</span><br><span class="line">  rescue START END                         rescue a lost partition near START and END</span><br><span class="line">  resize NUMBER START END                  resize partition NUMBER and its file system</span><br><span class="line">  rm NUMBER                                delete partition NUMBER</span><br><span class="line">  select DEVICE                            choose the device to edit</span><br><span class="line">  <span class="built_in">set</span> NUMBER FLAG STATE                    change the FLAG on partition NUMBER</span><br><span class="line">  toggle [NUMBER [FLAG]]                   toggle the state of FLAG on partition NUMBER</span><br><span class="line">  unit UNIT                                <span class="built_in">set</span> the default unit to UNIT</span><br><span class="line">  version                                  displays the current version of GNU Parted and copyright information</span><br><span class="line"></span><br><span class="line"><span class="comment"># 建立磁盘标签</span></span><br><span class="line">(parted) mklabel GPT</span><br><span class="line"><span class="comment"># 如果没有任何分区，它查看磁盘可用空间，当分区后，它会打印出分区情况</span></span><br><span class="line">(parted) <span class="built_in">print</span></span><br><span class="line"><span class="comment"># 创建主分区，n 为要分的分区占整个磁盘的百分比</span></span><br><span class="line">(parted) mkpart primary 0% 100%</span><br><span class="line"><span class="comment">#  分区完后，直接 quit 即可，不像 fdisk 分区的时候，还需要保存一下，这个不用</span></span><br><span class="line">(parted) quit</span><br><span class="line"></span><br><span class="line"><span class="comment"># 让内核知道添加新分区</span></span><br><span class="line">partprobe</span><br><span class="line"></span><br><span class="line"><span class="comment"># 格式化</span></span><br><span class="line">mkfs.ext4 /dev/sdb1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 挂载分区</span></span><br><span class="line">mkdir /data</span><br><span class="line">mount /dev/sdb1 /data</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置开机自动挂载磁盘</span></span><br><span class="line">vim /etc/fstab</span><br><span class="line">/dev/sdb1    /data    ext4    defaults    0    0</span><br><span class="line"></span><br><span class="line"><span class="comment"># fdisk 命令无法使用可以用 parted</span></span><br><span class="line">fdisk -l</span><br><span class="line">parted -l</span><br><span class="line"></span><br><span class="line"><span class="comment"># parted 有 2 种模式，使用命令行模式方便自动化</span></span><br><span class="line"> 命令行模式: parted [option] device [<span class="built_in">command</span>]</span><br><span class="line">交互模式: parted [option] device</span><br></pre></td></tr></table></figure>
+<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><p>怎样用 parted 管理硬盘分区 - <a href="https://linux.cn/article-9536-1.html" target="_blank" rel="noopener">https://linux.cn/article-9536-1.html</a></p>
+<p>初始化 Linux 数据盘（parted） - <a href="https://support.huaweicloud.com/qs-ecs/zh-cn_topic_0085634798.html" target="_blank" rel="noopener">https://support.huaweicloud.com/qs-ecs/zh-cn_topic_0085634798.html</a></p>
+<p>Partitioning Disks with parted - <a href="https://access.redhat.com/sites/default/files/attachments/parted_0.pdf" target="_blank" rel="noopener">https://access.redhat.com/sites/default/files/attachments/parted_0.pdf</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/parted/" data-title="使用 parted 解决大于 2T 的磁盘分区 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/grafana/" title="Grafana 安装部署">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Grafana 安装部署</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/exhibitor/"  title="使用 Exhibitor 监控管理 ZooKeeper">
+ <strong>下一篇：</strong><br/> 
+ <span>使用 Exhibitor 监控管理 ZooKeeper
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#磁盘分区信息存储的两种形式"><span class="toc-number">3.</span> <span class="toc-text">磁盘分区信息存储的两种形式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是-MBR"><span class="toc-number">3.1.</span> <span class="toc-text">什么是 MBR</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是-GPT"><span class="toc-number">3.2.</span> <span class="toc-text">什么是 GPT</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小于-2T-的分区的管理"><span class="toc-number">4.</span> <span class="toc-text">小于 2T 的分区的管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#超过-2T-的分区的管理"><span class="toc-number">5.</span> <span class="toc-text">超过 2T 的分区的管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-parted"><span class="toc-number">6.</span> <span class="toc-text">使用 parted</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文档"><span class="toc-number">7.</span> <span class="toc-text">参考文档</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>185</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>18</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

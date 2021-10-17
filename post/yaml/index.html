@@ -1,0 +1,571 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>YAML 入门教程 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="YAML入门教程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="YAML 入门教程">
+<meta property="og:url" content="https://wsgzao.github.io/post/yaml/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="YAML入门教程">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-01-08T10:52:19.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="YAML 入门教程">
+<meta name="twitter:description" content="YAML入门教程">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/yaml/" title="YAML 入门教程" itemprop="url">YAML 入门教程</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2020-01-08T06:59:49.000Z" itemprop="datePublished"> 发表于 2020-01-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#YAML-简介"><span class="toc-number">3.</span> <span class="toc-text">YAML 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#X-分钟速成-Y"><span class="toc-number">4.</span> <span class="toc-text">X 分钟速成 Y</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">5.</span> <span class="toc-text">参考文章</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>YAML 是 “YAML Ain’t a Markup Language”（YAML 不是一种标记语言）的递归缩写。在开发的这种语言时，YAML 的意思其实是：”Yet Another Markup Language”（仍是一种标记语言）。</p>
+<p>YAML 的语法和其他高级语言类似，并且可以简单表达清单、散列表，标量等数据形态。它使用空白符号缩进和大量依赖外观的特色，特别适合用来表达或编辑数据结构、各种配置文件、倾印调试内容、文件大纲（例如：许多电子邮件标题格式和 YAML 非常接近）。</p>
+<p>YAML 的配置文件后缀为 .yml，如：ansible-playbook.yml，Hexo 的配置文件也是_config.yml</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2020 年 01 月 09 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/yaml/">https://wsgzao.github.io/post/yaml/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<p><a href="https://yaml.org/" target="_blank" rel="noopener">YAML</a></p>
+<hr>
+<h2 id="YAML-简介"><a href="#YAML-简介" class="headerlink" title="YAML 简介"></a>YAML 简介</h2><p>YAML: YAML Ain’t Markup Language</p>
+<p>What It Is: YAML is a human friendly data serialization standard for all programming languages.</p>
+<p>YAML 语言（发音 /ˈjæməl/ ）的设计目标，就是方便人类读写。它实质上是一种通用的数据串行化格式。</p>
+<p>它的基本语法规则如下。</p>
+<ul>
+<li>大小写敏感</li>
+<li>使用缩进表示层级关系</li>
+<li>缩进时不允许使用 Tab 键，只允许使用空格。</li>
+<li>缩进的空格数目不重要，只要相同层级的元素左侧对齐即可</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># 表示注释，从这个字符一直到行尾，都会被解析器忽略。</span><br></pre></td></tr></table></figure>
+<p>YAML 支持的数据结构有三种。</p>
+<ul>
+<li>对象：键值对的集合，又称为映射（mapping）/ 哈希（hashes） / 字典（dictionary）</li>
+<li>数组：一组按次序排列的值，又称为序列（sequence） / 列表（list）</li>
+<li>纯量（scalars）：单个的、不可再分的值</li>
+</ul>
+<h2 id="X-分钟速成-Y"><a href="#X-分钟速成-Y" class="headerlink" title="X 分钟速成 Y"></a>X 分钟速成 Y</h2><blockquote>
+<p>其中 Y=yaml</p>
+</blockquote>
+<p>源代码下载： <a href="https://learnxinyminutes.com/docs/files/learnyaml-cn.yaml" target="_blank" rel="noopener">learnyaml-cn.yaml</a></p>
+<p>YAML 是一个数据序列化语言，被设计成人类直接可写可读的。</p>
+<p>它是 JSON 的严格超集，增加了语法显著换行符和缩进，就像 Python。但和 Python 不一样， YAML 根本不容许文字制表符。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># YAML 中的注解看起来像这样。</span></span><br><span class="line"></span><br><span class="line"><span class="comment">################</span></span><br><span class="line"><span class="comment"># 标量类型     #</span></span><br><span class="line"><span class="comment">################</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 我们的根对象 (它们在整个文件里延续) 将会是一个映射，</span></span><br><span class="line"><span class="comment"># 它等价于在别的语言里的一个字典，哈希表或对象。</span></span><br><span class="line"><span class="attr">key:</span> <span class="string">value</span></span><br><span class="line"><span class="attr">another_key:</span> <span class="string">Another</span> <span class="string">value</span> <span class="string">goes</span> <span class="string">here.</span></span><br><span class="line"><span class="attr">a_number_value:</span> <span class="number">100</span></span><br><span class="line"><span class="comment"># 数字 1 会被解释为数值，而不是一个布尔值。</span></span><br><span class="line"><span class="comment"># 如果你想要的是一个布尔值，使用 true。</span></span><br><span class="line"><span class="attr">scientific_notation:</span> <span class="number">1e+12</span></span><br><span class="line"><span class="attr">boolean:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">null_value:</span> <span class="literal">null</span></span><br><span class="line"><span class="attr">key with spaces:</span> <span class="string">value</span></span><br><span class="line"><span class="comment"># 注意，字符串不必被括在引号中，但也可以被括起来。</span></span><br><span class="line"><span class="attr">however:</span> <span class="string">'A string, enclosed in quotes.'</span></span><br><span class="line"><span class="attr">'Keys can be quoted too.':</span> <span class="string">"Useful if you want to put a':'in your key."</span></span><br><span class="line"><span class="attr">single quotes:</span> <span class="string">'have'</span><span class="string">'one'</span><span class="string">'escape pattern'</span></span><br><span class="line"><span class="attr">double quotes:</span> <span class="string">"have many: \", \0, \t, \u263A, \x0d\x0a == \r\n, and more."</span></span><br><span class="line"><span class="comment"># UTF-8/16/32 字符需要被转义 (encoded)</span></span><br><span class="line"><span class="attr">Superscript two:</span> <span class="string">\u00B2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 多行字符串既可以写成像一个'文字块'(使用 |)，</span></span><br><span class="line"><span class="comment"># 或像一个'折叠块'(使用'&gt;')。</span></span><br><span class="line"><span class="attr">literal_block:</span> <span class="string">|</span></span><br><span class="line">    <span class="string">This</span> <span class="string">entire</span> <span class="string">block</span> <span class="string">of</span> <span class="string">text</span> <span class="string">will</span> <span class="string">be</span> <span class="string">the</span> <span class="string">value</span> <span class="string">of</span> <span class="string">the</span> <span class="string">'literal_block'</span> <span class="string">key,</span></span><br><span class="line">    <span class="string">with</span> <span class="string">line</span> <span class="string">breaks</span> <span class="string">being</span> <span class="string">preserved.</span></span><br><span class="line"></span><br><span class="line">    <span class="string">The</span> <span class="string">literal</span> <span class="string">continues</span> <span class="string">until</span> <span class="string">de-dented,</span> <span class="string">and</span> <span class="string">the</span> <span class="string">leading</span> <span class="string">indentation</span> <span class="string">is</span></span><br><span class="line">    <span class="string">stripped.</span></span><br><span class="line"></span><br><span class="line">        <span class="string">Any</span> <span class="string">lines</span> <span class="string">that</span> <span class="string">are</span> <span class="string">'more-indented'</span> <span class="string">keep</span> <span class="string">the</span> <span class="string">rest</span> <span class="string">of</span> <span class="string">their</span> <span class="string">indentation</span> <span class="bullet">-</span></span><br><span class="line">        <span class="string">these</span> <span class="string">lines</span> <span class="string">will</span> <span class="string">be</span> <span class="string">indented</span> <span class="string">by</span> <span class="number">4</span> <span class="string">spaces.</span></span><br><span class="line"><span class="attr">folded_style:</span> <span class="string">&gt;</span></span><br><span class="line">    <span class="string">This</span> <span class="string">entire</span> <span class="string">block</span> <span class="string">of</span> <span class="string">text</span> <span class="string">will</span> <span class="string">be</span> <span class="string">the</span> <span class="string">value</span> <span class="string">of</span> <span class="string">'folded_style'</span><span class="string">,</span> <span class="string">but</span> <span class="string">this</span></span><br><span class="line">    <span class="string">time,</span> <span class="string">all</span> <span class="string">newlines</span> <span class="string">will</span> <span class="string">be</span> <span class="string">replaced</span> <span class="string">with</span> <span class="string">a</span> <span class="string">single</span> <span class="string">space.</span></span><br><span class="line"></span><br><span class="line">    <span class="string">Blank</span> <span class="string">lines,</span> <span class="string">like</span> <span class="string">above,</span> <span class="string">are</span> <span class="string">converted</span> <span class="string">to</span> <span class="string">a</span> <span class="string">newline</span> <span class="string">character.</span></span><br><span class="line"></span><br><span class="line">        <span class="string">'More-indented'</span> <span class="string">lines</span> <span class="string">keep</span> <span class="string">their</span> <span class="string">newlines,</span> <span class="string">too</span> <span class="bullet">-</span></span><br><span class="line">        <span class="string">this</span> <span class="string">text</span> <span class="string">will</span> <span class="string">appear</span> <span class="string">over</span> <span class="string">two</span> <span class="string">lines.</span></span><br><span class="line"></span><br><span class="line"><span class="comment">####################</span></span><br><span class="line"><span class="comment"># 集合类型         #</span></span><br><span class="line"><span class="comment">####################</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 嵌套是通过缩进完成的。推荐使用 2 个空格的缩进（但非必须）</span></span><br><span class="line"><span class="attr">a_nested_map:</span></span><br><span class="line">  <span class="attr">key:</span> <span class="string">value</span></span><br><span class="line">  <span class="attr">another_key:</span> <span class="string">Another</span> <span class="string">Value</span></span><br><span class="line">  <span class="attr">another_nested_map:</span></span><br><span class="line">    <span class="attr">hello:</span> <span class="string">hello</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 映射的键不必是字符串。</span></span><br><span class="line"><span class="attr">0.25:</span> <span class="string">a</span> <span class="string">float</span> <span class="string">key</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 键也可以是复合型的，比如多行对象 </span></span><br><span class="line"><span class="comment"># 我们用 ? 后跟一个空格来表示一个复合键的开始。</span></span><br><span class="line"><span class="string">?</span> <span class="string">|</span></span><br><span class="line">  <span class="string">This</span> <span class="string">is</span> <span class="string">a</span> <span class="string">key</span></span><br><span class="line">  <span class="string">that</span> <span class="string">has</span> <span class="string">multiple</span> <span class="string">lines</span></span><br><span class="line"><span class="string">:</span> <span class="string">and</span> <span class="string">this</span> <span class="string">is</span> <span class="string">its</span> <span class="string">value</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># YAML 也允许使用复杂键语法表示序列间的映射关系。</span></span><br><span class="line"><span class="comment"># 但有些语言的解析器可能会不支持。</span></span><br><span class="line"><span class="comment"># 一个例子：</span></span><br><span class="line"><span class="string">?</span> <span class="bullet">-</span> <span class="string">Manchester</span> <span class="string">United</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Real</span> <span class="string">Madrid</span></span><br><span class="line"><span class="string">:</span> <span class="string">[</span> <span class="number">2001</span><span class="number">-01</span><span class="number">-01</span><span class="string">,</span> <span class="number">2002</span><span class="number">-02</span><span class="number">-02</span> <span class="string">]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 序列 (等价于列表或数组) 看起来像这样：</span></span><br><span class="line"><span class="comment"># 注意'-'算作缩进 </span></span><br><span class="line"><span class="attr">a_sequence:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Item</span> <span class="number">1</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Item</span> <span class="number">2</span></span><br><span class="line">  <span class="bullet">-</span> <span class="number">0.5</span> <span class="comment"># 序列可以包含不同类型。</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Item</span> <span class="number">4</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">value</span></span><br><span class="line">    <span class="attr">another_key:</span> <span class="string">another_value</span></span><br><span class="line">  <span class="bullet">-</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">This</span> <span class="string">is</span> <span class="string">a</span> <span class="string">sequence</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">inside</span> <span class="string">another</span> <span class="string">sequence</span></span><br><span class="line">  <span class="bullet">-</span> <span class="bullet">-</span> <span class="bullet">-</span> <span class="string">Nested</span> <span class="string">sequence</span> <span class="string">indicators</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">can</span> <span class="string">be</span> <span class="string">collapsed</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 因为 YAML 是 JSON 的超集，你也可以写 JSON 风格的映射和序列：</span></span><br><span class="line"><span class="attr">json_map:</span> <span class="string">&#123;"key":</span> <span class="string">"value"</span><span class="string">&#125;</span></span><br><span class="line"><span class="attr">json_seq:</span> <span class="string">[3,</span> <span class="number">2</span><span class="string">,</span> <span class="number">1</span><span class="string">,</span> <span class="string">"takeoff"</span><span class="string">]</span></span><br><span class="line"><span class="attr">and quotes are optional:</span> <span class="string">&#123;key:</span> <span class="string">[3,</span> <span class="number">2</span><span class="string">,</span> <span class="number">1</span><span class="string">,</span> <span class="string">takeoff]&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#######################</span></span><br><span class="line"><span class="comment"># 其余的 YAML 特性    #</span></span><br><span class="line"><span class="comment">#######################</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># YAML 还有一个方便的特性叫'锚'，它能让你很容易在文档中进行文本复用。</span></span><br><span class="line"><span class="comment"># 如下两个键会有相同的值：</span></span><br><span class="line"><span class="attr">anchored_content:</span> <span class="string">&amp;anchor_name</span> <span class="string">This</span> <span class="string">string</span> <span class="string">will</span> <span class="string">appear</span> <span class="string">as</span> <span class="string">the</span> <span class="string">value</span> <span class="string">of</span> <span class="string">two</span> <span class="string">keys.</span></span><br><span class="line"><span class="attr">other_anchor:</span> <span class="meta">*anchor_name</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 锚也可被用来复制 / 继承属性 </span></span><br><span class="line"><span class="attr">base:</span> <span class="meta">&amp;base</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">Everyone</span> <span class="string">has</span> <span class="string">same</span> <span class="string">name</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The regexp &lt;&lt; is called Merge Key Language-Independent Type.</span></span><br><span class="line"><span class="comment"># 它表明指定映射的所有键值会插入到当前的映射中。</span></span><br><span class="line"></span><br><span class="line"><span class="attr">foo:</span> <span class="meta">&amp;foo</span></span><br><span class="line">  <span class="string">&lt;&lt;:</span> <span class="meta">*base</span></span><br><span class="line">  <span class="attr">age:</span> <span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="attr">bar:</span> <span class="meta">&amp;bar</span></span><br><span class="line">  <span class="string">&lt;&lt;:</span> <span class="meta">*base</span></span><br><span class="line">  <span class="attr">age:</span> <span class="number">20</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># foo 和 bar 将都含有 name: Everyone has same name</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># YAML 还有标签，你可以用它显示地声明类型。</span></span><br><span class="line"><span class="attr">explicit_string:</span> <span class="type">!!str</span> <span class="number">0.5</span></span><br><span class="line"><span class="comment"># 一些解析器实现特定语言的标签，就像这个针对 Python 的复数类型。</span></span><br><span class="line"><span class="attr">python_complex_number:</span> <span class="type">!!python</span><span class="string">/complex</span> <span class="number">1</span><span class="string">+2j</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 我们也可以在 YAML 的复合键中使用特定语言的标签 </span></span><br><span class="line"><span class="string">?</span> <span class="type">!!python</span><span class="string">/tuple</span> <span class="string">[5,</span> <span class="number">7</span><span class="string">]</span></span><br><span class="line"><span class="string">:</span> <span class="string">Fifty</span> <span class="string">Seven</span></span><br><span class="line"><span class="comment"># 将会是 Python 中的  &#123;(5, 7):'Fifty Seven'&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">####################</span></span><br><span class="line"><span class="comment"># 其余的 YAML 类型 #</span></span><br><span class="line"><span class="comment">####################</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 除了字符串和数字，YAML 还能理解其它标量。</span></span><br><span class="line"><span class="comment"># ISO 格式的日期和日期时间文本也可以被解析。</span></span><br><span class="line"><span class="attr">datetime:</span> <span class="number">2001</span><span class="number">-12</span><span class="string">-15T02:59:43.1Z</span></span><br><span class="line"><span class="attr">datetime_with_spaces:</span> <span class="number">2001</span><span class="number">-12</span><span class="number">-14</span> <span class="number">21</span><span class="string">:59:43.10</span> <span class="number">-5</span></span><br><span class="line"><span class="attr">date:</span> <span class="number">2002</span><span class="number">-12</span><span class="number">-14</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 这个 !!binary 标签表明这个字符串实际上 </span></span><br><span class="line"><span class="comment"># 是一个用 base64 编码表示的二进制 blob。</span></span><br><span class="line"><span class="attr">gif_file:</span> <span class="type">!!binary</span> <span class="string">|</span></span><br><span class="line">  <span class="string">R0lGODlhDAAMAIQAAP//9/X17unp5WZmZgAAAOfn515eXvPz7Y6OjuDg4J+fn5</span></span><br><span class="line">  <span class="string">OTk6enp56enmlpaWNjY6Ojo4SEhP/++f/++f/++f/++f/++f/++f/++f/++f/+</span></span><br><span class="line">  <span class="string">+f/++f/++f/++f/++f/++SH+Dk1hZGUgd2l0aCBHSU1QACwAAAAADAAMAAAFLC</span></span><br><span class="line">  <span class="string">AgjoEwnuNAFOhpEMTRiggcz4BNJHrv/zCFcLiwMWYNG84BwwEeECcgggoBADs=</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># YAML 还有一个集合类型，它看起来像这样：</span></span><br><span class="line"><span class="attr">set:</span></span><br><span class="line">  <span class="string">?</span> <span class="string">item1</span></span><br><span class="line">  <span class="string">?</span> <span class="string">item2</span></span><br><span class="line">  <span class="string">?</span> <span class="string">item3</span></span><br><span class="line"><span class="attr">or:</span> <span class="string">&#123;item1,</span> <span class="string">item2,</span> <span class="string">item3&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 集合只是值为 null 的映射；上面的集合等价于：</span></span><br><span class="line"><span class="attr">set2:</span></span><br><span class="line">  <span class="attr">item1:</span> <span class="literal">null</span></span><br><span class="line">  <span class="attr">item2:</span> <span class="literal">null</span></span><br><span class="line">  <span class="attr">item3:</span> <span class="literal">null</span></span><br><span class="line"></span><br><span class="line"><span class="string">...</span>  <span class="comment"># document end</span></span><br></pre></td></tr></table></figure>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="http://yaml.org/" target="_blank" rel="noopener">YAML official website</a></p>
+<p><a href="http://codebeautify.org/yaml-validator" target="_blank" rel="noopener">Online YAML Validator</a></p>
+<p><a href="https://learnxinyminutes.com/docs/zh-cn/yaml-cn/" target="_blank" rel="noopener">X 分钟速成 Y</a></p>
+<p><a href="https://www.runoob.com/w3cnote/yaml-intro.html" target="_blank" rel="noopener">YAML 入门教程</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/yaml/" data-title="YAML 入门教程 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/monit/" title="使用 Monit 替代 Supervisor 自动化管理和监控服务小结">
+  <strong>上一篇：</strong><br/>
+  <span>
+  使用 Monit 替代 Supervisor 自动化管理和监控服务小结</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/jenkins-import/"  title="Jenkins export and import jobs 迁移导出导入任务实践小结">
+ <strong>下一篇：</strong><br/> 
+ <span>Jenkins export and import jobs 迁移导出导入任务实践小结
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#YAML-简介"><span class="toc-number">3.</span> <span class="toc-text">YAML 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#X-分钟速成-Y"><span class="toc-number">4.</span> <span class="toc-text">X 分钟速成 Y</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">5.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>185</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>18</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

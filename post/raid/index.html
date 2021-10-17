@@ -1,0 +1,724 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>RAID 磁盘阵列配置和调优小结 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="RAID的本质是平衡可用性与成本">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RAID 磁盘阵列配置和调优小结">
+<meta property="og:url" content="https://wsgzao.github.io/post/raid/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="RAID的本质是平衡可用性与成本">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.v2ex.co/Ko2l48uT.png">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/JBOD.svg/500px-JBOD.svg.png">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/RAID_0.svg/325px-RAID_0.svg.png">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/RAID_1.svg/325px-RAID_1.svg.png">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/RAID_5.svg/675px-RAID_5.svg.png">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/RAID_6.svg/850px-RAID_6.svg.png">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/RAID_10.svg/800px-RAID_10.svg.png">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/RAID_01.svg/800px-RAID_01.svg.png">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/9/9d/RAID_50.png">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/9/9d/Raid_60.jpg">
+<meta property="og:image" content="http://noops.me/wp-content/uploads/2015/03/ssd_r50_r10_04.png">
+<meta property="og:image" content="http://noops.me/wp-content/uploads/2015/03/ssd_r50_r10_05.png">
+<meta property="og:updated_time" content="2017-02-10T02:00:57.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RAID 磁盘阵列配置和调优小结">
+<meta name="twitter:description" content="RAID的本质是平衡可用性与成本">
+<meta name="twitter:image" content="https://i.v2ex.co/Ko2l48uT.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/raid/" title="RAID 磁盘阵列配置和调优小结" itemprop="url">RAID 磁盘阵列配置和调优小结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2016-03-10T07:52:17.000Z" itemprop="datePublished"> 发表于 2016-03-10</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RAID-基础知识"><span class="toc-number">3.</span> <span class="toc-text">RAID 基础知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基本原理"><span class="toc-number">3.1.</span> <span class="toc-text">基本原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关键技术"><span class="toc-number">3.2.</span> <span class="toc-text">关键技术</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见-RAID-类型"><span class="toc-number">4.</span> <span class="toc-text">常见 RAID 类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RAID-等级"><span class="toc-number">5.</span> <span class="toc-text">RAID 等级</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#标准-RAID-等级"><span class="toc-number">5.1.</span> <span class="toc-text">标准 RAID 等级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JBOD"><span class="toc-number">5.2.</span> <span class="toc-text">JBOD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID0"><span class="toc-number">5.3.</span> <span class="toc-text">RAID0</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID1"><span class="toc-number">5.4.</span> <span class="toc-text">RAID1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID5"><span class="toc-number">5.5.</span> <span class="toc-text">RAID5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID6"><span class="toc-number">5.6.</span> <span class="toc-text">RAID6</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID-组合等级"><span class="toc-number">5.7.</span> <span class="toc-text">RAID 组合等级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID10-和-RAID01"><span class="toc-number">5.8.</span> <span class="toc-text">RAID10 和 RAID01</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID-50"><span class="toc-number">5.9.</span> <span class="toc-text">RAID 50</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID-60"><span class="toc-number">5.10.</span> <span class="toc-text">RAID 60</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关于-RAID-参数调优"><span class="toc-number">6.</span> <span class="toc-text">关于 RAID 参数调优</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSD-阵列卡方案优化"><span class="toc-number">7.</span> <span class="toc-text">SSD 阵列卡方案优化</span></a></li></ol>
+		
+		</div>
+		 -->
+		<p><img src="//i.v2ex.co/Ko2l48uT.png" alt></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>RAID 解释我偷个小懒引用 WikipediA，独立硬盘冗余阵列（RAID, Redundant Array of Independent Disks），旧称廉价磁盘冗余阵列（Redundant Array of Inexpensive Disks），简称磁盘阵列。其基本思想就是把多个相对便宜的硬盘组合起来，成为一个硬盘阵列组，使性能达到甚至超过一个价格昂贵、容量巨大的硬盘。根据选择的版本不同，RAID 比单颗硬盘有以下一个或多个方面的好处：增强数据集成度，增强容错功能，增加处理量或容量。另外，磁盘阵列对于电脑来说，看起来就像一个单独的硬盘或逻辑存储单元。写这篇文章当然不是单纯的介绍概念和使用方法，更重要的是如何针对不同的业务场景做合理的 RAID 配置和参数优化，对于 SSD 固态硬盘的加入我引入小米运维团队的实验数据，同时我也相信分布式存储会逐步走向成熟，以 OpenStack，VSAN，Nutanix 为代表头顶软件定义和超融合概念的技术也已经开始了暗战。</p>
+<blockquote>
+<p>RAID 的本质是平衡可用性与成本  </p>
+</blockquote>
+<hr>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2016 年 03 月 11 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/raid/">https://wsgzao.github.io/post/raid/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<p>RAID - <a href="https://zh.wikipedia.org/wiki/RAID" target="_blank" rel="noopener">https://zh.wikipedia.org/wiki/RAID</a><br>RAID 技术发展综述 - <a href="http://blog.csdn.net/liuaigui/article/details/4581970" target="_blank" rel="noopener">http://blog.csdn.net/liuaigui/article/details/4581970</a><br>SSD 阵列卡方案优化：考虑使用 RAID 50 替代 RAID 10 - <a href="http://noops.me/?p=1805" target="_blank" rel="noopener">http://noops.me/?p=1805</a></p>
+<hr>
+<h2 id="RAID-基础知识"><a href="#RAID-基础知识" class="headerlink" title="RAID 基础知识"></a>RAID 基础知识</h2><blockquote>
+<p>感谢 @刘爱贵，详细知识点可参考扩展阅读</p>
+</blockquote>
+<h3 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h3><p>RAID （ Redundant Array of Independent Disks ）即独立磁盘冗余阵列，通常简称为磁盘阵列。简单地说， RAID 是由多个独立的高性能磁盘驱动器组成的磁盘子系统，从而提供比单个磁盘更高的存储性能和数据冗余的技术。 RAID 是一类多磁盘管理技术，其向主机环境提供了成本适中、数据可靠性高的高性能存储。 SNIA 对 RAID 的定义是 ：一种磁盘阵列，部分物理存储空间用来记录保存在剩余空间上的用户数据的冗余信息。当其中某一个磁盘或访问路径发生故障时，冗余信息可用来重建用户数据。磁盘条带化虽然与 RAID 定义不符，通常还是称为 RAID （即 RAID0 ）。</p>
+<p>RAID 的初衷是为大型服务器提供高端的存储功能和冗余的数据安全。在整个系统中， RAID 被看作是由两个或更多磁盘组成的存储空间，通过并发地在多个磁盘上读写数据来提高存储系统的 I/O 性能。大多数 RAID 等级具有完备的数据校验、纠正措施，从而提高系统的容错性，甚至镜像方式，大大增强系统的可靠性， Redundant 也由此而来。</p>
+<p>这里要提一下 JBOD （ Just a Bunch of Disks ）。最初 JBOD 用来表示一个没有控制软件提供协调控制的磁盘集合，这是 RAID 区别与 JBOD 的主要因素。目前 JBOD 常指磁盘柜，而不论其是否提供 RAID 功能。</p>
+<p>RAID 的两个关键目标是提高数据可靠性和 I/O 性能。磁盘阵列中，数据分散在多个磁盘中，然而对于计算机系统来说，就像一个单独的磁盘。通过把相同数据同时写入到多块磁盘（典型地如镜像），或者将计算的校验数据写入阵列中来获得冗余能力，当单块磁盘出现故障时可以保证不会导致数据丢失。有些 RAID 等级允许更多地 磁盘同时发生故障，比如 RAID6 ，可以是两块磁盘同时损坏。在这样的冗余机制下，可以用新磁盘替换故障磁盘， RAID 会自动根据剩余磁盘中的数据和校验数据重建丢失的数据，保证数据一致性和完整性。数据分散保存在 RAID 中的多个不同磁盘上，并发数据读写要大大优于单个磁盘，因此可以获得更高的聚合 I/O 带宽。当然，磁盘阵列会减少全体磁盘的总可用存储空间，牺牲空间换取更高的可靠性和性能。比如， RAID1 存储空间利用率仅有 50% ， RAID5 会损失其中一个磁盘的存储容量，空间利用率为 (n-1)/n 。</p>
+<p>磁盘阵列可以在部分磁盘（单块或多块，根据实现而论）损坏的情况下，仍能保证系统不中断地连续运行。在重建故障磁盘数据至新磁盘的过程中，系统可以继续正常运行，但是性能方面会有一定程度上的降低。一些磁盘阵列在添加或删除磁盘时必须停机，而有些则支持热交换 （ Hot Swapping ），允许不停机下替换磁盘驱动器。这种高端磁盘阵列主要用于要求高可能性的应用系统，系统不能停机或尽可能少的停机时间。一般来说， RAID 不可作为数据备份的替代方案，它对非磁盘故障等造成的数据丢失无能为力，比如病毒、人为破坏、意外删除等情形。此时的数据丢失是相对操作系统、文件系统、卷管理器或者应用系统来说的，对于 RAID 系统来身，数据都是完好的，没有发生丢失。所以，数据备份、灾 备等数据保护措施是非常必要的，与 RAID 相辅相成，保护数据在不同层次的安全性，防止发生数据丢失。</p>
+<p>RAID 中主要有三个关键概念和技术：镜像（ Mirroring ）、数据条带（ Data Stripping ）和数据校验（ Data parity ）。镜像，将数据复制到多个磁盘，一方面可以提高可靠性，另一方面可并发从两个或多个副本读取数据来提高读性能。显而易见，镜像的写性能要稍低， 确保数据正确地写到多个磁盘需要更多的时间消耗。数据条带，将数据分片保存在多个不同的磁盘，多个数据分片共同组成一个完整数据副本，这与镜像的多个副本是不同的，它通常用于性能考虑。数据条带具有更高的并发粒度，当访问数据时，可以同时对位于不同磁盘上数据进行读写操作， 从而获得非常可观的 I/O 性能提升 。数据校验，利用冗余数据进行数据错误检测和修复，冗余数据通常采用海明码、异或操作等算法来计算获得。利用校验功能，可以很大程度上提高磁盘阵列的可靠性、鲁棒性和容错能力。不过，数据校验需要从多处读取数据并进行计算和对比，会影响系统性能。 不同等级的 RAID 采用一个或多个以上的三种技术，来获得不同的数据可靠性、可用性和 I/O 性能。至于设计何种 RAID （甚至新的等级或类型）或采用何种模式的 RAID ，需要在深入理解系统需求的前提下进行合理选择，综合评估可靠性、性能和成本来进行折中的选择。</p>
+<p>RAID 思想从提出后就广泛被业界所接纳，存储工业界投入了大量的时间和财力来研究和开发相关产品。而且，随着处理器、内存、计算机接口等技术的不断发展， RAID 不断地发展和革新，在计算机存储领域得到了广泛的应用，从高端系统逐渐延伸到普通的中低端系统。 RAID 技术如此流行，源于其具有显著的特征和优势，基本可以满足大部分的数据存储需求。总体说来， RAID 主要优势有如下几点：<br>(1) 大容量<br>　　这是 RAID 的一个显然优势，它扩大了磁盘的容量，由多个磁盘组成的 RAID 系统具有海量的存储空间。现在单个磁盘的容量就可以到 1TB 以上，这样 RAID 的存储容量就可以达到 PB 级，大多数的存储需求都可以满足。一般来说， RAID 可用容量要小于所有成员磁盘的总容量。不同等级的 RAID 算法需要一定的冗余开销，具体容量开销与采用算法相关。如果已知 RAID 算法和容量，可以计算出 RAID 的可用容量。通常， RAID 容量利用率在 50% ~ 90% 之间。<br>(2) 高性能<br>　　 RAID 的高性能受益于数据条带化技术。单个磁盘的 I/O 性能受到接口、带宽等计算机技术的限制，性能往往很有 限，容易成为系统性能的瓶颈。通过数据条带化， RAID 将数据 I/O 分散到各个成员磁盘上，从而获得比单个磁盘成倍增长的聚合 I/O 性能。<br>(3) 可靠性<br>　　可用性和可靠性是 RAID 的另一个重要特征。从理论上讲，由多个磁盘组成的 RAID 系统在可靠性方面应该比单个磁盘要差。这里有个隐含假定：单个磁盘故障将导致整个 RAID 不可用。 RAID 采用镜像和数据校验等数据冗余技术，打破了这个假定。 镜像是最为原始的冗余技术，把某组磁盘驱动器上的数据完全复制到另一组磁盘驱动器上，保证总有数据副本可用。 比起镜像 50% 的冗余开销 ，数据校验要小很多，它利用校验冗余信息对数据进行校验和纠错。 RAID 冗余技术大幅提升数据可用性和可靠性，保证了若干磁盘出错时，不 会导致数据的丢失，不影响系统的连续运行。<br>(4) 可管理性<br>　　实际上， RAID 是一种虚拟化技术，它对多个物理磁盘驱动器虚拟成一个大容量的逻辑驱动器。对于外部主机系统来说， RAID 是一个单一的、快速可靠的大容量磁盘驱动器。这样，用户就可以在这个虚拟驱动器上来组织和存储应用系统数据。 从用户应用角度看，可使存储系统简单易用，管理也很便利。 由于 RAID 内部完成了大量的存储管理工作，管理员只需要管理单个虚拟驱动器，可以节省大量的管理工作。 RAID 可以动态增减磁盘驱动器，可自动进行数据校验和数据重建，这些都可以 大大简化管理工作。</p>
+<h3 id="关键技术"><a href="#关键技术" class="headerlink" title="关键技术"></a>关键技术</h3><blockquote>
+<p>镜像</p>
+</blockquote>
+<p>镜像是一种冗余技术，为磁盘提供保护功能，防止磁盘发生故障而造成数据丢失。对于 RAID 而言，采用镜像技术 典型地 将会同时在阵列中产生两个完全相同的数据副本，分布在两个不同的磁盘驱动器组上。镜像提供了完全的数据冗余能力，当一个数据副本失效不可用时，外部系统仍可正常访问另一副本，不会对应用系统运行和性能产生影响。而且，镜像不需要额外的计算和校验，故障修复非常快，直接复制即可。镜像技术可以从多个副本进行并发读取数据，提供更高的读 I/O 性能，但不能并行写数据，写多个副本会会导致一定的 I/O 性能降低。</p>
+<p>镜像技术提供了非常高的数据安全性，其代价也是非常昂贵的，需要　　　至少双倍的存储空间。高成本限制了镜像的广泛应用，主要应用于至关重要的数据保护，这种场合下数据丢失会造成巨大的损失。另外，镜像通过 “ 拆分 ” 能获得特定时间点的上数据快照，从而可以实现一种备份窗口几乎为零的数据备份技术。</p>
+<blockquote>
+<p>数据条带</p>
+</blockquote>
+<p>磁盘存储的性能瓶颈在于磁头寻道定位，它是一种慢速机械运动，无法与高速的 CPU 匹配。再者，单个磁盘驱动器性能存在物理极限， I/O 性能非常有限。 RAID 由多块磁盘组成，数据条带技术将数据以块的方式分布存储在多个磁盘中，从而可以对数据进行并发处理。这样写入和读取数据就可以在多个磁盘上同时进行，并发产生非常高的聚合 I/O ，有效提高了整体 I/O 性能，而且具有良好的线性扩展性。这对大容量数据尤其显著，如果不分块，数据只能按顺序存储在磁盘阵列的磁盘上，需要时再按顺序读取。而通过条带技术，可获得数倍与顺序访问的性能提升。</p>
+<p>数据条带技术的分块大小选择非常关键。条带粒度可以是一个字节至几 KB 大小，分块越小，并行处理能力就越强，数据存取速度就越高，但同时就会增加块存取的随机性和块寻址时间。实际应用中，要根据数据特征和需求来选择合适的分块大小，在数据存取随机性和并发处理能力之间进行平衡，以争取尽可能高的整体性能。</p>
+<p>数据条带是基于提高 I/O 性能而提出的，也就是说它只关注性能， 而对数据可靠性、可用性没有任何改善。实际上，其中任何一个数据条带损坏都会导致整个数据不可用，采用数据条带技术反而增加了数据发生丢失的概念率。</p>
+<blockquote>
+<p>数据校验</p>
+</blockquote>
+<p>镜像具有高安全性、高读性能，但冗余开销太昂贵。数据条带通过并发性来大幅提高性能，然而对数据安全性、可靠性未作考虑。数据校验是一种冗余技术，它用校验数据来提供数据的安全，可以检测数据错误，并在能力允许的前提下进行数据重构。相对镜像，数据校验大幅缩减了冗余开销，用较小的代价换取了极佳的数据完整性和可靠性。数据条带技术提供高性能，数据校验提供数据安全性， RAID 不同等级往往同时结合使用这两种技术。</p>
+<p>采用数据校验时， RAID 要在写入数据同时进行校验计算，并将得到的校验数据存储在 RAID 成员磁盘中。校验数据可以集中保存在某个磁盘或分散存储在多个不同磁盘中，甚至校验数据也可以分块，不同 RAID 等级实现各不相同。当其中一部分数据出错时，就可以对剩余数据和校验数据进行反校验计算重建丢失的数据。校验技术相对于镜像技术的优势在于节省大量开销，但由于每次数据读写都要进行大量的校验运算，对计算机的运算速度要求很高，必须使用硬件 RAID 控制器。在数据重建恢复方面，检验技术比镜像技术复杂得多且慢得多。</p>
+<p>海明校验码和 异或校验是两种最为常用的 数据校验算法。海明校验码是由理查德 · 海明提出的，不仅能检测错误，还能给出错误位置并自动纠正。海明校验的基本思想是：将有效信息按照某种规律分成若干组，对每一个组作奇偶测试并安排一个校验位，从而能提供多位检错信息，以定位错误点并纠正。可见海明校验实质上是一种多重奇偶校验。异或校验通过异或逻辑运算产生，将一个有效信息与一个给定的初始值进行异或运算，会得到校验信息。如果有效信息出现错误，通过校验信息与初始值的异或运算能还原正确的有效信息。</p>
+<h2 id="常见-RAID-类型"><a href="#常见-RAID-类型" class="headerlink" title="常见 RAID 类型"></a>常见 RAID 类型</h2><blockquote>
+<p>常见 5 种 RAID 类型对比，n 位磁盘数量，详细介绍可参考扩展阅读</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>RAID 等级</th>
+<th>RAID0</th>
+<th>RAID1</th>
+<th>RAID5</th>
+<th>RAID6</th>
+<th>RAID10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>别名</td>
+<td>条带</td>
+<td>镜像</td>
+<td>分布奇偶校验条带</td>
+<td>双重奇偶校验条带</td>
+<td>镜像加条带</td>
+</tr>
+<tr>
+<td>容错性</td>
+<td>无</td>
+<td>有</td>
+<td>有</td>
+<td>有</td>
+<td>有</td>
+</tr>
+<tr>
+<td>冗余类型</td>
+<td>无</td>
+<td>有</td>
+<td>有</td>
+<td>有</td>
+<td>有</td>
+</tr>
+<tr>
+<td>热备盘</td>
+<td>无</td>
+<td>有</td>
+<td>有</td>
+<td>有</td>
+<td>有</td>
+</tr>
+<tr>
+<td>读性能</td>
+<td>高</td>
+<td>低</td>
+<td>高</td>
+<td>高</td>
+<td>高</td>
+</tr>
+<tr>
+<td>随机写性能</td>
+<td>高</td>
+<td>低</td>
+<td>一般</td>
+<td>低</td>
+<td>一般</td>
+</tr>
+<tr>
+<td>连续写性能</td>
+<td>高</td>
+<td>低</td>
+<td>低</td>
+<td>低</td>
+<td>一般</td>
+</tr>
+<tr>
+<td>需要磁盘数</td>
+<td>n≥1</td>
+<td>2n (n≥1)</td>
+<td>n≥3</td>
+<td>n≥4</td>
+<td>2n(n≥2)≥4</td>
+</tr>
+<tr>
+<td>可用容量</td>
+<td>全部</td>
+<td>50%</td>
+<td>(n-1)/n</td>
+<td>(n-2)/n</td>
+<td>50%</td>
+</tr>
+</tbody>
+</table>
+<h2 id="RAID-等级"><a href="#RAID-等级" class="headerlink" title="RAID 等级"></a>RAID 等级</h2><h3 id="标准-RAID-等级"><a href="#标准-RAID-等级" class="headerlink" title="标准 RAID 等级"></a>标准 RAID 等级</h3><p>SNIA 、 Berkeley 等组织机构把 RAID0 、 RAID1 、 RAID2 、 RAID3 、 RAID4 、 RAID5 、 RAID6 七个等级定为标准的 RAID 等级，这也被业界和学术界所公认。标准等级是最基本的 RAID 配置集合，单独或综合利用数据条带、镜像和数据校验技术。标准 RAID 可以组合，即 RAID 组合等级，满足 对性能、安全性、可靠性要求更高的存储应用需求。</p>
+<h3 id="JBOD"><a href="#JBOD" class="headerlink" title="JBOD"></a>JBOD</h3><p>JBOD （ Just a Bunch Of Disks ）不是标准的 RAID 等级，它通常用来表示一个没有控制软件提供协调控制的磁盘集合。 JBOD 将多个物理磁盘串联起来，提供一个巨大的逻辑磁盘。 JBOD 的数据存放机制是由第一块磁盘开始按顺序往后存储，当前磁盘存储空间用完后，再依次往后面的磁盘存储数据。 JBOD 存储性能完全等同于单块磁盘，而且也不提供数据安全保护。它只是简单提供一种扩展存储空间的机制， JBOD 可用存储容量等于所有成员磁盘的存储空间之和。目前 JBOD 常指磁盘柜，而不论其是否提供 RAID 功能。</p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/JBOD.svg/500px-JBOD.svg.png" alt></p>
+<h3 id="RAID0"><a href="#RAID0" class="headerlink" title="RAID0"></a>RAID0</h3><p>RAID0 是一种简单的、无数据校验的数据条带化技术。实际上不是一种真正的 RAID ，因为它并不提供任何形式的冗余策略。 RAID0 将所在磁盘条带化后组成大容量的存储空间，将数据分散存储在所有磁盘中，以独立访问方式实现多块磁盘的并读访问。由于可以并发执行 I/O 操作，总线带宽得到充分利用。再加上不需要进行数据校验， RAID0 的性能在所有 RAID 等级中是最高的。理论上讲，一个由 n 块磁盘组成的 RAID0 ，它的读写性能是单个磁盘性能的 n 倍，但由于总线带宽等多种因素的限制，实际的性能提升低于理论值。</p>
+<p>RAID0 具有低成本、高读写性能、 100% 的高存储空间利用率等优点，但是它不提供数据冗余保护，一旦数据损坏，将无法恢复。 因此， RAID0 一般适用于对性能要求严格但对数据安全性和可靠性不高的应用，如视频、音频存储、临时数据缓存空间等。</p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/RAID_0.svg/325px-RAID_0.svg.png" alt></p>
+<h3 id="RAID1"><a href="#RAID1" class="headerlink" title="RAID1"></a>RAID1</h3><p>RAID1 称为镜像，它将数据完全一致地分别写到工作磁盘和镜像 磁盘，它的磁盘空间利用率为 50% 。 RAID1 在数据写入时，响应时间会有所影响，但是读数据的时候没有影响。 RAID1 提供了最佳的数据保护，一旦工作磁盘发生故障，系统自动从镜像磁盘读取数据，不会影响用户工作。</p>
+<p>RAID1 与 RAID0 刚好相反，是为了增强数据安全性使两块 磁盘数据呈现完全镜像，从而达到安全性好、技术简单、管理方便。 RAID1 拥有完全容错的能力，但实现成本高。 RAID1 应用于对顺序读写性能要求高以及对数据保护极为重视的应用，如对邮件系统的数据保护。</p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/RAID_1.svg/325px-RAID_1.svg.png" alt></p>
+<h3 id="RAID5"><a href="#RAID5" class="headerlink" title="RAID5"></a>RAID5</h3><p>RAID5 应该是目前最常见的 RAID 等级，它的原理与 RAID4 相似，区别在于校验数据分布在阵列中的所有磁盘上，而没有采用专门的校验磁盘。对于数据和校验数据，它们的写操作可以同时发生在完全不同的磁盘上。因此， RAID5 不存在 RAID4 中的并发写操作时的校验盘性能瓶颈问题。另外， RAID5 还具备很好的扩展性。当阵列磁盘 数量增加时，并行操作量的能力也随之增长，可比 RAID4 支持更多的磁盘，从而拥有更高的容量以及更高的性能。</p>
+<p>RAID5 的磁盘上同时存储数据和校验数据，数据块和对应的校验信息存保存在不同的磁盘上，当一个数据盘损坏时，系统可以根据同一条带的其他数据块和对应的校验数据来重建损坏的数据。与其他 RAID 等级一样，重建数据时， RAID5 的性能会受到较大的影响。</p>
+<p>RAID5 兼顾存储性能、数据安全和存储成本等各方面因素，它可以理解为 RAID0 和 RAID1 的折中方案，是目前综合性能最佳的数据保护解决方案。 RAID5 基本上可以满足大部分的存储应用需求，数据中心大多采用它作为应用数据的保护方案。</p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/RAID_5.svg/675px-RAID_5.svg.png" alt></p>
+<h3 id="RAID6"><a href="#RAID6" class="headerlink" title="RAID6"></a>RAID6</h3><p>前面所 述的各个 RAID 等级都只能保护因单个磁盘失效而造成的数据丢失。如果两个磁盘同时发生故障，数据将无法恢复。 RAID6 引入双重校验的概念，它可以保护阵列中同时出现两个磁盘失效时，阵列仍能够继续工作，不会发生数据丢失。 RAID6 等级是在 RAID5 的基础上为了进一步增强数据保护而设计的一种 RAID 方式，它可以看作是一种扩展的 RAID5 等级。</p>
+<p>RAID6 不仅要支持数据的恢复，还要支持校验数据的恢复，因此实现代价很高，控制器的设计也比其他等级更复杂、更昂贵。 RAID6 思想最常见的实现方式是采用两个独立的校验算法，假设称为 P 和 Q ，校验数据可以分别存储在两个不同的校验盘上，或者分散存储在所有成员磁盘中。当两个磁盘同时失效时，即可通过求解两元方程来重建两个磁盘上的数据。</p>
+<p>RAID6 具有快速的读取性能、更高的容错能力。但是，它的成本要高于 RAID5 许多，写性能也较差，并有设计和实施非常复杂。因此， RAID6 很少得到实际应用，主要用于对数据安全等级要求非常高的场合。它一般是替代 RAID10 方案的经济性选择</p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/RAID_6.svg/850px-RAID_6.svg.png" alt></p>
+<h3 id="RAID-组合等级"><a href="#RAID-组合等级" class="headerlink" title="RAID 组合等级"></a>RAID 组合等级</h3><p>标准 RAID 等级各有优势和不足。自然地，我们想到把多个 RAID 等级组合起来，实现优势互补，弥补相互的不足，从而达到在性能、数据安全性等指标上更高的 RAID 系统。目前在业界和学术研究中提到的 RAID 组合等级主要有 RAID00 、 RAID01 、 RAID10 、 RAID100 、 RAID30 、 RAID50 、 RAID53 、 RAID60 ，但实际得到较为广泛应用的只有 RAID01 和 RAID10 两个等级。当然，组合等级的实现成本一般都非常昂贵，只是在 少数特定场合应用。</p>
+<h3 id="RAID10-和-RAID01"><a href="#RAID10-和-RAID01" class="headerlink" title="RAID10 和 RAID01"></a>RAID10 和 RAID01</h3><p>一些文献把这两种 RAID 等级看作是等同的，本文认为是不同的。 RAID01 是先做条带化再作镜像，本质是对物理磁盘实现镜像；而 RAID10 是先做镜像再作条带化，是对虚拟磁盘实现镜像。相同的配置下，通常 RAID01 比 RAID10 具有更好的容错能力。</p>
+<p>RAID01 兼备了 RAID0 和 RAID1 的优点，它先用两块磁盘建立镜像，然后再在镜像内部做条带化。 RAID01 的数据将同时写入到两个磁盘阵列中，如果其中一个阵列损坏，仍可继续工作，保证数据安全性的同时又提高了性能。 RAID01 和 RAID10 内部都含有 RAID1 模式，因此整体磁盘利用率均仅为 50% 。</p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/RAID_10.svg/800px-RAID_10.svg.png" alt><br><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/RAID_01.svg/800px-RAID_01.svg.png" alt></p>
+<h3 id="RAID-50"><a href="#RAID-50" class="headerlink" title="RAID 50"></a>RAID 50</h3><p>RAID 5 与 RAID 0 的组合，先作 RAID 5，再作 RAID 0，也就是对多组 RAID 5 彼此构成 Stripe 访问。由于 RAID 50 是以 RAID 5 为基础，而 RAID 5 至少需要 3 颗硬盘，因此要以多组 RAID 5 构成 RAID 50，至少需要 6 颗硬盘。以 RAID 50 最小的 6 颗硬盘配置为例，先把 6 颗硬盘分为 2 组，每组 3 颗构成 RAID 5，如此就得到两组 RAID 5，然后再把两组 RAID 5 构成 RAID 0。</p>
+<p>RAID 50 在底层的任一组或多组 RAID 5 中出现 1 颗硬盘损坏时，仍能维持运作，不过如果任一组 RAID 5 中出现 2 颗或 2 颗以上硬盘损毁，整组 RAID 50 就会失效。</p>
+<p>RAID 50 由于在上层把多组 RAID 5 构成 Stripe，性能比起单纯的 RAID 5 高，容量利用率比 RAID5 要低。比如同样使用 9 颗硬盘，由各 3 颗 RAID 5 再组成 RAID 0 的 RAID 50，每组 RAID 5 浪费一颗硬盘，利用率为(1-3/9)，RAID 5 则为(1-1/9)。</p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/9/9d/RAID_50.png" alt></p>
+<h3 id="RAID-60"><a href="#RAID-60" class="headerlink" title="RAID 60"></a>RAID 60</h3><p>RAID 6 与 RAID 0 的组合：先作 RAID 6，再作 RAID 0。换句话说，就是对两组以上的 RAID 6 作 Stripe 访问。RAID 6 至少需具备 4 颗硬盘，所以 RAID 60 的最小需求是 8 颗硬盘。</p>
+<p>由于底层是以 RAID 6 组成，所以 RAID 60 可以容许任一组 RAID 6 中损毁最多 2 颗硬盘，而系统仍能维持运作；不过只要底层任一组 RAID 6 中损毁 3 颗硬盘，整组 RAID 60 就会失效，当然这种情况的概率相当低。</p>
+<p>比起单纯的 RAID 6，RAID 60 的上层通过结合多组 RAID 6 构成 Stripe 访问，因此性能较高。不过使用门槛高，而且容量利用率低是较大的问题。</p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Raid_60.jpg" alt></p>
+<h2 id="关于-RAID-参数调优"><a href="#关于-RAID-参数调优" class="headerlink" title="关于 RAID 参数调优"></a>关于 RAID 参数调优</h2><blockquote>
+<p>通常情况下建议系统 (RAID1) 与数据 (RAID[5|10]) 分离，这里引用 @叶金荣老师的一段话</p>
+</blockquote>
+<ol>
+<li>使用 SSD 或者 PCIe SSD 设备，至少获得数百倍甚至万倍的 IOPS 提升</li>
+<li>购置阵列卡同时配备 CACHE 及 BBU 模块，可明显提升 IOPS（主要是指机械盘，SSD 或 PCIe SSD 除外。同时需要定期检查 CACHE 及 BBU 模块的健康状况，确保意外时不至于丢失数据）</li>
+<li>有阵列卡时，设置阵列写策略为 WB，甚至 FORCE WB（若有双电保护，或对数据安全性要求不是特别高的话），严禁使用 WT 策略。并且闭阵列预读策略</li>
+<li>尽可能选用 RAID-10，而非 RAID-5(<code>这句话有待商榷</code>)</li>
+<li>使用机械盘的话，尽可能选择高转速的，例如选用 15KRPM，而不是 7.2KRPM 的盘，不差几个钱的；</li>
+</ol>
+<h2 id="SSD-阵列卡方案优化"><a href="#SSD-阵列卡方案优化" class="headerlink" title="SSD 阵列卡方案优化"></a>SSD 阵列卡方案优化</h2><blockquote>
+<p>感谢 @小米 noops 运维团队，详细实验数据请参考扩展阅读</p>
+</blockquote>
+<p><img src="http://noops.me/wp-content/uploads/2015/03/ssd_r50_r10_04.png" alt><br><img src="http://noops.me/wp-content/uploads/2015/03/ssd_r50_r10_05.png" alt></p>
+<p><strong> 性能测试结论 </strong></p>
+<p>性能测试显示，相同容量的 R50 和 R10 性能接近：其中小块文件的随机读 R50 要全面好于 R10，随机写 4K 虽然 R50 和 R10 差距在 28%，但是块增大后 R50 要全面优于 R10。顺序读写方面，R50 和 R10 十分接近。</p>
+<p>容错方面，R50 接近 R10：第二块盘容错率 R50 十分接近 R10，两者相差 30%。R10 的优势主要是在有一定的概率提供第三、甚至第四块磁盘的容错率，但是考虑到并非 100% 容错，因此从容错角度来看 R50 虽然和 R10 有一些差距，但也已体现出较好的容错率，至少优于 R5。而且 R50 搭配灵活，甚至可以指定 3 组 R5 以达到最大 3 块磁盘的容错；</p>
+<p>成本方面，R50 有很大优势：按这个配置计算 R50 只有 R10 的 3/4。</p>
+<p><strong> 总结 </strong></p>
+<p>RAID 50 提供了接近 RAID 10 性能、可用性以及接近 RAID 5 成本的特性，具有较好的整体性价比优势，所以考虑使用 RAID 50 替换 RAID 10 吧</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/raid/" data-title="RAID 磁盘阵列配置和调优小结 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/ntp/" title="NTP 配置实践">
+  <strong>上一篇：</strong><br/>
+  <span>
+  NTP 配置实践</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/openstack/"  title="Red Hat OpenStack 官方培训笔记">
+ <strong>下一篇：</strong><br/> 
+ <span>Red Hat OpenStack 官方培训笔记
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RAID-基础知识"><span class="toc-number">3.</span> <span class="toc-text">RAID 基础知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基本原理"><span class="toc-number">3.1.</span> <span class="toc-text">基本原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关键技术"><span class="toc-number">3.2.</span> <span class="toc-text">关键技术</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见-RAID-类型"><span class="toc-number">4.</span> <span class="toc-text">常见 RAID 类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RAID-等级"><span class="toc-number">5.</span> <span class="toc-text">RAID 等级</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#标准-RAID-等级"><span class="toc-number">5.1.</span> <span class="toc-text">标准 RAID 等级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JBOD"><span class="toc-number">5.2.</span> <span class="toc-text">JBOD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID0"><span class="toc-number">5.3.</span> <span class="toc-text">RAID0</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID1"><span class="toc-number">5.4.</span> <span class="toc-text">RAID1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID5"><span class="toc-number">5.5.</span> <span class="toc-text">RAID5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID6"><span class="toc-number">5.6.</span> <span class="toc-text">RAID6</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID-组合等级"><span class="toc-number">5.7.</span> <span class="toc-text">RAID 组合等级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID10-和-RAID01"><span class="toc-number">5.8.</span> <span class="toc-text">RAID10 和 RAID01</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID-50"><span class="toc-number">5.9.</span> <span class="toc-text">RAID 50</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID-60"><span class="toc-number">5.10.</span> <span class="toc-text">RAID 60</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关于-RAID-参数调优"><span class="toc-number">6.</span> <span class="toc-text">关于 RAID 参数调优</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSD-阵列卡方案优化"><span class="toc-number">7.</span> <span class="toc-text">SSD 阵列卡方案优化</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>185</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>18</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

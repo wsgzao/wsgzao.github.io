@@ -1,0 +1,591 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>使用 fio 测试磁盘 I/O 性能 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="简单好用的磁盘性能测试工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 fio 测试磁盘 I&#x2F;O 性能">
+<meta property="og:url" content="https://wsgzao.github.io/post/fio/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="简单好用的磁盘性能测试工具">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://docs.ucloud.cn/_images/seq512k.jpg">
+<meta property="og:image" content="https://docs.ucloud.cn/_images/rand4k.jpg">
+<meta property="og:updated_time" content="2017-02-10T02:00:57.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用 fio 测试磁盘 I&#x2F;O 性能">
+<meta name="twitter:description" content="简单好用的磁盘性能测试工具">
+<meta name="twitter:image" content="https://docs.ucloud.cn/_images/seq512k.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/fio/" title="使用 fio 测试磁盘 I/O 性能" itemprop="url">使用 fio 测试磁盘 I/O 性能</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2015-10-20T08:17:05.000Z" itemprop="datePublished"> 发表于 2015-10-20</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#测试准备"><span class="toc-number">3.</span> <span class="toc-text">测试准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fio-用法"><span class="toc-number">4.</span> <span class="toc-text">fio 用法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#fio-参数说明"><span class="toc-number">4.1.</span> <span class="toc-text">fio 参数说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实际测试范例"><span class="toc-number">4.2.</span> <span class="toc-text">实际测试范例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#硬盘性能指标"><span class="toc-number">5.</span> <span class="toc-text">硬盘性能指标</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#测试数据"><span class="toc-number">5.1.</span> <span class="toc-text">测试数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置文件"><span class="toc-number">5.2.</span> <span class="toc-text">配置文件</span></a></li></ol></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>fio 是测试 IOPS 的非常好的工具，用来对硬件进行压力测试和验证，支持 13 种不同的 I/O 引擎，包括: sync,mmap, libaio, posixaio, SG v3, splice, null, network, syslet, guasi, solarisaio 等等。</p>
+<blockquote>
+<p>简单好用的磁盘性能测试工具</p>
+</blockquote>
+<hr>
+<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2015 年 10 月 20 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/fio/">https://wsgzao.github.io/post/fio/</a></p>
+<p>扩展阅读</p>
+<p>fio - <a href="http://freecode.com/projects/fio" target="_blank" rel="noopener">http://freecode.com/projects/fio</a><br>云主机磁盘 I/O 基准性能测试 - <a href="https://docs.ucloud.cn/testdata/io_uhost.html" target="_blank" rel="noopener">https://docs.ucloud.cn/testdata/io_uhost.html</a><br>fio man - <a href="http://linux.die.net/man/1/fio" target="_blank" rel="noopener">http://linux.die.net/man/1/fio</a></p>
+<hr>
+<h2 id="测试准备"><a href="#测试准备" class="headerlink" title="测试准备"></a>测试准备</h2><p>工具：fio - Flexible IO Tester</p>
+<p>官方网站：</p>
+<p><a href="http://freecode.com/projects/fio" target="_blank" rel="noopener">http://freecode.com/projects/fio</a></p>
+<p><a href="http://brick.kernel.dk/snaps/" target="_blank" rel="noopener">http://brick.kernel.dk/snaps/</a></p>
+<p><strong> 注意 </strong>: 性能测试建议直接通过写裸盘的方式进行测试，会得到较为真实的数据。但直接测试裸盘会破坏文件系统结构，导致数据丢失，请在测试前确认磁盘中数据已备份。</p>
+<p>CentOS 可以直接使用 yum 安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#yum 安装</span></span><br><span class="line">yum install libaio-devel fio</span><br><span class="line"><span class="comment"># 手动安装</span></span><br><span class="line">yum install libaio-devel</span><br><span class="line">wget http://brick.kernel.dk/snaps/fio-2.2.10.tar.gz</span><br><span class="line">tar -zxvf fio-2.2.10.tar.gz</span><br><span class="line"><span class="built_in">cd</span> fio-2.2.10</span><br><span class="line">make $ make install</span><br></pre></td></tr></table></figure>
+<h2 id="fio-用法"><a href="#fio-用法" class="headerlink" title="fio 用法"></a>fio 用法</h2><blockquote>
+<p>fio 分顺序读，随机读，顺序写，随机写，混合随机读写模式。</p>
+</blockquote>
+<p>filename: 指定文件 (设备) 的名称。可以通过冒号分割同时指定多个文件，如 filename=/dev/sda:/dev/sdb。</p>
+<p>directory: 设置 filename 的路径前缀。在后面的基准测试中，采用这种方式来指定设备。</p>
+<p>name: 指定 job 的名字，在命令行中表示新启动一个 job。</p>
+<p>direct: bool 类型，如果设置成 true (1)，表示不使用 io buffer。</p>
+<p>ioengine: I/O 引擎，现在 fio 支持 19 种 ioengine。默认值是 sync 同步阻塞 I/O，libaio 是 Linux 的 native 异步 I/O。关于同步异步，阻塞和非阻塞模型可以参考文章“使用异步 I/O 大大提高应用程序的性能”。<br><a href="http://www.ibm.com/developerworks/cn/linux/l-async/" target="_blank" rel="noopener">http://www.ibm.com/developerworks/cn/linux/l-async/</a></p>
+<p>iodepth: 如果 ioengine 采用异步方式，该参数表示一批提交保持的 io 单元数。该参数可参考文章“Fio 压测工具和 io 队列深度理解和误区”。<br><a href="http://blog.yufeng.info/archives/2104" target="_blank" rel="noopener">http://blog.yufeng.info/archives/2104</a></p>
+<p>rw: I/O 模式，随机读写，顺序读写等等。</p>
+<p>bs: I/O block 大小，默认是 4k。</p>
+<p>size: 指定 job 处理的文件的大小。</p>
+<p>numjobs: 指定 job 的克隆数(线程)。</p>
+<p>time_based: 如果在 runtime 指定的时间还没到时文件就被读写完成，将继续重复知道 runtime 时间结束。</p>
+<p>runtime: 指定在多少秒后停止进程。如果未指定该参数，fio 将执行至指定的文件读写完全完成。</p>
+<p>group_reporting: 当同时指定了 numjobs 了时，输出结果按组显示。</p>
+<h3 id="fio-参数说明"><a href="#fio-参数说明" class="headerlink" title="fio 参数说明"></a>fio 参数说明</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line">filename=/dev/sdb1   <span class="comment"># 测试文件名称，通常选择需要测试的盘的 data 目录</span></span><br><span class="line">direct=1             <span class="comment"># 测试过程绕过机器自带的 buffer。使测试结果更真实</span></span><br><span class="line">rw=randwrite         <span class="comment"># 测试随机写的 I/O</span></span><br><span class="line">rw=randrw            <span class="comment"># 测试随机写和读的 I/O</span></span><br><span class="line">bs=16k               <span class="comment"># 单次 io 的块文件大小为 16k</span></span><br><span class="line">bsrange=512-2048     <span class="comment"># 同上，提定数据块的大小范围</span></span><br><span class="line">size=5G              <span class="comment"># 本次的测试文件大小为 5g，以每次 4k 的 io 进行测试</span></span><br><span class="line">numjobs=30           <span class="comment"># 本次的测试线程为 30 个</span></span><br><span class="line">runtime=1000         <span class="comment"># 测试时间 1000 秒，如果不写则一直将 5g 文件分 4k 每次写完为止</span></span><br><span class="line">ioengine=psync       <span class="comment">#io 引擎使用 psync 方式</span></span><br><span class="line">rwmixwrite=30        <span class="comment"># 在混合读写的模式下，写占 30%</span></span><br><span class="line">group_reporting      <span class="comment"># 关于显示结果的，汇总每个进程的信息</span></span><br><span class="line"></span><br><span class="line">lockmem=1G           <span class="comment"># 只使用 1g 内存进行测试</span></span><br><span class="line">zero_buffers         <span class="comment"># 用 0 初始化系统 buffer</span></span><br><span class="line">nrfiles=8            <span class="comment"># 每个进程生成文件的数量</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 顺序读</span></span><br><span class="line">fio -filename=/dev/sda -direct=1 -iodepth 1 -thread -rw=<span class="built_in">read</span> -ioengine=psync -bs=16k -size=200G -numjobs=30 -runtime=1000 -group_reporting -name=mytest</span><br><span class="line"></span><br><span class="line"><span class="comment"># 顺序写</span></span><br><span class="line">fio -filename=/dev/sda -direct=1 -iodepth 1 -thread -rw=write -ioengine=psync -bs=16k -size=200G -numjobs=30 -runtime=1000 -group_reporting -name=mytest</span><br><span class="line"></span><br><span class="line"><span class="comment"># 随机读</span></span><br><span class="line">fio -filename=/dev/sda -direct=1 -iodepth 1 -thread -rw=randread -ioengine=psync -bs=16k -size=200G -numjobs=30 -runtime=1000 -group_reporting -name=mytest</span><br><span class="line"></span><br><span class="line"><span class="comment"># 随机写</span></span><br><span class="line">fio -filename=/dev/sda -direct=1 -iodepth 1 -thread -rw=randwrite -ioengine=psync -bs=16k -size=200G -numjobs=30 -runtime=1000 -group_reporting -name=mytest</span><br><span class="line"></span><br><span class="line"><span class="comment"># 混合随机读写</span></span><br><span class="line">fio -filename=/dev/sda -direct=1 -iodepth 1 -thread -rw=randrw -rwmixread=70 -ioengine=psync -bs=16k -size=200G -numjobs=30 -runtime=100 -group_reporting -name=mytest -ioscheduler=noop</span><br><span class="line"></span><br><span class="line"><span class="comment"># 复制下面的配置内容，将 directory=/path/to/test 修改为你测试硬盘挂载目录的地址，并另存为 fio.conf</span></span><br><span class="line"></span><br><span class="line">[global]</span><br><span class="line">ioengine=libaio</span><br><span class="line">direct=1</span><br><span class="line">thread=1</span><br><span class="line">norandommap=1</span><br><span class="line">randrepeat=0</span><br><span class="line">runtime=60</span><br><span class="line">ramp_time=6</span><br><span class="line">size=1g</span><br><span class="line">directory=/path/to/<span class="built_in">test</span></span><br><span class="line"></span><br><span class="line">[read4k-rand]</span><br><span class="line">stonewall</span><br><span class="line">group_reporting</span><br><span class="line">bs=4k</span><br><span class="line">rw=randread</span><br><span class="line">numjobs=8</span><br><span class="line">iodepth=32</span><br><span class="line"></span><br><span class="line">[read64k-seq]</span><br><span class="line">stonewall</span><br><span class="line">group_reporting</span><br><span class="line">bs=64k</span><br><span class="line">rw=<span class="built_in">read</span></span><br><span class="line">numjobs=4</span><br><span class="line">iodepth=8</span><br><span class="line"></span><br><span class="line">[write4k-rand]</span><br><span class="line">stonewall</span><br><span class="line">group_reporting</span><br><span class="line">bs=4k</span><br><span class="line">rw=randwrite</span><br><span class="line">numjobs=2</span><br><span class="line">iodepth=4</span><br><span class="line"></span><br><span class="line">[write64k-seq]</span><br><span class="line">stonewall</span><br><span class="line">group_reporting</span><br><span class="line">bs=64k</span><br><span class="line">rw=write</span><br><span class="line">numjobs=2</span><br><span class="line">iodepth=4</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">fio fio.conf</span><br></pre></td></tr></table></figure>
+<h3 id="实际测试范例"><a href="#实际测试范例" class="headerlink" title="实际测试范例"></a>实际测试范例</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 测试混合随机读写</span></span><br><span class="line">fio -filename=/dev/sda -direct=1 -iodepth 1 -thread -rw=randrw -rwmixread=70 -ioengine=psync -bs=16k -size=200G -numjobs=30 -runtime=100 -group_reporting -name=mytest1</span><br><span class="line"></span><br><span class="line">mytest1: (g=0): rw=randrw, bs=16K-16K/16K-16K/16K-16K, ioengine=psync, iodepth=1</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">mytest1: (g=0): rw=randrw, bs=16K-16K/16K-16K/16K-16K, ioengine=psync, iodepth=1</span><br><span class="line"></span><br><span class="line">fio-2.1.2</span><br><span class="line"></span><br><span class="line">Starting 30 threads</span><br><span class="line"></span><br><span class="line">Jobs: 30 (f=30):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [18.8% <span class="keyword">done</span>] [10192KB/3376KB/0KB /s] [637/211/0 iops] [eta 01m:22sJobs: 30 (f=30):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [19.8% <span class="keyword">done</span>] [9808KB/3200KB/0KB /s] [613/200/0 iops] [eta 01m:21s]Jobs: 30 (f=30):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [34.7% <span class="keyword">done</span>] [10496KB/3232KB/0KB /s] [656/202/0 iops] [eta 01m:06sJobs: 30 (f=30):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [35.6% <span class="keyword">done</span>] [9680KB/3232KB/0KB /s] [605/202/0 iops] [eta 01m:05s]Jobs: 30 (f=30):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [37.6% <span class="keyword">done</span>] [10016KB/2864KB/0KB /s] [626/179/0 iops] [eta 01m:03sJobs: 30 (f=30):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [38.6% <span class="keyword">done</span>] [10320KB/3632KB/0KB /s] [645/227/0 iops] [eta 01m:02sJobs: 30 (f=30):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [39.6% <span class="keyword">done</span>] [9744KB/3264KB/0KB /s] [609/204/0 iops] [eta 01m:01s]Jobs: 30 (f=30):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [63.4% <span class="keyword">done</span>] [10224KB/3792KB/0KB /s] [639/237/0 iops] [eta 00m:37sJobs: 30 (f=30):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [64.4% <span class="keyword">done</span>] [9184KB/3808KB/0KB /s] [574/238/0 iops] [eta 00m:36s]Jobs: 30 (f=30):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [68.3% <span class="keyword">done</span>] [10128KB/3200KB/0KB /s] [633/200/0 iops] [eta 00m:32sJobs: 30 (f=30):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [69.3% <span class="keyword">done</span>] [9872KB/3184KB/0KB /s] [617/199/0 iops] [eta 00m:31s]Jobs: 30 (f=30):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [71.3% <span class="keyword">done</span>] [10528KB/2624KB/0KB /s] [658/164/0 iops] [eta 00m:29sJobs: 30 (f=30):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [72.3% <span class="keyword">done</span>] [9696KB/2752KB/0KB /s] [606/172/0 iops] [eta 00m:28s]Jobs: 30 (f=30):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [73.3% <span class="keyword">done</span>] [10624KB/2912KB/0KB /s] [664/182/0 iops] [eta 00m:27sJobs: 30 (f=30):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [74.3% <span class="keyword">done</span>] [9312KB/2832KB/0KB /s] [582/177/0 iops] [eta 00m:26s]Jobs: 30 (f=30):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [95.0% <span class="keyword">done</span>] [10128KB/3792KB/0KB /s] [633/237/0 iops] [eta 00m:05sJobs: 30 (f=30):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [96.0% <span class="keyword">done</span>] [8320KB/3904KB/0KB /s] [520/244/0 iops] [eta 00m:04s]Jobs: 30 (f=30):</span><br><span class="line"></span><br><span class="line">[mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm] [100.0% <span class="keyword">done</span>] [9264KB/3536KB/0KB /s] [579/221/0 iops] [eta 00m:00s]</span><br><span class="line"></span><br><span class="line">mytest1: (groupid=0, <span class="built_in">jobs</span>=30): err= 0: pid=17792: Tue Nov 12 10:55:58 2013</span><br><span class="line"></span><br><span class="line">  <span class="built_in">read</span> : io=948896KB, bw=9475.1KB/s, iops=592, runt=100138msec</span><br><span class="line"></span><br><span class="line">    clat (usec): min=67, max=796794, avg=49878.72, stdev=59636.00</span><br><span class="line"></span><br><span class="line">     lat (usec): min=68, max=796794, avg=49879.01, stdev=59636.00</span><br><span class="line"></span><br><span class="line">    clat percentiles (msec):</span><br><span class="line"></span><br><span class="line">     | 1.00th=[ 4], 5.00th=[ 7], 10.00th=[ 9], 20.00th=[ 12],</span><br><span class="line"></span><br><span class="line">     | 30.00th=[ 16], 40.00th=[ 22], 50.00th=[ 29], 60.00th=[ 39],</span><br><span class="line"></span><br><span class="line">     | 70.00th=[ 53], 80.00th=[ 76], 90.00th=[ 120], 95.00th=[ 165],</span><br><span class="line"></span><br><span class="line">     | 99.00th=[ 293], 99.50th=[ 351], 99.90th=[ 494], 99.95th=[ 553],</span><br><span class="line"></span><br><span class="line">     | 99.99th=[ 701]</span><br><span class="line"></span><br><span class="line">    bw (KB /s): min= 20, max= 967, per=3.38%, avg=320.53, stdev=116.83</span><br><span class="line"></span><br><span class="line">  write: io=380816KB, bw=3802.1KB/s, iops=237, runt=100138msec</span><br><span class="line"></span><br><span class="line">    clat (usec): min=64, max=120607, avg=1801.07, stdev=5409.97</span><br><span class="line"></span><br><span class="line">     lat (usec): min=65, max=120610, avg=1803.86, stdev=5409.96</span><br><span class="line"></span><br><span class="line">    clat percentiles (usec):</span><br><span class="line"></span><br><span class="line">     | 1.00th=[ 69], 5.00th=[ 73], 10.00th=[ 77], 20.00th=[ 81],</span><br><span class="line"></span><br><span class="line">     | 30.00th=[ 84], 40.00th=[ 87], 50.00th=[ 90], 60.00th=[ 113],</span><br><span class="line"></span><br><span class="line">     | 70.00th=[ 724], 80.00th=[ 3248], 90.00th=[ 4384], 95.00th=[ 5344],</span><br><span class="line"></span><br><span class="line">     | 99.00th=[33536], 99.50th=[41728], 99.90th=[59136], 99.95th=[68096],</span><br><span class="line"></span><br><span class="line">     | 99.99th=[112128]</span><br><span class="line"></span><br><span class="line">    bw (KB /s): min= 17, max= 563, per=3.52%, avg=133.68, stdev=75.04</span><br><span class="line"></span><br><span class="line">    lat (usec) : 100=16.41%, 250=3.47%, 500=0.10%, 750=0.12%, 1000=0.23%</span><br><span class="line"></span><br><span class="line">    lat (msec) : 2=0.86%, 4=4.57%, 10=13.39%, 20=16.08%, 50=22.27%</span><br><span class="line"></span><br><span class="line">    lat (msec) : 100=12.87%, 250=8.49%, 500=1.08%, 750=0.06%, 1000=0.01%</span><br><span class="line"></span><br><span class="line">  cpu : usr=0.02%, sys=0.07%, ctx=83130, majf=0, minf=7</span><br><span class="line"></span><br><span class="line">  IO depths : 1=100.0%, 2=0.0%, 4=0.0%, 8=0.0%, 16=0.0%, 32=0.0%, &gt;=64=0.0%</span><br><span class="line"></span><br><span class="line">     submit : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, &gt;=64=0.0%</span><br><span class="line"></span><br><span class="line">     complete : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, &gt;=64=0.0%</span><br><span class="line"></span><br><span class="line">     issued : total=r=59306/w=23801/d=0, short=r=0/w=0/d=0</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Run status group 0 (all <span class="built_in">jobs</span>):</span><br><span class="line"></span><br><span class="line">   READ: io=948896KB, aggrb=9475KB/s, minb=9475KB/s, maxb=9475KB/s, mint=100138msec, maxt=100138msec</span><br><span class="line"></span><br><span class="line">  WRITE: io=380816KB, aggrb=3802KB/s, minb=3802KB/s, maxb=3802KB/s, mint=100138msec, maxt=100138msec</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Disk stats (<span class="built_in">read</span>/write):</span><br><span class="line"></span><br><span class="line">  sda: ios=59211/24192, merge=0/289, ticks=2951434/63353, in_queue=3092383, util=99.97%</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>测试结果如上，主要关注 bw 和 iops 结果</p>
+</blockquote>
+<p>bw：磁盘的吞吐量，这个是顺序读写考察的重点<br>iops：磁盘的每秒读写次数，这个是随机读写考察的重点</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">read</span> : io=948896KB, bw=9475.1KB/s, iops=592, runt=100138msec</span><br><span class="line">write: io=380816KB, bw=3802.1KB/s, iops=237, runt=100138msec</span><br></pre></td></tr></table></figure>
+<h2 id="硬盘性能指标"><a href="#硬盘性能指标" class="headerlink" title="硬盘性能指标"></a>硬盘性能指标</h2><p><strong> 顺序读写 </strong> （吞吐量，常用单位为 MB/s）：文件在硬盘上存储位置是连续的。</p>
+<p>适用场景：大文件拷贝（比如视频音乐）。速度即使很高，对数据库性能也没有参考价值。</p>
+<p><strong>4K 随机读写 </strong> （IOPS，常用单位为次）：在硬盘上随机位置读写数据，每次 4KB。</p>
+<p>适用场景：操作系统运行、软件运行、数据库。</p>
+<p>以下是使用通用 I/O 测试工具 “fio”，并在指定数据块大小“4K、512K”、队列深度为“128” 的条件下，对 “SAS” 以及 “SSD” 这两种机型磁盘进行的 I/O 基准性能测试所得出的测试数据。</p>
+<h3 id="测试数据"><a href="#测试数据" class="headerlink" title="测试数据"></a>测试数据</h3><p>测试 1. 顺序读 / 写 512K</p>
+<p><img src="https://docs.ucloud.cn/_images/seq512k.jpg" alt></p>
+<p>测试 2. 随机读 / 写 4K</p>
+<p><img src="https://docs.ucloud.cn/_images/rand4k.jpg" alt></p>
+<h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><blockquote>
+<p>块大小：4kb / 512kb<br>队列深度：128</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#fio.conf 配置</span></span><br><span class="line"></span><br><span class="line">[global]</span><br><span class="line">ioengine=libaio</span><br><span class="line">iodepth=128</span><br><span class="line">time_based</span><br><span class="line">direct=1</span><br><span class="line">thread=1</span><br><span class="line">group_reporting</span><br><span class="line">randrepeat=0</span><br><span class="line">norandommap</span><br><span class="line">numjobs=32</span><br><span class="line">timeout=6000</span><br><span class="line">runtime=120</span><br><span class="line"></span><br><span class="line">[randread-4k]</span><br><span class="line">rw=randread</span><br><span class="line">bs=4k</span><br><span class="line">filename=/dev/sdb   <span class="comment"># 注：/dev/sdb 是目标测试磁盘的设备名称</span></span><br><span class="line">rwmixread=100</span><br><span class="line">stonewall</span><br><span class="line"></span><br><span class="line">[randwrite-4k]</span><br><span class="line">rw=randwrite</span><br><span class="line">bs=4k</span><br><span class="line">filename=/dev/sdb</span><br><span class="line">stonewall</span><br><span class="line"></span><br><span class="line">[<span class="built_in">read</span>-512k]</span><br><span class="line">rw=<span class="built_in">read</span></span><br><span class="line">bs=512k</span><br><span class="line">filename=/dev/sdb</span><br><span class="line">stonewall</span><br><span class="line"></span><br><span class="line">[write-512k]</span><br><span class="line">rw=write</span><br><span class="line">bs=512k</span><br><span class="line">filename=/dev/sdb</span><br><span class="line">stonewall</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用方法</span></span><br><span class="line">shell$&gt; fio fio.conf</span><br></pre></td></tr></table></figure>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/fio/" data-title="使用 fio 测试磁盘 I/O 性能 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/esxi/" title="VMware ESXi 自动化部署实践">
+  <strong>上一篇：</strong><br/>
+  <span>
+  VMware ESXi 自动化部署实践</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/autoyast/"  title="基于 AutoYaST 自动化安装 SuSE 实践">
+ <strong>下一篇：</strong><br/> 
+ <span>基于 AutoYaST 自动化安装 SuSE 实践
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#测试准备"><span class="toc-number">3.</span> <span class="toc-text">测试准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fio-用法"><span class="toc-number">4.</span> <span class="toc-text">fio 用法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#fio-参数说明"><span class="toc-number">4.1.</span> <span class="toc-text">fio 参数说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实际测试范例"><span class="toc-number">4.2.</span> <span class="toc-text">实际测试范例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#硬盘性能指标"><span class="toc-number">5.</span> <span class="toc-text">硬盘性能指标</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#测试数据"><span class="toc-number">5.1.</span> <span class="toc-text">测试数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置文件"><span class="toc-number">5.2.</span> <span class="toc-text">配置文件</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>185</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>18</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

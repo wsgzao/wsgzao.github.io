@@ -1,0 +1,554 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>Grafana 安装部署 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="The open platform for beautiful analytics and monitoring">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Grafana 安装部署">
+<meta property="og:url" content="https://wsgzao.github.io/post/grafana/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="The open platform for beautiful analytics and monitoring">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-04-08T09:54:34.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Grafana 安装部署">
+<meta name="twitter:description" content="The open platform for beautiful analytics and monitoring">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/grafana/" title="Grafana 安装部署" itemprop="url">Grafana 安装部署</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2019-01-25T06:59:49.000Z" itemprop="datePublished"> 发表于 2019-01-25</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Grafana-入门"><span class="toc-number">3.</span> <span class="toc-text">Grafana 入门</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Grafana-安装"><span class="toc-number">4.</span> <span class="toc-text">Grafana 安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#grafana-zabbix"><span class="toc-number">4.1.</span> <span class="toc-text">grafana-zabbix</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Grafana-Zabbix-API-Error"><span class="toc-number">4.2.</span> <span class="toc-text">Grafana Zabbix API Error</span></a></li></ol></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Grafana 是一个开源的数据分析和监控平台，它是一个开箱即用的可视化工具，具有功能齐全的度量仪表盘和图形编辑器，有灵活丰富的图形化选项，可以混合多种风格，支持多个数据源特点。Grafana + Zabbix 的组合方式，主要是通过插件的形式，将 Zabbix 接入到 Grafana 中，使其可以借助 Grafana 的 portal 进行统一的监控和管理。</p>
+<blockquote>
+<p>The open platform for beautiful analytics and monitoring</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019 年 01 月 25 日 - 更新 Grafana Zabbix API Error 解决办法<br>2018 年 10 月 24 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/grafana/">https://wsgzao.github.io/post/grafana/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<p>Grafana - <a href="https://grafana.com/" target="_blank" rel="noopener">https://grafana.com/</a></p>
+<hr>
+<h2 id="Grafana-入门"><a href="#Grafana-入门" class="headerlink" title="Grafana 入门"></a>Grafana 入门</h2><p>观看 10 分钟的初学者指南，以建立仪表板，以快速介绍设置仪表板和面板。<br><a href="https://www.youtube.com/watch?v=sKNZMtoSHN4&amp;index=7&amp;list=PLDGkOdUX1Ujo3wHw9-z5Vo12YLqXRjzg2" target="_blank" rel="noopener">https://www.youtube.com/watch?v=sKNZMtoSHN4&amp;index=7&amp;list=PLDGkOdUX1Ujo3wHw9-z5Vo12YLqXRjzg2</a></p>
+<p>阅读基本概念文档，以获得 Grafana 概念的速成关键课程<br><a href="http://docs.grafana.org/guides/basic_concepts/" target="_blank" rel="noopener">http://docs.grafana.org/guides/basic_concepts/</a></p>
+<h2 id="Grafana-安装"><a href="#Grafana-安装" class="headerlink" title="Grafana 安装"></a>Grafana 安装</h2><blockquote>
+<p>No matter where your data is, or what kind of database it lives in, you can bring it together with Grafana. Beautifully.</p>
+</blockquote>
+<p><a href="http://docs.grafana.org/installation/" target="_blank" rel="noopener">http://docs.grafana.org/installation/</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># install grafana</span></span><br><span class="line">cat &gt; /etc/yum.repos.d/grafana.repo &lt;&lt; <span class="string">'EOF'</span></span><br><span class="line">[grafana]</span><br><span class="line">name=grafana</span><br><span class="line">baseurl=https://packagecloud.io/grafana/stable/el/7/<span class="variable">$basearch</span></span><br><span class="line">gpgkey=https://packagecloud.io/gpg.key https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana</span><br><span class="line">enabled=0</span><br><span class="line">gpgcheck=1</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment"># yum install grafana</span></span><br><span class="line">yum --enablerepo=grafana -y install grafana initscripts fontconfig</span><br><span class="line"></span><br><span class="line"><span class="comment"># change anything if you need</span></span><br><span class="line">vi /etc/grafana/grafana.ini</span><br><span class="line"> </span><br><span class="line"> 30 [server]</span><br><span class="line"> 31 <span class="comment"># Protocol (http, https, socket)</span></span><br><span class="line"> 32 ;protocol = http</span><br><span class="line"> 33</span><br><span class="line"> 34 <span class="comment"># The ip address to bind to, empty will bind to all interfaces</span></span><br><span class="line"> 35 ;http_addr =</span><br><span class="line"> 36</span><br><span class="line"> 37 <span class="comment"># The http port  to use</span></span><br><span class="line"> 38 ;http_port = 3000</span><br><span class="line"> 39</span><br><span class="line"> 40 <span class="comment"># The public facing domain name used to access grafana from a browser</span></span><br><span class="line"> 41 ;domain = localhost</span><br><span class="line"></span><br><span class="line"><span class="comment"># start and enable grafana</span></span><br><span class="line">sudo systemctl start grafana-server</span><br><span class="line">sudo systemctl <span class="built_in">enable</span> grafana-server</span><br><span class="line">sudo systemctl status grafana-server</span><br><span class="line"></span><br><span class="line"><span class="comment"># test</span></span><br><span class="line">http://&lt;ip&gt;:3000</span><br><span class="line">admin/admin</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加数据源 </span></span><br><span class="line"> 安装很简单，之后需要配置数据源比如 InfluxDB/Zabbix API 等才能发挥真正的作用</span><br></pre></td></tr></table></figure>
+<h3 id="grafana-zabbix"><a href="#grafana-zabbix" class="headerlink" title="grafana-zabbix"></a>grafana-zabbix</h3><p><a href="https://grafana.com/plugins/alexanderzobnin-zabbix-app" target="_blank" rel="noopener">https://grafana.com/plugins/alexanderzobnin-zabbix-app</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 zabbix 插件（grafana-zabbix）</span></span><br><span class="line">grafana-cli plugins install alexanderzobnin-zabbix-app</span><br><span class="line">systemctl restart grafana-server</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启用插件 </span></span><br><span class="line"> 进入 Plugins 界面，选择 “Zabbix” </span><br><span class="line">开始面板（左上角图标） -&gt; Plugins -&gt; Apps -&gt; Zabbix </span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加 zabbix 数据源 </span></span><br><span class="line"> 进入 “添加数据源” 界面 </span><br><span class="line">开始面板（左上角图标） -&gt; Data Sources -&gt; Add data <span class="built_in">source</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置 Zabbix 数据源 </span></span><br><span class="line">配置完后，保存退出，配置的内容如下： </span><br><span class="line">重要参数有： </span><br><span class="line">Type: Zabbix </span><br><span class="line">Url: http://192.168.56.103/zabbix/api_jsonrpc.php </span><br><span class="line">Access: direct </span><br><span class="line">(Zabbix API details) </span><br><span class="line">Username: Admin（默认） </span><br><span class="line">Password: zabbix（默认）</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证 </span></span><br><span class="line"> 之后，我们从 开始面板 -&gt; Zabbix 中，便可看到 Zabbix 相关的监控数据。</span><br></pre></td></tr></table></figure>
+<h3 id="Grafana-Zabbix-API-Error"><a href="#Grafana-Zabbix-API-Error" class="headerlink" title="Grafana Zabbix API Error"></a>Grafana Zabbix API Error</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果在 Grafana Dashboard 看到 Zabbix API Error 建议查看 Zabbix front 如 Apache 或者 Nginx 的错误日志定位问题</span></span><br><span class="line">tail -f /var/<span class="built_in">log</span>/httpd/error_log</span><br><span class="line"></span><br><span class="line">PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 72 bytes) <span class="keyword">in</span> /usr/share/zabbix/include/func.inc.php on line 1423</span><br><span class="line"></span><br><span class="line"><span class="comment"># 发现超过 php 的 memory_limit=128M</span></span><br><span class="line">vim /etc/php.ini</span><br><span class="line">vim /etc/httpd/conf.d/zabbix.conf</span><br><span class="line"></span><br><span class="line">memory_limit = 512M</span><br><span class="line"></span><br><span class="line"><span class="comment"># 增加 info.php 查看变量是否生效</span></span><br><span class="line">vim /usr/share/zabbix/info.php</span><br><span class="line"></span><br><span class="line">&lt;?php</span><br><span class="line">  phpinfo();</span><br><span class="line">?&gt;</span><br><span class="line"></span><br><span class="line">http://&lt;your-zabbix-server/info.php</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启 httpd 生效</span></span><br><span class="line">service httpd restart</span><br></pre></td></tr></table></figure>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/grafana/" data-title="Grafana 安装部署 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/linux-kernel-update/" title="Linux kernel 内核升级和降级的方法实践">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Linux kernel 内核升级和降级的方法实践</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/parted/"  title="使用 parted 解决大于 2T 的磁盘分区">
+ <strong>下一篇：</strong><br/> 
+ <span>使用 parted 解决大于 2T 的磁盘分区
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Grafana-入门"><span class="toc-number">3.</span> <span class="toc-text">Grafana 入门</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Grafana-安装"><span class="toc-number">4.</span> <span class="toc-text">Grafana 安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#grafana-zabbix"><span class="toc-number">4.1.</span> <span class="toc-text">grafana-zabbix</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Grafana-Zabbix-API-Error"><span class="toc-number">4.2.</span> <span class="toc-text">Grafana Zabbix API Error</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>185</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>18</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

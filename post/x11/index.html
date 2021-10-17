@@ -1,0 +1,601 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>macOS 使用 XQuartz 支持 X11 实现 Linux 图形化界面显示 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="macOS使用XQuartz支持X11实现Linux图形化界面显示">
+<meta property="og:type" content="article">
+<meta property="og:title" content="macOS 使用 XQuartz 支持 X11 实现 Linux 图形化界面显示">
+<meta property="og:url" content="https://wsgzao.github.io/post/x11/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="macOS使用XQuartz支持X11实现Linux图形化界面显示">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201120140500.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201120140613.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201120142156.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201120143321.png">
+<meta property="og:updated_time" content="2020-11-20T08:03:49.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="macOS 使用 XQuartz 支持 X11 实现 Linux 图形化界面显示">
+<meta name="twitter:description" content="macOS使用XQuartz支持X11实现Linux图形化界面显示">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201120140500.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/x11/" title="macOS 使用 XQuartz 支持 X11 实现 Linux 图形化界面显示" itemprop="url">macOS 使用 XQuartz 支持 X11 实现 Linux 图形化界面显示</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2020-11-20T06:22:49.000Z" itemprop="datePublished"> 发表于 2020-11-20</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#X11-介绍"><span class="toc-number">3.</span> <span class="toc-text">X11 介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#X-协议"><span class="toc-number">3.1.</span> <span class="toc-text">X 协议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#X11-Forwarding"><span class="toc-number">3.2.</span> <span class="toc-text">X11 Forwarding</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#macOS-实现-X11-图形化界面显示"><span class="toc-number">4.</span> <span class="toc-text">macOS 实现 X11 图形化界面显示</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Steps"><span class="toc-number">4.1.</span> <span class="toc-text">Steps</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#FAQ"><span class="toc-number">4.2.</span> <span class="toc-text">FAQ</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">5.</span> <span class="toc-text">参考文章</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在 Windows 中相信大家已经很熟悉使用 Xmanager(Xshell), MobaXterm, SecureCRT 通过 X11 实现 Linux 图形化界面显示，我的需求是在 macOS 下使用 iTerm2 作为 Terminal 实现 X11 图形化界面显示，网上大部分教程只提到安装 Xquartz 但并没有结合实际问题给出完整的解决步骤，我把实践过程做了详细的记录方便大家按照最简单的步骤实现 Linux 图形化显示效果。</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2020 年 11 月 20 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/x11/">https://wsgzao.github.io/post/x11/</a></p>
+<hr>
+<h2 id="X11-介绍"><a href="#X11-介绍" class="headerlink" title="X11 介绍"></a>X11 介绍</h2><p>有些 Linux 服务器出于性能和效率的考虑，通常都是没有安装图形化界面的，那么图形化程序在服务器上压根儿就跑不起来，或者无法直接显示出来，这就很尴尬了！那么如何解决这个问题呢？可以基于 X11 Forwarding 技术 + MobaXterm/Xshell/SecureCRT/XQuartz 等第三方工具，就可以轻松搞定，是不是很简单？</p>
+<h3 id="X-协议"><a href="#X-协议" class="headerlink" title="X 协议"></a>X 协议</h3><p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201120140500.png" alt></p>
+<p>Linux 本身是没有图形化界面的，所谓的图形化界面系统只不过中 Linux 下的应用程序。这一点和 Windows 不一样。Windows 从 Windows 95 开始，图形界面就直接在系统内核中实现了，是操作系统不可或缺的一部分。Linux 的图形化界面，底层都是基于 X 协议。</p>
+<p>X 协议由 X server 和 X client 组成：</p>
+<ul>
+<li>X server 管理主机上与显示相关的硬件设置（如显卡、硬盘、鼠标等），它负责屏幕画面的绘制与显示，以及将输入设置（如键盘、鼠标）的动作告知 X client。</li>
+<li>X client (即 X 应用程序) 则主要负责事件的处理（即程序的逻辑）。</li>
+</ul>
+<p>举个例子，如果用户点击了鼠标左键，因为鼠标归 X server 管理，于是 X server 就捕捉到了鼠标点击这个动作，然后它将这个动作告诉 X client，因为 X client 负责程序逻辑，于是 X client 就根据程序预先设定的逻辑（例如画一个圆），告诉 X server 说：“请在鼠标点击的位置，画一个圆”。最后，X server 就响应 X client 的请求，在鼠标点击的位置，绘制并显示出一个圆。</p>
+<h3 id="X11-Forwarding"><a href="#X11-Forwarding" class="headerlink" title="X11 Forwarding"></a>X11 Forwarding</h3><p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201120140613.png" alt></p>
+<p>这么绕，有啥意义呢？当然有！</p>
+<p>许多时候 X server 和 X client 在同一台主机上，这看起来没什么。但是， X server 和 X client 完全可以运行在不同的机器上，只要彼此通过 X 协议通信即可。于是，我们就可以做一些 “神奇” 的事情，比如像本文开头谈到的，在本地显示 (X server)，运行在服务器上的 GUI 程序 (X client)。这样的操作可以通过 SSH X11 Forwarding (转发) 来实现。</p>
+<p>X11 中的 X 指的就是 X 协议，11 指的是采用 X 协议的第 11 个版本。</p>
+<h2 id="macOS-实现-X11-图形化界面显示"><a href="#macOS-实现-X11-图形化界面显示" class="headerlink" title="macOS 实现 X11 图形化界面显示"></a>macOS 实现 X11 图形化界面显示</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># macOS 安装 xquartz</span></span><br><span class="line">brew cask install xquartz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动 xquartz，实测 `Allow connections from clients` 选项非必须条件</span></span><br><span class="line">Run Applications &gt; Utilities &gt; XQuartz.app</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置 DISPLAY 环境变量</span></span><br><span class="line"><span class="built_in">export</span> DISPLAY=:0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 没有使用 xquartz 中 terminal 的话不会自动设置 DISPLAY 环境变量，可能会出现以下错误</span></span><br><span class="line">[root@VM-2-11-centos ~]<span class="comment"># firefox</span></span><br><span class="line">Failed to open connection to <span class="string">"session"</span> message bus: Unable to autolaunch a dbus-daemon without a <span class="variable">$DISPLAY</span> <span class="keyword">for</span> X11</span><br><span class="line">Running without a11y support!</span><br><span class="line">Error: no DISPLAY environment variable specified</span><br><span class="line"></span><br><span class="line"><span class="comment"># ssh 添加 - Y flag 登录远程主机</span></span><br><span class="line">ssh -Y user@host</span><br><span class="line"></span><br><span class="line"><span class="comment"># 登录成功后可能出现以下错误，安装 xauth 即可解决</span></span><br><span class="line">ssh -Y root@192.168.117.148</span><br><span class="line">X11 forwarding request failed on channel 0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 远程主机安装 xauth，以 centos 为例，使用 xclock 可以测试图形化效果</span></span><br><span class="line">yum install -y xauth xclock</span><br><span class="line">xclock</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果需要浏览器支持安装 firefox 或者 chrome 即可</span></span><br><span class="line">yum install firefox</span><br><span class="line">firefox</span><br><span class="line"></span><br><span class="line">yum install https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm</span><br><span class="line">/usr/bin/google-chrome-stable %U --no-sandbox</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201120142156.png" alt></p>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20201120143321.png" alt></p>
+<h3 id="Steps"><a href="#Steps" class="headerlink" title="Steps"></a>Steps</h3><ol>
+<li>Install <code>Xquartz</code> to get X11 support on MacOS. You can google <code>Xquartz</code> and download it from its official site, or install using HomeBrew.</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew cask install xquartz</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li><p>Launch <code>Xquartz</code>. Go to <code>Preference</code> -&gt; <code>Security</code>, click the box <code>Allow connections from clients</code>. <strong><em>NOTE</em></strong>: You have to lauch <code>Xquartz</code> with <code>Allow connections from clients</code> enable everytime you want to <code>ssh</code> to remote server with X11 forwarding support. </p>
+</li>
+<li><p>Lauch <code>terminal</code> or <code>iterm</code>. Add environment <code>DISPLAY</code>.</p>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> to add an environment entry only working on current terminal, use `<span class="built_in">export</span>`</span></span><br><span class="line">export DISPLAY=:0</span><br><span class="line"><span class="meta">#</span><span class="bash"> to add an environment entry working on every terminal,</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> append `<span class="built_in">export</span> DISPLAY=:0` to `.bashrc` or `.zshrc` <span class="keyword">in</span> <span class="keyword">case</span> you use zsh.</span></span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>Lauch <code>terminal</code> or <code>iterm</code>, use flag <code>-Y</code> instead of <code>-X</code> with <code>ssh</code>.</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -Y user@address</span><br></pre></td></tr></table></figure>
+<h3 id="FAQ"><a href="#FAQ" class="headerlink" title="FAQ"></a>FAQ</h3><ol>
+<li>Why do I need to install <code>Xquartz</code>?</li>
+</ol>
+<p>From <a href="https://stackoverflow.com/a/50182736/6769366" target="_blank" rel="noopener">https://stackoverflow.com/a/50182736/6769366</a></p>
+<blockquote>
+<p>XQuartz is standard. It used to come bundled with the OS, but Apple removed it back around Mavericks.</p>
+</blockquote>
+<ol start="2">
+<li>Why do I have to add environment <code>DISPLAY</code>?</li>
+</ol>
+<p>Please see <a href="https://askubuntu.com/a/432257/745885" target="_blank" rel="noopener">https://askubuntu.com/a/432257/745885</a></p>
+<ol start="3">
+<li>Why do I have to use <code>-Y</code> instead of <code>-X</code>?</li>
+</ol>
+<p>I got the following error when trying to run a python script which draws some curves using <code>matplotlib</code>:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">X Error of failed request:  BadAccess (attempt to access private resource denied)</span><br><span class="line">Major opcode of failed request:  18 (X_ChangeProperty)</span><br><span class="line">Serial number of failed request:  12</span><br><span class="line">Current serial number in output stream:  15</span><br></pre></td></tr></table></figure>
+<p>This problem is sovled when using <code>-Y</code> instead of <code>-X</code>.<br>Haven’t got enough time to find exact explanation, just post a link for those who are curious:</p>
+<p><a href="https://stackoverflow.com/q/39622173/6769366" target="_blank" rel="noopener">Can’t run “ssh -X” on MacOS Sierra</a></p>
+<ol start="4">
+<li>How to fix <code>X11 forwarding request failed on channel 0</code>?</li>
+</ol>
+<p>Install X authority file utility</p>
+<p><code>sudo yum install xauth</code></p>
+<p><a href="https://unix.stackexchange.com/questions/111519/ssh-returns-message-x11-forwarding-request-failed-on-channel-1" target="_blank" rel="noopener">ssh returns message “X11 forwarding request failed on channel 0”</a></p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://gist.github.com/fengyuentau/7c43c06fb563752b6947affaf4677f2a" target="_blank" rel="noopener">Enable X11 forward to load images from remote server on MacOS Mojave</a></p>
+<p><a href="https://www.cnblogs.com/yuanqiangfei/p/11612815.html" target="_blank" rel="noopener">linux 服务器通过 X11 实现图形化界面显示</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/x11/" data-title="macOS 使用 XQuartz 支持 X11 实现 Linux 图形化界面显示 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/terraform/" title="Terraform 学习路径">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Terraform 学习路径</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/loki/"  title="Grafana Loki 开源日志聚合系统代替 ELK 或 EFK">
+ <strong>下一篇：</strong><br/> 
+ <span>Grafana Loki 开源日志聚合系统代替 ELK 或 EFK
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#X11-介绍"><span class="toc-number">3.</span> <span class="toc-text">X11 介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#X-协议"><span class="toc-number">3.1.</span> <span class="toc-text">X 协议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#X11-Forwarding"><span class="toc-number">3.2.</span> <span class="toc-text">X11 Forwarding</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#macOS-实现-X11-图形化界面显示"><span class="toc-number">4.</span> <span class="toc-text">macOS 实现 X11 图形化界面显示</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Steps"><span class="toc-number">4.1.</span> <span class="toc-text">Steps</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#FAQ"><span class="toc-number">4.2.</span> <span class="toc-text">FAQ</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">5.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>185</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>18</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

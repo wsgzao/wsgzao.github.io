@@ -1,0 +1,559 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>macOS Mojave 降级安装 MySQL 5.7 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="macOS Mojave 降级安装 MySQL 5.7">
+<meta property="og:type" content="article">
+<meta property="og:title" content="macOS Mojave 降级安装 MySQL 5.7">
+<meta property="og:url" content="https://wsgzao.github.io/post/macos-mysql/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="macOS Mojave 降级安装 MySQL 5.7">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-12-18T09:06:02.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="macOS Mojave 降级安装 MySQL 5.7">
+<meta name="twitter:description" content="macOS Mojave 降级安装 MySQL 5.7">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/macos-mysql/" title="macOS Mojave 降级安装 MySQL 5.7" itemprop="url">macOS Mojave 降级安装 MySQL 5.7</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2018-12-17T06:59:49.000Z" itemprop="datePublished"> 发表于 2018-12-17</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#正常安装"><span class="toc-number">3.</span> <span class="toc-text">正常安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#卸载现有版本"><span class="toc-number">4.</span> <span class="toc-text">卸载现有版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装-MySQL-指定版本"><span class="toc-number">5.</span> <span class="toc-text">安装 MySQL 指定版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装-mysqldb"><span class="toc-number">6.</span> <span class="toc-text">安装 mysqldb</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>自从 macOS 升级至 Mojave 后小问题不断，现在使用 Homebrew 安装 MySQL 默认也是 8.0 版本，和 Python 类似我们依赖的组件可能还不支持高版本，新版本的某些更新和调整导致比如 Sequel Pro 和 mysqldb 不可用。当然我们也可以使用官方的 MySQLWorkbench，之前介绍了如何在 macOS 下安装多版本 Python，现在继续分享 macOS 如何降级 MySQL。</p>
+<blockquote>
+<p>macOS Mojave 降级安装 MySQL 5.7</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018 年 12 月 17 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/macos-mysql/">https://wsgzao.github.io/post/macos-mysql/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<p>Install MySQL 5.7 on macOS Mojave - <a href="https://medium.com/@at0dd/install-mysql-5-7-on-mac-os-mojave-cd07ec936034" target="_blank" rel="noopener">https://medium.com/@at0dd/install-mysql-5-7-on-mac-os-mojave-cd07ec936034</a></p>
+<hr>
+<h2 id="正常安装"><a href="#正常安装" class="headerlink" title="正常安装"></a>正常安装</h2><blockquote>
+<p>默认新版本是 MySQL 8.0</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">brew update</span><br><span class="line">brew install mysql</span><br><span class="line"></span><br><span class="line">We<span class="string">'ve installed your MySQL database without a root password. To secure it run:</span></span><br><span class="line"><span class="string">    mysql_secure_installation</span></span><br><span class="line"><span class="string">MySQL is configured to only allow connections from localhost by default</span></span><br><span class="line"><span class="string">To connect run:</span></span><br><span class="line"><span class="string">    mysql -uroot</span></span><br><span class="line"><span class="string">To have launchd start mysql now and restart at login:</span></span><br><span class="line"><span class="string">  brew services start mysql</span></span><br><span class="line"><span class="string">Or, if you don'</span>t want/need a background service you can just run:</span><br><span class="line">  mysql.server start</span><br></pre></td></tr></table></figure>
+<h2 id="卸载现有版本"><a href="#卸载现有版本" class="headerlink" title="卸载现有版本"></a>卸载现有版本</h2><blockquote>
+<p>无论是官方 dmg 还是 brew 都记得先备份重要数据后再清理</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 正常关闭并删除 MySQL</span></span><br><span class="line">mysql.server stop</span><br><span class="line">brew services stop mysql</span><br><span class="line">brew remove mysql</span><br><span class="line"></span><br><span class="line"><span class="comment"># 无法正常删除 MySQL</span></span><br><span class="line">ps -ax | grep mysql</span><br><span class="line">stop and <span class="built_in">kill</span> any MySQL processes</span><br><span class="line">brew remove mysql</span><br><span class="line">brew cleanup</span><br><span class="line">sudo rm /usr/<span class="built_in">local</span>/mysql</span><br><span class="line">sudo rm -rf /usr/<span class="built_in">local</span>/var/mysql</span><br><span class="line">sudo rm -rf /usr/<span class="built_in">local</span>/mysql*</span><br></pre></td></tr></table></figure>
+<h2 id="安装-MySQL-指定版本"><a href="#安装-MySQL-指定版本" class="headerlink" title="安装 MySQL 指定版本"></a>安装 MySQL 指定版本</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 MySQL 5.7</span></span><br><span class="line">brew install mysql@5.7</span><br><span class="line">brew link --force mysql@5.7</span><br><span class="line"></span><br><span class="line">We<span class="string">'ve installed your MySQL database without a root password. To secure it run:</span></span><br><span class="line"><span class="string">    mysql_secure_installation</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">MySQL is configured to only allow connections from localhost by default</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">To connect run:</span></span><br><span class="line"><span class="string">    mysql -uroot</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">mysql@5.7 is keg-only, which means it was not symlinked into /usr/local,</span></span><br><span class="line"><span class="string">because this is an alternate version of another formula.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">If you need to have mysql@5.7 first in your PATH run:</span></span><br><span class="line"><span class="string">  echo'</span><span class="built_in">export</span> PATH=<span class="string">"/usr/local/opt/mysql@5.7/bin:<span class="variable">$PATH</span>"</span><span class="string">'&gt;&gt; ~/.zshrc</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">For compilers to find mysql@5.7 you may need to set:</span></span><br><span class="line"><span class="string">  export LDFLAGS="-L/usr/local/opt/mysql@5.7/lib"</span></span><br><span class="line"><span class="string">  export CPPFLAGS="-I/usr/local/opt/mysql@5.7/include"</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">For pkg-config to find mysql@5.7 you may need to set:</span></span><br><span class="line"><span class="string">  export PKG_CONFIG_PATH="/usr/local/opt/mysql@5.7/lib/pkgconfig"</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">To have launchd start mysql@5.7 now and restart at login:</span></span><br><span class="line"><span class="string">  brew services start mysql@5.7</span></span><br><span class="line"><span class="string">Or, if you don'</span>t want/need a background service you can just run:</span><br><span class="line">  /usr/<span class="built_in">local</span>/opt/mysql@5.7/bin/mysql.server start</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开机自启动 </span></span><br><span class="line">brew services restart mysql@5.7</span><br><span class="line"><span class="comment"># 设置环境变量 </span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">'export PATH="/usr/local/opt/mysql@5.7/bin:$PATH"'</span> &gt;&gt; ~/.zshrc</span><br><span class="line"><span class="comment"># 手动启动和关闭 </span></span><br><span class="line">/usr/<span class="built_in">local</span>/opt/mysql@5.7/bin/mysql.server start</span><br><span class="line">/usr/<span class="built_in">local</span>/opt/mysql@5.7/bin/mysql.server stop</span><br></pre></td></tr></table></figure>
+<h2 id="安装-mysqldb"><a href="#安装-mysqldb" class="headerlink" title="安装 mysqldb"></a>安装 mysqldb</h2><p>Python 中最连接 Mysql 常用的驱动是:</p>
+<ul>
+<li>mysql-python ：mysql 的 C 语言的驱动</li>
+<li>mysql-connector：msql 官方的驱动</li>
+<li>pymysql：python 语言的驱动</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用 MySQLdb ，但是提示 importerror no module named mysqldb</span></span><br><span class="line">brew install mysql-connector-c</span><br><span class="line">pip install mysql-python</span><br><span class="line"></span><br><span class="line"><span class="comment"># 可能会出现以下错误，按照提示做即可 </span></span><br><span class="line">Error: Cannot install mysql because conflicting formulae are installed.</span><br><span class="line">  mysql-connector-c: because both install MySQL client libraries</span><br><span class="line"></span><br><span class="line">Please `brew unlink mysql-connector-c` before continuing.</span><br><span class="line"></span><br><span class="line">Unlinking removes a formula<span class="string">'s symlinks from /usr/local. You can</span></span><br><span class="line"><span class="string">link the formula again after the install finishes. You can --force this</span></span><br><span class="line"><span class="string">install, but the build may fail or cause obscure side-effects in the</span></span><br><span class="line"><span class="string">resulting software.</span></span><br></pre></td></tr></table></figure>  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/macos-mysql/" data-title="macOS Mojave 降级安装 MySQL 5.7 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/autopep8/" title="PyCharm 使用 autopep8 按 PEP8 风格自动排版 Python 代码">
+  <strong>上一篇：</strong><br/>
+  <span>
+  PyCharm 使用 autopep8 按 PEP8 风格自动排版 Python 代码</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/macos-pyenv/"  title="macOS 使用 pyenv 安装和管理多个 Python 版本">
+ <strong>下一篇：</strong><br/> 
+ <span>macOS 使用 pyenv 安装和管理多个 Python 版本
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#正常安装"><span class="toc-number">3.</span> <span class="toc-text">正常安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#卸载现有版本"><span class="toc-number">4.</span> <span class="toc-text">卸载现有版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装-MySQL-指定版本"><span class="toc-number">5.</span> <span class="toc-text">安装 MySQL 指定版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装-mysqldb"><span class="toc-number">6.</span> <span class="toc-text">安装 mysqldb</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>185</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>18</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

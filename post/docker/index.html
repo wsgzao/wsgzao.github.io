@@ -1,0 +1,585 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>Docker 从入门到实践 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="Docker从入门到实践">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker 从入门到实践">
+<meta property="og:url" content="https://wsgzao.github.io/post/docker/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="Docker从入门到实践">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-01-21T08:32:16.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Docker 从入门到实践">
+<meta name="twitter:description" content="Docker从入门到实践">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/docker/" title="Docker 从入门到实践" itemprop="url">Docker 从入门到实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2018-10-25T06:59:49.000Z" itemprop="datePublished"> 发表于 2018-10-25</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker-入门"><span class="toc-number">3.</span> <span class="toc-text">Docker 入门</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#环境说明"><span class="toc-number">4.</span> <span class="toc-text">环境说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#部署-Docker"><span class="toc-number">5.</span> <span class="toc-text">部署 Docker</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用阿里云加速器加快获取-docker-官方的镜像"><span class="toc-number">5.1.</span> <span class="toc-text">使用阿里云加速器加快获取 docker 官方的镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装／升级你的-Docker-客户端"><span class="toc-number">5.2.</span> <span class="toc-text">安装／升级你的 Docker 客户端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#如何配置镜像加速器"><span class="toc-number">5.3.</span> <span class="toc-text">如何配置镜像加速器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装-Docker"><span class="toc-number">5.4.</span> <span class="toc-text">安装 Docker</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试-Docker-服务正常"><span class="toc-number">5.5.</span> <span class="toc-text">测试 Docker 服务正常</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装-docker-compose"><span class="toc-number">5.6.</span> <span class="toc-text">安装 docker-compose</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#离线安装-Docker"><span class="toc-number">6.</span> <span class="toc-text">离线安装 Docker</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#下载离线安装包"><span class="toc-number">6.1.</span> <span class="toc-text">下载离线安装包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构建本地-yum-源"><span class="toc-number">6.2.</span> <span class="toc-text">构建本地 yum 源</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker-常用命令"><span class="toc-number">7.</span> <span class="toc-text">Docker 常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker-Compose"><span class="toc-number">8.</span> <span class="toc-text">Docker Compose</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#查看版本"><span class="toc-number"></span> <span class="toc-text">查看版本</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#启动所有服务"><span class="toc-number"></span> <span class="toc-text">启动所有服务</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#关闭所有服务"><span class="toc-number"></span> <span class="toc-text">关闭所有服务</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#参考阅读"><span class="toc-number">1.</span> <span class="toc-text">参考阅读</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>把 docker-ce 安装和使用部分先独立抽取出来，关于 Docker 更加深入的理解可以参考文章开头推荐的文章</p>
+<blockquote>
+<p>Docker 从入门到实践</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018 年 10 月 25 日 - 更新大量 Docker 实践操作和精选的 Docker 入门文章<br>2018 年 05 月 21 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/docker/">https://wsgzao.github.io/post/docker/</a></p>
+<p><strong> 扩展阅读 </strong></p>
+<p>Docker - <a href="https://www.docker.com/" target="_blank" rel="noopener">https://www.docker.com/</a></p>
+<hr>
+<h2 id="Docker-入门"><a href="#Docker-入门" class="headerlink" title="Docker 入门"></a>Docker 入门</h2><p><a href="https://betacat.online/posts/2019-04-20/docker-in-one-day/" target="_blank" rel="noopener">Docker 一篇通</a></p>
+<p>Docker 入门教程<br><a href="http://www.ruanyifeng.com/blog/2018/02/docker-tutorial.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2018/02/docker-tutorial.html</a></p>
+<p>Docker 微服务教程<br><a href="http://www.ruanyifeng.com/blog/2018/02/docker-wordpress-tutorial.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2018/02/docker-wordpress-tutorial.html</a></p>
+<p>Nginx 容器教程<br><a href="http://www.ruanyifeng.com/blog/2018/02/nginx-docker.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2018/02/nginx-docker.html</a></p>
+<p>DOCKER 从入门到实践<br><a href="https://imnerd.org/docker-in-action.html" target="_blank" rel="noopener">https://imnerd.org/docker-in-action.html</a></p>
+<p>Docker — 从入门到实践</p>
+<h2 id="环境说明"><a href="#环境说明" class="headerlink" title="环境说明"></a>环境说明</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 操作系统版本 </span></span><br><span class="line">cat /etc/redhat-release</span><br><span class="line">CentOS Linux release 7.4.1708 (Core)</span><br><span class="line"><span class="comment"># 操作系统内核 </span></span><br><span class="line">uname -r</span><br><span class="line">3.10.0-693.21.1.el7.x86_64</span><br><span class="line"><span class="comment"># 硬件架构 </span></span><br><span class="line">uname -m</span><br><span class="line">x86_64</span><br><span class="line"><span class="comment"># docker 版本 </span></span><br><span class="line">docker version</span><br><span class="line"></span><br><span class="line">Client:</span><br><span class="line"> Version:	18.03.0-ce</span><br><span class="line"> API version:	1.37</span><br><span class="line"> Go version:	go1.9.4</span><br><span class="line"> Git commit:	0520e24</span><br><span class="line"> Built:	Wed Mar 21 23:09:15 2018</span><br><span class="line"> OS/Arch:	linux/amd64</span><br><span class="line"> Experimental:	<span class="literal">false</span></span><br><span class="line"> Orchestrator:	swarm</span><br><span class="line"></span><br><span class="line">Server:</span><br><span class="line"> Engine:</span><br><span class="line">  Version:	18.03.0-ce</span><br><span class="line">  API version:	1.37 (minimum version 1.12)</span><br><span class="line">  Go version:	go1.9.4</span><br><span class="line">  Git commit:	0520e24</span><br><span class="line">  Built:	Wed Mar 21 23:13:03 2018</span><br><span class="line">  OS/Arch:	linux/amd64</span><br><span class="line">  Experimental:	<span class="literal">false</span></span><br></pre></td></tr></table></figure>
+<h2 id="部署-Docker"><a href="#部署-Docker" class="headerlink" title="部署 Docker"></a>部署 Docker</h2><h3 id="使用阿里云加速器加快获取-docker-官方的镜像"><a href="#使用阿里云加速器加快获取-docker-官方的镜像" class="headerlink" title="使用阿里云加速器加快获取 docker 官方的镜像"></a>使用阿里云加速器加快获取 docker 官方的镜像</h3><p>步骤一：如果没有阿里云账号，需要注册阿里云开发账号</p>
+<p><a href="https://dev.aliyun.com/" target="_blank" rel="noopener">https://dev.aliyun.com/</a></p>
+<p>步骤二：进入加速器页面获取加速信息</p>
+<p><a href="https://cr.console.aliyun.com/#/accelerator" target="_blank" rel="noopener">https://cr.console.aliyun.com/#/accelerator</a></p>
+<h3 id="安装／升级你的-Docker-客户端"><a href="#安装／升级你的-Docker-客户端" class="headerlink" title="安装／升级你的 Docker 客户端"></a>安装／升级你的 Docker 客户端</h3><p>推荐安装 1.10.0 以上版本的 Docker 客户端，参考文档 docker-ce<br><a href="https://yq.aliyun.com/articles/110806?spm=5176.8351553.0.0.6a721991ZTvV8S" target="_blank" rel="noopener">https://yq.aliyun.com/articles/110806?spm=5176.8351553.0.0.6a721991ZTvV8S</a></p>
+<blockquote>
+<p>Docker CE 镜像源站</p>
+</blockquote>
+<p>使用官方安装脚本自动安装</p>
+<pre><code>curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+</code></pre><p>CentOS 7 (使用 yum 进行安装)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># step 1: 安装必要的一些系统工具 </span></span><br><span class="line">sudo yum install -y yum-utils device-mapper-persistent-data lvm2</span><br><span class="line"><span class="comment"># Step 2: 添加软件源信息 </span></span><br><span class="line">sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</span><br><span class="line"><span class="comment"># Step 3: 更新并安装 Docker-CE</span></span><br><span class="line">sudo yum makecache fast</span><br><span class="line">sudo yum -y install docker-ce</span><br><span class="line"><span class="comment"># Step 4: 开启 Docker 服务 </span></span><br><span class="line">sudo service docker start</span><br><span class="line"></span><br><span class="line"><span class="comment"># 注意：</span></span><br><span class="line"><span class="comment"># 官方软件源默认启用了最新的软件，您可以通过编辑软件源的方式获取各个版本的软件包。例如官方并没有将测试版本的软件源置为可用，你可以通过以下方式开启。同理可以开启各种测试版本等。</span></span><br><span class="line"><span class="comment"># vim /etc/yum.repos.d/docker-ce.repo</span></span><br><span class="line"><span class="comment">#   将 [docker-ce-test] 下方的 enabled=0 修改为 enabled=1</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># 安装指定版本的 Docker-CE:</span></span><br><span class="line"><span class="comment"># Step 1: 查找 Docker-CE 的版本:</span></span><br><span class="line"><span class="comment"># yum list docker-ce.x86_64 --showduplicates | sort -r</span></span><br><span class="line"><span class="comment">#   Loading mirror speeds from cached hostfile</span></span><br><span class="line"><span class="comment">#   Loaded plugins: branch, fastestmirror, langpacks</span></span><br><span class="line"><span class="comment">#   docker-ce.x86_64            17.03.1.ce-1.el7.centos            docker-ce-stable</span></span><br><span class="line"><span class="comment">#   docker-ce.x86_64            17.03.1.ce-1.el7.centos            @docker-ce-stable</span></span><br><span class="line"><span class="comment">#   docker-ce.x86_64            17.03.0.ce-1.el7.centos            docker-ce-stable</span></span><br><span class="line"><span class="comment">#   Available Packages</span></span><br><span class="line"><span class="comment"># Step2 : 安装指定版本的 Docker-CE: (VERSION 例如上面的 17.03.0.ce.1-1.el7.centos)</span></span><br><span class="line"><span class="comment"># sudo yum -y install docker-ce-[VERSION]</span></span><br></pre></td></tr></table></figure>
+<h3 id="如何配置镜像加速器"><a href="#如何配置镜像加速器" class="headerlink" title="如何配置镜像加速器"></a>如何配置镜像加速器</h3><p>针对 Docker 客户端版本大于 1.10.0 的用户</p>
+<p>您可以通过修改 daemon 配置文件 / etc/docker/daemon.json 来使用加速器：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir -p /etc/docker</span><br><span class="line">sudo tee /etc/docker/daemon.json &lt;&lt;-<span class="string">'EOF'</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"registry-mirrors"</span>: [<span class="string">"https://ffia7t7n.mirror.aliyuncs.com"</span>]</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure></p>
+<h3 id="安装-Docker"><a href="#安装-Docker" class="headerlink" title="安装 Docker"></a>安装 Docker</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用阿里云作加速 </span></span><br><span class="line"><span class="built_in">cd</span> /etc/yum.repos.d/ &amp;&amp; rm -f *.repo</span><br><span class="line">wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo</span><br><span class="line">wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo</span><br><span class="line">yum remove -y docker docker-common docker-selinux docker-engine</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 docker 官方源，国内下载较慢建议切换为阿里云加速 </span></span><br><span class="line">yum install -y yum-utils device-mapper-persistent-data lvm2</span><br><span class="line">yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</span><br><span class="line">yum-config-manager --<span class="built_in">enable</span> docker-ce-edge</span><br><span class="line">yum list docker-ce --showduplicates | sort -r |grep stable</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 docker，可以选择制定版本 </span></span><br><span class="line">yum install -y docker-ce</span><br><span class="line">systemctl start docker</span><br><span class="line">systemctl <span class="built_in">enable</span> docker</span><br><span class="line">mkdir -p /etc/docker</span><br><span class="line">tee /etc/docker/daemon.json &lt;&lt;-<span class="string">'EOF'</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"registry-mirrors"</span>: [<span class="string">"https://ffia7t7n.mirror.aliyuncs.com"</span>]                <span class="comment"># 为了后期方便添加阿里云的加速镜像站 </span></span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl restart docker</span><br></pre></td></tr></table></figure>
+<h3 id="测试-Docker-服务正常"><a href="#测试-Docker-服务正常" class="headerlink" title="测试 Docker 服务正常"></a>测试 Docker 服务正常</h3><p>例行跑个 hello world 测试下 Docker 服务是否正常</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 测试 docker</span></span><br><span class="line">docker run hello-world</span><br><span class="line">Unable to find image <span class="string">'hello-world:latest'</span> locally</span><br><span class="line">latest: Pulling from library/hello-world</span><br><span class="line">ca4f61b1923c: Pull complete </span><br><span class="line">Digest: sha256:97ce6fa4b6cdc0790cda65fe7290b74cfebd9fa0c9b8c38e979330d547d22ce1</span><br><span class="line">Status: Downloaded newer image <span class="keyword">for</span> hello-world:latest</span><br><span class="line"></span><br><span class="line">Hello from Docker!</span><br><span class="line">This message shows that your installation appears to be working correctly.</span><br><span class="line"></span><br><span class="line">To generate this message, Docker took the following steps:</span><br><span class="line"> 1. The Docker client contacted the Docker daemon.</span><br><span class="line"> 2. The Docker daemon pulled the <span class="string">"hello-world"</span> image from the Docker Hub.</span><br><span class="line">    (amd64)</span><br><span class="line"> 3. The Docker daemon created a new container from that image <span class="built_in">which</span> runs the</span><br><span class="line">    executable that produces the output you are currently reading.</span><br><span class="line"> 4. The Docker daemon streamed that output to the Docker client, <span class="built_in">which</span> sent it</span><br><span class="line">    to your terminal.</span><br><span class="line"></span><br><span class="line">To try something more ambitious, you can run an Ubuntu container with:</span><br><span class="line"> $ docker run -it ubuntu bash</span><br><span class="line"></span><br><span class="line">Share images, automate workflows, and more with a free Docker ID:</span><br><span class="line"> https://cloud.docker.com/</span><br><span class="line"></span><br><span class="line">For more examples and ideas, visit:</span><br><span class="line"> https://docs.docker.com/engine/userguide/</span><br></pre></td></tr></table></figure>
+<h3 id="安装-docker-compose"><a href="#安装-docker-compose" class="headerlink" title="安装 docker-compose"></a>安装 docker-compose</h3><pre><code>yum install -y docker-compose
+</code></pre><h2 id="离线安装-Docker"><a href="#离线安装-Docker" class="headerlink" title="离线安装 Docker"></a>离线安装 Docker</h2><p>先在一台可以联网的相同操作系统环境下下载离线安装包，然后内网服务器构建本地 yum 源，最后安装 docker</p>
+<h3 id="下载离线安装包"><a href="#下载离线安装包" class="headerlink" title="下载离线安装包"></a>下载离线安装包</h3><blockquote>
+<p>在可以联网的机器上下载 rpm 包</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 yum-plugin-downloadonly 插件 </span></span><br><span class="line">yum install -y yum-plugin-downloadonly</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载 createrepo 相关 rpm 到指定目录，构建本地源之前需要在本地安装 createrepo，用于构建本地源 </span></span><br><span class="line">mkdir -p /tmp/repo/createrepo/</span><br><span class="line">yum install --downloadonly --downloaddir=/tmp/repo/createrepo/ createrepo</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载 docker 相关 rpm 到指定目录 </span></span><br><span class="line">mkdir -p /tmp/repo/docker-ce/</span><br><span class="line">yum install --downloadonly --downloaddir=/tmp/repo/docker-ce/ docker-ce</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载 docker-compose 相关 rpm 到指定目录 </span></span><br><span class="line">mkdir -p /tmp/repo/docker-compose/</span><br><span class="line">yum install --downloadonly --downloaddir=/tmp/repo/docker-compose/ docker-compose</span><br></pre></td></tr></table></figure>
+<h3 id="构建本地-yum-源"><a href="#构建本地-yum-源" class="headerlink" title="构建本地 yum 源"></a>构建本地 yum 源</h3><p>将 docker 的 rpm 包拷贝到需要安装 docker 的局域网集群上面，例如：<br>/tmp/repo/docker-ce/</p>
+<p>将 docker 的 rpm 包拷贝到需要安装 docker 的局域网集群上面，例如：<br>/tmp/repo/createrepo/</p>
+<p>构建本地 yum 源</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 createrepo</span></span><br><span class="line">rpm -ivh /tmp/repo/createrepo/*.rpm</span><br><span class="line"><span class="comment"># 备份 / etc/yum.repos.d 目录下文件 </span></span><br><span class="line">ls /etc/yum.repos.d | xargs -I&#123;&#125; mv /etc/yum.repos.d/&#123;&#125; /etc/yum.repos.d/&#123;&#125;.bk</span><br><span class="line"><span class="comment"># 创建新的 *.repo 文件，如：docker.repo，进行配置 </span></span><br><span class="line">vim docker.repo</span><br><span class="line">[<span class="built_in">local</span>-yum]</span><br><span class="line">name=<span class="built_in">local</span>-yum</span><br><span class="line">baseurl=file:////tmp/repo/docker-ce/</span><br><span class="line">enabled=1</span><br><span class="line">gpgcheck=0</span><br><span class="line"><span class="comment"># 设置本地源 </span></span><br><span class="line">createrepo -d /tmp/repo/docker-ce/</span><br><span class="line"><span class="comment"># 查看看是否能看到自己构建的本地源 </span></span><br><span class="line">yum repolist</span><br><span class="line"><span class="comment"># 清除缓存 </span></span><br><span class="line">yum clean all</span><br><span class="line"><span class="comment"># 创建缓存 </span></span><br><span class="line">yum makecache</span><br><span class="line"><span class="comment"># 看本地源是否配置成功，通过 yum list 看是否输出了新的 rpm 包，如果能查询到，证明配置成功 </span></span><br><span class="line">yum list | grep docker</span><br><span class="line"><span class="comment"># 离线安装 docker</span></span><br><span class="line">yum install docker -y</span><br></pre></td></tr></table></figure>
+<h2 id="Docker-常用命令"><a href="#Docker-常用命令" class="headerlink" title="Docker 常用命令"></a>Docker 常用命令</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动 docker 服务 </span></span><br><span class="line">systemctl start docker</span><br><span class="line">systemctl <span class="built_in">enable</span> docker</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前系统 Docker 信息 </span></span><br><span class="line">docker info</span><br><span class="line"></span><br><span class="line"><span class="comment"># 拉取 docker 镜像 </span></span><br><span class="line">docker pull image_name</span><br><span class="line"><span class="comment"># 从 Docker hub 上下载某个镜像 </span></span><br><span class="line">docker pull centos:latest</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看宿主机上的镜像，Docker 镜像保存在 / var/lib/docker 目录下:</span></span><br><span class="line">docker images</span><br><span class="line"></span><br><span class="line">REPOSITORY                      TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">mysql                           5.7                 1b30b36ae96a        8 days ago          372MB</span><br><span class="line">zabbix/zabbix-web-nginx-mysql   centos-4.0-latest   8be5f91b2fa1        3 weeks ago         415MB</span><br><span class="line">zabbix/zabbix-server-mysql      centos-4.0-latest   8e5becf45c4e        3 weeks ago         326MB</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除镜像 </span></span><br><span class="line">docker rmi image_name/image_id</span><br><span class="line">docker rmi zabbix/zabbix-web-nginx-mysql:centos-4.0-latest 或者 docker rmi 8be5f91b2fa1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前有哪些容器正在运行 </span></span><br><span class="line">docker ps</span><br><span class="line"><span class="comment"># 查看所有容器 </span></span><br><span class="line">docker ps -a</span><br><span class="line"></span><br><span class="line">CONTAINER ID        IMAGE                                             COMMAND                  CREATED             STATUS                       PORTS                           NAMES</span><br><span class="line">b30307ad65be        zabbix/zabbix-web-nginx-mysql:centos-4.0-latest   <span class="string">"docker-entrypoint.sh"</span>   7 days ago          Exited (255) 8 minutes ago   443/tcp, 0.0.0.0:8080-&gt;80/tcp   zabbix-web-nginx-mysql</span><br><span class="line">0ad822cd52b7        zabbix/zabbix-server-mysql:centos-4.0-latest      <span class="string">"docker-entrypoint.sh"</span>   7 days ago          Exited (255) 8 minutes ago   0.0.0.0:10051-&gt;10051/tcp        zabbix-server-mysql</span><br><span class="line">d01c89a112f7        mysql:5.7                                         <span class="string">"docker-entrypoint.s…"</span>   7 days ago          Exited (255) 8 minutes ago   3306/tcp, 33060/tcp             mysql-server</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动、停止、重启容器命令：</span></span><br><span class="line">docker start container_name/container_id</span><br><span class="line">docker stop container_name/container_id</span><br><span class="line">docker restart container_name/container_id</span><br><span class="line"></span><br><span class="line"><span class="comment"># 后台启动一个容器后，如果想进入到这个容器，可以使用 attach</span></span><br><span class="line">docker attach container_name/container_id</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除容器 </span></span><br><span class="line">docker rm container_name/container_id</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看容器日志 </span></span><br><span class="line">docker logs -f container_name/container_id</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看容器 IP 地址 </span></span><br><span class="line">docker inspect container_name/container_id</span><br><span class="line"></span><br><span class="line"><span class="comment"># 进入容器 </span></span><br><span class="line">docker <span class="built_in">exec</span> -it container_name/container_id bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从 Docker 容器与宿主机相互传输文件 </span></span><br><span class="line">[root@localhost tmp]<span class="comment"># docker cp --help</span></span><br><span class="line"></span><br><span class="line">Usage:	docker cp [OPTIONS] CONTAINER:SRC_PATH DEST_PATH|-</span><br><span class="line">	docker cp [OPTIONS] SRC_PATH|- CONTAINER:DEST_PATH</span><br><span class="line"></span><br><span class="line">Copy files/folders between a container and the <span class="built_in">local</span> filesystem</span><br><span class="line"></span><br><span class="line">docker cp zabbix_config.sql mysql-server:/tmp</span><br><span class="line">docker cp mysql-server:/tmp/zabbix_config.sql /tmp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量删除所有已经退出的容器 </span></span><br><span class="line">docker rm -v $(docker ps -aq -f status=exited)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># docker help</span></span><br><span class="line">[root@centos7lined1 wangao]<span class="comment"># docker help</span></span><br><span class="line"></span><br><span class="line">Usage:	docker [OPTIONS] COMMAND</span><br><span class="line"></span><br><span class="line">A self-sufficient runtime <span class="keyword">for</span> containers</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">      --config string      Location of client config files (default <span class="string">"/root/.docker"</span>)</span><br><span class="line">  -D, --debug              Enable debug mode</span><br><span class="line">  -H, --host list          Daemon socket(s) to connect to</span><br><span class="line">  -l, --<span class="built_in">log</span>-level string   Set the logging level (<span class="string">"debug"</span>|<span class="string">"info"</span>|<span class="string">"warn"</span>|<span class="string">"error"</span>|<span class="string">"fatal"</span>) (default <span class="string">"info"</span>)</span><br><span class="line">      --tls                Use TLS; implied by --tlsverify</span><br><span class="line">      --tlscacert string   Trust certs signed only by this CA (default <span class="string">"/root/.docker/ca.pem"</span>)</span><br><span class="line">      --tlscert string     Path to TLS certificate file (default <span class="string">"/root/.docker/cert.pem"</span>)</span><br><span class="line">      --tlskey string      Path to TLS key file (default <span class="string">"/root/.docker/key.pem"</span>)</span><br><span class="line">      --tlsverify          Use TLS and verify the remote</span><br><span class="line">  -v, --version            Print version information and quit</span><br><span class="line"></span><br><span class="line">Management Commands:</span><br><span class="line">  config      Manage Docker configs</span><br><span class="line">  container   Manage containers</span><br><span class="line">  image       Manage images</span><br><span class="line">  network     Manage networks</span><br><span class="line">  node        Manage Swarm nodes</span><br><span class="line">  plugin      Manage plugins</span><br><span class="line">  secret      Manage Docker secrets</span><br><span class="line">  service     Manage services</span><br><span class="line">  stack       Manage Docker stacks</span><br><span class="line">  swarm       Manage Swarm</span><br><span class="line">  system      Manage Docker</span><br><span class="line">  trust       Manage trust on Docker images</span><br><span class="line">  volume      Manage volumes</span><br><span class="line"></span><br><span class="line">Commands:</span><br><span class="line">  attach      Attach <span class="built_in">local</span> standard input, output, and error streams to a running container</span><br><span class="line">  build       Build an image from a Dockerfile</span><br><span class="line">  commit      Create a new image from a container<span class="string">'s changes</span></span><br><span class="line"><span class="string">  cp          Copy files/folders between a container and the local filesystem</span></span><br><span class="line"><span class="string">  create      Create a new container</span></span><br><span class="line"><span class="string">  diff        Inspect changes to files or directories on a container'</span>s filesystem</span><br><span class="line">  events      Get real time events from the server</span><br><span class="line">  <span class="built_in">exec</span>        Run a <span class="built_in">command</span> <span class="keyword">in</span> a running container</span><br><span class="line">  <span class="built_in">export</span>      Export a container<span class="string">'s filesystem as a tar archive</span></span><br><span class="line"><span class="string">  history     Show the history of an image</span></span><br><span class="line"><span class="string">  images      List images</span></span><br><span class="line"><span class="string">  import      Import the contents from a tarball to create a filesystem image</span></span><br><span class="line"><span class="string">  info        Display system-wide information</span></span><br><span class="line"><span class="string">  inspect     Return low-level information on Docker objects</span></span><br><span class="line"><span class="string">  kill        Kill one or more running containers</span></span><br><span class="line"><span class="string">  load        Load an image from a tar archive or STDIN</span></span><br><span class="line"><span class="string">  login       Log in to a Docker registry</span></span><br><span class="line"><span class="string">  logout      Log out from a Docker registry</span></span><br><span class="line"><span class="string">  logs        Fetch the logs of a container</span></span><br><span class="line"><span class="string">  pause       Pause all processes within one or more containers</span></span><br><span class="line"><span class="string">  port        List port mappings or a specific mapping for the container</span></span><br><span class="line"><span class="string">  ps          List containers</span></span><br><span class="line"><span class="string">  pull        Pull an image or a repository from a registry</span></span><br><span class="line"><span class="string">  push        Push an image or a repository to a registry</span></span><br><span class="line"><span class="string">  rename      Rename a container</span></span><br><span class="line"><span class="string">  restart     Restart one or more containers</span></span><br><span class="line"><span class="string">  rm          Remove one or more containers</span></span><br><span class="line"><span class="string">  rmi         Remove one or more images</span></span><br><span class="line"><span class="string">  run         Run a command in a new container</span></span><br><span class="line"><span class="string">  save        Save one or more images to a tar archive (streamed to STDOUT by default)</span></span><br><span class="line"><span class="string">  search      Search the Docker Hub for images</span></span><br><span class="line"><span class="string">  start       Start one or more stopped containers</span></span><br><span class="line"><span class="string">  stats       Display a live stream of container(s) resource usage statistics</span></span><br><span class="line"><span class="string">  stop        Stop one or more running containers</span></span><br><span class="line"><span class="string">  tag         Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE</span></span><br><span class="line"><span class="string">  top         Display the running processes of a container</span></span><br><span class="line"><span class="string">  unpause     Unpause all processes within one or more containers</span></span><br><span class="line"><span class="string">  update      Update configuration of one or more containers</span></span><br><span class="line"><span class="string">  version     Show the Docker version information</span></span><br><span class="line"><span class="string">  wait        Block until one or more containers stop, then print their exit codes</span></span><br></pre></td></tr></table></figure>
+<h2 id="Docker-Compose"><a href="#Docker-Compose" class="headerlink" title="Docker Compose"></a>Docker Compose</h2><p>Compose 是 Docker 公司推出的一个工具软件，可以管理多个 Docker 容器组成一个应用。你需要定义一个 YAML 格式的配置文件 docker-compose.yml，写好多个容器之间的调用关系。然后，只要一个命令，就能同时启动 / 关闭这些容器。</p>
+<h1 id="查看版本"><a href="#查看版本" class="headerlink" title="查看版本"></a>查看版本</h1><p>docker-compose –version</p>
+<h1 id="启动所有服务"><a href="#启动所有服务" class="headerlink" title="启动所有服务"></a>启动所有服务</h1><p>docker-compose up</p>
+<h1 id="关闭所有服务"><a href="#关闭所有服务" class="headerlink" title="关闭所有服务"></a>关闭所有服务</h1><p>docker-compose stop</p>
+<h2 id="参考阅读"><a href="#参考阅读" class="headerlink" title="参考阅读"></a>参考阅读</h2><p>docker 命令详解 - <a href="https://github.com/KeKe-Li/docker-directive" target="_blank" rel="noopener">https://github.com/KeKe-Li/docker-directive</a></p>
+<p><a href="https://github.com/yeasy/docker_practice" target="_blank" rel="noopener">Docker — 从入门到实践</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/docker/" data-title="Docker 从入门到实践 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/zabbix-docker/" title="使用 Docker 安装 Zabbix 实践">
+  <strong>上一篇：</strong><br/>
+  <span>
+  使用 Docker 安装 Zabbix 实践</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/zabbix-alert-wechat/"  title="Zabbix 使用企业微信告警配置小结">
+ <strong>下一篇：</strong><br/> 
+ <span>Zabbix 使用企业微信告警配置小结
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker-入门"><span class="toc-number">3.</span> <span class="toc-text">Docker 入门</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#环境说明"><span class="toc-number">4.</span> <span class="toc-text">环境说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#部署-Docker"><span class="toc-number">5.</span> <span class="toc-text">部署 Docker</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用阿里云加速器加快获取-docker-官方的镜像"><span class="toc-number">5.1.</span> <span class="toc-text">使用阿里云加速器加快获取 docker 官方的镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装／升级你的-Docker-客户端"><span class="toc-number">5.2.</span> <span class="toc-text">安装／升级你的 Docker 客户端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#如何配置镜像加速器"><span class="toc-number">5.3.</span> <span class="toc-text">如何配置镜像加速器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装-Docker"><span class="toc-number">5.4.</span> <span class="toc-text">安装 Docker</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试-Docker-服务正常"><span class="toc-number">5.5.</span> <span class="toc-text">测试 Docker 服务正常</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装-docker-compose"><span class="toc-number">5.6.</span> <span class="toc-text">安装 docker-compose</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#离线安装-Docker"><span class="toc-number">6.</span> <span class="toc-text">离线安装 Docker</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#下载离线安装包"><span class="toc-number">6.1.</span> <span class="toc-text">下载离线安装包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构建本地-yum-源"><span class="toc-number">6.2.</span> <span class="toc-text">构建本地 yum 源</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker-常用命令"><span class="toc-number">7.</span> <span class="toc-text">Docker 常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker-Compose"><span class="toc-number">8.</span> <span class="toc-text">Docker Compose</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#查看版本"><span class="toc-number"></span> <span class="toc-text">查看版本</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#启动所有服务"><span class="toc-number"></span> <span class="toc-text">启动所有服务</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#关闭所有服务"><span class="toc-number"></span> <span class="toc-text">关闭所有服务</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#参考阅读"><span class="toc-number">1.</span> <span class="toc-text">参考阅读</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>185</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>18</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2021 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>
