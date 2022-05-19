@@ -1,0 +1,563 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>kubeconfig 多配置文件切换工具推荐 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="kubeconfig多配置文件切换工具推荐">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kubeconfig 多配置文件切换工具推荐">
+<meta property="og:url" content="https://wsgzao.github.io/post/kubeconfig/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="kubeconfig多配置文件切换工具推荐">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://asciinema.org/a/389595.svg">
+<meta property="og:image" content="https://github.com/lensapp/lens/raw/master/.github/screenshot.png">
+<meta property="og:updated_time" content="2022-05-19T03:19:40.588Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="kubeconfig 多配置文件切换工具推荐">
+<meta name="twitter:description" content="kubeconfig多配置文件切换工具推荐">
+<meta name="twitter:image" content="https://asciinema.org/a/389595.svg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/kubeconfig/" title="kubeconfig 多配置文件切换工具推荐" itemprop="url">kubeconfig 多配置文件切换工具推荐</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-18T02:59:49.000Z" itemprop="datePublished"> 发表于 2022-05-18</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装-kubectl"><span class="toc-number">3.</span> <span class="toc-text">安装 kubectl</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#kubeconfig"><span class="toc-number">4.</span> <span class="toc-text">kubeconfig</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#kubecm"><span class="toc-number">5.</span> <span class="toc-text">kubecm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#k8slens"><span class="toc-number">6.</span> <span class="toc-text">k8slens</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>随着 Kubernetes 越来越流行，不管大公司还是小公司都往 Kubernetes 迁移，每个公司最少有两套集群（测试和生产），但是多个集群就有多个 Kubeconfig 用户授权文件。虽然官方文档中有介绍多个 Kubeconfig 文件合并成一个 Kubeconfig，但是对于一些新手来说，看得不是很明白。如果需要从本地计算机连接访问 Kubernetes 集群，需要下载 kubectl 和获取集群访问凭证，但如果有多个 k8s 集群通过 2 个神器就可以做到轻松切换不同的 kubeconfig 环境，这里推荐 <code>kubecm</code> 和 <code>k8slens</code></p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2022 年 05 月 18 日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/kubeconfig/">https://wsgzao.github.io/post/kubeconfig/</a></p>
+<hr>
+<h2 id="安装-kubectl"><a href="#安装-kubectl" class="headerlink" title="安装 kubectl"></a>安装 kubectl</h2><p><a href="https://kubernetes.io/docs/tasks/tools/" target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/tools/</a></p>
+<p><a href="https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/" target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">curl -LO <span class="string">"https://dl.k8s.io/<span class="variable">$(curl -L -s https://dl.k8s.io/release/stable.txt)</span>/bin/linux/amd64/kubectl.sha256"</span></span><br><span class="line">sudo install -o root -g root -m 0755 kubectl /usr/<span class="built_in">local</span>/bin/kubectl</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># If you do not have root access on the target system, you can still install kubectl to the ~/.local/bin directory:</span></span><br><span class="line">chmod +x kubectl</span><br><span class="line">mkdir -p ~/.<span class="built_in">local</span>/bin</span><br><span class="line">mv ./kubectl ~/.<span class="built_in">local</span>/bin/kubectl</span><br><span class="line"><span class="comment"># and then append (or prepend) ~/.local/bin to $PATH</span></span><br></pre></td></tr></table></figure>
+<h2 id="kubeconfig"><a href="#kubeconfig" class="headerlink" title="kubeconfig"></a>kubeconfig</h2><p><a href="https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/" target="_blank" rel="noopener">https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/</a></p>
+<p>Kubeconfig 用途</p>
+<p>kubectl 命令行工具通过 kubeconfig 文件的配置来选择集群以及集群 API Server 通信的所有信息。kubeconfig 文件用来保存关于集群用户、命名空间和身份验证机制的信息。默认情况下 kubectl 读取 $HOME/.kube/config 文件，也可以通过设置环境变量 KUBECONFIG 或者 –kubeconfig 指定其他的配置文件。</p>
+<p>Kubeconfig 文件结构</p>
+<p>kubeconfig 文件主要由下面几部分构成：</p>
+<ul>
+<li>集群参数</li>
+<li>用户参数</li>
+<li>上下文参数</li>
+<li>当前上下文</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Config</span><br><span class="line">preferences: &#123;&#125;</span><br><span class="line"></span><br><span class="line">clusters: # 集群参数 </span><br><span class="line">- cluster:</span><br><span class="line">  name: &#123;cluster-name&#125;</span><br><span class="line"></span><br><span class="line">users: # 用户参数 </span><br><span class="line">- name: &#123;user-name&#125;</span><br><span class="line"></span><br><span class="line">contexts: # 上下文参数 </span><br><span class="line">- context:</span><br><span class="line">    cluster: &#123;cluster-name&#125;</span><br><span class="line">    user: &#123;user-name&#125;</span><br><span class="line">  name: kubernetes # 集群上下文名称 </span><br><span class="line">current-context: kubernetes # 当前上下文 </span><br></pre></td></tr></table></figure>
+<h2 id="kubecm"><a href="#kubecm" class="headerlink" title="kubecm"></a>kubecm</h2><p><a href="https://github.com/sunny0826/kubecm" target="_blank" rel="noopener">https://github.com/sunny0826/kubecm</a><br><a href="https://kubecm.cloud/#/zh-cn/install" target="_blank" rel="noopener">https://kubecm.cloud/#/zh-cn/install</a></p>
+<p>通过 kubecm 工具合并多个 kubeconfig 文件</p>
+<p>kubecm 安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># install kubecm</span></span><br><span class="line"><span class="comment"># https://github.com/sunny0826/kubecm/releases</span></span><br><span class="line"><span class="built_in">export</span> VERSION=<span class="string">"0.16.4"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># linux x86_64</span></span><br><span class="line">curl -Lo kubecm.tar.gz https://github.com/sunny0826/kubecm/releases/download/v<span class="variable">$&#123;VERSION&#125;</span>/kubecm_<span class="variable">$&#123;VERSION&#125;</span>_Linux_x86_64.tar.gz</span><br><span class="line"><span class="comment"># macos</span></span><br><span class="line">curl -Lo kubecm.tar.gz https://github.com/sunny0826/kubecm/releases/download/v<span class="variable">$&#123;VERSION&#125;</span>/kubecm_<span class="variable">$&#123;VERSION&#125;</span>_Darwin_x86_64.tar.gz</span><br><span class="line">brew install kubecm</span><br><span class="line"></span><br><span class="line"><span class="comment"># windows</span></span><br><span class="line">curl -Lo kubecm.tar.gz https://github.com/sunny0826/kubecm/releases/download/v<span class="variable">$&#123;VERSION&#125;</span>/kubecm_<span class="variable">$&#123;VERSION&#125;</span>_Windows_x86_64.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># linux &amp; macos</span></span><br><span class="line">tar -zxvf kubecm.tar.gz kubecm</span><br><span class="line"><span class="built_in">cd</span> kubecm</span><br><span class="line">sudo mv kubecm /usr/<span class="built_in">local</span>/bin/</span><br><span class="line"></span><br><span class="line"><span class="comment"># merge and generate kubeconfig</span></span><br><span class="line"><span class="comment"># https://kubecm.cloud/#/en-us/cli/kubecm_add</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 把需要合并的 Kubeconfig 文件放到 kubeconfig 目录下，执行命令后会在当前路径下产生一个新的 kubeconfig 文件 </span></span><br><span class="line">kubecm merge -f kubeconfig</span><br><span class="line"></span><br><span class="line"><span class="comment"># replace $HOME/.kube/config</span></span><br><span class="line">kubecm merge -f kubeconfig -c</span><br><span class="line"></span><br><span class="line"><span class="comment"># switch k8s cluster</span></span><br><span class="line">kubecm switch</span><br><span class="line"></span><br><span class="line"><span class="comment"># list kubeconfig</span></span><br><span class="line">kubecm list</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        Manage your kubeconfig more easily.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">██   ██ ██    ██ ██████  ███████  ██████ ███    ███</span><br><span class="line">██  ██  ██    ██ ██   ██ ██      ██      ████  ████</span><br><span class="line">█████   ██    ██ ██████  █████   ██      ██ ████ ██</span><br><span class="line">██  ██  ██    ██ ██   ██ ██      ██      ██  ██  ██</span><br><span class="line">██   ██  ██████  ██████  ███████  ██████ ██      ██</span><br><span class="line"></span><br><span class="line"> Tips  Find more information at: https://kubecm.cloud</span><br><span class="line"></span><br><span class="line">Usage:</span><br><span class="line">  kubecm [<span class="built_in">command</span>]</span><br><span class="line"></span><br><span class="line">Available Commands:</span><br><span class="line">  add         Add KubeConfig to <span class="variable">$HOME</span>/.kube/config</span><br><span class="line">  <span class="built_in">alias</span>       Generate <span class="built_in">alias</span> <span class="keyword">for</span> all contexts</span><br><span class="line">  clear       Clear lapsed context, cluster and user</span><br><span class="line">  completion  Generates bash/zsh completion scripts</span><br><span class="line">  create      Create new KubeConfig(experiment)</span><br><span class="line">  delete      Delete the specified context from the kubeconfig</span><br><span class="line">  <span class="built_in">help</span>        Help about any <span class="built_in">command</span></span><br><span class="line">  list        List KubeConfig</span><br><span class="line">  merge       Merge the KubeConfig files <span class="keyword">in</span> the specified directory</span><br><span class="line">  namespace   Switch or change namespace interactively</span><br><span class="line">  rename      Rename the contexts of kubeconfig</span><br><span class="line">  switch      Switch Kube Context interactively</span><br><span class="line">  version     Print version info</span><br><span class="line"></span><br><span class="line">Flags:</span><br><span class="line">      --config string   path of kubeconfig (default <span class="string">"<span class="variable">$HOME</span>/.kube/config"</span>)</span><br><span class="line">  -h, --<span class="built_in">help</span>            <span class="built_in">help</span> <span class="keyword">for</span> kubecm</span><br><span class="line"></span><br><span class="line">Use <span class="string">"kubecm [command] --help"</span> <span class="keyword">for</span> more information about a <span class="built_in">command</span>.</span><br></pre></td></tr></table></figure>
+<p><img src="https://asciinema.org/a/389595.svg" alt></p>
+<h2 id="k8slens"><a href="#k8slens" class="headerlink" title="k8slens"></a>k8slens</h2><p>GUI 界面切换 kubeconfig 就更强大了，自己探索吧</p>
+<p><a href="https://k8slens.dev/" target="_blank" rel="noopener">https://k8slens.dev/</a><br><a href="https://docs.k8slens.dev/main/" target="_blank" rel="noopener">https://docs.k8slens.dev/main/</a></p>
+<blockquote>
+<p>Lens - The Kubernetes IDE</p>
+</blockquote>
+<p>Lens - The Kubernetes IDE (“Lens IDE”) is a distribution of the OpenLens repository with Team Lens specific customizations released under a traditional <a href="https://k8slens.dev/licenses/eula" target="_blank" rel="noopener">EULA</a>.</p>
+<p>Lens IDE provides the full situational awareness for everything that runs in Kubernetes. It’s lowering the barrier of entry for people just getting started and radically improving productivity for people with more experience.</p>
+<p>Lens IDE a standalone application for MacOS, Windows and Linux operating systems. You can download it free of charge for Windows, MacOS, and Linux from <a href="https://k8slens.dev" target="_blank" rel="noopener">Lens IDE website</a>.</p>
+<p><img src="https://github.com/lensapp/lens/raw/master/.github/screenshot.png" alt></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学习-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/kubeconfig/" data-title="kubeconfig 多配置文件切换工具推荐 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/post/docker/"  title="Docker 从入门到实践">
+ <strong>下一篇：</strong><br/> 
+ <span>Docker 从入门到实践
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新历史"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装-kubectl"><span class="toc-number">3.</span> <span class="toc-text">安装 kubectl</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#kubeconfig"><span class="toc-number">4.</span> <span class="toc-text">kubeconfig</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#kubecm"><span class="toc-number">5.</span> <span class="toc-text">kubecm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#k8slens"><span class="toc-number">6.</span> <span class="toc-text">k8slens</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>186</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2022 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>
