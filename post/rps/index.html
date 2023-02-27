@@ -1,0 +1,687 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>RPS和RFS网卡多队列性能调优实践 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="RPS和RFS网卡多队列性能调优实践">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RPS和RFS网卡多队列性能调优实践">
+<meta property="og:url" content="https://wsgzao.github.io/post/rps/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="RPS和RFS网卡多队列性能调优实践">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190704111554.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190704163040.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190704163052.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190704163113.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190705111612.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190705111633.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190705111643.png">
+<meta property="article:published_time" content="2019-07-03T06:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:07.065Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190704111554.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/rps/" title="RPS和RFS网卡多队列性能调优实践" itemprop="url">RPS和RFS网卡多队列性能调优实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2019-07-03T06:59:49.000Z" itemprop="datePublished"> 发表于 2019-07-03</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8B%E6%95%85%E5%A4%8D%E7%9B%98"><span class="toc-number">3.</span> <span class="toc-text">事故复盘</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Scaling-in-the-Linux-Networking-Stack"><span class="toc-number">4.</span> <span class="toc-text">Scaling in the Linux Networking Stack</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RPS"><span class="toc-number">5.</span> <span class="toc-text">RPS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RFS"><span class="toc-number">6.</span> <span class="toc-text">RFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%86%E8%A7%A3%E6%8E%A5%E6%94%B6%E6%95%B0%E6%8D%AE%E5%8C%85%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="toc-number">7.</span> <span class="toc-text">了解接收数据包的流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E7%BD%91%E5%8D%A1%E6%94%B6%E5%88%B0%E7%9A%84%E6%95%B0%E6%8D%AE%E5%8C%85%E8%BD%AC%E7%A7%BB%E5%88%B0%E4%B8%BB%E6%9C%BA%E5%86%85%E5%AD%98%EF%BC%88NIC-%E4%B8%8E%E9%A9%B1%E5%8A%A8%E4%BA%A4%E4%BA%92%EF%BC%89"><span class="toc-number">7.1.</span> <span class="toc-text">将网卡收到的数据包转移到主机内存（NIC 与驱动交互）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E7%9F%A5%E7%B3%BB%E7%BB%9F%E5%86%85%E6%A0%B8%E5%A4%84%E7%90%86%EF%BC%88%E9%A9%B1%E5%8A%A8%E4%B8%8E-Linux-%E5%86%85%E6%A0%B8%E4%BA%A4%E4%BA%92%EF%BC%89"><span class="toc-number">7.2.</span> <span class="toc-text">通知系统内核处理（驱动与 Linux 内核交互）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%AD%E6%96%AD%EF%BC%9F"><span class="toc-number">8.</span> <span class="toc-text">什么是中断？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A1%AC%E4%B8%AD%E6%96%AD%E4%B8%8E%E8%BD%AF%E4%B8%AD%E6%96%AD%EF%BC%9F"><span class="toc-number">8.1.</span> <span class="toc-text">硬中断与软中断？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A1%AC%E4%B8%AD%E6%96%AD%E4%B8%8E%E8%BD%AF%E4%B8%AD%E6%96%AD%E4%B9%8B%E5%8C%BA%E5%88%AB%E4%B8%8E%E8%81%94%E7%B3%BB%EF%BC%9F"><span class="toc-number">8.2.</span> <span class="toc-text">硬中断与软中断之区别与联系？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E4%B8%AD%E6%96%AD%E6%83%85%E5%86%B5"><span class="toc-number">8.3.</span> <span class="toc-text">查看中断情况</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE%E5%92%8C%E6%95%88%E6%9E%9C%E6%BC%94%E7%A4%BA"><span class="toc-number">9.</span> <span class="toc-text">优化建议和效果演示</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8BRPS-x2F-RFS%E4%BC%98%E5%8C%96%E5%89%8D%E5%90%8E%E5%8F%98%E5%8C%96"><span class="toc-number">9.1.</span> <span class="toc-text">查看RPS&#x2F;RFS优化前后变化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E8%BD%AF%E4%B8%AD%E6%96%AD%E5%8F%98%E5%8C%96"><span class="toc-number">9.2.</span> <span class="toc-text">查看软中断变化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">10.</span> <span class="toc-text">参考文章</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>为了解决LVS ksoftirqd CPU使用率100%导致网卡软中断丢包，我和同事们一起搜索了大量的资料去分析问题，特别是感谢美团技术团队的分享帮助我们快速梳理优化思路，最后明确了如何重构RPS和RFS网卡多队列的优化脚本。个人认为这是一个大家可能普遍会遇到的问题，文章内的分析思路和解决方案未必是最优解，也欢迎各位分享自己的解决方法。</p>
+<blockquote>
+<p>RPS和RFS网卡多队列性能调优实践</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019年07月03日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/rps/">https://wsgzao.github.io/post/rps/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>Redis 高负载下的中断优化 - <a target="_blank" rel="noopener" href="https://tech.meituan.com/2018/03/16/redis-high-concurrency-optimization.html">https://tech.meituan.com/2018/03/16/redis-high-concurrency-optimization.html</a></p>
+<hr>
+<h2 id="事故复盘"><a href="#事故复盘" class="headerlink" title="事故复盘"></a>事故复盘</h2><p>我们遇到的问题属于计划外的incident，现象是某产品用户在线率突然降低，LVS Master同时收到CPU High Load告警，检查发现该节点出现网卡大量断开重连和丢包情况，应急切换到LVS Slave也出现上述问题，在排除掉流量异常和外部攻击后选择切换DNS到背后的Nginx Real Servers后服务逐步恢复。</p>
+<p>复盘核心原因在于系统初始化时rps优化脚本没有成功执行，这个脚本起初是因为早期DBA团队遇到过CPU负载较高导致网卡异常，这个优化脚本也一直传承至今，却已经没有人知道为什么添加。现在大多数服务器没有执行成功而被大家一直所忽视显然也是post check没有做到位。在早期大家都停留在Bash Shell运维的阶段，没有专职的团队来管理确实容易失控，好在现在可以基于Ansible来做初始化和检查，运维的压力也减轻了一部分。</p>
+<p>通过Google搜索相关知识的过程中，我们也发现在不少人都会遇到这样类似的问题。比如这篇文章提到<a target="_blank" rel="noopener" href="http://xstarcd.github.io/wiki/sysadmin/lvs_irq.html">lvs&#x2F;irq</a></p>
+<p><a target="_blank" rel="noopener" href="http://zh.linuxvirtualserver.org/node/2500" title="http://zh.linuxvirtualserver.org/node/2500">lvs 的性能问题，软中断耗尽 CPU 单核后到达处理极限</a></p>
+<ul>
+<li>瓶颈现象：当压力较大时，Lvs 服务器 CPU 的其中一个核使用率达到 100%（处理软中断）。<ul>
+<li>当 Lvs 服务器处理软中断的那个核使用率达到 100%，就到达系统处理上限。</li>
+<li>占用 CPU 的是进程 “ksoftirqd”，它未能使用到多核。</li>
+</ul>
+</li>
+<li>做双网卡绑定，然后调试内核 SMP，中断主要是来自网卡的，不是 LVS 本身。需要把 2 个网卡来的 IRQ 均衡在双核 CPU 上面。</li>
+</ul>
+<p>和华为的工程师们在交换经验的时候对方分享了一个关于RSS和RPS关系图，之后的内容还会引用美团技术团队的分析<br><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190704111554.jpg"></p>
+<p>我们遇到的情况是缺少可用服务器资源选择把用户外部请求流量和Codis Cache Cluster内部流量临时混在了同一个LVS上，虽然看上去CPU和traffic的整体压力都不算高，但是CPU的处理压力可能恰好集中在了和外网Bond1网卡相同的Core上最后引起了ksoftirqd软中断，而内网Bond0网卡就没有监控到任何丢包。虽然我们也有正常开启<code>irqbalance</code>，但不清楚是不是因为受到<code>cpupower performance</code>和<code>NUMA</code>的影响最后也没能阻止事故的发生，最终的优化方案主要是手动开启RPS和RFS，大致步骤如下：</p>
+<ol>
+<li>set cpupower <code>cpupower frequency-set -g performance</code>，<a href="https://wsgzao.github.io/post/cpupower/">CPU 优化建议使用 cpupower 设置 CPU Performance 模式</a></li>
+<li>activate rps&#x2F;rfs by script: <a target="_blank" rel="noopener" href="https://gist.github.com/wsgzao/18828f69147635f3e38a14690a633daf">rps.sh</a></li>
+<li>double ring buffer size: <code>ethtool -G p1p1 [rx|tx] 4096</code>, check <code>ethtool -g p1p1</code></li>
+<li>double NAPI poll budget: <code>sysctl -w net.core.netdev_budget=600</code></li>
+<li>add zabbix monitor on net.if.in[eth0,errors,dropped,overruns], CPU softirq time system.cpu.util[,softirq]</li>
+</ol>
+<p>	</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># chkconfig: 2345 90 60</span></span><br><span class="line"><span class="comment">### BEGIN INIT INFO</span></span><br><span class="line"><span class="comment"># Provides:          rps</span></span><br><span class="line"><span class="comment"># Required-Start:    $local_fs $remote_fs $network $syslog</span></span><br><span class="line"><span class="comment"># Required-Stop:     $local_fs $remote_fs $network $syslog</span></span><br><span class="line"><span class="comment"># Default-Start:     2 3 4 5</span></span><br><span class="line"><span class="comment"># Default-Stop:      0 1 6</span></span><br><span class="line"><span class="comment"># Short-Description: enable rps config for ubuntu</span></span><br><span class="line"><span class="comment"># Description:       enabele rps which is a kernel tweak for network performance</span></span><br><span class="line"><span class="comment">### END INIT INFO</span></span><br><span class="line"></span><br><span class="line">NAME=rps</span><br><span class="line">DESC=rps</span><br><span class="line"></span><br><span class="line"><span class="comment"># cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor</span></span><br><span class="line"><span class="comment"># cpupower frequency-set -g performance</span></span><br><span class="line"><span class="comment"># activate rps/rfs by script: https://gist.github.com/wsgzao/18828f69147635f3e38a14690a633daf</span></span><br><span class="line"><span class="comment"># double ring buffer size: ethtool -G p1p1 [rx|tx] 4096, ethtool -g p1p1</span></span><br><span class="line"><span class="comment"># double NAPI poll budget: sysctl -w net.core.netdev_budget=600</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">rps</span></span>() &#123;</span><br><span class="line">  net_interface=`ip <span class="built_in">link</span> show | grep <span class="string">&quot;state UP&quot;</span> | awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span> | egrep -v <span class="string">&#x27;^docker|^veth&#x27;</span> | <span class="built_in">tr</span> <span class="string">&quot;:\n&quot;</span> <span class="string">&quot; &quot;</span>`</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> em <span class="keyword">in</span> <span class="variable">$&#123;net_interface[@]&#125;</span></span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">      rq_count=`<span class="built_in">ls</span> /sys/class/net/<span class="variable">$em</span>/queues/rx-* -d | <span class="built_in">wc</span> -l`</span><br><span class="line">      rps_flow_cnt_value=`<span class="built_in">expr</span> 32768 / <span class="variable">$rq_count</span>`</span><br><span class="line"></span><br><span class="line">      <span class="keyword">for</span> ((i=<span class="number">0</span>; i&lt; <span class="variable">$rq_count</span>; i++))</span><br><span class="line">      <span class="keyword">do</span></span><br><span class="line">          <span class="built_in">echo</span> <span class="variable">$rps_flow_cnt_value</span> &gt; /sys/class/net/<span class="variable">$em</span>/queues/rx-<span class="variable">$i</span>/rps_flow_cnt</span><br><span class="line">      <span class="keyword">done</span></span><br><span class="line"></span><br><span class="line">      flag=0</span><br><span class="line">      <span class="keyword">while</span> [ -f /sys/class/net/<span class="variable">$em</span>/queues/rx-<span class="variable">$flag</span>/rps_cpus ]</span><br><span class="line">      <span class="keyword">do</span></span><br><span class="line">          <span class="built_in">echo</span> `<span class="built_in">cat</span>  /sys/class/net/<span class="variable">$em</span>/queues/rx-<span class="variable">$flag</span>/rps_cpus | sed <span class="string">&#x27;s/0/f/g&#x27;</span> ` &gt;  /sys/class/net/<span class="variable">$em</span>/queues/rx-<span class="variable">$flag</span>/rps_cpus</span><br><span class="line">          flag=$((<span class="variable">$flag</span>+<span class="number">1</span>))</span><br><span class="line">      <span class="keyword">done</span></span><br><span class="line">  <span class="keyword">done</span></span><br><span class="line">  <span class="built_in">echo</span> 32768 &gt; /proc/sys/net/core/rps_sock_flow_entries</span><br><span class="line">  sysctl -p</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">check_rps</span></span>() &#123;</span><br><span class="line">  ni_list=`ip <span class="built_in">link</span> show | grep <span class="string">&quot;state UP&quot;</span> | awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span> | egrep -v <span class="string">&quot;^docker|^veth&quot;</span> | <span class="built_in">tr</span> <span class="string">&quot;:\n&quot;</span> <span class="string">&quot; &quot;</span>`</span><br><span class="line">  <span class="keyword">for</span> n <span class="keyword">in</span> <span class="variable">$ni_list</span></span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">      rx_queues=`<span class="built_in">ls</span> /sys/class/net/<span class="variable">$n</span>/queues/ | grep <span class="string">&quot;rx-[0-9]&quot;</span>`</span><br><span class="line">      <span class="keyword">for</span> q <span class="keyword">in</span> <span class="variable">$rx_queues</span></span><br><span class="line">      <span class="keyword">do</span></span><br><span class="line">          rps_cpus=`<span class="built_in">cat</span> /sys/class/net/<span class="variable">$n</span>/queues/<span class="variable">$q</span>/rps_cpus`</span><br><span class="line">          rps_flow_cnt=`<span class="built_in">cat</span> /sys/class/net/<span class="variable">$n</span>/queues/<span class="variable">$q</span>/rps_flow_cnt`</span><br><span class="line"></span><br><span class="line">          <span class="built_in">echo</span> <span class="string">&quot;[<span class="variable">$n</span>]&quot;</span> <span class="variable">$q</span> <span class="string">&quot;--&gt; rps_cpus =&quot;</span> <span class="variable">$rps_cpus</span> <span class="string">&quot;, rps_flow_cnt =&quot;</span> <span class="variable">$rps_flow_cnt</span></span><br><span class="line">      <span class="keyword">done</span></span><br><span class="line">  <span class="keyword">done</span></span><br><span class="line">  rps_sock_flow_entries=`<span class="built_in">cat</span> /proc/sys/net/core/rps_sock_flow_entries`</span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;rps_sock_flow_entries =&quot;</span> <span class="variable">$rps_sock_flow_entries</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">case</span> <span class="string">&quot;<span class="variable">$1</span>&quot;</span> <span class="keyword">in</span></span><br><span class="line">  start)</span><br><span class="line">        <span class="built_in">echo</span> -n <span class="string">&quot;Starting <span class="variable">$DESC</span>: &quot;</span></span><br><span class="line">        rps</span><br><span class="line">        check_rps</span><br><span class="line">        ;;</span><br><span class="line">  stop)</span><br><span class="line">        <span class="built_in">echo</span> -n <span class="string">&quot;Stop is not supported. &quot;</span></span><br><span class="line">        ;;</span><br><span class="line">  restart|reload|force-reload)</span><br><span class="line">        <span class="built_in">echo</span> -n <span class="string">&quot;Restart is not supported. &quot;</span></span><br><span class="line">        ;;</span><br><span class="line">  status)</span><br><span class="line">        check_rps</span><br><span class="line">        ;;</span><br><span class="line">  *)</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;Usage: <span class="variable">$0</span> [start|status]&quot;</span></span><br><span class="line">        ;;</span><br><span class="line"><span class="keyword">esac</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span> 0</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Scaling-in-the-Linux-Networking-Stack"><a href="#Scaling-in-the-Linux-Networking-Stack" class="headerlink" title="Scaling in the Linux Networking Stack"></a>Scaling in the Linux Networking Stack</h2><blockquote>
+<p>了解RSS、RPS、RFS等基础知识很重要</p>
+</blockquote>
+<p>This document describes a set of complementary techniques in the Linux<br>networking stack to increase parallelism and improve performance for<br>multi-processor systems.</p>
+<p>The following technologies are described:</p>
+<ul>
+<li>RSS: Receive Side Scaling</li>
+<li>RPS: Receive Packet Steering</li>
+<li>RFS: Receive Flow Steering</li>
+<li>Accelerated Receive Flow Steering</li>
+<li>XPS: Transmit Packet Steering</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://www.kernel.org/doc/Documentation/networking/scaling.txt">https://www.kernel.org/doc/Documentation/networking/scaling.txt</a></p>
+<h2 id="RPS"><a href="#RPS" class="headerlink" title="RPS"></a>RPS</h2><p><a target="_blank" rel="noopener" href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/performance_tuning_guide/network-rps">RECEIVE PACKET STEERING (RPS)</a></p>
+<p>Receive Packet Steering (RPS) is similar to RSS in that it is used to direct packets to specific CPUs for processing. However, RPS is implemented at the software level, and helps to prevent the hardware queue of a single network interface card from becoming a bottleneck in network traffic.</p>
+<p>RPS has several advantages over hardware-based RSS:</p>
+<ul>
+<li><p>RPS can be used with any network interface card.</p>
+</li>
+<li><p>It is easy to add software filters to RPS to deal with new protocols.</p>
+</li>
+<li><p>RPS does not increase the hardware interrupt rate of the network device. However, it does introduce inter-processor interrupts.</p>
+</li>
+</ul>
+<p>RPS is configured per network device and receive queue, in the <code>/sys/class/net/*device*/queues/*rx-queue*/rps_cpus</code> file, where <em>device</em> is the name of the network device (such as <code>eth0</code>) and <em>rx-queue</em> is the name of the appropriate receive queue (such as <code>rx-0</code>).</p>
+<p>The default value of the <code>rps_cpus</code> file is zero. This disables RPS, so the CPU that handles the network interrupt also processes the packet.</p>
+<p>To enable RPS, configure the appropriate <code>rps_cpus</code> file with the CPUs that should process packets from the specified network device and receive queue.</p>
+<p>The <code>rps_cpus</code> files use comma-delimited CPU bitmaps. Therefore, to allow a CPU to handle interrupts for the receive queue on an interface, set the value of their positions in the bitmap to 1. For example, to handle interrupts with CPUs 0, 1, 2, and 3, set the value of <code>rps_cpus</code> to <code>00001111</code> (1+2+4+8), or <code>f</code> (the hexadecimal value for 15).</p>
+<p>For network devices with single transmit queues, best performance can be achieved by configuring RPS to use CPUs in the same memory domain. On non-NUMA systems, this means that all available CPUs can be used. If the network interrupt rate is extremely high, excluding the CPU that handles network interrupts may also improve performance.</p>
+<p>For network devices with multiple queues, there is typically no benefit to configuring both RPS and RSS, as RSS is configured to map a CPU to each receive queue by default. However, RPS may still be beneficial if there are fewer hardware queues than CPUs, and RPS is configured to use CPUs in the same memory domain.</p>
+<h2 id="RFS"><a href="#RFS" class="headerlink" title="RFS"></a>RFS</h2><p><a target="_blank" rel="noopener" href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/performance_tuning_guide/network-rfs">RECEIVE FLOW STEERING (RFS)</a></p>
+<p>Receive Flow Steering (RFS) extends RPS behavior to increase the CPU cache hit rate and thereby reduce network latency. Where RPS forwards packets based solely on queue length, RFS uses the RPS backend to calculate the most appropriate CPU, then forwards packets based on the location of the application consuming the packet. This increases CPU cache efficiency.</p>
+<p>RFS is disabled by default. To enable RFS, you must edit two files:</p>
+<p><code>/proc/sys/net/core/rps_sock_flow_entries</code></p>
+<p>Set the value of this file to the maximum expected number of concurrently active connections. We recommend a value of <code>32768</code> for moderate server loads. All values entered are rounded up to the nearest power of 2 in practice.</p>
+<p><code>/sys/class/net/*device*/queues/*rx-queue*/rps_flow_cnt</code></p>
+<p>Replace <em>device</em> with the name of the network device you wish to configure (for example, <code>eth0</code>), and <em>rx-queue</em> with the receive queue you wish to configure (for example, <code>rx-0</code>).</p>
+<p>Set the value of this file to the value of <code>rps_sock_flow_entries</code> divided by <code>N</code>, where <code>N</code> is the number of receive queues on a device. For example, if <code>rps_flow_entries</code> is set to <code>32768</code> and there are 16 configured receive queues, <code>rps_flow_cnt</code> should be set to <code>2048</code>. For single-queue devices, the value of <code>rps_flow_cnt</code> is the same as the value of <code>rps_sock_flow_entries</code>.</p>
+<p>Data received from a single sender is not sent to more than one CPU. If the amount of data received from a single sender is greater than a single CPU can handle, configure a larger frame size to reduce the number of interrupts and therefore the amount of processing work for the CPU. Alternatively, consider NIC offload options or faster CPUs.</p>
+<p>Consider using <code>numactl</code> or <code>taskset</code> in conjunction with RFS to pin applications to specific cores, sockets, or NUMA nodes. This can help prevent packets from being processed out of order.</p>
+<h2 id="了解接收数据包的流程"><a href="#了解接收数据包的流程" class="headerlink" title="了解接收数据包的流程"></a>了解接收数据包的流程</h2><blockquote>
+<p>这里摘取了美团技术团队的分析，在此表示感谢</p>
+</blockquote>
+<p>接收数据包是一个复杂的过程，涉及很多底层的技术细节，但大致需要以下几个步骤：</p>
+<ol>
+<li>网卡收到数据包。</li>
+<li>将数据包从网卡硬件缓存转移到服务器内存中。</li>
+<li>通知内核处理。</li>
+<li>经过 TCP&#x2F;IP 协议逐层处理。</li>
+<li>应用程序通过 <code>read()</code> 从 <code>socket buffer</code> 读取数据。</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190704163040.png"></p>
+<h3 id="将网卡收到的数据包转移到主机内存（NIC-与驱动交互）"><a href="#将网卡收到的数据包转移到主机内存（NIC-与驱动交互）" class="headerlink" title="将网卡收到的数据包转移到主机内存（NIC 与驱动交互）"></a>将网卡收到的数据包转移到主机内存（NIC 与驱动交互）</h3><p>NIC 在接收到数据包之后，首先需要将数据同步到内核中，这中间的桥梁是 <code>rx ring buffer</code>。它是由 NIC 和驱动程序共享的一片区域，事实上，<code>rx ring buffer</code> 存储的并不是实际的 packet 数据，而是一个描述符，这个描述符指向了它真正的存储地址，具体流程如下：</p>
+<ol>
+<li>驱动在内存中分配一片缓冲区用来接收数据包，叫做 <code>sk_buffer</code>；</li>
+<li>将上述缓冲区的地址和大小（即接收描述符），加入到 <code>rx ring buffer</code>。描述符中的缓冲区地址是 DMA 使用的物理地址；</li>
+<li>驱动通知网卡有一个新的描述符；</li>
+<li>网卡从 <code>rx ring buffer</code> 中取出描述符，从而获知缓冲区的地址和大小；</li>
+<li>网卡收到新的数据包；</li>
+<li>网卡将新数据包通过 DMA 直接写到 <code>sk_buffer</code> 中。</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190704163052.png"></p>
+<p>当驱动处理速度跟不上网卡收包速度时，驱动来不及分配缓冲区，NIC 接收到的数据包无法及时写到 <code>sk_buffer</code>，就会产生堆积，当 NIC 内部缓冲区写满后，就会丢弃部分数据，引起丢包。这部分丢包为 <code>rx_fifo_errors</code>，在 <code>/proc/net/dev</code> 中体现为 fifo 字段增长，在 ifconfig 中体现为 overruns 指标增长。</p>
+<h3 id="通知系统内核处理（驱动与-Linux-内核交互）"><a href="#通知系统内核处理（驱动与-Linux-内核交互）" class="headerlink" title="通知系统内核处理（驱动与 Linux 内核交互）"></a>通知系统内核处理（驱动与 Linux 内核交互）</h3><p>这个时候，数据包已经被转移到了 <code>sk_buffer</code> 中。前文提到，这是驱动程序在内存中分配的一片缓冲区，并且是通过 DMA 写入的，这种方式不依赖 CPU 直接将数据写到了内存中，意味着对内核来说，其实并不知道已经有新数据到了内存中。那么如何让内核知道有新数据进来了呢？答案就是中断，通过中断告诉内核有新数据进来了，并需要进行后续处理。</p>
+<p>提到中断，就涉及到硬中断和软中断，首先需要简单了解一下它们的区别：</p>
+<ul>
+<li>硬中断： 由硬件自己生成，具有随机性，硬中断被 CPU 接收后，触发执行中断处理程序。中断处理程序只会处理关键性的、短时间内可以处理完的工作，剩余耗时较长工作，会放到中断之后，由软中断来完成。硬中断也被称为上半部分。</li>
+<li>软中断： 由硬中断对应的中断处理程序生成，往往是预先在代码里实现好的，不具有随机性。（除此之外，也有应用程序触发的软中断，与本文讨论的网卡收包无关。）也被称为下半部分。</li>
+</ul>
+<p><strong>当 NIC 把数据包通过 DMA 复制到内核缓冲区 <code>sk_buffer</code> 后，NIC 立即发起一个硬件中断。CPU 接收后，首先进入上半部分，网卡中断对应的中断处理程序是网卡驱动程序的一部分，之后由它发起软中断，进入下半部分，开始消费 <code>sk_buffer</code> 中的数据，交给内核协议栈处理。</strong></p>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190704163113.png"></p>
+<p>通过中断，能够快速及时地响应网卡数据请求，但如果数据量大，那么会产生大量中断请求，CPU 大部分时间都忙于处理中断，效率很低。为了解决这个问题，现在的内核及驱动都采用一种叫 NAPI（new API）的方式进行数据处理，其原理可以简单理解为 中断 + 轮询，在数据量大时，一次中断后通过轮询接收一定数量包再返回，避免产生多次中断。</p>
+<h2 id="什么是中断？"><a href="#什么是中断？" class="headerlink" title="什么是中断？"></a>什么是中断？</h2><p>由于接收来自外围硬件 (相对于 CPU 和内存) 的异步信号或者来自软件的同步信号，而进行相应的硬件、软件处理；发出这样的信号称为进行中断请求 (interrupt request, IRQ)</p>
+<h3 id="硬中断与软中断？"><a href="#硬中断与软中断？" class="headerlink" title="硬中断与软中断？"></a><a href="#%E7%A1%AC%E4%B8%AD%E6%96%AD%E4%B8%8E%E8%BD%AF%E4%B8%AD%E6%96%AD" title="硬中断与软中断?"></a>硬中断与软中断？</h3><ul>
+<li><strong>硬中断</strong>：外围硬件发给 CPU 或者内存的异步信号就称之为硬中断</li>
+<li><strong>软中断</strong>：由软件系统本身发给操作系统内核的中断信号，称之为软中断。通常是由硬中断处理程序或进程调度程序对操作系统内核的中断，也就是我们常说的系统调用 (System Call)</li>
+</ul>
+<h3 id="硬中断与软中断之区别与联系？"><a href="#硬中断与软中断之区别与联系？" class="headerlink" title="硬中断与软中断之区别与联系？"></a><a href="#%E7%A1%AC%E4%B8%AD%E6%96%AD%E4%B8%8E%E8%BD%AF%E4%B8%AD%E6%96%AD%E4%B9%8B%E5%8C%BA%E5%88%AB%E4%B8%8E%E8%81%94%E7%B3%BB%EF%BC%9F" title="硬中断与软中断之区别与联系？"></a>硬中断与软中断之区别与联系？</h3><ol>
+<li>硬中断是有外设硬件发出的，需要有中断控制器之参与。其过程是外设侦测到变化，告知中断控制器，中断控制器通过 CPU 或内存的中断脚通知 CPU，然后硬件进行程序计数器及堆栈寄存器之现场保存工作（引发上下文切换），并根据中断向量调用硬中断处理程序进行中断处理</li>
+<li>软中断则通常是由硬中断处理程序或者进程调度程序等软件程序发出的中断信号，无需中断控制器之参与，直接以一个 CPU 指令之形式指示 CPU 进行程序计数器及堆栈寄存器之现场保存工作 (亦会引发上下文切换)，并调用相应的软中断处理程序进行中断处理 (即我们通常所言之系统调用)</li>
+<li>硬中断直接以硬件的方式引发，处理速度快。软中断以软件指令之方式适合于对响应速度要求不是特别严格的场景</li>
+<li>硬中断通过设置 CPU 的屏蔽位可进行屏蔽，软中断则由于是指令之方式给出，不能屏蔽</li>
+<li>硬中断发生后，通常会在硬中断处理程序中调用一个软中断来进行后续工作的处理</li>
+<li>硬中断和软中断均会引起上下文切换 (进程 &#x2F; 线程之切换)，进程切换的过程是差不多的</li>
+</ol>
+<h3 id="查看中断情况"><a href="#查看中断情况" class="headerlink" title="查看中断情况"></a>查看中断情况</h3><p>1.top 按下数字键 1 </p>
+<ul>
+<li>hi : time spent servicing hardware interrupts</li>
+<li>si : time spent servicing software interrupts</li>
+</ul>
+<p>2.mpstat -P ALL 2</p>
+<ul>
+<li>%irq 为硬中断</li>
+<li>%soft 为软中断</li>
+</ul>
+<p>mpstat使用介绍和输出参数详解 - <a href="https://wsgzao.github.io/post/mpstat/">https://wsgzao.github.io/post/mpstat/</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost wangao]<span class="comment"># top</span></span><br><span class="line">top - 19:17:57 up 7 days,  7:11,  1 user,  load average: 0.00, 0.01, 0.05</span><br><span class="line">Tasks: 338 total,   1 running, 337 sleeping,   0 stopped,   0 zombie</span><br><span class="line">%Cpu0  :  0.0 us,  0.0 sy,  0.0 ni, 98.0 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  2.0 si,  0.0 st</span><br><span class="line">%Cpu1  :  0.0 us,  0.0 sy,  0.0 ni, 96.7 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  3.3 si,  0.0 st</span><br><span class="line">%Cpu2  :  0.0 us,  0.0 sy,  0.0 ni, 97.7 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  2.3 si,  0.0 st</span><br><span class="line">%Cpu3  :  0.0 us,  0.0 sy,  0.0 ni, 97.4 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  2.6 si,  0.0 st</span><br><span class="line">%Cpu4  :  0.0 us,  0.0 sy,  0.0 ni, 99.0 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  1.0 si,  0.0 st</span><br><span class="line">%Cpu5  :  0.0 us,  0.0 sy,  0.0 ni, 96.7 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  3.3 si,  0.0 st</span><br><span class="line">%Cpu6  :  0.0 us,  0.0 sy,  0.0 ni, 97.4 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  2.6 si,  0.0 st</span><br><span class="line">%Cpu7  :  0.0 us,  0.0 sy,  0.0 ni, 97.7 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  2.3 si,  0.0 st</span><br><span class="line">%Cpu8  :  0.0 us,  0.0 sy,  0.0 ni, 98.3 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  1.7 si,  0.0 st</span><br><span class="line">%Cpu9  :  0.0 us,  0.0 sy,  0.0 ni, 97.0 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  3.0 si,  0.0 st</span><br><span class="line">%Cpu10 :  0.0 us,  0.0 sy,  0.0 ni, 98.7 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  1.3 si,  0.0 st</span><br><span class="line">%Cpu11 :  0.0 us,  0.0 sy,  0.0 ni, 97.4 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  2.6 si,  0.0 st</span><br><span class="line">%Cpu12 :  0.0 us,  0.0 sy,  0.0 ni, 96.7 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  3.3 si,  0.0 st</span><br><span class="line">%Cpu13 :  0.0 us,  0.0 sy,  0.0 ni, 98.3 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  1.7 si,  0.0 st</span><br><span class="line">%Cpu14 :  0.0 us,  0.0 sy,  0.0 ni, 98.3 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  1.7 si,  0.0 st</span><br><span class="line">%Cpu15 :  0.0 us,  0.0 sy,  0.0 ni, 96.7 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  3.3 si,  0.0 st</span><br><span class="line">%Cpu16 :  0.0 us,  0.0 sy,  0.0 ni, 97.3 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  2.7 si,  0.0 st</span><br><span class="line">%Cpu17 :  0.0 us,  0.0 sy,  0.0 ni, 97.7 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  2.3 si,  0.0 st</span><br><span class="line">%Cpu18 :  0.3 us,  0.7 sy,  0.0 ni, 96.7 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  2.3 si,  0.0 st</span><br><span class="line">%Cpu19 :  0.0 us,  0.0 sy,  0.0 ni, 98.3 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  1.7 si,  0.0 st</span><br><span class="line">%Cpu20 :  0.0 us,  0.0 sy,  0.0 ni, 99.0 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  1.0 si,  0.0 st</span><br><span class="line">%Cpu21 :  0.0 us,  0.0 sy,  0.0 ni, 97.0 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  3.0 si,  0.0 st</span><br><span class="line">%Cpu22 :  0.0 us,  0.0 sy,  0.0 ni, 97.7 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  2.3 si,  0.0 st</span><br><span class="line">%Cpu23 :  0.0 us,  0.0 sy,  0.0 ni, 97.4 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  2.6 si,  0.0 st</span><br><span class="line">%Cpu24 :  0.0 us,  0.0 sy,  0.0 ni, 97.7 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  2.3 si,  0.0 st</span><br><span class="line">%Cpu25 :  0.0 us,  0.0 sy,  0.0 ni, 97.0 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  3.0 si,  0.0 st</span><br><span class="line">%Cpu26 :  0.0 us,  0.0 sy,  0.0 ni, 98.3 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  1.7 si,  0.0 st</span><br><span class="line">%Cpu27 :  0.0 us,  0.0 sy,  0.0 ni, 98.3 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  1.7 si,  0.0 st</span><br><span class="line">%Cpu28 :  0.0 us,  0.0 sy,  0.0 ni, 96.7 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  3.3 si,  0.0 st</span><br><span class="line">%Cpu29 :  0.0 us,  0.0 sy,  0.0 ni, 97.4 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  2.6 si,  0.0 st</span><br><span class="line">%Cpu30 :  0.0 us,  0.0 sy,  0.0 ni, 98.3 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  1.7 si,  0.0 st</span><br><span class="line">%Cpu31 :  0.0 us,  0.0 sy,  0.0 ni, 97.4 <span class="built_in">id</span>,  0.0 wa,  0.0 hi,  2.6 si,  0.0 st</span><br><span class="line">KiB Mem : 65688788 total, 62127224 free,  1742128 used,  1819436 buff/cache</span><br><span class="line">KiB Swap: 66060284 total, 66060284 free,        0 used. 63291844 avail Mem</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@localhost wangao]<span class="comment"># mpstat -P ALL 2</span></span><br><span class="line">Linux 3.10.0-957.21.3.el7.x86_64 (localhost.localdomain) 	07/04/2019 	_x86_64_	(32 CPU)</span><br><span class="line"></span><br><span class="line">07:18:35 PM  CPU    %usr   %<span class="built_in">nice</span>    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle</span><br><span class="line">07:18:37 PM  all    0.02    0.00    0.02    0.00    0.00    2.14    0.00    0.00    0.00   97.83</span><br><span class="line">07:18:37 PM    0    0.00    0.00    0.00    0.00    0.00    2.50    0.00    0.00    0.00   97.50</span><br><span class="line">07:18:37 PM    1    0.00    0.00    0.00    0.00    0.00    4.41    0.00    0.00    0.00   95.59</span><br><span class="line">07:18:37 PM    2    0.00    0.00    0.00    0.00    0.00    2.51    0.00    0.00    0.00   97.49</span><br><span class="line">07:18:37 PM    3    0.00    0.00    0.00    0.00    0.00    2.96    0.00    0.00    0.00   97.04</span><br><span class="line">07:18:37 PM    4    0.00    0.00    0.00    0.00    0.00    1.01    0.00    0.00    0.00   98.99</span><br><span class="line">07:18:37 PM    5    0.00    0.00    0.00    0.00    0.00    2.99    0.00    0.00    0.00   97.01</span><br><span class="line">07:18:37 PM    6    0.00    0.00    0.00    0.00    0.00    1.01    0.00    0.00    0.00   98.99</span><br><span class="line">07:18:37 PM    7    0.00    0.00    0.00    0.00    0.00    2.99    0.00    0.00    0.00   97.01</span><br><span class="line">07:18:37 PM    8    0.00    0.00    0.00    0.00    0.00    1.50    0.00    0.00    0.00   98.50</span><br><span class="line">07:18:37 PM    9    0.00    0.00    0.00    0.00    0.00    2.01    0.00    0.00    0.00   97.99</span><br><span class="line">07:18:37 PM   10    0.00    0.00    0.00    0.00    0.00    1.50    0.00    0.00    0.00   98.50</span><br><span class="line">07:18:37 PM   11    0.00    0.00    0.00    0.00    0.00    1.50    0.00    0.00    0.00   98.50</span><br><span class="line">07:18:37 PM   12    0.00    0.00    0.00    0.00    0.00    1.01    0.00    0.00    0.00   98.99</span><br><span class="line">07:18:37 PM   13    0.00    0.00    0.00    0.00    0.00    2.49    0.00    0.00    0.00   97.51</span><br><span class="line">07:18:37 PM   14    0.00    0.00    0.00    0.00    0.00    1.01    0.00    0.00    0.00   98.99</span><br><span class="line">07:18:37 PM   15    0.00    0.00    0.00    0.00    0.00    3.94    0.00    0.00    0.00   96.06</span><br><span class="line">07:18:37 PM   16    0.00    0.00    0.00    0.00    0.00    2.50    0.00    0.00    0.00   97.50</span><br><span class="line">07:18:37 PM   17    0.00    0.00    0.00    0.00    0.00    2.97    0.00    0.00    0.00   97.03</span><br><span class="line">07:18:37 PM   18    0.00    0.00    0.00    0.00    0.00    2.02    0.00    0.00    0.00   97.98</span><br><span class="line">07:18:37 PM   19    0.00    0.00    0.00    0.00    0.00    1.49    0.00    0.00    0.00   98.51</span><br><span class="line">07:18:37 PM   20    0.00    0.00    0.00    0.00    0.00    1.01    0.00    0.00    0.00   98.99</span><br><span class="line">07:18:37 PM   21    0.00    0.00    0.00    0.00    0.00    2.50    0.00    0.00    0.00   97.50</span><br><span class="line">07:18:37 PM   22    0.00    0.00    0.00    0.00    0.00    1.50    0.00    0.00    0.00   98.50</span><br><span class="line">07:18:37 PM   23    0.00    0.00    0.00    0.00    0.00    3.48    0.00    0.00    0.00   96.52</span><br><span class="line">07:18:37 PM   24    0.00    0.00    0.00    0.00    0.00    0.51    0.00    0.00    0.00   99.49</span><br><span class="line">07:18:37 PM   25    0.00    0.00    0.00    0.00    0.00    2.97    0.00    0.00    0.00   97.03</span><br><span class="line">07:18:37 PM   26    0.00    0.00    0.00    0.00    0.00    1.99    0.00    0.00    0.00   98.01</span><br><span class="line">07:18:37 PM   27    0.00    0.00    0.00    0.00    0.00    0.51    0.00    0.00    0.00   99.49</span><br><span class="line">07:18:37 PM   28    0.00    0.00    0.00    0.00    0.00    1.51    0.00    0.00    0.00   98.49</span><br><span class="line">07:18:37 PM   29    0.00    0.00    0.00    0.00    0.00    3.45    0.00    0.00    0.00   96.55</span><br><span class="line">07:18:37 PM   30    0.00    0.00    0.00    0.00    0.00    1.50    0.00    0.00    0.00   98.50</span><br><span class="line">07:18:37 PM   31    0.00    0.00    0.00    0.00    0.00    2.97    0.00    0.00    0.00   97.03</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="优化建议和效果演示"><a href="#优化建议和效果演示" class="headerlink" title="优化建议和效果演示"></a>优化建议和效果演示</h2><ol>
+<li>查看网卡支持多队列的情况，<code>ethtool -l eth0</code></li>
+<li>开启 irqbalance 服务，让系统自动调整网络中断在多个 CPU 核上的分配, <code>systemctl start irqbalance</code></li>
+<li>开启 RPS&#x2F;RFS 特性，软件方式实现 CPU 均衡，接收包中断的优化</li>
+</ol>
+<h3 id="查看RPS-x2F-RFS优化前后变化"><a href="#查看RPS-x2F-RFS优化前后变化" class="headerlink" title="查看RPS&#x2F;RFS优化前后变化"></a>查看RPS&#x2F;RFS优化前后变化</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 优化前</span></span><br><span class="line">[root@localhost wangao]<span class="comment"># service rps status</span></span><br><span class="line">[em1] rx-0 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[em1] rx-1 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[em1] rx-2 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[em1] rx-3 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-0 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-1 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-10 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-11 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-12 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-13 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-14 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-15 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-16 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-17 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-18 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-19 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-2 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-20 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-21 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-22 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-23 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-24 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-25 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-26 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-27 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-28 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-29 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-3 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-30 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-31 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-4 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-5 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-6 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-7 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-8 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p1] rx-9 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-0 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-1 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-10 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-11 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-12 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-13 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-14 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-15 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-16 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-17 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-18 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-19 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-2 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-20 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-21 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-22 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-23 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-24 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-25 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-26 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-27 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-28 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-29 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-3 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-30 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-31 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-4 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-5 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-6 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-7 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-8 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[p1p2] rx-9 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[bond0] rx-0 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[bond0] rx-1 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[bond0] rx-10 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[bond0] rx-11 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[bond0] rx-12 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[bond0] rx-13 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[bond0] rx-14 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[bond0] rx-15 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[bond0] rx-2 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[bond0] rx-3 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[bond0] rx-4 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[bond0] rx-5 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[bond0] rx-6 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[bond0] rx-7 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[bond0] rx-8 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">[bond0] rx-9 --&gt; rps_cpus = 00000000,00000000,00000000,00000000,00000000,00000000 , rps_flow_cnt = 0</span><br><span class="line">rps_sock_flow_entries = 0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 优化后</span></span><br><span class="line">[root@localhost wangao]<span class="comment"># service rps status</span></span><br><span class="line">[em1] rx-0 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 8192</span><br><span class="line">[em1] rx-1 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 8192</span><br><span class="line">[em1] rx-2 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 8192</span><br><span class="line">[em1] rx-3 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 8192</span><br><span class="line">[p1p1] rx-0 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-1 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-10 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-11 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-12 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-13 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-14 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-15 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-16 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-17 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-18 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-19 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-2 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-20 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-21 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-22 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-23 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-24 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-25 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-26 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-27 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-28 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-29 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-3 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-30 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-31 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-4 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-5 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-6 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-7 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-8 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p1] rx-9 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-0 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-1 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-10 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-11 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-12 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-13 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-14 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-15 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-16 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-17 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-18 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-19 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-2 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-20 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-21 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-22 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-23 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-24 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-25 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-26 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-27 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-28 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-29 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-3 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-30 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-31 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-4 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-5 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-6 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-7 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-8 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[p1p2] rx-9 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 1024</span><br><span class="line">[bond0] rx-0 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 2048</span><br><span class="line">[bond0] rx-1 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 2048</span><br><span class="line">[bond0] rx-10 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 2048</span><br><span class="line">[bond0] rx-11 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 2048</span><br><span class="line">[bond0] rx-12 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 2048</span><br><span class="line">[bond0] rx-13 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 2048</span><br><span class="line">[bond0] rx-14 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 2048</span><br><span class="line">[bond0] rx-15 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 2048</span><br><span class="line">[bond0] rx-2 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 2048</span><br><span class="line">[bond0] rx-3 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 2048</span><br><span class="line">[bond0] rx-4 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 2048</span><br><span class="line">[bond0] rx-5 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 2048</span><br><span class="line">[bond0] rx-6 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 2048</span><br><span class="line">[bond0] rx-7 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 2048</span><br><span class="line">[bond0] rx-8 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 2048</span><br><span class="line">[bond0] rx-9 --&gt; rps_cpus = 0000,00000000,00000000,00000000,ffffffff , rps_flow_cnt = 2048</span><br><span class="line">rps_sock_flow_entries = 32768</span><br></pre></td></tr></table></figure>
+
+<h3 id="查看软中断变化"><a href="#查看软中断变化" class="headerlink" title="查看软中断变化"></a>查看软中断变化</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"># 优化前</span><br><span class="line">[root@localhost wangao]# egrep &#x27;cpu|p1p1&#x27; /proc/interrupts</span><br><span class="line">  68:   14737707          0       7843          0     571920          0     265157          0          0          0       1610          0      15028          0     314078          0      54904          0     449958          0     126160          0     338804          0     668880          0     122459          0     174803          0      26147          0  IR-PCI-MSI-edge      p1p1-TxRx-0</span><br><span class="line">  69:      56960          0     115829          0    2669071          0      61425          0      25161          0    4573083          0      72772          0      30975          0      61705          0     189408          0      13134          0     212159          0      49345          0     104657          0    1475007          0      82145          0  IR-PCI-MSI-edge      p1p1-TxRx-1</span><br><span class="line">  70:      73053          0     118657          0      95018          0    8645414          0      60962          0      83141          0      53948          0       7465          0      99615          0     119273          0      26191          0      14160          0      45703          0     335306          0    4014649          0      94692          0  IR-PCI-MSI-edge      p1p1-TxRx-2</span><br><span class="line">  71:      46293          0      75419          0      57967          0       6088          0      44337          0      88437          0      22859          0      51370          0      45510          0     120119          0      53276          0    1105728          0      92556          0    7627687          0     374344          0      79394          0  IR-PCI-MSI-edge      p1p1-TxRx-3</span><br><span class="line">  74:      55261          0     738486          0      14860          0      76202          0     173074          0     215494          0    6385081          0    2691319          0     167374          0      60585          0      17804          0      63837          0    1267656          0      25655          0      94509          0     115839          0  IR-PCI-MSI-edge      p1p1-TxRx-4</span><br><span class="line">  75:      59182          0      58481          0      89362          0      49916          0      53663          0      40476          0      81847          0      48582          0    7661643          0      74951          0      81414          0      37247          0      58610          0     244719          0    1449948          0      53745          0  IR-PCI-MSI-edge      p1p1-TxRx-5</span><br><span class="line">  76:      46993          0     290826          0      58661          0      31146          0     112260          0      51531          0     124002          0      47309          0      74370          0    5474439          0    8948212          0      97511          0     184151          0     141408          0      60222          0      19645          0  IR-PCI-MSI-edge      p1p1-TxRx-6</span><br><span class="line">  77:      44716          0      30601          0     111528          0      61197          0      29883          0    1262486          0      44401          0      19157          0      55785          0      80069          0     143110          0      67065          0    8581759          0      75214          0     201489          0     116415          0  IR-PCI-MSI-edge      p1p1-TxRx-7</span><br><span class="line">  78:      68542          0      46913          0      60848          0      61158          0      66591          0    8619198          0    1284598          0      68180          0      88156          0    3904413          0      32320          0     158036          0      74480          0      36877          0      91269          0      66078          0  IR-PCI-MSI-edge      p1p1-TxRx-8</span><br><span class="line">  79:      45256          0      70914          0      57025          0      58231          0      70398          0      24195          0      29084          0      55756          0    8559005          0      91255          0     105623          0      66336          0      34652          0     161266          0    1555160          0      63201          0  IR-PCI-MSI-edge      p1p1-TxRx-9</span><br><span class="line">  80:      81984          0      71120          0    8853871          0    4829736          0      38789          0      66915          0      37601          0      55277          0      52352          0     226681          0      64967          0      68163          0     100074          0      48442          0     106219          0     120024          0  IR-PCI-MSI-edge      p1p1-TxRx-10</span><br><span class="line">  81:      69573          0      55072          0      98255          0      49468          0   11084926          0      50300          0      67870          0      91907          0      61667          0      69887          0      83711          0      80970          0      87310          0      47258          0    1438136          0      80672          0  IR-PCI-MSI-edge      p1p1-TxRx-11</span><br><span class="line">  82:      41874          0     141338          0      40619          0    9095415          0    2744017          0      63918          0     203991          0     314563          0    1205451          0     124044          0     112602          0     308959          0      43454          0     128518          0      46659          0      80356          0  IR-PCI-MSI-edge      p1p1-TxRx-12</span><br><span class="line">  83:      33080          0    8793595          0      53807          0      46637          0      62925          0      54755          0      72271          0      60842          0      93343          0      47785          0      82287          0      73409          0     745000          0     832425          0     102907          0      90783          0  IR-PCI-MSI-edge      p1p1-TxRx-13</span><br><span class="line">  84:      52045          0      52518          0      83353          0      64534          0      32414          0      35972          0      45190          0      36925          0      24817          0      79178          0    1443964          0    3712758          0    9480150          0     109740          0      82856          0      58387          0  IR-PCI-MSI-edge      p1p1-TxRx-14</span><br><span class="line">  85:      63117          0      22871          0     220711          0      75206          0      19498          0      70962          0      52117          0      97241          0     123345          0      67058          0     115891          0    7140767          0    1527076          0     230527          0      52956          0      36916          0  IR-PCI-MSI-edge      p1p1-TxRx-15</span><br><span class="line">  86:     341182          0      25306          0     436494          0      79810          0     336125          0      24769          0    1015036          0      56332          0     996708          0      46704          0      44728          0     171661          0      73625          0     112345          0     595442          0    1249696          0  IR-PCI-MSI-edge      p1p1-TxRx-16</span><br><span class="line">  87:      27329          0      55574          0     348849          0      43122          0     333589          0      68221          0     146119          0     264597          0      42572          0      84245          0     217853          0     446305          0      47318          0     202998          0     423085          0     961201          0  IR-PCI-MSI-edge      p1p1-TxRx-17</span><br><span class="line">  88:     270648          0      46600          0     217253          0      31500          0      38469          0    3095476          0      84290          0      52591          0      26967          0      34871          0      38145          0      87283          0      67059          0     270541          0     210215          0    3993171          0  IR-PCI-MSI-edge      p1p1-TxRx-18</span><br><span class="line">  89:     148447          0      48653          0     326406          0      53179          0     123863          0      66748          0     391198          0     159050          0      98765          0      54322          0     141506          0     173276          0    1397478          0     133225          0      78736          0     119593          0  IR-PCI-MSI-edge      p1p1-TxRx-19</span><br><span class="line">  90:      56503          0     135502          0     687704          0     380045          0     469732          0      37274          0     281894          0    1552891          0     121443          0      47009          0     173177          0     650010          0     104931          0     131578          0     217383          0     633766          0  IR-PCI-MSI-edge      p1p1-TxRx-20</span><br><span class="line">  91:     214823          0      61146          0     339177          0      49928          0     327002          0      64010          0     318068          0     541504          0      45756          0      20992          0     176829          0      57846          0     148528          0    1162846          0      94836          0     433683          0  IR-PCI-MSI-edge      p1p1-TxRx-21</span><br><span class="line">  92:     106435          0      26816          0     555204          0      31009          0     391325          0     125873          0     290335          0     567300          0      40470          0     341570          0      61671          0     192984          0     221575          0    3245714          0      80733          0     596397          0  IR-PCI-MSI-edge      p1p1-TxRx-22</span><br><span class="line">  93:     115951          0      70761          0     381334          0     143441          0     872170          0     118644          0     517816          0      60193          0     100746          0      41460          0      70866          0     102305          0     134298          0      79193          0      79264          0    1835037          0  IR-PCI-MSI-edge      p1p1-TxRx-23</span><br><span class="line">  94:     146101          0      35816          0     733832          0      29613          0     313268          0     202986          0     340662          0     100681          0    1993051          0     335538          0      71931          0      23162          0     246612          0     556509          0     224855          0     559908          0  IR-PCI-MSI-edge      p1p1-TxRx-24</span><br><span class="line">  95:     150668          0      36783          0     251091          0      36610          0     452604          0     118424          0     197907          0     471898          0     916471          0      25373          0      43497          0     170329          0     504482          0     504129          0      61751          0     349911          0  IR-PCI-MSI-edge      p1p1-TxRx-25</span><br><span class="line">  96:     175244          0      85547          0     149382          0      25817          0      27945          0      55507          0     297689          0    1877839          0      72682          0     294648          0      34613          0      54712          0     184015          0    5097111          0      62440          0     893488          0  IR-PCI-MSI-edge      p1p1-TxRx-26</span><br><span class="line">  97:     188255          0      79222          0     196770          0      93331          0      62542          0     197921          0     499815          0    1489952          0     685652          0     127194          0      39956          0      48082          0      46078          0     444262          0      89668          0     197128          0  IR-PCI-MSI-edge      p1p1-TxRx-27</span><br><span class="line">  98:     113119          0      44914          0     418302          0      17345          0      51941          0     187466          0      37948          0     572466          0      54668          0      27553          0     580539          0     366022          0    2375605          0      49572          0      73136          0    1132828          0  IR-PCI-MSI-edge      p1p1-TxRx-28</span><br><span class="line">  99:      94404          0      56968          0     407066          0      45791          0     302591          0     106122          0     261980          0     583169          0      32802          0      50997          0      47888          0      99704          0     129685          0     315057          0      38119          0    1544062          0  IR-PCI-MSI-edge      p1p1-TxRx-29</span><br><span class="line"> 100:      98958          0     178434          0     354708          0     111329          0     159026          0     156721          0     224555          0     188416          0     224497          0      30343          0     497511          0     121221          0     280827          0     354135          0      84543          0    1650501          0  IR-PCI-MSI-edge      p1p1-TxRx-30</span><br><span class="line"> 101:     199414          0      34177          0     506856          0      92717          0     246991          0     118922          0     123314          0     261694          0     145339          0     730269          0     397150          0      26237          0     541393          0     357194          0     174133          0     520104          0  IR-PCI-MSI-edge      p1p1-TxRx-31</span><br><span class="line"> 102:          5          0          0          0          0          0        130          0          0          0          4          0          5          0          2          0          1          0          0          0          2          0          0          0          0          0          0          0          0          0         57          0  IR-PCI-MSI-edge      p1p1</span><br><span class="line"></span><br><span class="line"># 优化后</span><br><span class="line">[root@localhost wangao]# egrep &#x27;cpu|enp175s0f0&#x27; /proc/interrupts</span><br><span class="line"> 545:          0          0          0          0          0          0          0          0   78728441   66114965   52520832   41158901   65698825   55803106   20888551   23716200          0          0          0          0          0          0          0          0   41296940   19654307   42367407   68035795   31971316   73083489  109360661   60151057  IR-PCI-MSI-edge      enp175s0f0-TxRx-0</span><br><span class="line"> 546:          0          0          0          0          0          0          0          0  293334701   57784003   57947637  279907263   83003310   59328994   14582717   10594077          0          0          0          0          0          0          0          0   33844346   53425312  104463040  121835272   48115201   11875829  149517303   27888367  IR-PCI-MSI-edge      enp175s0f0-TxRx-1</span><br><span class="line"> 547:          0          0          0          0          0          0          0          0   65087834   74714070   70617455   50729188   50629957   53222216   29320338   43600286          0          0          0          0          0          0          0          0   78790098   21664768   53133919  104396382   28219169   98109898  106275780    6075631  IR-PCI-MSI-edge      enp175s0f0-TxRx-2</span><br><span class="line"> 548:          0          0          0          0          0          0          0          0  108290552   62484073   55417923   64030173   55771760   74127972   63180417   62512564          0          0          0          0          0          0          0          0  127950399   63170356   20177522  106969671   21966002  107295156  138414635    3139534  IR-PCI-MSI-edge      enp175s0f0-TxRx-3</span><br><span class="line"> 549:          0          0          0          0          0          0          0          0  175701987  134359768  118283034   93078181   56579608   43699849   83211249   72178065          0          0          0          0          0          0          0          0   67170073   21723454   56826677  103798934   14026848   39506854  136483492   11700838  IR-PCI-MSI-edge      enp175s0f0-TxRx-4</span><br><span class="line"> 550:          0          0          0          0          0          0          0          0  161298050   70517371   30581739  186350377  170422634  226218127   55471402   95255735          0          0          0          0          0          0          0          0  158450530   36931783   14121926   68432292   26086904    5561980   46129837      10039  IR-PCI-MSI-edge      enp175s0f0-TxRx-5</span><br><span class="line"> 551:          0          0          0          0          0          0          0          0   59810450   85668650   74748733   66956510   53509915   67475372   37312571   27187643          0          0          0          0          0          0          0          0   42998302   18434014   26932131   54190593   16723043   46515600   59603049   11897912  IR-PCI-MSI-edge      enp175s0f0-TxRx-6</span><br><span class="line"> 552:          0          0          0          0          0          0          0          0   37068253  137459908  126379700  132069647   44577185   92132779   18951865   48826631          0          0          0          0          0          0          0          0  168471567   18399908    9609939  156723119   45300251   47356473   71094409   13049049  IR-PCI-MSI-edge      enp175s0f0-TxRx-7</span><br><span class="line"> 553:          0          0          0          0          0          0          0          0    9148701   15294255  337628836   28379485   21729246   18839950    5383431    5064436          0          0          0          0          0          0          0          0   45773035    6898143    3359206    4497486  569915849    5649581  659950071  561102436  IR-PCI-MSI-edge      enp175s0f0-TxRx-8</span><br><span class="line"> 554:          0          0          0          0          0          0          0          0   45919755  648235162   90862075   82511196  121536855  775131101    5059996    2245523          0          0          0          0          0          0          0          0   39913983  123180793    4250458  117911846   13217963    4291001   72759615   11901382  IR-PCI-MSI-edge      enp175s0f0-TxRx-9</span><br><span class="line"> 555:          0          0          0          0          0          0          0          0   17252329   12804726  202960565  226950817  436490841   62135664  286074659    2405684          0          0          0          0          0          0          0          0    1937801    2774288  198336045   26598791    3834288  620409019    7956742          0  IR-PCI-MSI-edge      enp175s0f0-TxRx-10</span><br><span class="line"> 556:          0          0          0          0          0          0          0          0    2543207    1589549  378184536    5537639    2432570   10278492  370935530    2557214          0          0          0          0          0          0          0          0    2084807    2817750    3214825    3352447 1633147902    3067434    3704468          0  IR-PCI-MSI-edge      enp175s0f0-TxRx-11</span><br><span class="line"> 557:          0          0          0          0          0          0          0          0   35578276  274609699  253038113    4759061   62653759    2988138   24435129    2729652          0          0          0          0          0          0          0          0 1276874078    3470696  522229642    4623985    3795035    3779577    4484373      26368  IR-PCI-MSI-edge      enp175s0f0-TxRx-12</span><br><span class="line"> 558:          0          0          0          0          0          0          0          0    3282953    3151370   13102970   15841447    2290018  191758517  253118172    3139260          0          0          0          0          0          0          0          0    2245766    6169610 1545045398   30596340    4355187  163581051    4176977          0  IR-PCI-MSI-edge      enp175s0f0-TxRx-13</span><br><span class="line"> 559:          0          0          0          0          0          0          0          0   88746890    2665364   81746473  477713921    4323711   87193204   74776878    3650446          0          0          0          0          0          0          0          0    2540382  403859013    3537468  997197460  189897196    4592593    5480200          0  IR-PCI-MSI-edge      enp175s0f0-TxRx-14</span><br><span class="line"> 560:          0          0          0          0          0          0          0          0    6646487    5048477    4430038    8497796   18754540  225111260  231266854 1499236783          0          0          0          0          0          0          0          0  138682422    4968757   27628949   22916070    3702479   28557972   20003328          0  IR-PCI-MSI-edge      enp175s0f0-TxRx-15</span><br><span class="line"> 561:          0          0          0          0          0          0          0          0      60867      79129      72520      56561      47863      58682      37248      30413          0          0          0          0          0          0          0          0      31560      22821      36684      41662      23009      40489      40755   10139346  IR-PCI-MSI-edge      enp175s0f0-TxRx-16</span><br><span class="line"> 562:          0          0          0          0          0          0          0          0     704280    2485475    1162836     815515     762812     681074     684065     578558          0          0          0          0          0          0          0          0     384355     706857     392981     350292     339121     403073     201587      19983  IR-PCI-MSI-edge      enp175s0f0-TxRx-17</span><br><span class="line"> 563:          0          0          0          0          0          0          0          0     629722    2106933    1485145    1179751     579723     864401     771639     621684          0          0          0          0          0          0          0          0     357663     563356     465863     413412     351007     341288     208065      25611  IR-PCI-MSI-edge      enp175s0f0-TxRx-18</span><br><span class="line"> 564:          0          0          0          0          0          0          0          0     823889     835158     898125    1042075     479060     649698     488703     431781          0          0          0          0          0          0          0          0    3198859     368537     361450     268475     279292     335527     175329      21693  IR-PCI-MSI-edge      enp175s0f0-TxRx-19</span><br><span class="line"> 565:          0          0          0          0          0          0          0          0     676732    1450852    1388628     704602     644689     423264     404306     365596          0          0          0          0          0          0          0          0    3038526     391864     405727     263275     191222     248226     136003      21112  IR-PCI-MSI-edge      enp175s0f0-TxRx-20</span><br><span class="line"> 566:          0          0          0          0          0          0          0          0     566595    1175664    2031641     958319     714165     319767     349309     318957          0          0          0          0          0          0          0          0    2958683     218495     239817     214993     179935     191555     106269      22241  IR-PCI-MSI-edge      enp175s0f0-TxRx-21</span><br><span class="line"> 567:          0          0          0          0          0          0          0          0     832674    1176655    1652999     789321     736090     853359     748998     577413          0          0          0          0          0          0          0          0     498610     570634     823144     451361     350612     336046     200696      23342  IR-PCI-MSI-edge      enp175s0f0-TxRx-22</span><br><span class="line"> 568:          0          0          0          0          0          0          0          0     486851     946241    1375282     525162     582995     609945     696507     440446          0          0          0          0          0          0          0          0    2986687     390852     513487     317316     283314     320359     191080      21907  IR-PCI-MSI-edge      enp175s0f0-TxRx-23</span><br><span class="line"> 569:          0          0          0          0          0          0          0          0   51211317   79773036   82956204   46567489   42244838   62523416   34798214   31871168          0          0          0          0          0          0          0          0   89233552   34741833   45475248   56079776   44626874  112466556  127468577   26730942  IR-PCI-MSI-edge      enp175s0f0-TxRx-24</span><br><span class="line"> 570:          0          0          0          0          0          0          0          0   84554805   62689462  101496218   40518441   34792544  140921853   28422396   29428544          0          0          0          0          0          0          0          0   23860917   73164249   50084153   72011910   24525127  548979217  332764098   50908113  IR-PCI-MSI-edge      enp175s0f0-TxRx-25</span><br><span class="line"> 571:          0          0          0          0          0          0          0          0   69909137   55776777   94776131   63355410   42321451   74321693   45528982   50604702          0          0          0          0          0          0          0          0   56618040   31516738   58332108   69357737   20168247   58852410  137885013   28088790  IR-PCI-MSI-edge      enp175s0f0-TxRx-26</span><br><span class="line"> 572:          0          0          0          0          0          0          0          0   97305670   87729287   88586433   59983480   55828246   79305722   51064394   44409948          0          0          0          0          0          0          0          0   41248135   60491280   43010548   99696137   32513292   64373823   74114831   49645455  IR-PCI-MSI-edge      enp175s0f0-TxRx-27</span><br><span class="line"> 573:          0          0          0          0          0          0          0          0   72108897   76540055   69546704   69542158   46167801   57170600   48419068   58439907          0          0          0          0          0          0          0          0   68912196   27371642   58904860   82050006   79475074  107799031  109654468   81082896  IR-PCI-MSI-edge      enp175s0f0-TxRx-28</span><br><span class="line"> 574:          0          0          0          0          0          0          0          0   69014002   80647341   62399685   97216594   87591440  103529815   72314579   45731155          0          0          0          0          0          0          0          0   89557655   50919154   68754628  109583064   33891553   76526249  188283182   29596358  IR-PCI-MSI-edge      enp175s0f0-TxRx-29</span><br><span class="line"> 575:          0          0          0          0          0          0          0          0   70240109   84468547   61070305   57381753  122569467   76404910   51871561   47071056          0          0          0          0          0          0          0          0   97676445   22451436   44986642   93854970   51734947  141860090   97976950   63786565  IR-PCI-MSI-edge      enp175s0f0-TxRx-30</span><br><span class="line"> 576:          0          0          0          0          0          0          0          0   66395628   99188539   63355633   82424649  110498163  119343763  129927329   49811047          0          0          0          0          0          0          0          0   76096869   78511976   32199289  122850446  108523248   49641666  346741057  101551776  IR-PCI-MSI-edge      enp175s0f0-TxRx-31</span><br><span class="line"> 577:          0          0          0          0          0          0          0          0        307        422        349        309        268        317        222        167          0          0          0          0          0          0          0          0        139        126        215        193         95        182        231       7349  IR-PCI-MSI-edge      enp175s0f0</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190705111612.png"><br><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190705111633.png"><br><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190705111643.png"></p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a target="_blank" rel="noopener" href="https://tech.meituan.com/2018/03/16/redis-high-concurrency-optimization.html">Redis 高负载下的中断优化</a><br><a target="_blank" rel="noopener" href="http://www.simlinux.com/2017/02/28/net-softirq.html">网卡软中断过高问题优化总结</a><br><a target="_blank" rel="noopener" href="https://ylgrgyq.github.io/2017/08/01/linux-receive-packet-3/">Linux 网络协议栈收消息过程 - TCP Protocol Layer</a><br><a target="_blank" rel="noopener" href="https://blog.packagecloud.io/eng/2016/06/22/monitoring-tuning-linux-networking-stack-receiving-data/#tuning-network-devices">Monitoring and Tuning the Linux Networking Stack: Receiving Data</a><br><a target="_blank" rel="noopener" href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/performance_tuning_guide/">Performance Tuning Guide</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/rps/" data-title="RPS和RFS网卡多队列性能调优实践 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/zabbix-faq/" title="Zabbix常见问题整理">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Zabbix常见问题整理</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/elk/"  title="使用ELK(Elasticsearch + Logstash + Kibana) 搭建日志集中分析平台实践">
+ <strong>下一篇：</strong><br/> 
+ <span>使用ELK(Elasticsearch + Logstash + Kibana) 搭建日志集中分析平台实践
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8B%E6%95%85%E5%A4%8D%E7%9B%98"><span class="toc-number">3.</span> <span class="toc-text">事故复盘</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Scaling-in-the-Linux-Networking-Stack"><span class="toc-number">4.</span> <span class="toc-text">Scaling in the Linux Networking Stack</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RPS"><span class="toc-number">5.</span> <span class="toc-text">RPS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RFS"><span class="toc-number">6.</span> <span class="toc-text">RFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%86%E8%A7%A3%E6%8E%A5%E6%94%B6%E6%95%B0%E6%8D%AE%E5%8C%85%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="toc-number">7.</span> <span class="toc-text">了解接收数据包的流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E7%BD%91%E5%8D%A1%E6%94%B6%E5%88%B0%E7%9A%84%E6%95%B0%E6%8D%AE%E5%8C%85%E8%BD%AC%E7%A7%BB%E5%88%B0%E4%B8%BB%E6%9C%BA%E5%86%85%E5%AD%98%EF%BC%88NIC-%E4%B8%8E%E9%A9%B1%E5%8A%A8%E4%BA%A4%E4%BA%92%EF%BC%89"><span class="toc-number">7.1.</span> <span class="toc-text">将网卡收到的数据包转移到主机内存（NIC 与驱动交互）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E7%9F%A5%E7%B3%BB%E7%BB%9F%E5%86%85%E6%A0%B8%E5%A4%84%E7%90%86%EF%BC%88%E9%A9%B1%E5%8A%A8%E4%B8%8E-Linux-%E5%86%85%E6%A0%B8%E4%BA%A4%E4%BA%92%EF%BC%89"><span class="toc-number">7.2.</span> <span class="toc-text">通知系统内核处理（驱动与 Linux 内核交互）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%AD%E6%96%AD%EF%BC%9F"><span class="toc-number">8.</span> <span class="toc-text">什么是中断？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A1%AC%E4%B8%AD%E6%96%AD%E4%B8%8E%E8%BD%AF%E4%B8%AD%E6%96%AD%EF%BC%9F"><span class="toc-number">8.1.</span> <span class="toc-text">硬中断与软中断？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A1%AC%E4%B8%AD%E6%96%AD%E4%B8%8E%E8%BD%AF%E4%B8%AD%E6%96%AD%E4%B9%8B%E5%8C%BA%E5%88%AB%E4%B8%8E%E8%81%94%E7%B3%BB%EF%BC%9F"><span class="toc-number">8.2.</span> <span class="toc-text">硬中断与软中断之区别与联系？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E4%B8%AD%E6%96%AD%E6%83%85%E5%86%B5"><span class="toc-number">8.3.</span> <span class="toc-text">查看中断情况</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE%E5%92%8C%E6%95%88%E6%9E%9C%E6%BC%94%E7%A4%BA"><span class="toc-number">9.</span> <span class="toc-text">优化建议和效果演示</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8BRPS-x2F-RFS%E4%BC%98%E5%8C%96%E5%89%8D%E5%90%8E%E5%8F%98%E5%8C%96"><span class="toc-number">9.1.</span> <span class="toc-text">查看RPS&#x2F;RFS优化前后变化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E8%BD%AF%E4%B8%AD%E6%96%AD%E5%8F%98%E5%8C%96"><span class="toc-number">9.2.</span> <span class="toc-text">查看软中断变化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">10.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

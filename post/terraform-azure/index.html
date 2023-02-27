@@ -1,0 +1,671 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>Terraform Azure部署实践 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="Terraform Azure部署实践">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Terraform Azure部署实践">
+<meta property="og:url" content="https://wsgzao.github.io/post/terraform-azure/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="Terraform Azure部署实践">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://docs.microsoft.com/en-us/azure/role-based-access-control/media/rbac-and-directory-admin-roles/rbac-admin-roles.png">
+<meta property="og:image" content="https://docs.microsoft.com/zh-cn/azure/role-based-access-control/media/rbac-and-directory-admin-roles/rbac-admin-roles.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20210301114638.png">
+<meta property="article:published_time" content="2021-02-26T06:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:07.131Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://docs.microsoft.com/en-us/azure/role-based-access-control/media/rbac-and-directory-admin-roles/rbac-admin-roles.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/terraform-azure/" title="Terraform Azure部署实践" itemprop="url">Terraform Azure部署实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2021-02-26T06:59:49.000Z" itemprop="datePublished"> 发表于 2021-02-26</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84"><span class="toc-number">3.</span> <span class="toc-text">学习路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Azure-Provider"><span class="toc-number">4.</span> <span class="toc-text">Azure Provider</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%90%86%E8%A7%A3Azure-RBAC"><span class="toc-number">5.</span> <span class="toc-text">理解Azure RBAC</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Azure%E7%99%BB%E5%BD%95%E9%AA%8C%E8%AF%81%E6%96%B9%E5%BC%8F"><span class="toc-number">5.1.</span> <span class="toc-text">Azure登录验证方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85Azure-CLI"><span class="toc-number">5.2.</span> <span class="toc-text">安装Azure CLI</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform-on-Azure"><span class="toc-number">6.</span> <span class="toc-text">Terraform on Azure</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform-Azure%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="toc-number">7.</span> <span class="toc-text">Terraform Azure常见问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Azure-Best-Practices"><span class="toc-number">8.</span> <span class="toc-text">Azure Best Practices</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Governance"><span class="toc-number">8.1.</span> <span class="toc-text">Governance</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Identity-and-Access-Management"><span class="toc-number">8.2.</span> <span class="toc-text">Identity and Access Management</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DevOps"><span class="toc-number">8.3.</span> <span class="toc-text">DevOps</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Security"><span class="toc-number">8.4.</span> <span class="toc-text">Security</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Networking"><span class="toc-number">8.5.</span> <span class="toc-text">Networking</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Storage"><span class="toc-number">8.6.</span> <span class="toc-text">Storage</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Compute"><span class="toc-number">8.7.</span> <span class="toc-text">Compute</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AppServices"><span class="toc-number">8.8.</span> <span class="toc-text">AppServices</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">9.</span> <span class="toc-text">参考文章</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文以Terraform Azure微软云为实践案例</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2021年02月26日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/terraform-azure/">https://wsgzao.github.io/post/terraform-azure/</a></p>
+<hr>
+<h2 id="学习路径"><a href="#学习路径" class="headerlink" title="学习路径"></a>学习路径</h2><p><a target="_blank" rel="noopener" href="https://learn.hashicorp.com/collections/terraform/azure-get-started">Terraform Get Started - Azure</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/azure/developer/terraform/">Terraform on Azure documentation</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/learn/azure/">Azure on Microsoft Learn</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/hashicorp/learn-terraform-provision-aks-cluster">Provision an AKS Cluster learn guide</a></p>
+<p><a target="_blank" rel="noopener" href="https://learnk8s.io/blog/get-start-terraform-aks">Getting started with Terraform and Kubernetes on Azure AKS</a></p>
+<h2 id="Azure-Provider"><a href="#Azure-Provider" class="headerlink" title="Azure Provider"></a>Azure Provider</h2><p>The Azure Provider can be used to configure infrastructure in <a target="_blank" rel="noopener" href="https://azure.microsoft.com/en-us/">Microsoft Azure</a> using the Azure Resource Manager API’s. Documentation regarding the <a target="_blank" rel="noopener" href="https://www.terraform.io/docs/configuration/data-sources.html">Data Sources</a> and <a target="_blank" rel="noopener" href="https://www.terraform.io/docs/configuration/resources.html">Resources</a> supported by the Azure Provider can be found in the navigation to the left.</p>
+<p>Interested in the provider’s latest features, or want to make sure you’re up to date? Check out the <a target="_blank" rel="noopener" href="https://github.com/terraform-providers/terraform-provider-azurerm/blob/master/CHANGELOG.md">changelog</a> for version information and release notes.</p>
+<p>Azure Terraform相关API都可以通过官网查询，注意版本</p>
+<p><a target="_blank" rel="noopener" href="https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs">https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs</a></p>
+<p>如果遇到描述不清楚的细节建议回头阅读Azure官方文档，以下链接优先提供英文版，中文翻译不及时，有需要可以替换<code>en-us</code>为<code>zh-cn</code></p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/azure/">https://docs.microsoft.com/en-us/azure/</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/azure/">https://docs.microsoft.com/zh-cn/azure/</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.azure.cn/">由世纪互联运营的Microsoft Azure</a></p>
+<h2 id="理解Azure-RBAC"><a href="#理解Azure-RBAC" class="headerlink" title="理解Azure RBAC"></a>理解Azure RBAC</h2><p><img src="https://docs.microsoft.com/en-us/azure/role-based-access-control/media/rbac-and-directory-admin-roles/rbac-admin-roles.png"></p>
+<p><img src="https://docs.microsoft.com/zh-cn/azure/role-based-access-control/media/rbac-and-directory-admin-roles/rbac-admin-roles.png"></p>
+<p>Azure role-based access control (Azure RBAC) is a system that provides fine-grained access management of Azure resources. Using Azure RBAC, you can segregate duties within your team and grant only the amount of access to users that they need to perform their jobs.</p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/azure/role-based-access-control/">https://docs.microsoft.com/en-us/azure/role-based-access-control/</a></p>
+<p>基于 Azure 角色的访问控制 (Azure RBAC) 是一个系统，它为 Azure 资源提供精细的访问管理。 使用 Azure RBAC，可以在团队中实现职责分离，并且可以仅向用户授予执行作业所需的访问权限。</p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/azure/role-based-access-control/">https://docs.microsoft.com/zh-cn/azure/role-based-access-control/</a></p>
+<h3 id="Azure登录验证方式"><a href="#Azure登录验证方式" class="headerlink" title="Azure登录验证方式"></a>Azure登录验证方式</h3><p>Terraform supports a number of different methods for authenticating to Azure:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/azure_cli">Authenticating to Azure using the Azure CLI</a></li>
+<li><a target="_blank" rel="noopener" href="https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/managed_service_identity">Authenticating to Azure using Managed Service Identity</a></li>
+<li><a target="_blank" rel="noopener" href="https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_certificate">Authenticating to Azure using a Service Principal and a Client Certificate</a></li>
+<li><a target="_blank" rel="noopener" href="https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_secret">Authenticating to Azure using a Service Principal and a Client Secret</a></li>
+</ul>
+<p>We recommend using either a Service Principal or Managed Service Identity when running Terraform non-interactively (such as when running Terraform in a CI server) - and authenticating using the Azure CLI when running Terraform locally.</p>
+<p><a target="_blank" rel="noopener" href="https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_secret#creating-a-service-principal-in-the-azure-portal">Creating a Service Principal in the Azure Portal</a></p>
+<p>There are three tasks necessary to create a Service Principal using <a target="_blank" rel="noopener" href="https://portal.azure.com/">the Azure Portal</a>:</p>
+<ol>
+<li>Create an Application in Azure Active Directory, which will create an associated Service Principal</li>
+<li>Generating a Client Secret for the Azure Active Directory Application, which you’ll to authenticate</li>
+<li>Grant the Service Principal access to manage resources in your Azure subscriptions</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal">How to: Use the portal to create an Azure AD application and service principal that can access resources</a></p>
+<blockquote>
+<p>如果各位没有看明白英文描述和各字段值的获取，微软官方也有中文翻译</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/azure/active-directory/develop/howto-create-service-principal-portal">如何使用门户创建可访问资源的 Azure AD 应用程序和服务主体</a></p>
+<p>说明一下：</p>
+<ul>
+<li>subscription_id：你的Azure订阅ID</li>
+<li>client_id：创建Service Principal后的Application (client) ID</li>
+<li>client_secret：创建Service Principal后，创建application secret</li>
+<li>tenant_id：创建Service Principal后，application的Directory (tenant) ID</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20210301114638.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"># create azureEnv.sh (can skip)</span><br><span class="line">vim azureEnv.sh</span><br><span class="line"></span><br><span class="line">#!/bin/sh</span><br><span class="line">echo &quot;Setting environment variables for Terraform&quot;</span><br><span class="line">export ARM_SUBSCRIPTION_ID=your_subscription_id</span><br><span class="line">export ARM_CLIENT_ID=your_appId</span><br><span class="line">export ARM_CLIENT_SECRET=your_password</span><br><span class="line">export ARM_TENANT_ID=your_tenant_id</span><br><span class="line"># Not needed for public, required for usgovernment, german, china</span><br><span class="line">export ARM_ENVIRONMENT=public</span><br><span class="line"></span><br><span class="line"># source azureEnv.sh</span><br><span class="line">. azureEnv.sh</span><br><span class="line"></span><br><span class="line"># create provider.tf</span><br><span class="line">vim provider.tf</span><br><span class="line"></span><br><span class="line"># Configure the Azure provider</span><br><span class="line">terraform &#123;</span><br><span class="line">  required_providers &#123;</span><br><span class="line">    azurerm = &#123;</span><br><span class="line">      source = &quot;hashicorp/azurerm&quot;</span><br><span class="line">      version = &quot;&gt;= 2.26&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">provider &quot;azurerm&quot; &#123;</span><br><span class="line">  features &#123;&#125;</span><br><span class="line"># Not needed for public, required for usgovernment, german, china</span><br><span class="line">#   environment     = &quot;china&quot;</span><br><span class="line">  subscription_id = &quot;00000000-0000-0000-0000-000000000000&quot; </span><br><span class="line">  client_id       = &quot;00000000-0000-0000-0000-000000000000&quot; </span><br><span class="line">  client_secret   = &quot;xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&quot; </span><br><span class="line">  tenant_id       = &quot;00000000-0000-0000-0000-000000000000&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># create main.tf</span><br><span class="line"></span><br><span class="line">resource &quot;azurerm_resource_group&quot; &quot;tfrg&quot; &#123;</span><br><span class="line">    name = &quot;ResourceGroup&quot;</span><br><span class="line">    location = &quot;eastasia&quot;</span><br><span class="line"></span><br><span class="line">    tags = &#123;</span><br><span class="line">      environment = &quot;demo&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># terraform test</span><br><span class="line">terraform plan</span><br><span class="line">terraform apply</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这是Azure官方文档给的一个案例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"># We strongly recommend using the required_providers block to set the</span><br><span class="line"># Azure Provider source and version being used</span><br><span class="line">terraform &#123;</span><br><span class="line">  required_providers &#123;</span><br><span class="line">    azurerm = &#123;</span><br><span class="line">      source = &quot;hashicorp/azurerm&quot;</span><br><span class="line">      version = &quot;=2.46.0&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># Configure the Microsoft Azure Provider</span><br><span class="line">provider &quot;azurerm&quot; &#123;</span><br><span class="line">  features &#123;&#125;</span><br><span class="line"></span><br><span class="line">  # More information on the authentication methods supported by</span><br><span class="line">  # the AzureRM Provider can be found here:</span><br><span class="line">  # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs</span><br><span class="line"></span><br><span class="line">  # subscription_id = &quot;...&quot;</span><br><span class="line">  # client_id       = &quot;...&quot;</span><br><span class="line">  # client_secret   = &quot;...&quot;</span><br><span class="line">  # tenant_id       = &quot;...&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># Create a resource group</span><br><span class="line">resource &quot;azurerm_resource_group&quot; &quot;example&quot; &#123;</span><br><span class="line">  name     = &quot;production-resources&quot;</span><br><span class="line">  location = &quot;West US&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># Create a virtual network in the production-resources resource group</span><br><span class="line">resource &quot;azurerm_virtual_network&quot; &quot;test&quot; &#123;</span><br><span class="line">  name                = &quot;production-network&quot;</span><br><span class="line">  resource_group_name = azurerm_resource_group.example.name</span><br><span class="line">  location            = azurerm_resource_group.example.location</span><br><span class="line">  address_space       = [&quot;10.0.0.0/16&quot;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装Azure-CLI"><a href="#安装Azure-CLI" class="headerlink" title="安装Azure CLI"></a>安装Azure CLI</h3><p>Install the Azure CLI</p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/cli/azure/install-azure-cli">https://docs.microsoft.com/en-us/cli/azure/install-azure-cli</a></p>
+<p>以下操作均以macOS为例</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Install</span></span><br><span class="line"><span class="comment"># brew update &amp;&amp; brew install azure-cli</span></span><br><span class="line">brew install azure-cli</span><br><span class="line">az login</span><br><span class="line"></span><br><span class="line"><span class="comment"># Update</span></span><br><span class="line">az upgrade</span><br><span class="line">brew update &amp;&amp; brew upgrade azure-cli</span><br><span class="line"></span><br><span class="line"><span class="comment"># Uninstall</span></span><br><span class="line">brew uninstall azure-cli</span><br><span class="line"></span><br><span class="line"><span class="comment"># az command</span></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">     /\</span><br><span class="line">    /  \    _____   _ _  ___ _</span><br><span class="line">   / /\ \  |_  / | | | \<span class="string">&#x27;__/ _\</span></span><br><span class="line"><span class="string">  / ____ \  / /| |_| | | |  __/</span></span><br><span class="line"><span class="string"> /_/    \_\/___|\__,_|_|  \___|</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Welcome to the cool new Azure CLI!</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Use `az --version` to display the current version.</span></span><br><span class="line"><span class="string">Here are the base commands:</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    account             : Manage Azure subscription information.</span></span><br><span class="line"><span class="string">    acr                 : Manage private registries with Azure Container Registries.</span></span><br><span class="line"><span class="string">    ad                  : Manage Azure Active Directory Graph entities needed for Role Based Access</span></span><br><span class="line"><span class="string">                         Control.</span></span><br><span class="line"><span class="string">    advisor             : Manage Azure Advisor.</span></span><br><span class="line"><span class="string">    aks                 : Manage Azure Kubernetes Services.</span></span><br><span class="line"><span class="string">    ams                 : Manage Azure Media Services resources.</span></span><br><span class="line"><span class="string">    apim                : Manage Azure API Management services.</span></span><br><span class="line"><span class="string">    appconfig           : Manage App Configurations.</span></span><br><span class="line"><span class="string">    appservice          : Manage App Service plans.</span></span><br><span class="line"><span class="string">    aro                 : Manage Azure Red Hat OpenShift clusters.</span></span><br><span class="line"><span class="string">    backup              : Manage Azure Backups.</span></span><br><span class="line"><span class="string">    batch               : Manage Azure Batch.</span></span><br><span class="line"><span class="string">    billing             : Manage Azure Billing.</span></span><br><span class="line"><span class="string">    bot                 : Manage Microsoft Azure Bot Service.</span></span><br><span class="line"><span class="string">    cache               : Commands to manage CLI objects cached using the `--defer` argument.</span></span><br><span class="line"><span class="string">    cdn                 : Manage Azure Content Delivery Networks (CDNs).</span></span><br><span class="line"><span class="string">    cloud               : Manage registered Azure clouds.</span></span><br><span class="line"><span class="string">    cognitiveservices   : Manage Azure Cognitive Services accounts.</span></span><br><span class="line"><span class="string">    config              : Manage Azure CLI configuration.</span></span><br><span class="line"><span class="string">    configure           : Manage Azure CLI configuration. This command is interactive.</span></span><br><span class="line"><span class="string">    consumption         : Manage consumption of Azure resources.</span></span><br><span class="line"><span class="string">    container           : Manage Azure Container Instances.</span></span><br><span class="line"><span class="string">    cosmosdb            : Manage Azure Cosmos DB database accounts.</span></span><br><span class="line"><span class="string">    databoxedge         : Support data box edge device and management.</span></span><br><span class="line"><span class="string">    deployment          : Manage Azure Resource Manager template deployment at subscription scope.</span></span><br><span class="line"><span class="string">    deployment-scripts  : Manage deployment scripts at subscription or resource group scope.</span></span><br><span class="line"><span class="string">    deploymentmanager   : Create and manage rollouts for your service.</span></span><br><span class="line"><span class="string">    disk                : Manage Azure Managed Disks.</span></span><br><span class="line"><span class="string">    disk-access         : Manage disk access resources.</span></span><br><span class="line"><span class="string">    disk-encryption-set : Disk Encryption Set resource.</span></span><br><span class="line"><span class="string">    dla                 : Manage Data Lake Analytics accounts, jobs, and catalogs.</span></span><br><span class="line"><span class="string">    dls                 : Manage Data Lake Store accounts and filesystems.</span></span><br><span class="line"><span class="string">    dms                 : Manage Azure Data Migration Service (DMS) instances.</span></span><br><span class="line"><span class="string">    eventgrid           : Manage Azure Event Grid topics, domains, domain topics, system topics</span></span><br><span class="line"><span class="string">                         partner topics, event subscriptions, system topic event subscriptions and</span></span><br><span class="line"><span class="string">                         partner topic event subscriptions.</span></span><br><span class="line"><span class="string">    eventhubs           : Manage Azure Event Hubs namespaces, eventhubs, consumergroups and geo</span></span><br><span class="line"><span class="string">                         recovery configurations - Alias.</span></span><br><span class="line"><span class="string">    extension           : Manage and update CLI extensions.</span></span><br><span class="line"><span class="string">    feature             : Manage resource provider features.</span></span><br><span class="line"><span class="string">    feedback            : Send feedback to the Azure CLI Team!</span></span><br><span class="line"><span class="string">    find                : I&#x27;</span>m an AI robot, my advice is based on our Azure documentation as well as</span><br><span class="line">                         the usage patterns of Azure CLI and Azure ARM <span class="built_in">users</span>. Using me improves</span><br><span class="line">                         Azure products and documentation.</span><br><span class="line">    functionapp         : Manage <span class="keyword">function</span> apps. To install the Azure Functions Core tools see</span><br><span class="line">                         https://github.com/Azure/azure-functions-core-tools.</span><br><span class="line">    group               : Manage resource <span class="built_in">groups</span> and template deployments.</span><br><span class="line">    hdinsight           : Manage HDInsight resources.</span><br><span class="line">    identity            : Managed Service Identities.</span><br><span class="line">    image               : Manage custom virtual machine images.</span><br><span class="line">    interactive         : Start interactive mode. Installs the Interactive extension <span class="keyword">if</span> not</span><br><span class="line">                         installed already.</span><br><span class="line">    iot                 : Manage Internet of Things (IoT) assets.</span><br><span class="line">    keyvault            : Manage KeyVault keys, secrets, and certificates.</span><br><span class="line">    kusto               : Manage Azure Kusto resources.</span><br><span class="line">    lab                 : Manage Azure DevTest Labs.</span><br><span class="line">    local-context       : Manage Local Context.</span><br><span class="line">    lock                : Manage Azure locks.</span><br><span class="line">    login               : Log <span class="keyword">in</span> to Azure.</span><br><span class="line">    <span class="built_in">logout</span>              : Log out to remove access to Azure subscriptions.</span><br><span class="line">    managedapp          : Manage template solutions provided and maintained by Independent Software</span><br><span class="line">                         Vendors (ISVs).</span><br><span class="line">    managedservices     : Manage the registration assignments and definitions <span class="keyword">in</span> Azure.</span><br><span class="line">    maps                : Manage Azure Maps.</span><br><span class="line">    mariadb             : Manage Azure Database <span class="keyword">for</span> MariaDB servers.</span><br><span class="line">    monitor             : Manage the Azure Monitor Service.</span><br><span class="line">    mysql               : Manage Azure Database <span class="keyword">for</span> MySQL servers.</span><br><span class="line">    netappfiles         : Manage Azure NetApp Files (ANF) Resources.</span><br><span class="line">    network             : Manage Azure Network resources.</span><br><span class="line">    openshift           : Manage Azure Red Hat OpenShift 3.11 clusters.</span><br><span class="line">    policy              : Manage resource policies.</span><br><span class="line">    postgres            : Manage Azure Database <span class="keyword">for</span> PostgreSQL servers.</span><br><span class="line">    ppg                 : Manage Proximity Placement Groups.</span><br><span class="line">    provider            : Manage resource providers.</span><br><span class="line">    redis               : Manage dedicated Redis caches <span class="keyword">for</span> your Azure applications.</span><br><span class="line">    relay               : Manage Azure Relay Service namespaces, WCF relays, hybrid connections, and</span><br><span class="line">                         rules.</span><br><span class="line">    reservations        : Manage Azure Reservations.</span><br><span class="line">    resource            : Manage Azure resources.</span><br><span class="line">    rest                : Invoke a custom request.</span><br><span class="line">    role                : Manage user roles <span class="keyword">for</span> access control with Azure Active Directory and</span><br><span class="line">                         service principals.</span><br><span class="line">    search              : Manage Azure Search services, admin keys and query keys.</span><br><span class="line">    security            : Manage your security posture with Azure Security Center.</span><br><span class="line">    servicebus          : Manage Azure Service Bus namespaces, queues, topics, subscriptions, rules</span><br><span class="line">                         and geo-disaster recovery configuration <span class="built_in">alias</span>.</span><br><span class="line">    sf                  : Manage and administer Azure Service Fabric clusters.</span><br><span class="line">    sig                 : Manage shared image gallery.</span><br><span class="line">    signalr             : Manage Azure SignalR Service.</span><br><span class="line">    snapshot            : Manage point-in-time copies of managed disks, native blobs, or other</span><br><span class="line">                         snapshots.</span><br><span class="line">    sql                 : Manage Azure SQL Databases and Data Warehouses.</span><br><span class="line">    sshkey              : Manage ssh public key with vm.</span><br><span class="line">    staticwebapp        : Manage static apps.</span><br><span class="line">    storage             : Manage Azure Cloud Storage resources.</span><br><span class="line">    synapse             : Manage and operate Synapse Workspace, Spark Pool, SQL Pool.</span><br><span class="line">    tag                 : Tag Management on a resource.</span><br><span class="line">    ts                  : Manage template specs at subscription or resource group scope.</span><br><span class="line">    upgrade             : Upgrade Azure CLI and extensions.</span><br><span class="line">    version             : Show the versions of Azure CLI modules and extensions <span class="keyword">in</span> JSON format by</span><br><span class="line">                         default or format configured by --output.</span><br><span class="line">    vm                  : Manage Linux or Windows virtual machines.</span><br><span class="line">    vmss                : Manage groupings of virtual machines <span class="keyword">in</span> an Azure Virtual Machine Scale Set</span><br><span class="line">                         (VMSS).</span><br><span class="line">    webapp              : Manage web apps.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/cli/azure/popular-articles-using-the-azure-cli">Popular articles using the Azure CLI</a></p>
+<h2 id="Terraform-on-Azure"><a href="#Terraform-on-Azure" class="headerlink" title="Terraform on Azure"></a>Terraform on Azure</h2><p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/azure/developer/terraform/get-started-cloud-shell">Configure Terraform using Azure Cloud Shell</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/azure/developer/terraform/get-started-cloud-shell">使用 Azure Cloud Shell 配置 Terraform</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/azure/developer/terraform/create-linux-virtual-machine-with-infrastructure">Create a Linux VM with infrastructure in Azure using Terraform</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/azure/developer/terraform/create-linux-virtual-machine-with-infrastructure">使用 Terraform 在 Azure 中创建带有基础结构的 Linux VM</a></p>
+<h2 id="Terraform-Azure常见问题"><a href="#Terraform-Azure常见问题" class="headerlink" title="Terraform Azure常见问题"></a>Terraform Azure常见问题</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">az login</span><br><span class="line">Port <span class="string">&#x27;8400&#x27;</span> is taken with error <span class="string">&#x27;[Errno 8] nodename nor servname provided, or not known&#x27;</span>. Trying with the next one</span><br><span class="line">Port <span class="string">&#x27;8401&#x27;</span> is taken with error <span class="string">&#x27;[Errno 8] nodename nor servname provided, or not known&#x27;</span>. Trying with the next one</span><br><span class="line">Port <span class="string">&#x27;8402&#x27;</span> is taken with error <span class="string">&#x27;[Errno 8] nodename nor servname provided, or not known&#x27;</span>. Trying with the next one</span><br><span class="line">Port <span class="string">&#x27;8403&#x27;</span> is taken with error <span class="string">&#x27;[Errno 8] nodename nor servname provided, or not known&#x27;</span>. Trying with the next one</span><br><span class="line">Port <span class="string">&#x27;8404&#x27;</span> is taken with error <span class="string">&#x27;[Errno 8] nodename nor servname provided, or not known&#x27;</span>. Trying with the next one</span><br><span class="line">Port <span class="string">&#x27;8405&#x27;</span> is taken with error <span class="string">&#x27;[Errno 8] nodename nor servname provided, or not known&#x27;</span>. Trying with the next one</span><br><span class="line">Error: can<span class="string">&#x27;t reserve a port for authentication reply url</span></span><br><span class="line"><span class="string">Login failed</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># macOS中添加localhost可解决</span></span><br><span class="line"><span class="string">sudo vi /etc/hosts</span></span><br><span class="line"><span class="string">127.0.0.1 localhost</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Azure-Best-Practices"><a href="#Azure-Best-Practices" class="headerlink" title="Azure Best Practices"></a>Azure Best Practices</h2><p>A collection of all the best practice references that I can find.</p>
+<h3 id="Governance"><a href="#Governance" class="headerlink" title="Governance"></a>Governance</h3><ul>
+<li>Subscription design guide<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/azure/architecture/cloud-adoption/decision-guides/subscriptions/">https://docs.microsoft.com/en-us/azure/architecture/cloud-adoption/decision-guides/subscriptions/</a></li>
+</ul>
+</li>
+<li>Azure enterprise scaffold: Prescriptive subscription governance<ul>
+<li>Governance, Hierarchy, Management Groups, Resource Groups</li>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/azure/architecture/cloud-adoption/appendix/azure-scaffold">https://docs.microsoft.com/en-us/azure/architecture/cloud-adoption/appendix/azure-scaffold</a></li>
+</ul>
+</li>
+<li>Resource groups<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-overview#resource-groups">https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-overview#resource-groups</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="Identity-and-Access-Management"><a href="#Identity-and-Access-Management" class="headerlink" title="Identity and Access Management"></a>Identity and Access Management</h3><ul>
+<li>IDAM<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/azure/security/fundamentals/identity-management-best-practices">https://docs.microsoft.com/en-us/azure/security/fundamentals/identity-management-best-practices</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="DevOps"><a href="#DevOps" class="headerlink" title="DevOps"></a>DevOps</h3><ul>
+<li>Azure Resource Manager template best practices<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/template-best-practices">https://docs.microsoft.com/en-us/azure/azure-resource-manager/template-best-practices</a></li>
+</ul>
+</li>
+<li>Deploy resources with Resource Manager templates and Azure PowerShell<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-template-deploy">https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-template-deploy</a></li>
+</ul>
+</li>
+<li>Best Practices For Using Azure Resource Manager Templates<ul>
+<li><a target="_blank" rel="noopener" href="https://blogs.msdn.microsoft.com/mvpawardprogram/2018/05/01/azure-resource-manager/">https://blogs.msdn.microsoft.com/mvpawardprogram/2018/05/01/azure-resource-manager/</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="Security"><a href="#Security" class="headerlink" title="Security"></a>Security</h3><ul>
+<li>Azure security best practices and patterns<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/azure/security/security-best-practices-and-patterns">https://docs.microsoft.com/en-us/azure/security/security-best-practices-and-patterns</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="Networking"><a href="#Networking" class="headerlink" title="Networking"></a>Networking</h3><ul>
+<li>Best practices to set up networking for workloads migrated to Azure<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-au/azure/architecture/cloud-adoption/migrate/azure-best-practices/migrate-best-practices-networking">https://docs.microsoft.com/en-au/azure/architecture/cloud-adoption/migrate/azure-best-practices/migrate-best-practices-networking</a></li>
+</ul>
+</li>
+<li>Best practices to consider before deploying a network virtual appliance<ul>
+<li><a target="_blank" rel="noopener" href="https://azure.microsoft.com/en-au/blog/best-practices-to-consider-before-deploying-a-network-virtual-appliance/">https://azure.microsoft.com/en-au/blog/best-practices-to-consider-before-deploying-a-network-virtual-appliance/</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="Storage"><a href="#Storage" class="headerlink" title="Storage"></a>Storage</h3><ul>
+<li>Azure Storage security guide<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/azure/storage/common/storage-security-guide">https://docs.microsoft.com/en-us/azure/storage/common/storage-security-guide</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="Compute"><a href="#Compute" class="headerlink" title="Compute"></a>Compute</h3><h3 id="AppServices"><a href="#AppServices" class="headerlink" title="AppServices"></a>AppServices</h3><h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/azure/">Azure 文档</a></p>
+<p><a target="_blank" rel="noopener" href="https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs">Azure Provider</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/terraform-providers/terraform-provider-azurerm">terraform-provider-azurerm</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/AllenMaster/p/14196875.html">Azure Terraform（二）语法详解 </a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/terraform-azure/" data-title="Terraform Azure部署实践 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/ping/" title="为ping添加时间戳后台运行实时输出保存日志">
+  <strong>上一篇：</strong><br/>
+  <span>
+  为ping添加时间戳后台运行实时输出保存日志</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/buy/"  title="我的线上线下购物变迁史">
+ <strong>下一篇：</strong><br/> 
+ <span>我的线上线下购物变迁史
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84"><span class="toc-number">3.</span> <span class="toc-text">学习路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Azure-Provider"><span class="toc-number">4.</span> <span class="toc-text">Azure Provider</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%90%86%E8%A7%A3Azure-RBAC"><span class="toc-number">5.</span> <span class="toc-text">理解Azure RBAC</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Azure%E7%99%BB%E5%BD%95%E9%AA%8C%E8%AF%81%E6%96%B9%E5%BC%8F"><span class="toc-number">5.1.</span> <span class="toc-text">Azure登录验证方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85Azure-CLI"><span class="toc-number">5.2.</span> <span class="toc-text">安装Azure CLI</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform-on-Azure"><span class="toc-number">6.</span> <span class="toc-text">Terraform on Azure</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform-Azure%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="toc-number">7.</span> <span class="toc-text">Terraform Azure常见问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Azure-Best-Practices"><span class="toc-number">8.</span> <span class="toc-text">Azure Best Practices</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Governance"><span class="toc-number">8.1.</span> <span class="toc-text">Governance</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Identity-and-Access-Management"><span class="toc-number">8.2.</span> <span class="toc-text">Identity and Access Management</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DevOps"><span class="toc-number">8.3.</span> <span class="toc-text">DevOps</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Security"><span class="toc-number">8.4.</span> <span class="toc-text">Security</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Networking"><span class="toc-number">8.5.</span> <span class="toc-text">Networking</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Storage"><span class="toc-number">8.6.</span> <span class="toc-text">Storage</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Compute"><span class="toc-number">8.7.</span> <span class="toc-text">Compute</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AppServices"><span class="toc-number">8.8.</span> <span class="toc-text">AppServices</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">9.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

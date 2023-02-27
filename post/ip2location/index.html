@@ -1,0 +1,629 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>IP2Location Nginx Module配置使用小结 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="IP2Location Nginx Module配置使用小结">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IP2Location Nginx Module配置使用小结">
+<meta property="og:url" content="https://wsgzao.github.io/post/ip2location/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="IP2Location Nginx Module配置使用小结">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-04-21T06:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:06.862Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/ip2location/" title="IP2Location Nginx Module配置使用小结" itemprop="url">IP2Location Nginx Module配置使用小结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2020-04-21T06:59:49.000Z" itemprop="datePublished"> 发表于 2020-04-21</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GeoIP%E5%92%8CIP2Location%E7%AE%80%E4%BB%8B"><span class="toc-number">3.</span> <span class="toc-text">GeoIP和IP2Location简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IP2Location-Nginx-Module"><span class="toc-number">4.</span> <span class="toc-text">IP2Location Nginx Module</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Installation"><span class="toc-number">4.1.</span> <span class="toc-text">Installation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E5%A4%87%E6%B3%A8"><span class="toc-number">4.2.</span> <span class="toc-text">安装备注</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IP2Location-Database-Download"><span class="toc-number">5.</span> <span class="toc-text">IP2Location Database Download</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Configuration"><span class="toc-number">6.</span> <span class="toc-text">Configuration</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Syntax"><span class="toc-number">7.</span> <span class="toc-text">Syntax</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Variables"><span class="toc-number">8.</span> <span class="toc-text">Variables</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IP2Location-Python-Library"><span class="toc-number">9.</span> <span class="toc-text">IP2Location Python Library</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Country-blocking-using-Nginx-with-IP2Location-Module"><span class="toc-number">10.</span> <span class="toc-text">Country blocking using Nginx with IP2Location Module</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">11.</span> <span class="toc-text">参考文章</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>IP2Location主要是用于代替MaxMind GeoIP，原因是GeoIP数据库针对中国的Blacklist黑名单有非常高的误伤率，选择IP2Location可以有效降低误伤，为了业务需求得及时做出改变。在使用IP2Location的过程中发现官网的步骤还是存在一些问题，这里记录和分享下自己逐步解决问题的过程。</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2020年04月21日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/ip2location/">https://wsgzao.github.io/post/ip2location/</a></p>
+<hr>
+<h2 id="GeoIP和IP2Location简介"><a href="#GeoIP和IP2Location简介" class="headerlink" title="GeoIP和IP2Location简介"></a>GeoIP和IP2Location简介</h2><p><a target="_blank" rel="noopener" href="https://dev.maxmind.com/geoip/">GeoIP</a>是一套含IP数据库的软件工具。除此之外还有<a target="_blank" rel="noopener" href="https://www.ip2location.com/">IP2Location</a>等，国内做得比较深入的是高春辉创建的<a target="_blank" rel="noopener" href="https://www.ipip.net/">IPIP.NET</a></p>
+<p>Geo根据来访者的IP， 定位该IP所在经纬度、国家&#x2F;地区、省市、和街道等位置信息。</p>
+<p>GeoIP&#x2F;IP2Location等通常有两个版本，一个免费版，一个收费版本。</p>
+<p>收费版本的准确率高一些，更新频率也更频繁。</p>
+<p>Geo IP solution to identify country, region, city, latitude &amp; longitude, ZIP code, time zone, connection speed, ISP, domain name, IDD country code, area code, weather station data, mobile network codes (MNC), mobile country codes (MCC), mobile carrier, elevation and usage type.</p>
+<p>GeoIP是大家都非常熟悉的老字号，而这次的主角是IP2Location</p>
+<h2 id="IP2Location-Nginx-Module"><a href="#IP2Location-Nginx-Module" class="headerlink" title="IP2Location Nginx Module"></a>IP2Location Nginx Module</h2><p>This is an IP2Location Nginx Module that enables the user to identify the country code and country name by IP address. In general, it is faster, easier and more accurate than reverse DNS lookups.</p>
+<p><a target="_blank" rel="noopener" href="https://www.ip2location.com/development-libraries/ip2location/nginx">https://www.ip2location.com/development-libraries/ip2location/nginx</a></p>
+<h3 id="Installation"><a href="#Installation" class="headerlink" title="Installation"></a>Installation</h3><p>IP2Location C library enables the user to find the country, region, city, coordinates, ZIP code, time zone, ISP, domain name, connection type, area code, weather, MCC, MNC, mobile brand name, elevation and usage type that any IP address or hostname originates from. It has been optimized for speed and memory utilization. Developers can use the API to query all IP2Location™ binary databases for IPv4 and IPv6 address.</p>
+<ul>
+<li><p>Download IP2location C library from <a target="_blank" rel="noopener" href="https://www.ip2location.com/development-libraries/ip2location/c">here</a>.</p>
+</li>
+<li><p>Download and decompress this Nginx module package.</p>
+</li>
+<li><p>Change the path to IP2Location library in “ngx_http_ip2location_module.c”.</p>
+</li>
+<li><p>Re-compile Nginx from source to include this module. Add the below directive into the compile of Nginx:</p>
+<p>.&#x2F;configure --add-module&#x3D;&#x2F;absolute&#x2F;path&#x2F;to&#x2F;nginx-ip2location-8.0.0<br>make<br>make install</p>
+</li>
+<li><p>Edit your Nginx config file to point the correct path of IP2Location database file:</p>
+<p>ip2location_database &#x2F;absolute&#x2F;path&#x2F;to&#x2F;IP2LOCATION-DB1.BIN;</p>
+</li>
+</ul>
+<h3 id="安装备注"><a href="#安装备注" class="headerlink" title="安装备注"></a>安装备注</h3><p>IP2Location官方的执行步骤存在一些问题没有说清楚，这里分享自己实践后的步骤和结论</p>
+<blockquote>
+<p>安装依赖包</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># These are for RedHat, CentOS, and Fedora.</span></span><br><span class="line">sudo yum install wget git gcc-c++ pcre-devel zlib-devel make libtool autoconf automake</span><br><span class="line"></span><br><span class="line"><span class="comment"># These are for Debian. Ubuntu will be similar.</span></span><br><span class="line">sudo apt-get install wget git build-essential zlib1g-dev libpcre3 libpcre3-dev libtool autoconf automake</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>编译 IP2Location C library</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/chrislim2888/IP2Location-C-Library</span><br><span class="line"><span class="built_in">cd</span> IP2Location-C-Library</span><br><span class="line">autoreconf -i -v --force</span><br><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">make install</span><br><span class="line"><span class="comment"># 以下步骤可选</span></span><br><span class="line"><span class="built_in">cd</span> data</span><br><span class="line">perl ip-country.pl</span><br><span class="line"><span class="built_in">cd</span> ../test</span><br><span class="line">./test-IP2Location</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>编译 Nginx</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="http://nginx.org/en/download.html">nginx: download</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Download ip2location-nginx</span></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/ip2location/ip2location-nginx</span><br><span class="line"></span><br><span class="line"><span class="comment"># IP2Location library in &quot;ngx_http_ip2location_module.c&quot;</span></span><br><span class="line"><span class="built_in">cd</span> ip2location-nginx</span><br><span class="line">vim ngx_http_ip2location_module.c</span><br><span class="line"><span class="comment">#include &quot;IP2Location.h&quot;</span></span><br><span class="line"><span class="comment">#include &quot;/root/ip2location/IP2Location-C-Library-master/libIP2Location/IP2Location.h&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Download Nginx Stable version</span></span><br><span class="line">VERSION=<span class="string">&quot;1.16.1&quot;</span></span><br><span class="line">wget http://nginx.org/download/nginx-<span class="variable">$&#123;VERSION&#125;</span>.tar.gz </span><br><span class="line">tar -xvzf nginx-<span class="variable">$&#123;VERSION&#125;</span>.tar.gz </span><br><span class="line"><span class="built_in">cd</span> nginx-<span class="variable">$&#123;VERSION&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Compile Nginx</span></span><br><span class="line">./configure --add-module=../ip2location-nginx</span><br><span class="line">make</span><br><span class="line">sudo make install</span><br><span class="line"></span><br><span class="line"><span class="comment"># error: Failed dependencies:</span></span><br><span class="line"><span class="comment"># libIP2Location.so.1()(64bit) is needed by nginx-garena-1.16.1-0.noarch</span></span><br><span class="line"><span class="comment"># 一般编译nginx二进制文件不会出现该问题，如果你使用rpmbuild打包就要注意了</span></span><br><span class="line">rpm -Uvh https://rpms.remirepo.net/enterprise/7/remi/x86_64/libip2location-8.0.7-1.el7.remi.x86_64.rpm</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="IP2Location-Database-Download"><a href="#IP2Location-Database-Download" class="headerlink" title="IP2Location Database Download"></a>IP2Location Database Download</h2><p>IP2Location offers 5 free LITE databases and 24 commercial IP geolocation databases. Free database is less accurate comparing to commercial database.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Create new directory for IP2Location database.</span></span><br><span class="line"><span class="built_in">mkdir</span> -p /usr/share/ip2location</span><br><span class="line"><span class="built_in">cd</span> /usr/share/ip2location</span><br><span class="line"></span><br><span class="line"><span class="comment"># Go to https://lite.ip2location.com. Sign up an account for login and password.</span></span><br><span class="line"><span class="comment"># Download and decompress the latest IP2Location LITE database.</span></span><br><span class="line">wget http://download.ip2location.com/lite/IP2LOCATION-LITE-DB1.BIN.ZIP</span><br><span class="line">unzip IP2LOCATION-LITE-DB1.BIN.ZIP</span><br></pre></td></tr></table></figure>
+
+<h2 id="Configuration"><a href="#Configuration" class="headerlink" title="Configuration"></a>Configuration</h2><p>You need to configure Nginx to use IP2LOCATION module.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Edit</span></span><br><span class="line">vi /etc/nginx/nginx.conf</span><br><span class="line"></span><br><span class="line"><span class="comment"># Add following lines under `http` context:</span></span><br><span class="line"></span><br><span class="line">http &#123;</span><br><span class="line">ip2location on;</span><br><span class="line">ip2location_database /usr/share/ip2location/IP2LOCATION-LITE-DB1.BIN;</span><br><span class="line"><span class="comment">#ip2location_database /usr/share/ip2location/IP-COUNTRY-REGION-CITY-LATITUDE-LONGITUDE-ZIPCODE-ISP-DOMAIN.BIN</span></span><br><span class="line">ip2location_access_type shared_memory;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>可选参数 ip2location_access_type file_io|shared_memory|cache_memory<br>默认为 shared_memory<br>建议不要选择 file_io， 否则可能会严重拖慢响应速度</p>
+<h2 id="Syntax"><a href="#Syntax" class="headerlink" title="Syntax"></a>Syntax</h2><p>Syntax: <code>ip2location on|off</code><br>Default: off<br>Context: http, server, location<br>Description: Enable or disable IP2LOCATION Nginx module.</p>
+<p>Syntax: <code>ip2location_database path</code><br>Default: none<br>Context: http<br>Description: The absolute path to IP2LOCATION BIN database.</p>
+<p>Syntax: <code>ip2location_access_type file_io|shared_memory|cache_memory</code><br>Default: shared_memory<br>Context: http<br>Description: Set the method used for lookup.</p>
+<p>Syntax: <code>ip2location_proxy cidr|address</code><br>Default: none<br>Context: http<br>Description: Set a list of proxies to translate x-forwarded-for headers for.</p>
+<p>Syntax: <code>ip2location_proxy_recursive on|off</code><br>Default: off<br>Context: http<br>Description: Enable recursive search in the x-forwarded-for headers.</p>
+<h2 id="Variables"><a href="#Variables" class="headerlink" title="Variables"></a>Variables</h2><p>The following variables will be made available in Nginx: </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">ip2location_country_short</span><br><span class="line">ip2location_country_long</span><br><span class="line">ip2location_region</span><br><span class="line">ip2location_city</span><br><span class="line">ip2location_isp</span><br><span class="line">ip2location_latitude</span><br><span class="line">ip2location_longitude</span><br><span class="line">ip2location_domain</span><br><span class="line">ip2location_zipcode</span><br><span class="line">ip2location_timezone</span><br><span class="line">ip2location_netspeed</span><br><span class="line">ip2location_iddcode</span><br><span class="line">ip2location_areacode</span><br><span class="line">ip2location_weatherstationcode</span><br><span class="line">ip2location_weatherstationname</span><br><span class="line">ip2location_mcc</span><br><span class="line">ip2location_mnc</span><br><span class="line">ip2location_elevation</span><br><span class="line">ip2location_usagetype</span><br></pre></td></tr></table></figure>
+
+<p>You may block the traffic from United States in Nginx as below:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ( <span class="variable">$ip2location_country_short</span> = <span class="string">&#x27;US&#x27;</span> ) &#123;</span><br><span class="line">    <span class="built_in">return</span> 444;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ( <span class="variable">$ip2location_country_short</span> = <span class="string">&#x27;SG&#x27;</span> ) &#123;</span><br><span class="line">    <span class="built_in">return</span> 444;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>还可以参照GeoIP的配置方法</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">map $ip2location_country_short $blacklist_country &#123;</span><br><span class="line">    default no;</span><br><span class="line">    CN yes;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">        listen 80;</span><br><span class="line">        server_name wangao.com;</span><br><span class="line">        if ($blacklist_country = yes) &#123;</span><br><span class="line">            return 444;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>浏览器访问检查nginx log结果</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tailf /var/log/nginx/access.log</span><br><span class="line"></span><br><span class="line">xxx - - [21/Apr/2020:17:18:11 +0800] &quot;GET / HTTP/1.1&quot; 200 396 &quot;-&quot; &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36&quot;</span><br><span class="line"></span><br><span class="line">xxx - - [21/Apr/2020:17:18:42 +0800] &quot;GET / HTTP/1.1&quot; 444 0 &quot;-&quot; &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="IP2Location-Python-Library"><a href="#IP2Location-Python-Library" class="headerlink" title="IP2Location Python Library"></a>IP2Location Python Library</h2><p>This module is a Python Library to support all IP2Location™ database products. It has been optimized for speed and memory utilization. Developers can use this API to query all IP2Location™ binary databases for IPv4 and IPv6 address.</p>
+<p><a target="_blank" rel="noopener" href="https://www.ip2location.com/development-libraries/ip2location/python">https://www.ip2location.com/development-libraries/ip2location/python</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> IP2Location</span><br><span class="line"> </span><br><span class="line">IP2LocObj = IP2Location.IP2Location()</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    Cache the database into memory to accelerate lookup speed.</span></span><br><span class="line"><span class="string">    WARNING: Please make sure your system have sufficient RAM to use this feature.</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="comment"># database = IP2Location.IP2Location(os.path.join(&quot;data&quot;, &quot;IPV6-COUNTRY.BIN&quot;), &quot;SHARED_MEMORY&quot;)</span></span><br><span class="line">IP2LocObj.<span class="built_in">open</span>(<span class="string">&quot;data/IP-COUNTRY-REGION-CITY-LATITUDE-LONGITUDE-ZIPCODE-TIMEZONE-ISP-DOMAIN-NETSPEED-AREACODE-WEATHER-MOBILE-ELEVATION-USAGETYPE-SAMPLE.BIN&quot;</span>)</span><br><span class="line">rec = IP2LocObj.get_all(<span class="string">&quot;19.5.10.1&quot;</span>)</span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span> rec.country_short</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> IP2Location</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">ip2location_search</span>(<span class="params">ip, db</span>):</span><br><span class="line">    IP2LocObj = IP2Location.IP2Location()</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">        Cache the database into memory to accelerate lookup speed.</span></span><br><span class="line"><span class="string">        WARNING: Please make sure your system have sufficient RAM to use this feature.</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="comment"># database = IP2Location.IP2Location(os.path.join(&quot;data&quot;, &quot;IPV6-COUNTRY.BIN&quot;), &quot;SHARED_MEMORY&quot;)</span></span><br><span class="line">    IP2LocObj.<span class="built_in">open</span>(db)</span><br><span class="line">    rec = IP2LocObj.get_all(ip)</span><br><span class="line">    <span class="built_in">print</span> rec.country_short</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_parse_args</span>():</span><br><span class="line">    parser = argparse.ArgumentParser(description=<span class="string">&quot;Search IP in IP2Location Database&quot;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&quot;-i&quot;</span>, <span class="string">&quot;--ip&quot;</span>, <span class="built_in">help</span>=<span class="string">&quot;Input ip&quot;</span>, required=<span class="literal">True</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&quot;-d&quot;</span>, <span class="string">&quot;--db&quot;</span>, <span class="built_in">help</span>=<span class="string">&quot;Path to ip2location db&quot;</span>, required=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> parser.parse_args()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    args = _parse_args()</span><br><span class="line">    ip = args.ip</span><br><span class="line">    db = args.db</span><br><span class="line">    ip2location_search(ip, db)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Country-blocking-using-Nginx-with-IP2Location-Module"><a href="#Country-blocking-using-Nginx-with-IP2Location-Module" class="headerlink" title="Country blocking using Nginx with IP2Location Module"></a>Country blocking using Nginx with IP2Location Module</h2><p>After few days of trying, trying and trying, finally find out the way to compile the IP2Location module into the Nginx in Ubuntu server. I try to compare multiple way of doing the country block with Nginx, where in my previous post, the country blocking is done with GeoIP module (which I found out more easy compare to the IP2Location module), and also the country block without any 3rd party plugin for Nginx, with this method, that’s no any compilation of Nginx needed in order to make it, it’s most suitable for the current running Nginx which install directly from the APT repo.</p>
+<p>IP2Location is one of the most famous IP location provider in the market and they are from Penang. I being use their service since many years ago and that’s the reason why I wanna try out to doing the Nginx country block with IP2Location module.</p>
+<p>I can’t really find a full and complete step on the installing and compiling of the module, that’s why it take me many days to figure out how to make the whole thing work nicely.</p>
+<p>The following script basically just download all necessary module source code (OpenSSL, PCRE, IP2Location C module, IP2Lacation Nginx module, Nginx 1.15 .0 source code) and compile all. After that, create the system service and put the Nginx into auto start mode and include the IP2Location database into Nginx.conf. Beside that, I also include the script to auto download the database directly from IP2Location server.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br></pre></td><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt upgrade -y &amp;&amp; \</span><br><span class="line">sudo apt install build-essential dh-autoreconf unzip -y &amp;&amp; \</span><br><span class="line">sudo <span class="built_in">mkdir</span> nginx-dev &amp;&amp; <span class="built_in">cd</span> nginx-dev &amp;&amp; \</span><br><span class="line"></span><br><span class="line">sudo wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.42.tar.gz &amp;&amp; \</span><br><span class="line">sudo tar -zxf pcre-8.42.tar.gz &amp;&amp; \</span><br><span class="line"><span class="built_in">cd</span> pcre-8.42 &amp;&amp; \</span><br><span class="line">sudo ./configure &amp;&amp; \</span><br><span class="line">sudo make &amp;&amp; \</span><br><span class="line">sudo make install &amp;&amp; \</span><br><span class="line"><span class="built_in">cd</span> .. &amp;&amp; \</span><br><span class="line"></span><br><span class="line">sudo wget http://zlib.net/zlib-1.2.11.tar.gz &amp;&amp; \</span><br><span class="line">sudo tar -zxf zlib-1.2.11.tar.gz &amp;&amp; \</span><br><span class="line"><span class="built_in">cd</span> zlib-1.2.11 &amp;&amp; \</span><br><span class="line">sudo ./configure &amp;&amp; \</span><br><span class="line">sudo make &amp;&amp; \</span><br><span class="line">sudo make install &amp;&amp; \</span><br><span class="line"><span class="built_in">cd</span> .. &amp;&amp; \</span><br><span class="line"></span><br><span class="line">sudo wget https://www.openssl.org/source/openssl-1.0.2o.tar.gz &amp;&amp; sudo tar xzvf openssl-1.0.2o.tar.gz &amp;&amp; \</span><br><span class="line"><span class="built_in">cd</span> openssl-1.0.2o &amp;&amp; \</span><br><span class="line">sudo ./config --prefix=/usr &amp;&amp; \</span><br><span class="line">sudo make &amp;&amp; \</span><br><span class="line">sudo make install &amp;&amp; \</span><br><span class="line"><span class="built_in">cd</span> .. &amp;&amp; \</span><br><span class="line"></span><br><span class="line">sudo <span class="built_in">rm</span> *.gz &amp;&amp; \</span><br><span class="line"></span><br><span class="line">sudo wget https://github.com/chrislim2888/IP2Location-C-Library/archive/master.zip &amp;&amp; \</span><br><span class="line">sudo unzip master.zip &amp;&amp; \</span><br><span class="line"><span class="built_in">cd</span> IP2Location-C-Library-master &amp;&amp; \</span><br><span class="line">sudo autoreconf -i -v --force &amp;&amp; \</span><br><span class="line">sudo ./configure &amp;&amp; \</span><br><span class="line">sudo make &amp;&amp; \</span><br><span class="line">sudo make install &amp;&amp; \</span><br><span class="line"><span class="built_in">cd</span> ~/nginx-dev &amp;&amp; \</span><br><span class="line">sudo <span class="built_in">rm</span> master.zip &amp;&amp; \</span><br><span class="line"></span><br><span class="line">sudo wget https://github.com/ip2location/ip2location-nginx/archive/master.zip &amp;&amp; \</span><br><span class="line">sudo unzip master.zip &amp;&amp; \</span><br><span class="line">sudo <span class="built_in">rm</span> master.zip &amp;&amp; \</span><br><span class="line">sudo sed -i <span class="string">&#x27;s/#include &quot;IP2Location.h&quot;/#include &quot;\/home\/ubuntu\/nginx-dev\/IP2Location-C-Library-master\/libIP2Location\/IP2Location.h&quot;/g&#x27;</span> ~/nginx-dev/ip2location-nginx-master/ngx_http_ip2location_module.c &amp;&amp; \</span><br><span class="line">sudo <span class="built_in">mkdir</span> /etc/ip2location &amp;&amp; <span class="built_in">cd</span> /etc/ip2location &amp;&amp; \</span><br><span class="line"></span><br><span class="line">sudo curl -o DB1-IP-COUNTRY.BIN.ZIP <span class="string">&quot;https://www.ip2location.com/download?token=B7DAFhxJcAyim6NQsXWV1pGzy3deiiGUqjv5B2OOCn6YuUPWSLRTbytJCGXVZEPp&amp;file=DB1BIN&quot;</span> &amp;&amp; \</span><br><span class="line">sudo unzip -o DB1-IP-COUNTRY.BIN.ZIP &amp;&amp; \</span><br><span class="line">sudo <span class="built_in">rm</span> !(*.BIN) &amp;&amp; \</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ~/nginx-dev &amp;&amp; \</span><br><span class="line">sudo wget https://nginx.org/download/nginx-1.15.0.tar.gz &amp;&amp; \</span><br><span class="line">sudo tar zxf nginx-1.15.0.tar.gz &amp;&amp; \</span><br><span class="line"><span class="built_in">cd</span> nginx-1.15.0 &amp;&amp; \</span><br><span class="line"></span><br><span class="line">sudo ./configure --prefix=/usr/share/nginx \</span><br><span class="line">--sbin-path=/usr/sbin/nginx \</span><br><span class="line">--modules-path=/usr/lib/nginx/modules \</span><br><span class="line">--add-module=../ip2location-nginx-master \</span><br><span class="line">--conf-path=/etc/nginx/nginx.conf \</span><br><span class="line">--error-log-path=/var/log/nginx/error.log \</span><br><span class="line">--http-log-path=/var/log/nginx/access.log \</span><br><span class="line">--pid-path=/run/nginx.pid \</span><br><span class="line">--lock-path=/var/lock/nginx.lock \</span><br><span class="line">--user=www-data \</span><br><span class="line">--group=www-data \</span><br><span class="line">--build=Ubuntu \</span><br><span class="line">--http-client-body-temp-path=/var/lib/nginx/body \</span><br><span class="line">--http-fastcgi-temp-path=/var/lib/nginx/fastcgi \</span><br><span class="line">--http-proxy-temp-path=/var/lib/nginx/proxy \</span><br><span class="line">--http-scgi-temp-path=/var/lib/nginx/scgi \</span><br><span class="line">--http-uwsgi-temp-path=/var/lib/nginx/uwsgi \</span><br><span class="line">--with-openssl=../openssl-1.0.2o \</span><br><span class="line">--with-openssl-opt=enable-ec_nistp_64_gcc_128 \</span><br><span class="line">--with-openssl-opt=no-nextprotoneg \</span><br><span class="line">--with-openssl-opt=no-weak-ssl-ciphers \</span><br><span class="line">--with-openssl-opt=no-ssl3 \</span><br><span class="line">--with-pcre=../pcre-8.42 \</span><br><span class="line">--with-pcre-jit \</span><br><span class="line">--with-zlib=../zlib-1.2.11 \</span><br><span class="line">--with-compat \</span><br><span class="line">--with-file-aio \</span><br><span class="line">--with-threads \</span><br><span class="line">--with-http_addition_module \</span><br><span class="line">--with-http_auth_request_module \</span><br><span class="line">--with-http_dav_module \</span><br><span class="line">--with-http_flv_module \</span><br><span class="line">--with-http_gunzip_module \</span><br><span class="line">--with-http_gzip_static_module \</span><br><span class="line">--with-http_mp4_module \</span><br><span class="line">--with-http_random_index_module \</span><br><span class="line">--with-http_realip_module \</span><br><span class="line">--with-http_slice_module \</span><br><span class="line">--with-http_ssl_module \</span><br><span class="line">--with-http_sub_module \</span><br><span class="line">--with-http_stub_status_module \</span><br><span class="line">--with-http_v2_module \</span><br><span class="line">--with-http_secure_link_module \</span><br><span class="line">--with-mail \</span><br><span class="line">--with-mail_ssl_module \</span><br><span class="line">--with-stream \</span><br><span class="line">--with-stream_realip_module \</span><br><span class="line">--with-stream_ssl_module \</span><br><span class="line">--with-stream_ssl_preread_module \</span><br><span class="line">--with-debug &amp;&amp; \</span><br><span class="line"></span><br><span class="line">sudo make &amp;&amp; \</span><br><span class="line">sudo make install &amp;&amp; \</span><br><span class="line">sudo ldconfig &amp;&amp; \</span><br><span class="line">sudo nginx -v &amp;&amp; sudo nginx -V &amp;&amp; \</span><br><span class="line">sudo <span class="built_in">mkdir</span> -p /var/lib/nginx &amp;&amp; sudo nginx -t &amp;&amp; \</span><br><span class="line"></span><br><span class="line">sudo <span class="built_in">echo</span> <span class="string">&quot;</span></span><br><span class="line"><span class="string">[Unit]</span></span><br><span class="line"><span class="string">Description=A high performance web server and a reverse proxy server</span></span><br><span class="line"><span class="string">After=network.target</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Service]</span></span><br><span class="line"><span class="string">Type=forking</span></span><br><span class="line"><span class="string">PIDFile=/run/nginx.pid</span></span><br><span class="line"><span class="string">ExecStartPre=/usr/sbin/nginx -t -q -g &#x27;daemon on; master_process on;&#x27;</span></span><br><span class="line"><span class="string">ExecStart=/usr/sbin/nginx -g &#x27;daemon on; master_process on;&#x27;</span></span><br><span class="line"><span class="string">ExecReload=/usr/sbin/nginx -g &#x27;daemon on; master_process on;&#x27; -s reload</span></span><br><span class="line"><span class="string">ExecStop=-/sbin/start-stop-daemon --quiet --stop --retry QUIT/5 --pidfile /run/nginx.pid</span></span><br><span class="line"><span class="string">TimeoutStopSec=5</span></span><br><span class="line"><span class="string">KillMode=mixed</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Install]</span></span><br><span class="line"><span class="string">WantedBy=multi-user.target &quot;</span> &gt; ~/nginx.service &amp;&amp; \</span><br><span class="line"></span><br><span class="line">sudo <span class="built_in">mv</span> ~/nginx.service /etc/systemd/system/nginx.service &amp;&amp; \</span><br><span class="line"></span><br><span class="line">sudo systemctl start nginx.service &amp;&amp; sudo systemctl <span class="built_in">enable</span> nginx.service &amp;&amp; \</span><br><span class="line"></span><br><span class="line">sudo sed -i <span class="string">&#x27;s/default_type application\/octet-stream;/default_type application\/octet-stream;\nip2location on;\nip2location_database \/etc\/ip2location\/IP-COUNTRY.BIN;\nip2location_access_type shared_memory;/g&#x27;</span> /etc/nginx/nginx.conf</span><br></pre></td></tr></table></figure>
+
+<p>After finish run above command, just add the following script into your Nginx.conf or your website virtual host directive in or to make rewrite all incoming traffic to your desire destination</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">server&#123;</span><br><span class="line">listen 80;</span><br><span class="line">server_name _;</span><br><span class="line"></span><br><span class="line">if ($ip2location_country_short ~ ^MY$) &#123;</span><br><span class="line">rewrite ^(.*)$ http://www.google.com last;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Finally you may testing your configure by browsing the server IP using any of your browse, if you are from Malaysia, than you should be redirected to Google home page</p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a target="_blank" rel="noopener" href="https://blog.ip2location.com/knowledge-base/how-to-use-ip2location-geolocation-with-nginx/">How to use IP2Location GeoLocation with Nginx</a></p>
+<p><a target="_blank" rel="noopener" href="https://youtu.be/zgVqU-sL238">How to Install IP2Location Nginx Module on Debian</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.getpagespeed.com/server-setup/nginx/upgrade-to-geoip2-with-nginx-on-centos-rhel">Upgrade to GeoIP2 with NGINX on CentOS&#x2F;RHEL</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/ip2location/" data-title="IP2Location Nginx Module配置使用小结 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/bash/" title="Bash命令语法和Bash Cheat Sheet中文速查表">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Bash命令语法和Bash Cheat Sheet中文速查表</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/lvs-dr/"  title="LVS-DR原理介绍和配置实践">
+ <strong>下一篇：</strong><br/> 
+ <span>LVS-DR原理介绍和配置实践
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GeoIP%E5%92%8CIP2Location%E7%AE%80%E4%BB%8B"><span class="toc-number">3.</span> <span class="toc-text">GeoIP和IP2Location简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IP2Location-Nginx-Module"><span class="toc-number">4.</span> <span class="toc-text">IP2Location Nginx Module</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Installation"><span class="toc-number">4.1.</span> <span class="toc-text">Installation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E5%A4%87%E6%B3%A8"><span class="toc-number">4.2.</span> <span class="toc-text">安装备注</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IP2Location-Database-Download"><span class="toc-number">5.</span> <span class="toc-text">IP2Location Database Download</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Configuration"><span class="toc-number">6.</span> <span class="toc-text">Configuration</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Syntax"><span class="toc-number">7.</span> <span class="toc-text">Syntax</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Variables"><span class="toc-number">8.</span> <span class="toc-text">Variables</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IP2Location-Python-Library"><span class="toc-number">9.</span> <span class="toc-text">IP2Location Python Library</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Country-blocking-using-Nginx-with-IP2Location-Module"><span class="toc-number">10.</span> <span class="toc-text">Country blocking using Nginx with IP2Location Module</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">11.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

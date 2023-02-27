@@ -1,0 +1,609 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>nc命令使用小结 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="nc命令使用小结">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nc命令使用小结">
+<meta property="og:url" content="https://wsgzao.github.io/post/nc/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="nc命令使用小结">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-10-07T06:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:06.968Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/nc/" title="nc命令使用小结" itemprop="url">nc命令使用小结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2020-10-07T06:59:49.000Z" itemprop="datePublished"> 发表于 2020-10-07</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nc%E7%AE%80%E4%BB%8B"><span class="toc-number">3.</span> <span class="toc-text">nc简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nc%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">4.</span> <span class="toc-text">nc常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nc%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E5%AE%9E%E4%BE%8B"><span class="toc-number">5.</span> <span class="toc-text">nc常用命令实例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#nc%E6%B5%8B%E8%AF%95tcp%E5%92%8Cudp%E7%AB%AF%E5%8F%A3"><span class="toc-number">5.1.</span> <span class="toc-text">nc测试tcp和udp端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#nc%E7%9B%91%E5%90%AC%E7%AB%AF%E5%8F%A3%E5%92%8C%E6%89%AB%E6%8F%8F%E8%BF%9E%E6%8E%A5%E7%AB%AF%E5%8F%A3"><span class="toc-number">5.2.</span> <span class="toc-text">nc监听端口和扫描连接端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#nc-examples"><span class="toc-number">5.3.</span> <span class="toc-text">nc examples</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#nc%E6%89%B9%E9%87%8F%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F%E8%84%9A%E6%9C%AC"><span class="toc-number">5.4.</span> <span class="toc-text">nc批量端口扫描脚本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">6.</span> <span class="toc-text">参考文章</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>nc是netcat的简写，有着网络界的瑞士军刀美誉。因为它短小精悍、功能实用，被设计为一个简单、可靠的网络工具。比如大家很熟悉使用telnet测试tcp端口，而nc可以支持测试linux的tcp和udp端口，而且也经常被用于端口扫描，甚至把nc作为server以TCP或UDP方式侦听指定端口做简单的模拟测试。</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2020年10月07日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/nc/">https://wsgzao.github.io/post/nc/</a></p>
+<hr>
+<h2 id="nc简介"><a href="#nc简介" class="headerlink" title="nc简介"></a>nc简介</h2><p><code>ncat</code> 或者说 <code>nc</code> 是一款功能类似 <code>cat</code> 的工具，但是是用于网络的。它是一款拥有多种功能的 CLI 工具，可以用来在网络上读、写以及重定向数据。 它被设计成可以被脚本或其他程序调用的可靠的后端工具。同时由于它能创建任意所需的连接，因此也是一个很好的网络调试工具。</p>
+<p><code>ncat</code>&#x2F;<code>nc</code> 既是一个端口扫描工具，也是一款安全工具，还能是一款监测工具，甚至可以做为一个简单的 TCP 代理。 由于有这么多的功能，它被誉为是网络界的瑞士军刀。 这是每个系统管理员都应该知道并且掌握它。</p>
+<p>在大多数 Debian 发行版中，<code>nc</code> 是默认可用的，它会在安装系统的过程中自动被安装。 但是在 CentOS 7 &#x2F; RHEL 7 的最小化安装中，<code>nc</code> 并不会默认被安装。 你需要用下列命令手工安装。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装nc</span></span><br><span class="line">[root@localhost wangao]<span class="comment"># yum provides nc</span></span><br><span class="line">Loaded plugins: fastestmirror</span><br><span class="line">Loading mirror speeds from cached hostfile</span><br><span class="line"> * base: centos.usonyx.net</span><br><span class="line"> * extras: centos.usonyx.net</span><br><span class="line"> * updates: centos.usonyx.net</span><br><span class="line">2:nmap-ncat-6.40-19.el7.x86_64 : Nmap<span class="string">&#x27;s Netcat replacement</span></span><br><span class="line"><span class="string">Repo        : base</span></span><br><span class="line"><span class="string">Matched from:</span></span><br><span class="line"><span class="string">Provides    : nc</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># 执行nc或者nmap-ncat安装都可以</span></span><br><span class="line"><span class="string">yum install nmap-ncat -y</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># 我们通过 ll 命令查看 nc 命令, 老版本对应的ncat，新版本则直接指向nmap</span></span><br><span class="line"><span class="string">ll /usr/bin/nc</span></span><br><span class="line"><span class="string">lrwxrwxrwx. 1 root root 4 Feb 19 19:09 /usr/bin/nc -&gt; ncat</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[root@localhost wangao]# ll /usr/bin/nc</span></span><br><span class="line"><span class="string">lrwxrwxrwx. 1 root root 22 Oct  8 11:25 /usr/bin/nc -&gt; /etc/alternatives/nmap</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+
+<h2 id="nc常用命令"><a href="#nc常用命令" class="headerlink" title="nc常用命令"></a>nc常用命令</h2><p>nc的作用：</p>
+<ol>
+<li>实现任意TCP&#x2F;UDP端口的侦听，nc可以作为server以TCP或UDP方式侦听指定端口</li>
+<li>端口的扫描，nc可以作为client发起TCP或UDP连接</li>
+<li>机器之间传输文件</li>
+<li>机器之间网络测速</li>
+</ol>
+<p>nc的控制参数不少，常用的几个参数如下所列：</p>
+<ol>
+<li>-l</li>
+</ol>
+<p>用于指定nc将处于侦听模式。指定该参数，则意味着nc被当作server，侦听并接受连接，而非向其它地址发起连接。</p>
+<ol start="2">
+<li>-p <port></li>
+</ol>
+<p>暂未用到（老版本的nc可能需要在端口号前加-p参数）</p>
+<ol start="3">
+<li>-s</li>
+</ol>
+<p>指定发送数据的源IP地址，适用于多网卡机 </p>
+<ol start="4">
+<li>-u</li>
+</ol>
+<p> 指定nc使用UDP协议，默认为TCP</p>
+<ol start="5">
+<li>-v</li>
+</ol>
+<p>输出交互或出错信息，新手调试时尤为有用</p>
+<p>6）-w</p>
+<p>超时秒数，后面跟数字 </p>
+<p>7）-z</p>
+<p>表示zero，表示扫描时不发送任何数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line">NAME</span><br><span class="line">       ncat - Concatenate and redirect sockets</span><br><span class="line"></span><br><span class="line">SYNOPSIS</span><br><span class="line">       ncat [OPTIONS...] [hostname] [port]</span><br><span class="line"></span><br><span class="line">DESCRIPTION</span><br><span class="line">       Ncat is a feature-packed networking utility which reads and writes data across networks</span><br><span class="line">       from the command line. Ncat was written for the Nmap Project and is the culmination of</span><br><span class="line">       the currently splintered family of Netcat incarnations. It is designed to be a reliable</span><br><span class="line">       back-end tool to instantly provide network connectivity to other applications and users.</span><br><span class="line">       Ncat will not only work with IPv4 and IPv6 but provides the user with a virtually</span><br><span class="line">       limitless number of potential uses.</span><br><span class="line"></span><br><span class="line">       Among Ncat&#x27;s vast number of features there is the ability to chain Ncats together;</span><br><span class="line">       redirection of TCP, UDP, and SCTP ports to other sites; SSL support; and proxy</span><br><span class="line">       connections via SOCKS4 or HTTP proxies (with optional proxy authentication as well).</span><br><span class="line">       Some general principles apply to most applications and thus give you the capability of</span><br><span class="line">       instantly adding networking support to software that would normally never support it.</span><br><span class="line"></span><br><span class="line">OPTIONS SUMMARY</span><br><span class="line">           Ncat 7.50 ( https://nmap.org/ncat )</span><br><span class="line">           Usage: ncat [options] [hostname] [port]</span><br><span class="line"></span><br><span class="line">           Options taking a time assume seconds. Append &#x27;ms&#x27; for milliseconds,</span><br><span class="line">           &#x27;s&#x27; for seconds, &#x27;m&#x27; for minutes, or &#x27;h&#x27; for hours (e.g. 500ms).</span><br><span class="line">             -4                         Use IPv4 only</span><br><span class="line">             -6                         Use IPv6 only</span><br><span class="line">             -U, --unixsock             Use Unix domain sockets only</span><br><span class="line">             -C, --crlf                 Use CRLF for EOL sequence</span><br><span class="line">             -c, --sh-exec &lt;command&gt;    Executes the given command via /bin/sh</span><br><span class="line">             -e, --exec &lt;command&gt;       Executes the given command</span><br><span class="line">                 --lua-exec &lt;filename&gt;  Executes the given Lua script</span><br><span class="line">             -g hop1[,hop2,...]         Loose source routing hop points (8 max)</span><br><span class="line">             -G &lt;n&gt;                     Loose source routing hop pointer (4, 8, 12, ...)</span><br><span class="line">             -m, --max-conns &lt;n&gt;        Maximum &lt;n&gt; simultaneous connections</span><br><span class="line">             -h, --help                 Display this help screen</span><br><span class="line">             -d, --delay &lt;time&gt;         Wait between read/writes</span><br><span class="line">             -o, --output &lt;filename&gt;    Dump session data to a file</span><br><span class="line">             -x, --hex-dump &lt;filename&gt;  Dump session data as hex to a file</span><br><span class="line">             -i, --idle-timeout &lt;time&gt;  Idle read/write timeout</span><br><span class="line">             -p, --source-port port     Specify source port to use</span><br><span class="line">             -s, --source addr          Specify source address to use (doesn&#x27;t affect -l)</span><br><span class="line">             -l, --listen               Bind and listen for incoming connections</span><br><span class="line">             -k, --keep-open            Accept multiple connections in listen mode</span><br><span class="line">             -n, --nodns                Do not resolve hostnames via DNS</span><br><span class="line">             -t, --telnet               Answer Telnet negotiations</span><br><span class="line">             -u, --udp                  Use UDP instead of default TCP</span><br><span class="line">                 --sctp                 Use SCTP instead of default TCP</span><br><span class="line">             -v, --verbose              Set verbosity level (can be used several times)</span><br><span class="line">             -w, --wait &lt;time&gt;          Connect timeout</span><br><span class="line">             -z                         Zero-I/O mode, report connection status only</span><br><span class="line">                 --append-output        Append rather than clobber specified output files</span><br><span class="line">                 --send-only            Only send data, ignoring received; quit on EOF</span><br><span class="line">                 --recv-only            Only receive data, never send anything</span><br><span class="line">                 --allow                Allow only given hosts to connect to Ncat</span><br><span class="line">                 --allowfile            A file of hosts allowed to connect to Ncat</span><br><span class="line">                 --deny                 Deny given hosts from connecting to Ncat</span><br><span class="line">                 --denyfile             A file of hosts denied from connecting to Ncat</span><br><span class="line">                 --broker               Enable Ncat&#x27;s connection brokering mode</span><br><span class="line">                 --chat                 Start a simple Ncat chat server</span><br><span class="line">                 --proxy &lt;addr[:port]&gt;  Specify address of host to proxy through</span><br><span class="line">                 --proxy-type &lt;type&gt;    Specify proxy type (&quot;http&quot; or &quot;socks4&quot; or &quot;socks5&quot;)</span><br><span class="line">                 --proxy-auth &lt;auth&gt;    Authenticate with HTTP or SOCKS proxy server</span><br><span class="line">                 --ssl                  Connect or listen with SSL</span><br><span class="line">                 --ssl-cert             Specify SSL certificate file (PEM) for listening</span><br><span class="line">                 --ssl-key              Specify SSL private key (PEM) for listening</span><br><span class="line">                 --ssl-verify           Verify trust and domain name of certificates</span><br><span class="line">                 --ssl-trustfile        PEM file containing trusted SSL certificates</span><br><span class="line">                 --ssl-ciphers          Cipherlist containing SSL ciphers to use</span><br><span class="line">                 --version              Display Ncat&#x27;s version information and exit</span><br><span class="line"></span><br><span class="line">           See the ncat(1) manpage for full options, descriptions and usage examples</span><br></pre></td></tr></table></figure>
+
+<h2 id="nc常用命令实例"><a href="#nc常用命令实例" class="headerlink" title="nc常用命令实例"></a>nc常用命令实例</h2><h3 id="nc测试tcp和udp端口"><a href="#nc测试tcp和udp端口" class="headerlink" title="nc测试tcp和udp端口"></a>nc测试tcp和udp端口</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 测试tcp一般会想到使用telnet</span></span><br><span class="line">telnet 192.168.12.10 22</span><br><span class="line"></span><br><span class="line"><span class="comment"># telnet不支持udp协议，所以我们可以使用nc，nc可以支持tcp也可以支持udp</span></span><br><span class="line">yum install -y nc</span><br><span class="line">nc -z -v 192.168.10.12 22 <span class="comment">#tcp</span></span><br><span class="line">nc -z -v -u 192.168.10.12 123 <span class="comment"># udp</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="nc监听端口和扫描连接端口"><a href="#nc监听端口和扫描连接端口" class="headerlink" title="nc监听端口和扫描连接端口"></a>nc监听端口和扫描连接端口</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 监听端口</span></span><br><span class="line">[root@localhost wangao]<span class="comment"># nc -l 8888 -v</span></span><br><span class="line">Ncat: Version 7.50 ( https://nmap.org/ncat )</span><br><span class="line">Ncat: Listening on :::8888</span><br><span class="line">Ncat: Listening on 0.0.0.0:8888</span><br><span class="line">Ncat: Connection from 127.0.0.1.</span><br><span class="line">Ncat: Connection from 127.0.0.1:56090.</span><br><span class="line"></span><br><span class="line"><span class="comment"># 连接端口</span></span><br><span class="line">[root@localhost wangao]<span class="comment"># nc -vz -w 5 127.0.0.1 8888</span></span><br><span class="line">Ncat: Version 7.50 ( https://nmap.org/ncat )</span><br><span class="line">Ncat: Connected to 127.0.0.1:8888.</span><br><span class="line">Ncat: 0 bytes sent, 0 bytes received <span class="keyword">in</span> 0.01 seconds.</span><br></pre></td></tr></table></figure>
+
+<h3 id="nc-examples"><a href="#nc-examples" class="headerlink" title="nc examples"></a>nc examples</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">EXAMPLES</span><br><span class="line">       Connect to example.org on TCP port 8080.</span><br><span class="line">           ncat example.org 8080</span><br><span class="line"></span><br><span class="line">       Listen for connections on TCP port 8080.</span><br><span class="line">           ncat -l 8080</span><br><span class="line"></span><br><span class="line">       Redirect TCP port 8080 on the local machine to host on port 80.</span><br><span class="line">           ncat --sh-exec &quot;ncat example.org 80&quot; -l 8080 --keep-open</span><br><span class="line"></span><br><span class="line">       Bind to TCP port 8081 and attach /bin/bash for the world to access freely.</span><br><span class="line">           ncat --exec &quot;/bin/bash&quot; -l 8081 --keep-open</span><br><span class="line"></span><br><span class="line">       Bind a shell to TCP port 8081, limit access to hosts on a local network, and limit the</span><br><span class="line">       maximum number of simultaneous connections to 3.</span><br><span class="line">           ncat --exec &quot;/bin/bash&quot; --max-conns 3 --allow 192.168.0.0/24 -l 8081 --keep-open</span><br><span class="line"></span><br><span class="line">       Connect to smtphost:25 through a SOCKS4 server on port 1080.</span><br><span class="line">           ncat --proxy socks4host --proxy-type socks4 --proxy-auth user smtphost 25</span><br><span class="line"></span><br><span class="line">       Create an HTTP proxy server on localhost port 8888.</span><br><span class="line">           ncat -l --proxy-type http localhost 8888</span><br><span class="line"></span><br><span class="line">       Send a file over TCP port 9899 from host2 (client) to host1 (server).</span><br><span class="line">           HOST1$ ncat -l 9899 &gt; outputfile</span><br><span class="line"></span><br><span class="line">           HOST2$ ncat HOST1 9899 &lt; inputfile</span><br><span class="line"></span><br><span class="line">       Transfer in the other direction, turning Ncat into a “one file” server.</span><br><span class="line">           HOST1$ ncat -l 9899 &lt; inputfile</span><br><span class="line"></span><br><span class="line">           HOST2$ ncat HOST1 9899 &gt; outputfile</span><br></pre></td></tr></table></figure>
+
+<h3 id="nc批量端口扫描脚本"><a href="#nc批量端口扫描脚本" class="headerlink" title="nc批量端口扫描脚本"></a>nc批量端口扫描脚本</h3><blockquote>
+<p>方案1: 利用nc构建简单的bash脚本</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 假如我们要监控一堆指定的IP和端口，可新建一个文件（第1列为服务器IP，第2列为监控的端口，中间用空格分隔）</span></span><br><span class="line">[root@localhost ~]<span class="comment"># vi ip-ports.txt</span></span><br><span class="line">127.0.0.1 21</span><br><span class="line">127.0.0.1 22</span><br><span class="line">127.0.0.1 23</span><br><span class="line"></span><br><span class="line"><span class="comment"># 新建这样一个脚本来批量检测端口是否开放，成功会返回0值显示ok，失败会返回1值显示fail</span></span><br><span class="line"></span><br><span class="line">[root@localhost ~]<span class="comment"># vi ncports.sh</span></span><br><span class="line"><span class="comment">#!/bin/bash  </span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> ip-ports.txt | <span class="keyword">while</span> <span class="built_in">read</span> line</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">  nc -w 10 -z <span class="variable">$line</span> &gt; /dev/null 2&gt;&amp;1</span><br><span class="line">  <span class="keyword">if</span> [ $? -eq 0 ]</span><br><span class="line">  <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="variable">$line</span>:ok</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="variable">$line</span>:failed</span><br><span class="line">  <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 给脚本赋予可执行权限，并执行查看结果</span></span><br><span class="line">[root@localhost ~]<span class="comment"># chmod a+x ncports.sh</span></span><br><span class="line">[root@localhost ~]<span class="comment"># sh ncports.sh</span></span><br><span class="line">127.0.0.1 21:failed</span><br><span class="line">127.0.0.1 22:ok</span><br><span class="line">127.0.0.1 23:failed</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>方案2: 利用nc或者nmap构建复杂的bash脚本</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建配置文件</span></span><br><span class="line">vim ports_list.cfg</span><br><span class="line"></span><br><span class="line"><span class="comment">#    IP        PROTOCOL(tcp/udp)        PORTS(1,2,3)</span></span><br><span class="line">127.0.0.1      tcp                      21,22,23</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建脚本</span></span><br><span class="line">vim scan_ports.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行脚本</span></span><br><span class="line">[root@localhost ~]<span class="comment"># ./scan_ports.sh</span></span><br><span class="line">2020-10-08 12:03:31  Connection to 127.0.0.1 23 port [tcp/23] failed!</span><br><span class="line">2020-10-08 12:03:31  Connection to 127.0.0.1 21 port [tcp/21] failed!</span><br><span class="line">Hosts: 1 Ports: 3 Times: 0s</span><br></pre></td></tr></table></figure>
+
+<p>作用：批量端口扫描，可根据扫描主机的配置调整后台扫描进程数量（手动执行后根据统计的执行时间调整脚本中关于进程数量的参数），通过定时任务作为简单的服务监控（可修改脚本添加其他报警功能，例如邮件等）</p>
+<p>实现：使用nc指令扫描端口，使用管道特性控制后台扫描进程数量</p>
+<p>不足：仅仅对扫描端口状态为down的信息做记录，并没有其他报警操作</p>
+<p>使用：</p>
+<ol>
+<li>需要提供包含被扫描主机的ip地址、协议和端口号的配置文件（格式见演示或代码专区注释）</li>
+<li>需要一个日志文件记录端口down状态信息。 </li>
+<li>配置和日志文件在脚本中定义，默认为：ports_list.cfg　和　port_down.log</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># vim scan_ports.sh</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># the conf_file, like this:</span></span><br><span class="line"><span class="comment">#------------------------------------------------------</span></span><br><span class="line"><span class="comment">#        IP       PROTOCOL(tcp/udp)     PORTS(1,2,3)  |</span></span><br><span class="line"><span class="comment">#                                                     |</span></span><br><span class="line"><span class="comment">#  192.168.2.250      tcp                21,22,23     |</span></span><br><span class="line"><span class="comment">#------------------------------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># config file</span></span><br><span class="line">conf_file=ports_list.cfg</span><br><span class="line">port_down_log=port_down.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># number of backgroud processes</span></span><br><span class="line">number_of_background_processes=1000</span><br><span class="line"></span><br><span class="line">host_count=0</span><br><span class="line">port_count=0</span><br><span class="line"></span><br><span class="line">time_start=0</span><br><span class="line">time_end=0</span><br><span class="line"></span><br><span class="line">all_cfg_infor=$( grep -E -v <span class="string">&#x27;(^ *#|^$)&#x27;</span> <span class="variable">$conf_file</span> )</span><br><span class="line"></span><br><span class="line"><span class="comment"># check nc</span></span><br><span class="line"><span class="keyword">if</span> ! rpm -q nc &amp;&gt;/dev/null; <span class="keyword">then</span></span><br><span class="line">    yum install -y nc &amp;&gt;/dev/null</span><br><span class="line">    [[ $? -ne 0 ]] &amp;&amp; <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># print timestamp</span></span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">timestamp</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">echo</span> -n <span class="string">&quot;<span class="subst">$(date +<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>)</span> &quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># scan_ports main function</span></span><br><span class="line"><span class="comment"># host &#123;tcp|udp&#125; port</span></span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">scan_host_port</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">local</span> this_protocol</span><br><span class="line">    <span class="keyword">if</span> [[ <span class="variable">$2</span> == <span class="string">&#x27;udp&#x27;</span> ]]; <span class="keyword">then</span></span><br><span class="line">        this_protocol=<span class="string">&#x27;-u&#x27;</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        this_protocol=<span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">    <span class="keyword">if</span> ! nc -z -w 1 <span class="variable">$this_protocol</span> <span class="variable">$1</span> <span class="variable">$3</span>; <span class="keyword">then</span></span><br><span class="line">        <span class="comment"># can add other alert msg</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;<span class="subst">$(timestamp)</span> Connection to <span class="variable">$1</span> <span class="variable">$3</span> port [<span class="variable">$2</span>/<span class="variable">$3</span>] failed!&quot;</span> | <span class="built_in">tee</span> -a <span class="variable">$port_down_log</span></span><br><span class="line">    <span class="comment"># else</span></span><br><span class="line">    <span class="comment">#     echo &quot;$(timestamp) Connection to $1 $3 port [$2/$3] ok!&quot; | tee -a $port_down_log</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">sum_line_of_all_cfg_infor=$(<span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$all_cfg_infor</span>&quot;</span> | <span class="built_in">wc</span> -l)</span><br><span class="line"></span><br><span class="line"><span class="comment"># pipe operators</span></span><br><span class="line">fifo_file=$(<span class="built_in">date</span> +%s)</span><br><span class="line"><span class="keyword">if</span> <span class="built_in">mkfifo</span> <span class="variable">$fifo_file</span>; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">exec</span> 46&lt;&gt;<span class="variable">$fifo_file</span> </span><br><span class="line">    <span class="built_in">rm</span> -fr <span class="variable">$fifo_file</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;Create fifo file failed !&quot;</span></span><br><span class="line">    <span class="built_in">exit</span> 2</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># control function</span></span><br><span class="line">time_start=$(<span class="built_in">date</span> +%s)</span><br><span class="line"><span class="keyword">for</span>((count_n=<span class="number">1</span>; count_n&lt;=number_of_background_processes; count_n++))</span><br><span class="line"><span class="keyword">do</span> </span><br><span class="line">    <span class="built_in">echo</span> &gt;&amp;46</span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> -----------------------------$(timestamp)--------------------------- &gt;&gt;<span class="variable">$port_down_log</span></span><br><span class="line"><span class="keyword">for</span>((line_num=<span class="number">1</span>; line_num&lt;=sum_line_of_all_cfg_infor; line_num++))</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    </span><br><span class="line">    line_infor=$( <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$all_cfg_infor</span>&quot;</span> | sed -n <span class="string">&quot;<span class="variable">$&#123;line_num&#125;</span>p&quot;</span> )</span><br><span class="line">    line_ip=$( <span class="built_in">echo</span> <span class="variable">$line_infor</span> | awk  <span class="string">&#x27;&#123;print $1&#125;&#x27;</span> )</span><br><span class="line">    line_protocol=$( <span class="built_in">echo</span> <span class="variable">$line_infor</span> | awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span> )</span><br><span class="line">    <span class="comment"># read line_ip line_protocol &lt; &lt;(echo $line_infor | awk  &#x27;&#123;print $1,$2&#125;&#x27;)</span></span><br><span class="line">    <span class="keyword">for</span> this_port <span class="keyword">in</span> $( <span class="built_in">echo</span> <span class="variable">$line_infor</span> | awk <span class="string">&#x27;&#123;print $3&#125;&#x27;</span> | <span class="built_in">tr</span> <span class="string">&#x27;,&#x27;</span> <span class="string">&#x27; &#x27;</span>)</span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">        <span class="comment"># read pipe after port scan</span></span><br><span class="line">        <span class="built_in">read</span> -u46</span><br><span class="line">        <span class="comment"># put process into background for concurrency</span></span><br><span class="line">        &#123;</span><br><span class="line">            scan_host_port <span class="variable">$line_ip</span> <span class="variable">$line_protocol</span> <span class="variable">$this_port</span></span><br><span class="line">            <span class="comment"># make a write operation after pipe operator finished</span></span><br><span class="line">            <span class="built_in">echo</span> &gt;&amp;46</span><br><span class="line">        &#125; &amp;</span><br><span class="line">        <span class="built_in">let</span> port_count++</span><br><span class="line">    <span class="keyword">done</span></span><br><span class="line">    <span class="built_in">let</span> host_count++</span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">wait</span></span><br><span class="line"><span class="comment"># release</span></span><br><span class="line"><span class="built_in">exec</span> 46&gt;&amp;-</span><br><span class="line"><span class="built_in">exec</span> 46&lt;&amp;-</span><br><span class="line">time_end=$(<span class="built_in">date</span> +%s)</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> Hosts: <span class="variable">$host_count</span>  Ports: <span class="variable">$port_count</span>  Times: $((time_end-time_start))s | <span class="built_in">tee</span> -a <span class="variable">$port_down_log</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a target="_blank" rel="noopener" href="https://www.linuxtechi.com/nc-ncat-command-examples-linux-systems/">10 useful ncat (nc) Command Examples for Linux Systems</a></p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1493030">nc命令用法举例</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/nc/" data-title="nc命令使用小结 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/homebrew-update/" title="Updating Homebrew卡住的解决方案">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Updating Homebrew卡住的解决方案</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/devops/"  title="DevOps Roadmap持续学习路径分享">
+ <strong>下一篇：</strong><br/> 
+ <span>DevOps Roadmap持续学习路径分享
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nc%E7%AE%80%E4%BB%8B"><span class="toc-number">3.</span> <span class="toc-text">nc简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nc%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">4.</span> <span class="toc-text">nc常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nc%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E5%AE%9E%E4%BE%8B"><span class="toc-number">5.</span> <span class="toc-text">nc常用命令实例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#nc%E6%B5%8B%E8%AF%95tcp%E5%92%8Cudp%E7%AB%AF%E5%8F%A3"><span class="toc-number">5.1.</span> <span class="toc-text">nc测试tcp和udp端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#nc%E7%9B%91%E5%90%AC%E7%AB%AF%E5%8F%A3%E5%92%8C%E6%89%AB%E6%8F%8F%E8%BF%9E%E6%8E%A5%E7%AB%AF%E5%8F%A3"><span class="toc-number">5.2.</span> <span class="toc-text">nc监听端口和扫描连接端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#nc-examples"><span class="toc-number">5.3.</span> <span class="toc-text">nc examples</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#nc%E6%89%B9%E9%87%8F%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F%E8%84%9A%E6%9C%AC"><span class="toc-number">5.4.</span> <span class="toc-text">nc批量端口扫描脚本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">6.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

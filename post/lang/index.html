@@ -1,0 +1,583 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>NLS_LANG数据库字符集中文乱码问题分析和解决 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="保持操作系统，终端登录，数据库3者编码格式一致性很重要">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NLS_LANG数据库字符集中文乱码问题分析和解决">
+<meta property="og:url" content="https://wsgzao.github.io/post/lang/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="保持操作系统，终端登录，数据库3者编码格式一致性很重要">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-09-06T08:40:53.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:06.883Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/lang/" title="NLS_LANG数据库字符集中文乱码问题分析和解决" itemprop="url">NLS_LANG数据库字符集中文乱码问题分析和解决</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2017-09-06T08:40:53.000Z" itemprop="datePublished"> 发表于 2017-09-06</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E8%AE%B0%E5%BD%95"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Locale"><span class="toc-number">3.</span> <span class="toc-text">Locale</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NLS-LANG"><span class="toc-number">4.</span> <span class="toc-text">NLS_LANG</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%981%EF%BC%9AORA-12705"><span class="toc-number">4.1.</span> <span class="toc-text">问题1：ORA-12705</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%982%EF%BC%9AVI%E6%89%93%E5%BC%80%E6%96%87%E4%BB%B6%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81"><span class="toc-number">4.2.</span> <span class="toc-text">问题2：VI打开文件中文乱码</span></a></li></ol></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>已经有3年多没再关心或者遇到编码格式的问题了，一是离Oracle数据库操作远了，二是现在的Terminal，IDE和操作系统语言环境配置都很标准，比如清一色的UTF-8编码和UNIX(LF)，我自己的组合是以下形式，Xmanager + Visual Studio Code&#x2F;Notepad2 + 增加中文语言包显示的操作系统，Oracle zhs16gbk，MySQL utf8，Python 2&#x2F;3 utf-8。本来应该是非常统一而和谐的开发环境因为sqlplus spool导出中文内容而又变更混沌，索性再彻底分析以下中文乱码的源头和解决方案。</p>
+<blockquote>
+<p>保持操作系统，终端登录，数据库3者编码格式一致性很重要</p>
+</blockquote>
+<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2017年09月06日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/lang/">https://wsgzao.github.io/post/lang/</a></p>
+<h2 id="Locale"><a href="#Locale" class="headerlink" title="Locale"></a>Locale</h2><blockquote>
+<p>下面2个地址对Locale语言字符集的介绍已经很清晰了，我只强调2点</p>
+</blockquote>
+<ol>
+<li>大多数UNIX操作系统建议默认显示语言为英语，但是一定要添加中文语言支持包</li>
+<li>显示中文乱码多数原因是操作系统LANG环境变量或者类似Xshell编码不统一造成的</li>
+</ol>
+<p>Locale - <a target="_blank" rel="noopener" href="http://wiki.ubuntu.org.cn/Locale">http://wiki.ubuntu.org.cn/Locale</a><br>Localization - <a target="_blank" rel="noopener" href="https://wiki.gentoo.org/wiki/Localization/Guide">https://wiki.gentoo.org/wiki/Localization/Guide</a></p>
+<h2 id="NLS-LANG"><a href="#NLS-LANG" class="headerlink" title="NLS_LANG"></a>NLS_LANG</h2><p>本次遇到的问题主要是由于使用sqlplus spool从Oracle数据库导出中文数据引发连锁问题，虽然和数据库相关但是解决中文乱码的思路基本上是一致的，方便各位以后可以借鉴和参考。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># 源主机：CentOS 6.8 已安装中文语言包，保持LANG和NLS_LANG默认环境变量，Oracle Instant Client 12.2.0.1.0，已安装sqlplus</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$LANG</span></span><br><span class="line">en_US.UTF-8</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$NLS_LANG</span></span><br><span class="line">空</span><br><span class="line"></span><br><span class="line"><span class="comment"># 数据库服务器：Oracle Database 11.2.0.3.0，NLS_CHARACTERSET ZHS16GBK</span></span><br><span class="line">sqlplus system/oracle@orabiz</span><br><span class="line"></span><br><span class="line">SQL&gt; select * from v<span class="variable">$nls_parameters</span>;</span><br><span class="line"></span><br><span class="line">PARAMETER</span><br><span class="line">----------------------------------------------------------------</span><br><span class="line">VALUE</span><br><span class="line">----------------------------------------------------------------</span><br><span class="line">NLS_LANGUAGE</span><br><span class="line">AMERICAN</span><br><span class="line"></span><br><span class="line">NLS_TERRITORY</span><br><span class="line">AMERICA</span><br><span class="line"></span><br><span class="line">NLS_CURRENCY</span><br><span class="line">$</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">PARAMETER</span><br><span class="line">----------------------------------------------------------------</span><br><span class="line">VALUE</span><br><span class="line">----------------------------------------------------------------</span><br><span class="line">NLS_ISO_CURRENCY</span><br><span class="line">AMERICA</span><br><span class="line"></span><br><span class="line">NLS_NUMERIC_CHARACTERS</span><br><span class="line">.,</span><br><span class="line"></span><br><span class="line">NLS_CALENDAR</span><br><span class="line">GREGORIAN</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">PARAMETER</span><br><span class="line">----------------------------------------------------------------</span><br><span class="line">VALUE</span><br><span class="line">----------------------------------------------------------------</span><br><span class="line">NLS_DATE_FORMAT</span><br><span class="line">DD-MON-RR</span><br><span class="line"></span><br><span class="line">NLS_DATE_LANGUAGE</span><br><span class="line">AMERICAN</span><br><span class="line"></span><br><span class="line">NLS_CHARACTERSET</span><br><span class="line">ZHS16GBK</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">PARAMETER</span><br><span class="line">----------------------------------------------------------------</span><br><span class="line">VALUE</span><br><span class="line">----------------------------------------------------------------</span><br><span class="line">NLS_SORT</span><br><span class="line">BINARY</span><br><span class="line"></span><br><span class="line">NLS_TIME_FORMAT</span><br><span class="line">HH.MI.SSXFF AM</span><br><span class="line"></span><br><span class="line">NLS_TIMESTAMP_FORMAT</span><br><span class="line">DD-MON-RR HH.MI.SSXFF AM</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">PARAMETER</span><br><span class="line">----------------------------------------------------------------</span><br><span class="line">VALUE</span><br><span class="line">----------------------------------------------------------------</span><br><span class="line">NLS_TIME_TZ_FORMAT</span><br><span class="line">HH.MI.SSXFF AM TZR</span><br><span class="line"></span><br><span class="line">NLS_TIMESTAMP_TZ_FORMAT</span><br><span class="line">DD-MON-RR HH.MI.SSXFF AM TZR</span><br><span class="line"></span><br><span class="line">NLS_DUAL_CURRENCY</span><br><span class="line">$</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">PARAMETER</span><br><span class="line">----------------------------------------------------------------</span><br><span class="line">VALUE</span><br><span class="line">----------------------------------------------------------------</span><br><span class="line">NLS_NCHAR_CHARACTERSET</span><br><span class="line">AL16UTF16</span><br><span class="line"></span><br><span class="line">NLS_COMP</span><br><span class="line">BINARY</span><br><span class="line"></span><br><span class="line">NLS_LENGTH_SEMANTICS</span><br><span class="line">BYTE</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">PARAMETER</span><br><span class="line">----------------------------------------------------------------</span><br><span class="line">VALUE</span><br><span class="line">----------------------------------------------------------------</span><br><span class="line">NLS_NCHAR_CONV_EXCP</span><br><span class="line">FALSE</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">19 rows selected.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="问题1：ORA-12705"><a href="#问题1：ORA-12705" class="headerlink" title="问题1：ORA-12705"></a>问题1：ORA-12705</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ERROR:</span><br><span class="line">ORA-12705: Cannot access NLS data files or invalid environment specified</span><br><span class="line"></span><br><span class="line">12705, 00000, <span class="string">&quot;Cannot access NLS data files or invalid environment specified&quot;</span></span><br><span class="line">// *Cause: Either an attempt was made to issue an ALTER SESSION <span class="built_in">command</span></span><br><span class="line">//         with an invalid NLS parameter or value; or the environment</span><br><span class="line">//         variable(s) NLS_LANG, ORA_NLSxx, or ORACLE_HOME was incorrectly</span><br><span class="line">//         specified, therefore the NLS data files cannot be located.</span><br><span class="line">// *Action: Check the syntax of the ALTER SESSION <span class="built_in">command</span> and the NLS</span><br><span class="line">//          parameter, correct the syntax and retry the statement, or</span><br><span class="line">//          specify the correct directory path/values <span class="keyword">in</span> the environment</span><br><span class="line">//          variables.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>根据以上Oracle官方提示，合理的解决思路大致是这样</p>
+<ol>
+<li>检查数据库服务器的NLS parameter</li>
+<li>在客户端中配置与服务端匹配的NLS_LANG</li>
+</ol>
+<p>比如我的环境就需要配置</p>
+<pre><code>export NLS_LANG=&quot;american_america.zhs16gbk&quot;
+</code></pre>
+<p>它的格式如下:NLS_LANG&#x3D;language_territory.charset<br>它有三个组成部分(语言、地域和字符集)，每个成分控制了NLS子集的特性。<br>Language：指定服务器消息的语言， 影响提示信息是中文还是英文<br>Territory：指定服务器的日期和数字格式，<br>Charset：指定字符集。<br>如:AMERICAN_AMERICA.ZHS16GBK, SIMPLIFIED CHINESE_CHINA.ZHS16GBK</p>
+<pre><code>export NLS_LANG=&quot;SIMPLIFIED CHINESE_CHINA.ZHS16GBK&quot;
+</code></pre>
+<p>从NLS_LANG的组成我们可以看出，真正影响数据库字符集的其实是第三部分。<br>所以两个数据库之间的字符集只要第三部分一样就可以相互导入导出数据，前面影响的只是提示信息是中文还是英文。</p>
+<h3 id="问题2：VI打开文件中文乱码"><a href="#问题2：VI打开文件中文乱码" class="headerlink" title="问题2：VI打开文件中文乱码"></a>问题2：VI打开文件中文乱码</h3><blockquote>
+<p>其实这个问题就是由第一个问题引申出来的，主要和LANG环境变量有关</p>
+</blockquote>
+<p>Locale 是软件在运行时的语言环境, 它包括语言(Language), 地域 (Territory) 和字符集(Codeset)。<br>一个locale的书写格式为: 语言[_地域[.字符集]].</p>
+<p>zh_CN.GB2312＝中文_中华人民共和国＋国标2312字符集。<br>我说中文，身处中国大陆，使用国标2312字符集来表达字符。</p>
+<p>zh_TW.BIG5&#x3D;中文_台湾.大五码字符集<br>我说中文，身处台湾地区，使用Big5字符集来表达字符。</p>
+<p>根据以上信息合理的解决思路大致是这样</p>
+<ol>
+<li>检查操作系统是否已添加中文语言包</li>
+<li>检查SecureCRT&#x2F;Xshell等终端编码是否为默认编码或UTF-8</li>
+<li>检查LANG环境变量是否合适</li>
+</ol>
+<p>比如我的环境就需要配置，为什么不加zh_CN.UTF-8，你猜呢</p>
+<pre><code>export LANG=zh_CN
+</code></pre>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/lang/" data-title="NLS_LANG数据库字符集中文乱码问题分析和解决 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/virtualenv/" title="使用virtualenv和virtualenvwrapper管理多版本Python开发环境">
+  <strong>上一篇：</strong><br/>
+  <span>
+  使用virtualenv和virtualenvwrapper管理多版本Python开发环境</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/oracle-instant-client/"  title="Install Oracle Instant Client on Linux and Windows">
+ <strong>下一篇：</strong><br/> 
+ <span>Install Oracle Instant Client on Linux and Windows
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E8%AE%B0%E5%BD%95"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Locale"><span class="toc-number">3.</span> <span class="toc-text">Locale</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NLS-LANG"><span class="toc-number">4.</span> <span class="toc-text">NLS_LANG</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%981%EF%BC%9AORA-12705"><span class="toc-number">4.1.</span> <span class="toc-text">问题1：ORA-12705</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%982%EF%BC%9AVI%E6%89%93%E5%BC%80%E6%96%87%E4%BB%B6%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81"><span class="toc-number">4.2.</span> <span class="toc-text">问题2：VI打开文件中文乱码</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

@@ -1,0 +1,872 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>Terraform学习路径 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="Terraform学习路径">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Terraform学习路径">
+<meta property="og:url" content="https://wsgzao.github.io/post/terraform/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="Terraform学习路径">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200917160138.png">
+<meta property="article:published_time" content="2020-12-01T02:50:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:07.133Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200917160138.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/terraform/" title="Terraform学习路径" itemprop="url">Terraform学习路径</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2020-12-01T02:50:49.000Z" itemprop="datePublished"> 发表于 2020-12-01</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform%E7%AE%80%E4%BB%8B"><span class="toc-number">3.</span> <span class="toc-text">Terraform简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform-Workshop-Slides"><span class="toc-number">4.</span> <span class="toc-text">Terraform Workshop Slides</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform%E5%AE%89%E8%A3%85"><span class="toc-number">5.</span> <span class="toc-text">Terraform安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform-in-60-Seconds"><span class="toc-number">6.</span> <span class="toc-text">Terraform in 60 Seconds</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#View-code"><span class="toc-number">6.1.</span> <span class="toc-text">View code</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Init"><span class="toc-number">6.2.</span> <span class="toc-text">Init</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Apply"><span class="toc-number">6.3.</span> <span class="toc-text">Apply</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Verify"><span class="toc-number">6.4.</span> <span class="toc-text">Verify</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Destroy"><span class="toc-number">6.5.</span> <span class="toc-text">Destroy</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Conclusion"><span class="toc-number">6.6.</span> <span class="toc-text">Conclusion</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84"><span class="toc-number">7.</span> <span class="toc-text">Terraform学习路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform-%E5%85%B3%E9%94%AE%E6%A6%82%E5%BF%B5"><span class="toc-number">8.</span> <span class="toc-text">Terraform 关键概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Configuration%EF%BC%9A%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD%E7%9A%84%E5%AE%9A%E4%B9%89%E5%92%8C%E6%8F%8F%E8%BF%B0"><span class="toc-number">8.1.</span> <span class="toc-text">Configuration：基础设施的定义和描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Provider%EF%BC%9A%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD%E7%AE%A1%E7%90%86%E7%BB%84%E4%BB%B6"><span class="toc-number">8.2.</span> <span class="toc-text">Provider：基础设施管理组件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Resource%EF%BC%9A%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD%E8%B5%84%E6%BA%90%E5%92%8C%E6%9C%8D%E5%8A%A1%E7%9A%84%E7%AE%A1%E7%90%86"><span class="toc-number">8.3.</span> <span class="toc-text">Resource：基础设施资源和服务的管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Data-Source%EF%BC%9A%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD%E8%B5%84%E6%BA%90%E5%92%8C%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%9F%A5%E8%AF%A2"><span class="toc-number">8.4.</span> <span class="toc-text">Data Source：基础设施资源和服务的查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#State%EF%BC%9A%E4%BF%9D%E5%AD%98%E8%B5%84%E6%BA%90%E5%85%B3%E7%B3%BB%E5%8F%8A%E5%85%B6%E5%B1%9E%E6%80%A7%E6%96%87%E4%BB%B6%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">8.5.</span> <span class="toc-text">State：保存资源关系及其属性文件的数据库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Backend%EF%BC%9A%E5%AD%98%E6%94%BE-State-%E6%96%87%E4%BB%B6%E7%9A%84%E8%BD%BD%E4%BD%93"><span class="toc-number">8.6.</span> <span class="toc-text">Backend：存放 State 文件的载体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Provisioner%EF%BC%9A%E5%9C%A8%E6%9C%BA%E5%99%A8%E4%B8%8A%E6%89%A7%E8%A1%8C%E6%93%8D%E4%BD%9C%E7%9A%84%E7%BB%84%E4%BB%B6"><span class="toc-number">8.7.</span> <span class="toc-text">Provisioner：在机器上执行操作的组件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3"><span class="toc-number">9.</span> <span class="toc-text">Terraform 常用命令详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Terraform-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">9.1.</span> <span class="toc-text">Terraform 资源管理常用命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Terraform%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">9.2.</span> <span class="toc-text">Terraform状态管理常用命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Terraform-%E5%85%B6%E4%BB%96%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">9.3.</span> <span class="toc-text">Terraform 其他常用命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform%E5%AE%9E%E4%BE%8B%E8%A7%A3%E6%9E%90"><span class="toc-number">10.</span> <span class="toc-text">Terraform实例解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7"><span class="toc-number">11.</span> <span class="toc-text">Terraform使用技巧</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%81%BF%E5%85%8D%E7%A7%98%E9%92%A5%E7%9B%B4%E6%8E%A5%E5%86%99%E5%85%A5tf%E6%96%87%E4%BB%B6%E4%B8%AD"><span class="toc-number">11.1.</span> <span class="toc-text">避免秘钥直接写入tf文件中</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%96%84%E7%94%A8variable%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">11.2.</span> <span class="toc-text">善用variable环境变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%96%84%E7%94%A8output%E5%81%9Adebug"><span class="toc-number">11.3.</span> <span class="toc-text">善用output做debug</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#terrafrom%E7%9B%AE%E5%BD%95%E5%B8%83%E5%B1%80"><span class="toc-number">11.4.</span> <span class="toc-text">terrafrom目录布局</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B6%E5%AE%83terraform%E6%8C%87%E4%BB%A4"><span class="toc-number">11.5.</span> <span class="toc-text">其它terraform指令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform%E8%AE%A4%E8%AF%81%E8%80%83%E8%AF%95"><span class="toc-number">12.</span> <span class="toc-text">Terraform认证考试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">13.</span> <span class="toc-text">参考文章</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>相信Infrastructure as Code (IaC)的DevOps理念已经深入人心，如果是Ansible是偏向Infrastructure Configuration tool，那么Terraform就是Infrastructure provision tool，两者本身并不冲突，而Terraform使用declarative声明式语法结合强大的生态让我们在多云(AWS, Azure, GCP, Alibaba Cloud, TencentCloud)和容器化(K8s)环境中可以更加地从容应对新挑战实现统一的资源编排管理。</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2020年12月01日 - 增加Terraform Associate Exam<br>2020年11月25日 - 增加 AWS&#x2F;Azure&#x2F;GCP Terraform Workshop<br>2020年10月06日 - 更新Terraform在AWS&#x2F;阿里云&#x2F;腾讯云的部署实例<br>2020年10月01日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/terraform/">https://wsgzao.github.io/post/terraform/</a></p>
+<hr>
+<h2 id="Terraform简介"><a href="#Terraform简介" class="headerlink" title="Terraform简介"></a>Terraform简介</h2><blockquote>
+<p>Terraform官方文档中CTO的介绍视频可以帮助你快速了解</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200917160138.png"></p>
+<p>Terraform is a tool for building, changing, and versioning infrastructure safely and efficiently. Terraform can manage existing and popular service providers as well as custom in-house solutions.</p>
+<p>Configuration files describe to Terraform the components needed to run a single application or your entire datacenter. Terraform generates an execution plan describing what it will do to reach the desired state, and then executes it to build the described infrastructure. As the configuration changes, Terraform is able to determine what changed and create incremental execution plans which can be applied.</p>
+<p>The infrastructure Terraform can manage includes low-level components such as compute instances, storage, and networking, as well as high-level components such as DNS entries, SaaS features, etc.</p>
+<p>开发公司：HashiCorp<br>入门手册：<a target="_blank" rel="noopener" href="https://www.terraform.io/intro/index.html">https://www.terraform.io/intro/index.html</a><br>官网:<a target="_blank" rel="noopener" href="https://www.terraform.io/">https://www.terraform.io/</a><br>Github：<a target="_blank" rel="noopener" href="https://github.com/hashicorp/terraform">https://github.com/hashicorp/terraform</a><br>功能：terraform用于各类基础设施资源初始化，支持多种云平台，支持第三方服务对接</p>
+<p><a target="_blank" rel="noopener" href="https://www.terraform.io/intro/index.html">Introduction to Terraform</a></p>
+<p><a target="_blank" rel="noopener" href="https://learn.hashicorp.com/tutorials/terraform/infrastructure-as-code">Introduction to Infrastructure as Code with Terraform</a></p>
+<p>Advantages of Infrastructure as Code</p>
+<ul>
+<li>Easily Repeatable</li>
+<li>Easily Readable</li>
+<li>Operational certainty with “terraform plan”</li>
+<li>Standardized environment builds</li>
+<li>Quickly provisioned development environments</li>
+<li>Disaster Recovery</li>
+</ul>
+<p>关于Terraform开源版你需要知道的缺点，官方的介绍视频主要通过引入Terraform Enterprise企业版来解决以下问题</p>
+<ol>
+<li>状态管理非常原始</li>
+<li>缺乏状态可视化</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1vK411J71d">追赶 terraform，让基础设施代码化更加容易，pulumi 都做了些什么？</a></p>
+<h2 id="Terraform-Workshop-Slides"><a href="#Terraform-Workshop-Slides" class="headerlink" title="Terraform Workshop Slides"></a>Terraform Workshop Slides</h2><p>AWS Terraform Workshop - Build AWS Resources with Infrastructure as Code</p>
+<p><a target="_blank" rel="noopener" href="https://hashicorp.github.io/field-workshops-terraform/slides/aws/terraform-oss/index.html">https://hashicorp.github.io/field-workshops-terraform/slides/aws/terraform-oss/index.html</a></p>
+<p>Azure Terraform Workshop - Build Azure Resources With Infrastructure as Code</p>
+<p><a target="_blank" rel="noopener" href="https://hashicorp.github.io/field-workshops-terraform/slides/azure/terraform-oss/index.html">https://hashicorp.github.io/field-workshops-terraform/slides/azure/terraform-oss/index.html</a></p>
+<p>GCP Terraform Workshop - Build GCP Resources with Infrastructure as Code</p>
+<p><a target="_blank" rel="noopener" href="https://hashicorp.github.io/field-workshops-terraform/slides/gcp/terraform-oss/index.html">https://hashicorp.github.io/field-workshops-terraform/slides/gcp/terraform-oss/index.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://play.instruqt.com/binxio/tracks/terraform-intro">Terraform Intro</a></p>
+<p><a target="_blank" rel="noopener" href="https://play.instruqt.com/instruqt/tracks/terraform-arcade">Terraform</a></p>
+<p><a target="_blank" rel="noopener" href="https://play.instruqt.com/hashicorp/tracks/sentinel-for-terraform-v3">Sentinel for Terraform</a></p>
+<h2 id="Terraform安装"><a href="#Terraform安装" class="headerlink" title="Terraform安装"></a>Terraform安装</h2><blockquote>
+<p>Terraform的安装和基础命令并不复杂，需要重点学习和熟悉的是各个云厂商开放的API语法</p>
+</blockquote>
+<p>安装Terraform，找到与你系统<a target="_blank" rel="noopener" href="https://www.terraform.io/downloads.html">匹配的软件包</a>然后下载。Terraform被打包为一个zip归档文件。</p>
+<p>下载完zip文件以后，解压这个包。Terraform是一个名为terraform的独立文件。包里其他所有的文件都可以安全删掉，Terraform依然可以正常工作。</p>
+<p>最后一步确保terraform二进制文件在PATH上可用。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># copy binary file to path</span></span><br><span class="line"><span class="built_in">mv</span> ~/Downloads/terraform /usr/local/bin/</span><br><span class="line"></span><br><span class="line"><span class="comment"># macOS can use Homebrew to install terraform</span></span><br><span class="line">brew install hashicorp/tap/terraform</span><br><span class="line"></span><br><span class="line"><span class="comment"># terraform</span></span><br><span class="line">Usage: terraform [-version] [-<span class="built_in">help</span>] &lt;<span class="built_in">command</span>&gt; [args]</span><br><span class="line"></span><br><span class="line">The available commands <span class="keyword">for</span> execution are listed below.</span><br><span class="line">The most common, useful commands are shown first, followed by</span><br><span class="line">less common or more advanced commands. If you<span class="string">&#x27;re just getting</span></span><br><span class="line"><span class="string">started with Terraform, stick with the common commands. For the</span></span><br><span class="line"><span class="string">other commands, please read the help and docs before usage.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Common commands:</span></span><br><span class="line"><span class="string">    apply              Builds or changes infrastructure</span></span><br><span class="line"><span class="string">    console            Interactive console for Terraform interpolations</span></span><br><span class="line"><span class="string">    destroy            Destroy Terraform-managed infrastructure</span></span><br><span class="line"><span class="string">    env                Workspace management</span></span><br><span class="line"><span class="string">    fmt                Rewrites config files to canonical format</span></span><br><span class="line"><span class="string">    get                Download and install modules for the configuration</span></span><br><span class="line"><span class="string">    graph              Create a visual graph of Terraform resources</span></span><br><span class="line"><span class="string">    import             Import existing infrastructure into Terraform</span></span><br><span class="line"><span class="string">    init               Initialize a Terraform working directory</span></span><br><span class="line"><span class="string">    login              Obtain and save credentials for a remote host</span></span><br><span class="line"><span class="string">    logout             Remove locally-stored credentials for a remote host</span></span><br><span class="line"><span class="string">    output             Read an output from a state file</span></span><br><span class="line"><span class="string">    plan               Generate and show an execution plan</span></span><br><span class="line"><span class="string">    providers          Prints a tree of the providers used in the configuration</span></span><br><span class="line"><span class="string">    refresh            Update local state file against real resources</span></span><br><span class="line"><span class="string">    show               Inspect Terraform state or plan</span></span><br><span class="line"><span class="string">    taint              Manually mark a resource for recreation</span></span><br><span class="line"><span class="string">    untaint            Manually unmark a resource as tainted</span></span><br><span class="line"><span class="string">    validate           Validates the Terraform files</span></span><br><span class="line"><span class="string">    version            Prints the Terraform version</span></span><br><span class="line"><span class="string">    workspace          Workspace management</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">All other commands:</span></span><br><span class="line"><span class="string">    0.12upgrade        Rewrites pre-0.12 module source code for v0.12</span></span><br><span class="line"><span class="string">    0.13upgrade        Rewrites pre-0.13 module source code for v0.13</span></span><br><span class="line"><span class="string">    debug              Debug output management (experimental)</span></span><br><span class="line"><span class="string">    force-unlock       Manually unlock the terraform state</span></span><br><span class="line"><span class="string">    push               Obsolete command for Terraform Enterprise legacy (v1)</span></span><br><span class="line"><span class="string">    state              Advanced state management</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+
+
+<p>可以在云上创建Terraform的账户，并创建AccessKey，通过环境变量存放认证信息</p>
+<p>terrafrom常用命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">terraform init   <span class="comment"># 初始化工作目录，也是我们第一个要执行的命令</span></span><br><span class="line">terraform plan   <span class="comment"># 生成计划</span></span><br><span class="line">terraform appy   <span class="comment"># 提交请求</span></span><br><span class="line">terraform state  <span class="comment"># 查看资源状态</span></span><br><span class="line">terraform graph  <span class="comment"># 生成执行计划图</span></span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://learn.hashicorp.com/tutorials/terraform/install-cli">Install Terraform</a></p>
+<h2 id="Terraform-in-60-Seconds"><a href="#Terraform-in-60-Seconds" class="headerlink" title="Terraform in 60 Seconds"></a>Terraform in 60 Seconds</h2><p>A Terraform configuration is a series of code blocks that define your intended infrastructure. You’ll run the <code>terraform</code> command against this file to create an Nginx webserver and view the default Nginx web page.</p>
+<h3 id="View-code"><a href="#View-code" class="headerlink" title="View code"></a>View code</h3><p>First, open the <code>main.tf</code> file in the text editor by clicking this link.</p>
+<p><code>main.tf</code></p>
+<p>You don’t have to edit or even understand the code. It defines two resources: a Docker disk image that packages the Nginx webserver, and a Docker container that gives it a name and runs it on port 80.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"># pwd</span><br><span class="line">/root/terraform-docker-demo</span><br><span class="line"></span><br><span class="line"># vim main.tf</span><br><span class="line">terraform &#123;</span><br><span class="line">  required_providers &#123;</span><br><span class="line">    docker = &#123;</span><br><span class="line">      source = &quot;terraform-providers/docker&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  required_version = &quot;&gt;= 0.13&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">resource &quot;docker_image&quot; &quot;nginx&quot; &#123;</span><br><span class="line">  name = &quot;nginx:latest&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">resource &quot;docker_container&quot; &quot;nginx&quot; &#123;</span><br><span class="line">  image = docker_image.nginx.latest</span><br><span class="line">  name  = &quot;tutorial&quot;</span><br><span class="line">  ports &#123;</span><br><span class="line">    internal = 80</span><br><span class="line">    external = 80</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="Init"><a href="#Init" class="headerlink" title="Init"></a>Init</h3><p>All Terraform workflows start with the <code>init</code> command. Terraform searches the configuration for both direct and indirect references to providers (such as Docker). Terraform then attempts to load the required plugins.</p>
+<p><code>terraform init</code></p>
+<h3 id="Apply"><a href="#Apply" class="headerlink" title="Apply"></a>Apply</h3><p>Now provision the webserver by running <code>apply</code>.</p>
+<p><code>terraform apply</code></p>
+<p>You will be asked to confirm. Type <code>yes</code> and press <code>ENTER</code>. It may take up to 30 seconds. A message will display confirmation that it succeeded.</p>
+<h3 id="Verify"><a href="#Verify" class="headerlink" title="Verify"></a>Verify</h3><p>Visit this URL to view the default Nginx web page which is now live:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://2886795306-80-shadow03.environments.katacoda.com/">Nginx index page</a></li>
+</ul>
+<p>Alternatively, you can examine Docker’s process list. You will see the <code>tutorial</code> container which is running Nginx.</p>
+<p><code>docker ps</code></p>
+<h3 id="Destroy"><a href="#Destroy" class="headerlink" title="Destroy"></a>Destroy</h3><p>To remove the Nginx webserver as defined in <code>main.tf</code>, run the destroy command.</p>
+<p><code>terraform destroy</code></p>
+<p>You will be prompted to confirm. Type <code>yes</code> and press <code>ENTER</code>.</p>
+<h3 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h3><p>You have now created and destroyed your first Terraform resources! Terraform supports hundreds of ecosystem providers, from major cloud resources to content delivery networks and more.</p>
+<p>Continue learning at <a target="_blank" rel="noopener" href="https://learn.hashicorp.com/terraform">HashiCorp Learn</a> and the <a target="_blank" rel="noopener" href="https://www.terraform.io/">Terraform API documentation</a> or discuss with others on the <a target="_blank" rel="noopener" href="https://discuss.hashicorp.com/c/terraform-core/27">Terraform forum</a>.</p>
+<h2 id="Terraform学习路径"><a href="#Terraform学习路径" class="headerlink" title="Terraform学习路径"></a>Terraform学习路径</h2><blockquote>
+<p>之前也提到了Terraform学起来很快，但更重要的是熟悉不同Providers之前的调用差异</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://learn.hashicorp.com/terraform/">Learn Terraform</a> - New users can start here. Interactive guides to teach you how to use Terraform’s features. Begin with the <a target="_blank" rel="noopener" href="https://learn.hashicorp.com/terraform/getting-started/install">Getting Started guide</a>, then continue with task-specific advanced guides or go directly to the <a target="_blank" rel="noopener" href="https://www.terraform.io/docs/cli-index.html">Terraform CLI docs</a>.</p>
+<p><a target="_blank" rel="noopener" href="https://www.terraform.io/docs/providers/index.html">Providers</a><br>Terraform is used to create, manage, and update infrastructure resources such as physical machines, VMs, network switches, containers, and more. Almost any infrastructure type can be represented as a resource in Terraform.</p>
+<p>A provider is responsible for understanding API interactions and exposing resources. Most providers configure a specific infrastructure platform (either cloud or self-hosted). Providers can also offer local utilities for tasks like generating random numbers for unique resource names.</p>
+<p><a target="_blank" rel="noopener" href="https://www.terraform.io/docs/providers/aws/index.html">AWS</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.terraform.io/docs/providers/azurerm/index.html">Azure</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.terraform.io/docs/providers/google/index.html">Google Cloud Platform</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.terraform.io/docs/providers/alicloud/index.html">Alibaba Cloud</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.terraform.io/docs/providers/tencentcloud/index.html">TencentCloud</a></p>
+<h2 id="Terraform-关键概念"><a href="#Terraform-关键概念" class="headerlink" title="Terraform 关键概念"></a>Terraform 关键概念</h2><p>Terraform管理的是云资源</p>
+<p>基础设施和服务统称为资源，如私有网络、子网、物理机、虚拟机、镜像、专线、NAT网关等等都可以称之为资源，也是开发和运维人员经常要打交道要维护的东西。</p>
+<p>资源分为两种resource和data</p>
+<p><strong>resource</strong><br>这类资源一般是抽象的真正的云服务资源，支持增删改，如私有网络、NAT网关、虚拟机实例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">resource &quot;资源类名&quot; &quot;映射到本地的唯一资源名&quot; &#123;</span><br><span class="line">  参数 = 值</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>data</strong><br>这类资源一般是固定的一些可读资源，如可用区列表、镜像列表。大部分情况下，resource资源也会封装一个data source方法，用于资源查询</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">data &quot;资源类名&quot; &quot;映射到本地的唯一资源名&quot; &#123;</span><br><span class="line">  参数 = 值</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在使用Terraform的过程中，通常接触到很多名词，如configuration，provider，resource，datasource，state，backend，provisioner等，本文将一一跟大家介绍这些概念。</p>
+<h3 id="Configuration：基础设施的定义和描述"><a href="#Configuration：基础设施的定义和描述" class="headerlink" title="Configuration：基础设施的定义和描述"></a>Configuration：基础设施的定义和描述</h3><p>“基础设施即代码（Infrastructure as Code）”，这里的Code就是对基础设施资源的代码定义和描述，也就是通过代码表达我们想要管理的资源。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># VPC 资源</span><br><span class="line">resource &quot;alicloud_vpc&quot; &quot;vpc&quot; &#123;</span><br><span class="line">        name          = &quot;tf_vpc&quot;</span><br><span class="line">        cidr_block  = &quot;172.16.0.0/16&quot;</span><br><span class="line">&#125;</span><br><span class="line"># VSwitch 资源</span><br><span class="line">resource &quot;alicloud_vswitch&quot; &quot;vswitch&quot; &#123;</span><br><span class="line">        vpc_id            = alicloud_vpc.vpc.id</span><br><span class="line">        cidr_block        = &quot;172.16.1.0/24&quot;</span><br><span class="line">        availability_zone = &quot;cn-beijing-a&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对所有资源的代码描述都需要定义在一个以 <code>tf</code> 结尾的文件用于Terraform加载和解析，这个文件我们称之为“Terraform模板”或者“Configuration”。</p>
+<h3 id="Provider：基础设施管理组件"><a href="#Provider：基础设施管理组件" class="headerlink" title="Provider：基础设施管理组件"></a>Provider：基础设施管理组件</h3><p>Terraform 通常用于对云上基础设施，如虚拟机，网络资源，容器资源，存储资源等的创建，更新，查看，删除等管理动作，也可以实现对物理机的管理，如安装软件，部署应用等。</p>
+<p><a target="_blank" rel="noopener" href="https://www.terraform.io/docs/providers/index.html">【Provider】</a> 是一个与Open API直接交互的后端驱动，Terraform 就是通过Provider来完成对基础设施资源的管理的。不同的基础设施提供商都需要提供一个Provider来实现对自家基础设施的统一管理。目前Terraform目前支持超过160多种的providers，大多数云平台的Provider插件均已经实现了，阿里云对应的Provider为 <code>alicloud</code> 。</p>
+<p>在操作环境中，Terraform和Provider是两个独立存在的package，当运行Terraform时，Terraform会根据用户模板中指定的provider或者resource／datasource的标志自动的下载模板所用到的所有provider，并将其放在执行目录下的一个隐藏目录 <code>.terraform</code> 下。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">provider &quot;alicloud&quot; &#123;</span><br><span class="line">  version              = &quot;&gt;=1.56.0&quot;</span><br><span class="line">  region               = &quot;cn-hangzhou&quot;</span><br><span class="line">  configuration_source = &quot;terraform-alicloud-modules/classic-load-balance&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>模板中显示指定了一个阿里云的Provider，并显示设置了provider的版本为 <code>1.56.0+</code> （默认下载最新的版本），指定了需要管理资源的region，指定了当前这个模板的标识。<br>通常Provider都包含两个主要元素 resource 和 data source。</p>
+<h3 id="Resource：基础设施资源和服务的管理"><a href="#Resource：基础设施资源和服务的管理" class="headerlink" title="Resource：基础设施资源和服务的管理"></a>Resource：基础设施资源和服务的管理</h3><p>在Terraform中，一个具体的资源或者服务称之为一个resource，比如一台ECS 实例，一个VPC网络，一个SLB实例。每个特定的resource包含了若干可用于描述对应资源或者服务的属性字段，通过这些字段来定义一个完整的资源或者服务，比如实例的名称（name），实例的规格（instance_type），VPC或者VSwitch的网段（cidr_block）等。<br>定义一个Resource的语法非常简单，通过 <code>resource</code> 关键字声明，如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 定义一个ECS实例</span><br><span class="line">resource &quot;alicloud_instance&quot; &quot;default&quot; &#123;</span><br><span class="line">  image_id        = &quot;ubuntu_16_04_64_20G_alibase_20190620.vhd&quot;</span><br><span class="line">  instance_type   = &quot;ecs.sn1ne.large&quot;</span><br><span class="line">  instance_name   = &quot;my-first-vm&quot;</span><br><span class="line">  system_disk_category = &quot;cloud_ssd&quot;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>其中 <code>alicloud_instance</code> 为**资源类型（Resource Type)**，定义这个资源的类型，告诉Terraform这个Resource是阿里云的ECS实例还是阿里云的VPC。</li>
+<li><code>default</code> 为**资源名称(Resource Name)**，资源名称在同一个模块中必须唯一，主要用于供其他资源引用该资源。</li>
+<li>大括号里面的block块为**配置参数(Configuration Arguments)**，定义资源的属性，比如ECS 实例的规格、镜像、名称等。</li>
+</ul>
+<p>显然这个Terraform模板的功能为在阿里云上创建一个ECS实例，镜像ID为 <code>ubuntu_16_04_64_20G_alibase_20190620.vhd</code> ，规格为 <code>ecs.sn1ne.large</code> ，自定义了实例名称和系统盘的类型。</p>
+<p>除此之外，在Terraform中，一个资源与另一个资源的关系也定义为一个资源，如一块云盘与一台ECS实例的挂载，一个弹性IP（EIP）与一台ECS或者SLB实例的绑定关系。这样定义的好处是，一方面资源架构非常清晰，另一方面，当模板中有若干个EIP需要与若干台ECS实例绑定时，只需要通过Terraform的 <code>count</code> 功能就可以在无需编写大量重复代码的前提下实现绑定功能。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">resource &quot;alicloud_instance&quot; &quot;default&quot; &#123;</span><br><span class="line">  count = 5</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br><span class="line">resource &quot;alicloud_eip&quot; &quot;default&quot; &#123;</span><br><span class="line">    count = 5</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br><span class="line">resource &quot;alicloud_eip_association&quot; &quot;default&quot; &#123;</span><br><span class="line">  count = 5</span><br><span class="line">  instance_id = alicloud_instance.default[count.index].id</span><br><span class="line">  allocation_id = alicloud_eip.default[count.index].id</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>显然这个Terraform模板的功能为在阿里云上创建5个ECS实例和5个弹性IP，并将它们一一绑定。</p>
+<h3 id="Data-Source：基础设施资源和服务的查询"><a href="#Data-Source：基础设施资源和服务的查询" class="headerlink" title="Data Source：基础设施资源和服务的查询"></a>Data Source：基础设施资源和服务的查询</h3><p>对资源的查询是运维人员或者系统最常使用的操作，比如，查看某个region下有哪些可用区，某个可用区下有哪些实例规格，每个region下有哪些镜像，当前账号下有多少机器等，通过对资源及其资源属性的查询可以帮助和引导开发者进行下一步的操作。</p>
+<p>除此之外，在编写Terraform模板时，Resource使用的参数有些是固定的静态变量，但有些情况下可能参数变量不确定或者参数可能随时变化。比如我们创建ECS 实例时，通常需要指定我们自己的镜像ID和实例规格，但我们的模板可能随时更新，如果在代码中指定ImageID和Instance，则一旦我们更新镜像模板就需要重新修改代码。<br>在Terraform 中，Data Source 提供的就是一个查询资源的功能，每个data source实现对一个资源的动态查询，Data Souce的结果可以认为是动态变量，只有在运行时才能知道变量的值。</p>
+<p>Data Sources通过 <code>data</code> 关键字声明，如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">// Images data source for image_id</span><br><span class="line">data &quot;alicloud_images&quot; &quot;default&quot; &#123;</span><br><span class="line">  most_recent = true</span><br><span class="line">  owners      = &quot;system&quot;</span><br><span class="line">  name_regex  = &quot;^ubuntu_18.*_64&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">data &quot;alicloud_zones&quot; &quot;default&quot; &#123;</span><br><span class="line">  available_resource_creation = &quot;VSwitch&quot;</span><br><span class="line">  enable_details              = true</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// Instance_types data source for instance_type</span><br><span class="line">data &quot;alicloud_instance_types&quot; &quot;default&quot; &#123;</span><br><span class="line">  availability_zone = data.alicloud_zones.default.zones.0.id</span><br><span class="line">  cpu_core_count    = 2</span><br><span class="line">  memory_size       = 4</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">resource &quot;alicloud_instance&quot; &quot;web&quot; &#123;</span><br><span class="line">  image_id        = data.alicloud_images.default.images[0].id</span><br><span class="line">  instance_type   = data.alicloud_instance_types.default.instance_types[0].id</span><br><span class="line">  instance_name   = &quot;my-first-vm&quot;</span><br><span class="line">  system_disk_category = &quot;cloud_ssd&quot;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如上例子中的ECS Instance 没有指定镜像ImageID和实例规格，而是通过 <code>data</code>引用，Terraform运行时将首先根据镜像名称前缀选择系统镜像，如果同时有多个镜像满足条件，则选择最新的镜像。实例规格也是类似，在某个可用区下选择2核4G的实例规格进行返回。</p>
+<h3 id="State：保存资源关系及其属性文件的数据库"><a href="#State：保存资源关系及其属性文件的数据库" class="headerlink" title="State：保存资源关系及其属性文件的数据库"></a>State：保存资源关系及其属性文件的数据库</h3><p>Terraform创建和管理的所有资源都会保存到自己的数据库上，这个数据库不是通常意义上的数据库（MySQL，Redis等），而是一个文件名为 <code>terraform.tfstate</code> 的文件，在Terraform 中称之为 <a target="_blank" rel="noopener" href="https://www.terraform.io/docs/state/index.html"><code>state</code></a><a target="_blank" rel="noopener" href="https://www.terraform.io/docs/state/index.html"> </a>，默认存放在执行Terraform命令的本地目录下。这个 <code>state</code> 文件非常重要，如果该文件损坏，Terraform 将认为已创建的资源被破坏或者需要重建（实际的云资源通常不会受到影响），因为在执行Terraform命令是，Terraform将会利用该文件与当前目录下的模板做Diff比较，如果出现不一致，Terraform将按照模板中的定义重新创建或者修改已有资源，直到没有Diff，因此可以认为Terraform是一个有状态服务。</p>
+<p>当涉及多人协作时不仅需要拷贝模板，还需要拷贝 <code>state</code> 文件，这无形中增加了维护成本。幸运的是，目前Terraform支持把  <code>state</code> 文件放到远端的存储服务 <code>OSS</code> 上或者 <code>consul</code> 上，来实现 <code>state</code> 文件和模板代码的分离。具体细节可参考<a target="_blank" rel="noopener" href="https://www.terraform.io/docs/state/remote.html">官方文档Remote State</a>或者关注后续文章的详细介绍。</p>
+<h3 id="Backend：存放-State-文件的载体"><a href="#Backend：存放-State-文件的载体" class="headerlink" title="Backend：存放 State 文件的载体"></a>Backend：存放 State 文件的载体</h3><p>正如上节提到，Terraform 在创建完资源后，会将资源的属性存放在一个 <code>state</code> 文件中，这个文件可以存放在本地也可以存放在远端。存放 <code>state</code> 文件的载体就是 <a target="_blank" rel="noopener" href="https://www.terraform.io/docs/backends/index.html"><code>Backend</code></a> 。<br> <code>Backend</code> 分为本地（local）和远端（remote）两类，默认为本地。远端的类型也非常多，目前官方网站提供的有13种，并且阿里云的 <a target="_blank" rel="noopener" href="https://www.terraform.io/docs/backends/types/oss.html">OSS</a>就位列其中。</p>
+<p>使用远端的Backend，既可以降低多人协作时对state的维护成本，而且可以将一些敏感的数据存放在远端，保证了数据的安全性。</p>
+<h3 id="Provisioner：在机器上执行操作的组件"><a href="#Provisioner：在机器上执行操作的组件" class="headerlink" title="Provisioner：在机器上执行操作的组件"></a>Provisioner：在机器上执行操作的组件</h3><p><a target="_blank" rel="noopener" href="https://www.terraform.io/docs/provisioners/index.html">Provisioner</a> 通常用来在本地机器或者登陆远程主机执行相关的操作，如 <code>local-exec</code> provisioner 用来执行本地的命令， <code>chef</code> provisioner  用来在远程机器安装，配置和执行chef client， <code>remote-exec</code> provisioner 用来登录远程主机并在其上执行命令。</p>
+<p>Provisioner 通常跟 Provider一起配合使用，provider用来创建和管理资源，provisioner在创建好的机器上执行各种操作。</p>
+<h2 id="Terraform-常用命令详解"><a href="#Terraform-常用命令详解" class="headerlink" title="Terraform 常用命令详解"></a>Terraform 常用命令详解</h2><p>Terraform 对资源的管理主要是对资源生命周期的管理，即通过命令实现对Terraform模板中所定义资源的创建，修改，查看和删除。</p>
+<p>CURD 定义了用于处理数据的基本原子操作，它代表创建（Create），更新（Update），读取（Retrieve）和删除（Delete）操作。</p>
+<p>CRUD是指在做计算处理时的增加(Create)、读取查询(Retrieve)、更新(Update)和删除(Delete)几个单词的首字母简写。主要被用在描述软件系统中DataBase或者持久层的基本操作功能。</p>
+<p>CRUD通常说的就是数据库增查改删(增删改查)<br>C：Create 增加对应CREATE TBL …; ADD TBL IN (…) VALUES (…)<br>R：Retrieve查询SELECT * from TBL<br>U：Update修改UPDATE TBL ..SET …<br>D：Delete删除 DELETE FROM TBL WHERE ….</p>
+<p>Terraform的使用主要有三个非常基本的命令：</p>
+<ul>
+<li>terraform plan，实现对于模板所定义资源的预览功能，在真正生产资源之前可以实时地去查看当前模板所要生产哪些资源。</li>
+<li>terraform apply，这就是真正地生产资源的过程，执行这个命令就可以解析模板进而调用相应的API去实现对于资源的真实生产，资源后续的更新也会通过这个命令进行。</li>
+<li>terraform destroy，就是当需要去释放资源的时候，可以执行这个命令，从而达到对于模板所定义资源的全部释放销毁。</li>
+</ul>
+<h3 id="Terraform-资源管理常用命令"><a href="#Terraform-资源管理常用命令" class="headerlink" title="Terraform 资源管理常用命令"></a>Terraform 资源管理常用命令</h3><blockquote>
+<p>terraform plan：资源的预览</p>
+</blockquote>
+<p><code>plan</code> 命令用于对模板中所定义资源的预览，主要用于以下几个场景：</p>
+<ul>
+<li>预览当前模板中定义的资源是否符合管理预期，和Markdown的预览功能类似</li>
+<li>如果当前模板已经存在对应的state文件，那么 <code>plan</code> 命令将会展示模板定义与state文件内容的diff结果，如果有变更，将会展示结果并在下方显示出来</li>
+<li>对DataSource而言，执行 <code>plan</code> 命令，即可直接获取并输出所要查询的资源及其属性</li>
+</ul>
+<blockquote>
+<p>terraform apply：资源的新建和变更</p>
+</blockquote>
+<p><code>apply</code> 命令用于实际资源的新建和变更操作，为了安全起见，在命令运行过程中增加了人工交互的过程，即需要手动确认是否继续，当然也可以通过 <code>--auto-approve</code> 参数来跳过人工确认的过程。<br><code>apply</code> 命令适用于以下几种场景：</p>
+<ul>
+<li>创建新的资源</li>
+<li>通过修改模板参数来修改资源的属性</li>
+<li>如果从当前模板中删除某个资源的定义， <code>apply</code> 命令会将该资源彻底删除。可以理解为“资源的移除也是一种变更”</li>
+</ul>
+<blockquote>
+<p>terraform show：资源的展示</p>
+</blockquote>
+<p><code>show</code> 命令用于展示当前state中所有被管理的资源及其所有属性值。</p>
+<blockquote>
+<p>terraform destroy：资源的释放</p>
+</blockquote>
+<p><code>destroy</code> 命令用于对资源的释放操作，为了安全起见，在命令执行过程中，也增加了人工交互的过程，如果想要跳过手动确认操作，可以通过 <code>--force</code> 参数来跳过。<br><code>terraform destroy</code> 默认会释放当前模板中定义的所有资源，如果只想释放其中某个特定的资源，可以通过参数 <code>-target=&lt;资源类型&gt;.&lt;资源名称&gt;</code>  来指定。</p>
+<blockquote>
+<p>terraform import：资源的导入</p>
+</blockquote>
+<p><code>import</code> 命令用于将存量的云资源导入到terraform state中，进而加入到Terraform的管理体系中，适用的场景包含但不限于以下几种：</p>
+<ul>
+<li>从来没有使用Terraform管控过任何资源，当前所有的存量云资源都是通过控制台，阿里云CLI，ROS或者直接调用API创建和管理的，现在想要切换为Terraform管理</li>
+<li>在不影响资源正常使用的前提下，重构资源模板中的资源定义</li>
+<li>阿里云的Provider进行了兼容性升级，新版Provider对原有模板中所定义的资源支持了更多的参数，需要把最新的参数同步进来</li>
+</ul>
+<blockquote>
+<p>terraform taint: 标记资源为“被污染”</p>
+</blockquote>
+<p><code>taint</code> 命令用于把某个资源标记为“被污染”状态，当再次执行 <code>apply</code> 命令时，这个被污染的资源将会被先释放，然后再创建一个新的，相当于对这个特定资源做了先删除后新建的操作。<br>命令的详细格式为： <code>terraform taint &lt;资源类型&gt;.&lt;资源名称&gt;</code> ，如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ terraform taint alicloud_vswitch.this</span><br><span class="line">Resource instance alicloud_vswitch.this has been marked as tainted.</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>terraform untaint：取消“被污染”标记</p>
+</blockquote>
+<p><code>untaint</code> 命令是 <code>taint</code> 的逆向操作，用于取消“被污染”标记，使其恢复到正常的状态。命令的详细格式和 <code>taint</code> 类似为： <code>terraform untaint &lt;资源类型&gt;.&lt;资源名称&gt;</code> ，如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ terraform untaint alicloud_vswitch.this</span><br><span class="line">Resource instance alicloud_vswitch.this has been successfully untainted.</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>terraform output：打印出参及其值</p>
+</blockquote>
+<p>如果在模板中显示定义了 <code>output</code> 参数，那么这个output的值将在 <code>apply</code> 命令之后展示，但 <code>plan</code> 命令并不会展示，如果想随时随地快速查看output的值，可以直接运行命令 <code>terraform output</code> :</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ terraform output</span><br><span class="line">vswitchId = vsw-gw8gl31wz********</span><br></pre></td></tr></table></figure>
+
+<h3 id="Terraform状态管理常用命令"><a href="#Terraform状态管理常用命令" class="headerlink" title="Terraform状态管理常用命令"></a>Terraform状态管理常用命令</h3><p>Terraform 对资源状态的管理，实际上是对State文件中数据的管理。State文件保存了当前Terraform管理的所有资源及其属性，内容都是由Terraform自动存储的，为了保证数据的完整性，不建议手动修改State内容。</p>
+<p>对State数据的操作可以通过 <code>terraform state</code> 命令来完成。</p>
+<blockquote>
+<p>terraform state list：列出当前state中的所有资源</p>
+</blockquote>
+<p><code>state list</code> 按照 <code>&lt;资源类型&gt;.&lt;资源名称&gt;</code> 的格式列出当前state中存在的所有资源（包括datasource），如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ terraform state list</span><br><span class="line">data.alicloud_slbs.default</span><br><span class="line">alicloud_vpc.default</span><br><span class="line">alicloud_vswitch.this</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>terraform state show：展示某一个资源的属性</p>
+</blockquote>
+<p><code>state show</code> 命令按照Key-Value的格式展示出特定资源的所有属性及其值，命令的完整格式为 <code>terraform state show &lt;资源类型&gt;.&lt;资源名称&gt;</code> ，如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ terraform state show alicloud_vswitch.this</span><br><span class="line"># alicloud_vswitch.this:</span><br><span class="line">resource &quot;alicloud_vswitch&quot; &quot;this&quot; &#123;</span><br><span class="line">    availability_zone = &quot;eu-central-1a&quot;</span><br><span class="line">    cidr_block        = &quot;172.16.0.0/24&quot;</span><br><span class="line">    id                = &quot;vsw-gw8gl31wz******&quot;</span><br><span class="line">    vpc_id            = &quot;vpc-gw8calnzt*******&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>terraform state pull：获取当前state内容并展示</p>
+</blockquote>
+<p> <code>state pull</code> 命令用于原样展示当前state文件数据，类似与Shell下的cat命令，如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">$ terraform state pull</span><br><span class="line">&#123;</span><br><span class="line">  &quot;version&quot;: 4,</span><br><span class="line">  &quot;terraform_version&quot;: &quot;0.12.8&quot;,</span><br><span class="line">  &quot;serial&quot;: 615,</span><br><span class="line">  &quot;lineage&quot;: &quot;39aeeee2-b3bd-8130-c897-2cb8595cf8ec&quot;,</span><br><span class="line">  &quot;outputs&quot;: &#123;</span><br><span class="line">    ***</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;resources&quot;: [</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;mode&quot;: &quot;data&quot;,</span><br><span class="line">      &quot;type&quot;: &quot;alicloud_slbs&quot;,</span><br><span class="line">      &quot;name&quot;: &quot;default&quot;,</span><br><span class="line">      &quot;provider&quot;: &quot;provider.alicloud&quot;,</span><br><span class="line">      ***</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;mode&quot;: &quot;managed&quot;,</span><br><span class="line">      &quot;type&quot;: &quot;alicloud_vpc&quot;,</span><br><span class="line">      &quot;name&quot;: &quot;default&quot;,</span><br><span class="line">      &quot;provider&quot;: &quot;provider.alicloud&quot;,</span><br><span class="line">      ***</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>terraform state rm：移除特定的资源</p>
+</blockquote>
+<p><code>state rm</code> 命令用于将state中的某个资源移除，但是实际上并不会真正删除这个资源，命令格式为： <code>terraform state rm &lt;资源类型&gt;.&lt;资源名称&gt;</code> ，如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> terraform state rm alicloud_vswitch.this</span><br><span class="line">Removed alicloud_vswitch.this</span><br><span class="line">Successfully removed 1 resource instance(s).</span><br></pre></td></tr></table></figure>
+
+<p>移除后，如果模板内容不变并且再次执行 <code>apply</code> 命令，将会新增一个同样的资源。移除后的资源可以再次通过 <code>import</code> 命令再次加入。</p>
+<blockquote>
+<p>terraform state mv：变更特定资源的存放地址</p>
+</blockquote>
+<p>如果想调整某个资源所在的state文件，可以通过 <code>state mv</code> 命令来完成，类似于Shell下的mv命令，这个命令的使用有多种选项，可以通过命令 <code>terraform state mv --help</code> 来详细了解。本文只介绍最常用的一种： <code>terraform state mv --state=./terraform.tfstate --state-out=&lt;target path&gt;/terraform-target.tfstate &lt;资源类型&gt;.&lt;资源名称A&gt; &lt;资源类型&gt;.&lt;资源名称B&gt;</code> ，如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ terraform state mv -state-out=../tf.tfstate alicloud_vswitch.this alicloud_vswitch.default</span><br><span class="line">Move &quot;alicloud_vswitch.this&quot; to &quot;alicloud_vswitch.default&quot;</span><br><span class="line">Successfully moved 1 object(s).</span><br></pre></td></tr></table></figure>
+
+<p>如上命令省略了默认的 <code>--state=./terraform.tfstate</code> 选项，命令最终的结果是将当前State中的VSwitch 资源移动到了上层目录下名为 <code>tf.tfstate</code> 的State中，并且将VSwitch的资源名称由”this”改为了”default”。</p>
+<blockquote>
+<p>terraform refresh：刷新当前state</p>
+</blockquote>
+<p><code>refresh</code> 命令可以用来刷新当前State的内容，即再次调用API并拉取最新的数据写入到state文件中。</p>
+<h3 id="Terraform-其他常用命令"><a href="#Terraform-其他常用命令" class="headerlink" title="Terraform 其他常用命令"></a>Terraform 其他常用命令</h3><p>除了资源和state的管理命令外，还有一些常用的应用在模板，provider等多种场景下的命令。</p>
+<blockquote>
+<p>terraform init：初始化加载模块</p>
+</blockquote>
+<p><code>init</code> 用来初始化加载所需的模块，包括Provider，Provisioner，Module等。</p>
+<blockquote>
+<p>terraform graph：输出当前模板定义的资源关系图</p>
+</blockquote>
+<p>每个模板定义的资源之间都存在不同程度的关系，如果想看资源关系大图，可以使用命令 <code>terraform graph</code> :</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ terraform graph</span><br><span class="line">digraph &#123;</span><br><span class="line">        compound = &quot;true&quot;</span><br><span class="line">        newrank = &quot;true&quot;</span><br><span class="line">        subgraph &quot;root&quot; &#123;</span><br><span class="line">                &quot;[root] alicloud_vpc.default&quot; [label = &quot;alicloud_vpc.default&quot;, shape = &quot;box&quot;]</span><br><span class="line">                &quot;[root] alicloud_vswitch.this&quot; [label = &quot;alicloud_vswitch.this&quot;, shape = &quot;box&quot;]</span><br><span class="line">                ******</span><br><span class="line">                &quot;[root] output.vswitchId&quot; -&gt; &quot;[root] alicloud_vswitch.this&quot;</span><br><span class="line">                &quot;[root] provider.alicloud (close)&quot; -&gt; &quot;[root] alicloud_vswitch.this&quot;</span><br><span class="line">                                ******</span><br><span class="line">                &quot;[root] root&quot; -&gt; &quot;[root] provider.alicloud (close)&quot;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该命令的结果还可以通过命令 <code>terraform graph | dot -Tsvg &gt; graph.svg</code> 直接导出为一张图片（需要提前安装graphviz： <code>brew install graphviz</code> ）</p>
+<blockquote>
+<p>terraform validate：验证模板语法是否正确</p>
+</blockquote>
+<p>Terraform 模板的编写需要遵循其自身定义的一套简单的语法规范，编写完成后，如果想要检查模板是否存在语法错误或者在运行 <code>plan</code> 和 <code>apply</code> 命令的时候报语法错误，可以通过执行命令 <code>terraform validate</code> 来检查和定位错误出现的详细位置和原因。</p>
+<h2 id="Terraform实例解析"><a href="#Terraform实例解析" class="headerlink" title="Terraform实例解析"></a>Terraform实例解析</h2><p>Hashicorp 为 Terraform 设计了一套语言 HCL（Hashicorp Configuration Language）来描述基础设施资源的状态。比如我们要在 AWS 上创建一台运行 OpenResty 的 EC2，可以这么写：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">provider &quot;aws&quot; &#123;</span><br><span class="line">  region = &quot;us-west-2&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">data &quot;aws_ami&quot; &quot;openresty&quot; &#123;</span><br><span class="line">  most_recent = true</span><br><span class="line"></span><br><span class="line">  filter &#123;</span><br><span class="line">    name   = &quot;name&quot;</span><br><span class="line">    values = [&quot;openresty-*&quot;]</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  filter &#123;</span><br><span class="line">    name   = &quot;virtualization-type&quot;</span><br><span class="line">    values = [&quot;hvm&quot;]</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  owners = [&quot;xxxx&quot;] # aws ID</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">resource &quot;aws_security_group&quot; &quot;lb_sg&quot; &#123;</span><br><span class="line">  name        = &quot;lb_sg&quot;</span><br><span class="line">  description = &quot;allow http/https access&quot;</span><br><span class="line">  vpc_id      = &quot;$&#123;aws_vpc.main.id&#125;&quot;</span><br><span class="line"></span><br><span class="line">  ingress &#123;</span><br><span class="line">    from_port   = 443</span><br><span class="line">    to_port     = 443</span><br><span class="line">    protocol    = &quot;tcp&quot;</span><br><span class="line">    cidr_blocks = [&quot;0.0.0.0/0&quot;]</span><br><span class="line">  &#125;</span><br><span class="line">  ingress &#123;</span><br><span class="line">    from_port   = 80</span><br><span class="line">    to_port     = 80</span><br><span class="line">    protocol    = &quot;tcp&quot;</span><br><span class="line">    cidr_blocks = [&quot;0.0.0.0/0&quot;]</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  egress &#123;</span><br><span class="line">    from_port   = 0</span><br><span class="line">    to_port     = 0</span><br><span class="line">    protocol    = &quot;-1&quot;</span><br><span class="line">    cidr_blocks = [&quot;0.0.0.0/0&quot;]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">resource &quot;aws_instance&quot; &quot;lb&quot; &#123;</span><br><span class="line">  ami           = &quot;$&#123;data.aws_ami.openresty.id&#125;&quot;</span><br><span class="line">  instance_type = &quot;t2.micro&quot;</span><br><span class="line"></span><br><span class="line">  tags = &#123;</span><br><span class="line">    Name = &quot;lb&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">resource &quot;aws_network_interface_sg_attachment&quot; &quot;sg_attachment&quot; &#123;</span><br><span class="line">  security_group_id    = &quot;$&#123;aws_security_group.lb_sg.id&#125;&quot;</span><br><span class="line">  network_interface_id = &quot;$&#123;aws_instance.lb.primary_network_interface_id&#125;&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码读起来并不复杂：</p>
+<ol>
+<li>首先我们声明了用 aws provider 来创建资源，所以下述的资源都会创建在 aws 的 us-west-2 区域，就是美国西海岸俄勒冈的数据中心。</li>
+<li>然后我们描述要使用的 AMI（Amazon Machine Image），这里我使用了我自己个人账号下的通过 packer（也是 Hashicorp 的一个开源项目）构建好的名为 “openresty-xxx” 的 AMI。</li>
+<li>随后描述一个资源：security group，开放 80&#x2F;443 端口。</li>
+<li>之后描述一个资源：EC2 实例，使用刚才描述的 AMI，实例大小用 t2.micro。</li>
+<li>最后描述如何把 security group 和 EC2 实例绑定起来。</li>
+</ol>
+<p>从这段代码我们可以看出，terraform 是声明式语言（Declarative Language），它描述这个脚本运行完云平台应该具有什么状态。所以 terraform 脚本在运行的时候，会拿代码中的状态和服务器端的状态进行对比，得出一个 diff，然后生成为实现这个 diff 所需要的 cloudformation（对于 aws 而言）代码，最后执行之。当然，如果每次都去云平台拿所有相关资源的状态，效率太低，所以 terraform 会将上一次执行完的结果的状态保存在本地或者公共的存储（一般是 S3），对比代码和上一次执行完保存的状态即可。</p>
+<p>虽然 terraform 写起来很简单，但当我们撰写越来越多的 terraform 代码后，我们会发现，要能够很好地复用代码，还是要下一番功夫的。terraform 支持模块（module），一个模块就像一个函数，有输入输出，以及函数的主体。上面的代码如果封装成一个模块，那么其输入可以是 security group 想要开放的端口，EC2 实例的大小，磁盘大小，使用的 AMI 的名字等等，而输出可以是 EC2 实例的 id，public &#x2F; private IP 等等。</p>
+<p>除了模块外，terraform 还支持各种各样的 provider，比如各个云服务商的基础设施相关的 provider，以及丰富的在软件生命周期内可能涉及的各种 IT 服务，比如管理代码的 github，处理监控的 datadog，静态网站部署的 netlify, 监控报警用的 opsgenie, 进行单点登录（SSO）的 okta 等。这些 provider 让 terraform 的生命力非常旺盛，前景非常广阔。目前，大部分基础设施代码化的工作还聚焦在生产环境的代码化上面，而未来企业的 IT 系统的架构的代码化，将会是一座巨大的金矿。</p>
+<blockquote>
+<p>前面都在吹 terraform 的特点和优势，我们也来看看 terraform 的问题：</p>
+</blockquote>
+<p><strong>1）状态管理还处在原始社会。</strong></p>
+<p>terraform 作为开源软件，既有开源软件生态丰富代码相对难以作恶的优势，又有开源软件只重视核心功能不注重使用体验的劣势。状态管理是 terraform 用户体验非常差的一环，由于没有提供相应的功能，客户只能自己在开源社区里找解决方案。目前 AWS 上常用的方案是 S3 存储状态，DynamoDB 用来加锁。如果多个人部署同一个 stack，就简单粗暴去 DynamoDB 拿锁排队。这个方案在几十人的团队里还凑合，再大就会有很多麻烦。另外，状态的版本控制基本上没有，或者只能通过状态使用的存储引擎做版本管理（比如 S3），很难有效对比多个状态之间的差异。</p>
+<p><strong>2）缺乏可视化的手段。</strong></p>
+<p>状态的展示，部署的过程其实都可能做很多可视化的事情，让整体体验更好一些，减少 devOps 犯错。然而，terraform 并没有做这方面的支持。</p>
+<p><strong>3）代码表现力一般。</strong></p>
+<p>用于描述基础设施的代码是否需要强大的表现力？强大的表现力是福还是祸？这块一直有争论。然而，实际使用的时候，我们总是绕不开循环，条件判断，以及对字符串做处理等各种工作，而 terraform 在这一块的表现力太弱，使得代码写起来非常冗长，很多时候不得不复制粘贴。</p>
+<p><strong>4）terraform cloud 才刚刚起步。</strong></p>
+<p>头两个问题也许在 terraform 的企业版中得到解决，但我和我的公司都没有用过，具体怎么样不得而知。也许是迫于接下来要讲的 pulumi 在市场上的压力吧，Hashicorp 在 2019 年 9 月开始提供 terraform cloud，为小团队解决这两个问题。然而，目前 terraform cloud 更像是一个临时拼凑的 CI 工具，还有很长的路要走。</p>
+<h2 id="Terraform使用技巧"><a href="#Terraform使用技巧" class="headerlink" title="Terraform使用技巧"></a>Terraform使用技巧</h2><h3 id="避免秘钥直接写入tf文件中"><a href="#避免秘钥直接写入tf文件中" class="headerlink" title="避免秘钥直接写入tf文件中"></a>避免秘钥直接写入tf文件中</h3><p>将秘钥直接填入到.tf文件中是十分不安全的，在多用户共同管理资源时，不建议把云API的秘钥直接写到源代码里，以免一不小心更新到公开的版本中，造成安全风险。</p>
+<p>涉及Provider API中的如数据库用户名密码也同样建议以变量的形式加载，避免明文写入到文件中</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># configure the secret key in the environment path</span></span><br><span class="line"><span class="built_in">export</span> TENCENTCLOUD_SECRET_ID=<span class="string">&quot;your_fancy_accessid&quot;</span></span><br><span class="line"><span class="built_in">export</span> TENCENTCLOUD_SECRET_KEY=<span class="string">&quot;your_fancy_accesskey&quot;</span></span><br><span class="line"><span class="built_in">export</span> TENCENTCLOUD_REGION=<span class="string">&quot;ap-hongkong&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># configure provider.tf</span></span><br><span class="line">vim provider.tf</span><br><span class="line"></span><br><span class="line">provider <span class="string">&quot;tencentcloud&quot;</span> &#123;</span><br><span class="line"><span class="comment">#   secret_id  = &quot;AKID****************&quot;</span></span><br><span class="line"><span class="comment">#   secret_key = &quot;QdcM***************&quot;</span></span><br><span class="line">    region     = <span class="string">&quot;ap-hongkong&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">resource <span class="string">&quot;aws_db_instance&quot;</span> <span class="string">&quot;example&quot;</span> &#123;</span><br><span class="line">  engine               = <span class="string">&quot;mysql&quot;</span></span><br><span class="line">  engine_version       = <span class="string">&quot;5.7&quot;</span></span><br><span class="line">  instance_class       = <span class="string">&quot;db.t2.micro&quot;</span></span><br><span class="line">  name                 = <span class="string">&quot;example&quot;</span></span><br><span class="line">  <span class="comment"># Set the secrets from variables</span></span><br><span class="line">  username             = var.username</span><br><span class="line">  password             = var.password</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># Set secrets via environment variables</span></span><br><span class="line"><span class="built_in">export</span> TF_VAR_username=(the username)</span><br><span class="line"><span class="built_in">export</span> TF_VAR_password=(the password)</span><br><span class="line"><span class="comment"># When you run Terraform, it&#x27;ll pick up the secrets automatically</span></span><br><span class="line">terraform apply</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="善用variable环境变量"><a href="#善用variable环境变量" class="headerlink" title="善用variable环境变量"></a>善用variable环境变量</h3><p><code>variable</code>是Terraform重要的配置文件类型之一，通过对变量的集中管理，用户可以在资源文件中直接引用变量名进行赋值</p>
+<p>创建<code>variable.tf</code>文件，配置可用区参数的默认值<code>ap-guangzhou-1</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># variable.tf</span><br><span class="line">variable &quot;default_az&quot; &#123;</span><br><span class="line">  type = string</span><br><span class="line">  efault = &quot;ap-guangzhou-1&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># instance.tf</span><br><span class="line"># create a CVM instance</span><br><span class="line">resource &quot;tencentcloud_instance&quot; &quot;tc_cvm_instance&quot; &#123;</span><br><span class="line">  image_id          = &quot;xxx&quot;</span><br><span class="line">  availability_zone = &quot;var.default_az&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="善用output做debug"><a href="#善用output做debug" class="headerlink" title="善用output做debug"></a>善用output做debug</h3><p><code>terraform output</code> 指令用于从状态文件中提取输出变量的值。</p>
+<p><strong>标准语法：</strong><code>terraform output [options] [NAME]</code></p>
+<ul>
+<li><code>options</code>用来填写<code>output</code>的flags</li>
+<li><code>NAME</code>用来指定要输出的变量的值，默认为根模块的所有输出</li>
+</ul>
+<p>配置<code>output.tf</code>文件，设置要输出的内容，案例中设置查看服务器的<code>id</code>和<code>availability_zone</code>两个参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># output.tf</span><br><span class="line"></span><br><span class="line">output &quot;cvm_az&quot; &#123;</span><br><span class="line">  value = &quot;$&#123;tencentcloud_instance.cvm.availability_zone&#125;&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">output &quot;cvm_id&quot; &#123;</span><br><span class="line">  value = &quot;$&#123;tencentcloud_instance.cvm.id&#125;&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行<code>terraform apply</code>，<code>output</code>的内容自动显示出来，也可以执行<code>terraform output</code>再次查看全部输出内容</p>
+<p>通过<code>terraform output cvm_id</code>单独查看服务器id</p>
+<p>有关<code>output</code>指令的更多信息，请点击<a target="_blank" rel="noopener" href="https://www.terraform.io/docs/commands/output.html">这里</a></p>
+<h3 id="terrafrom目录布局"><a href="#terrafrom目录布局" class="headerlink" title="terrafrom目录布局"></a>terrafrom目录布局</h3><p>Terraform 运行时会读取工作目录中所有的 <code>*.tf</code>, <code>*.tfvars</code>文件，所以我们不必把所有的东西都写在单个文件中去，应按职责分列在不同的文件中，例如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">provider.tf             ### provider 配置</span><br><span class="line"></span><br><span class="line">terraform.tfvars        ### 配置 provider 要用到的变量</span><br><span class="line"></span><br><span class="line">varable.tf              ### 通用变量</span><br><span class="line"></span><br><span class="line">resource.tf             ### 资源定义</span><br><span class="line"></span><br><span class="line">data.tf                 ### 包文件定义</span><br><span class="line"></span><br><span class="line">output.tf               ### 输出</span><br></pre></td></tr></table></figure>
+
+<h3 id="其它terraform指令"><a href="#其它terraform指令" class="headerlink" title="其它terraform指令"></a>其它terraform指令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># providers有新版本时可以使用以下指令更新脚本，获取最新的应用</span></span><br><span class="line">terraform init -upgrade</span><br><span class="line"></span><br><span class="line"><span class="comment"># 限制并发操作的数量，默认是10</span></span><br><span class="line">terraform apply -parallelism=5</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>对方正在输入…</p>
+<h2 id="Terraform认证考试"><a href="#Terraform认证考试" class="headerlink" title="Terraform认证考试"></a>Terraform认证考试</h2><p><a target="_blank" rel="noopener" href="https://www.hashicorp.com/certification/terraform-associate">Terraform Associate Certification</a></p>
+<p>The Terraform Associate exam has both a study guide and a review guide. While much of the information in these two guides are the same, they are presented differently for different uses. Use the <a target="_blank" rel="noopener" href="https://learn.hashicorp.com/terraform/certification/terraform-associate-study-guide">study guide</a>if you want to study all the exam objectives. Use the <a target="_blank" rel="noopener" href="https://learn.hashicorp.com/terraform/certification/terraform-associate-review">review guide</a> if you already have Terraform experience and want to choose which objectives to review before taking the exam. We provide <a target="_blank" rel="noopener" href="https://learn.hashicorp.com/terraform/certification/terraform-associate-sample-questions">sample questions</a> so you know what to expect when taking the exam.</p>
+<ul>
+<li>True or False</li>
+<li>Multiple choice with a single answer</li>
+<li>Multiple choice with several answers</li>
+<li>Text match, where you’ll choose the right text insert or command from a set of possible answers</li>
+</ul>
+<p>As for the actual content, the <a target="_blank" rel="noopener" href="https://www.hashicorp.com/certification/terraform-associate/">Exam Objectives</a> give you a comprehensive breakdown of what you’ll need to know for each subject. The nine key objectives are as follows:</p>
+<ol>
+<li>Understand infrastructure as code (IaC) concepts</li>
+<li>Understand Terraform’s purpose (vs other IaC)</li>
+<li>Understand Terraform basics</li>
+<li>Use the Terraform CLI (outside of core workflow)</li>
+<li>Interact with Terraform modules</li>
+<li>Navigate Terraform workflow</li>
+<li>Implement and maintain state</li>
+<li>Read, generate, and modify configuration</li>
+<li>Understand Terraform Cloud and Enterprise capabilities</li>
+</ol>
+<p>Prepare for the “HashiCorp Certified: Terraform Associate” exam. This track will walk you through each test objective and study resources.</p>
+<p><a target="_blank" rel="noopener" href="https://learn.hashicorp.com/collections/terraform/certification">Prepare for Certification</a></p>
+<p><a target="_blank" rel="noopener" href="https://hashicorp-certifications.zendesk.com/hc/en-us/articles/360048211571">Exam-taker Handbook</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.contino.io/insights/hashicorp-certified-terraform-associate-exam">The Ultimate Guide to Passing the HashiCorp Certified Terraform Associate Exam</a></p>
+<p><a target="_blank" rel="noopener" href="https://medium.com/@ravadonis/guidance-on-hashicorp-certified-terraform-associate-1fa6f04af1d2">Guidance on HashiCorp Certified — Terraform Associate</a></p>
+<p><a target="_blank" rel="noopener" href="https://medium.com/bb-tutorials-and-thoughts/250-practice-questions-for-terraform-associate-certification-7a3ccebe6a1a#terraform">250 Practice Questions For Terraform Associate Certification</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.udemy.com/course/hashicorp-certified-terraform-associate-2020/">HashiCorp Certified: Terraform Associate Practice Exam 2020</a></p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a target="_blank" rel="noopener" href="https://www.terraform.io/docs/index.html">Terraform Documentation</a> - The documentation is an in-depth reference guide to all the features of Terraform, including technical details about the internals of how Terraform operates.</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/164624588">追赶 terraform，让基础设施代码化更加容易，pulumi 都做了些什么？</a></p>
+<p><a target="_blank" rel="noopener" href="https://aws.amazon.com/cn/blogs/china/aws-china-region-guide-series-terraform1/">使用 Terraform 在 AWS 中国区域实现自动化部署指南系列</a></p>
+<p><a target="_blank" rel="noopener" href="https://godleon.github.io/blog/DevOps/terraform-getting-started/">Terraform入門學習筆記</a></p>
+<p><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/713099">玩转阿里云Terraform</a></p>
+<p><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/118719">Terraform&#x2F;Ansible on Cloud–基础设施和应用管理实践</a></p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1473713">腾讯云Terraform应用指南</a></p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1597530">通过terraform快速创建腾讯云基础资源</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/terraform/" data-title="Terraform学习路径 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/buy/" title="我的线上线下购物变迁史">
+  <strong>上一篇：</strong><br/>
+  <span>
+  我的线上线下购物变迁史</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/x11/"  title="macOS使用XQuartz支持X11实现Linux图形化界面显示">
+ <strong>下一篇：</strong><br/> 
+ <span>macOS使用XQuartz支持X11实现Linux图形化界面显示
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform%E7%AE%80%E4%BB%8B"><span class="toc-number">3.</span> <span class="toc-text">Terraform简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform-Workshop-Slides"><span class="toc-number">4.</span> <span class="toc-text">Terraform Workshop Slides</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform%E5%AE%89%E8%A3%85"><span class="toc-number">5.</span> <span class="toc-text">Terraform安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform-in-60-Seconds"><span class="toc-number">6.</span> <span class="toc-text">Terraform in 60 Seconds</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#View-code"><span class="toc-number">6.1.</span> <span class="toc-text">View code</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Init"><span class="toc-number">6.2.</span> <span class="toc-text">Init</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Apply"><span class="toc-number">6.3.</span> <span class="toc-text">Apply</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Verify"><span class="toc-number">6.4.</span> <span class="toc-text">Verify</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Destroy"><span class="toc-number">6.5.</span> <span class="toc-text">Destroy</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Conclusion"><span class="toc-number">6.6.</span> <span class="toc-text">Conclusion</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84"><span class="toc-number">7.</span> <span class="toc-text">Terraform学习路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform-%E5%85%B3%E9%94%AE%E6%A6%82%E5%BF%B5"><span class="toc-number">8.</span> <span class="toc-text">Terraform 关键概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Configuration%EF%BC%9A%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD%E7%9A%84%E5%AE%9A%E4%B9%89%E5%92%8C%E6%8F%8F%E8%BF%B0"><span class="toc-number">8.1.</span> <span class="toc-text">Configuration：基础设施的定义和描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Provider%EF%BC%9A%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD%E7%AE%A1%E7%90%86%E7%BB%84%E4%BB%B6"><span class="toc-number">8.2.</span> <span class="toc-text">Provider：基础设施管理组件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Resource%EF%BC%9A%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD%E8%B5%84%E6%BA%90%E5%92%8C%E6%9C%8D%E5%8A%A1%E7%9A%84%E7%AE%A1%E7%90%86"><span class="toc-number">8.3.</span> <span class="toc-text">Resource：基础设施资源和服务的管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Data-Source%EF%BC%9A%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD%E8%B5%84%E6%BA%90%E5%92%8C%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%9F%A5%E8%AF%A2"><span class="toc-number">8.4.</span> <span class="toc-text">Data Source：基础设施资源和服务的查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#State%EF%BC%9A%E4%BF%9D%E5%AD%98%E8%B5%84%E6%BA%90%E5%85%B3%E7%B3%BB%E5%8F%8A%E5%85%B6%E5%B1%9E%E6%80%A7%E6%96%87%E4%BB%B6%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">8.5.</span> <span class="toc-text">State：保存资源关系及其属性文件的数据库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Backend%EF%BC%9A%E5%AD%98%E6%94%BE-State-%E6%96%87%E4%BB%B6%E7%9A%84%E8%BD%BD%E4%BD%93"><span class="toc-number">8.6.</span> <span class="toc-text">Backend：存放 State 文件的载体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Provisioner%EF%BC%9A%E5%9C%A8%E6%9C%BA%E5%99%A8%E4%B8%8A%E6%89%A7%E8%A1%8C%E6%93%8D%E4%BD%9C%E7%9A%84%E7%BB%84%E4%BB%B6"><span class="toc-number">8.7.</span> <span class="toc-text">Provisioner：在机器上执行操作的组件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3"><span class="toc-number">9.</span> <span class="toc-text">Terraform 常用命令详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Terraform-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">9.1.</span> <span class="toc-text">Terraform 资源管理常用命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Terraform%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">9.2.</span> <span class="toc-text">Terraform状态管理常用命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Terraform-%E5%85%B6%E4%BB%96%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">9.3.</span> <span class="toc-text">Terraform 其他常用命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform%E5%AE%9E%E4%BE%8B%E8%A7%A3%E6%9E%90"><span class="toc-number">10.</span> <span class="toc-text">Terraform实例解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7"><span class="toc-number">11.</span> <span class="toc-text">Terraform使用技巧</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%81%BF%E5%85%8D%E7%A7%98%E9%92%A5%E7%9B%B4%E6%8E%A5%E5%86%99%E5%85%A5tf%E6%96%87%E4%BB%B6%E4%B8%AD"><span class="toc-number">11.1.</span> <span class="toc-text">避免秘钥直接写入tf文件中</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%96%84%E7%94%A8variable%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">11.2.</span> <span class="toc-text">善用variable环境变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%96%84%E7%94%A8output%E5%81%9Adebug"><span class="toc-number">11.3.</span> <span class="toc-text">善用output做debug</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#terrafrom%E7%9B%AE%E5%BD%95%E5%B8%83%E5%B1%80"><span class="toc-number">11.4.</span> <span class="toc-text">terrafrom目录布局</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B6%E5%AE%83terraform%E6%8C%87%E4%BB%A4"><span class="toc-number">11.5.</span> <span class="toc-text">其它terraform指令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terraform%E8%AE%A4%E8%AF%81%E8%80%83%E8%AF%95"><span class="toc-number">12.</span> <span class="toc-text">Terraform认证考试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">13.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

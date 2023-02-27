@@ -1,0 +1,748 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>Ansible学习路径 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="Ansible is Simple IT Automation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ansible学习路径">
+<meta property="og:url" content="https://wsgzao.github.io/post/ansible/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="Ansible is Simple IT Automation">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200122143435.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200122143458.png">
+<meta property="article:published_time" content="2020-06-21T02:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:06.707Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200122143435.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/ansible/" title="Ansible学习路径" itemprop="url">Ansible学习路径</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2020-06-21T02:59:49.000Z" itemprop="datePublished"> 发表于 2020-06-21</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ansible-%E6%A0%87%E5%87%86%E5%8C%96%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84"><span class="toc-number">3.</span> <span class="toc-text">Ansible 标准化学习路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%90%E5%8D%87-Ansible-%E6%89%A7%E8%A1%8C%E6%95%88%E7%8E%87%E7%9A%84%E6%8F%92%E4%BB%B6"><span class="toc-number">4.</span> <span class="toc-text">提升 Ansible 执行效率的插件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E-Ansible-%E7%9A%84%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE"><span class="toc-number">5.</span> <span class="toc-text">基于 Ansible 的开源项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ansible-%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5"><span class="toc-number">6.</span> <span class="toc-text">Ansible 项目实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ansible-%E9%83%A8%E7%BD%B2"><span class="toc-number">6.1.</span> <span class="toc-text">ansible 部署</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ansible-cfg-%E9%85%8D%E7%BD%AE%E8%A7%A3%E6%9E%90"><span class="toc-number">6.2.</span> <span class="toc-text">ansible.cfg 配置解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Ansible%E5%B8%B8%E8%A7%81%E6%8A%80%E5%B7%A7"><span class="toc-number">6.3.</span> <span class="toc-text">Ansible常见技巧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux"><span class="toc-number">6.4.</span> <span class="toc-text">Linux</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Windows"><span class="toc-number">6.5.</span> <span class="toc-text">Windows</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Where-X-x3D-ansible"><span class="toc-number">7.</span> <span class="toc-text">Where X&#x3D;ansible</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">8.</span> <span class="toc-text">结语</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">9.</span> <span class="toc-text">参考文章</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>因为工作的缘故接触并积极推动Ansible在企业级生产环境的落地，独立承担并实现了《基于ansible的主机自动化配置管理》项目，此前也先后接触过Puppet和SaltStack，本文不会讨论开源或者自主研发方案的优劣，重点是和大伙儿分享自己在ansible技术领域积累的一些项目实战经验，如果大家遇到任何问题也欢迎通过留言或者其他方式进行互动，我尽力做到有效回复。</p>
+<blockquote>
+<p>Ansible is Simple IT Automation</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2020年06月21日 - 增加Mitogen for Ansible<br>2020年06月01日 - 增加基于Ansible的自动化运维开源项目<br>2020年01月22日 - 增加Ansible参考文章<br>2018年05月15日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/ansible/">https://wsgzao.github.io/post/ansible/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>ansible - <a target="_blank" rel="noopener" href="https://docs.ansible.com/">https://docs.ansible.com/</a></p>
+<hr>
+<h2 id="Ansible-标准化学习路径"><a href="#Ansible-标准化学习路径" class="headerlink" title="Ansible 标准化学习路径"></a>Ansible 标准化学习路径</h2><blockquote>
+<p>Ansible相关的书籍在逐步增多，由于Ansible版本迭代更新频率高但学习成本低，个人建议书为辅，官方文档为主</p>
+</blockquote>
+<p>Ansible is an IT automation tool. It can configure systems, deploy software, and orchestrate more advanced IT tasks such as continuous deployments or zero downtime rolling updates.</p>
+<p>Ansible’s main goals are simplicity and ease-of-use. It also has a strong focus on security and reliability, featuring a minimum of moving parts, usage of OpenSSH for transport (with other transports and pull modes as alternatives), and a language that is designed around auditability by humans–even those not familiar with the program.</p>
+<p>We believe simplicity is relevant to all sizes of environments, so we design for busy users of all types: developers, sysadmins, release engineers, IT managers, and everyone in between. Ansible is appropriate for managing all environments, from small setups with a handful of instances to enterprise environments with many thousands of instances.</p>
+<p>Ansible manages machines in an agent-less manner. There is never a question of how to upgrade remote daemons or the problem of not being able to manage systems because daemons are uninstalled. Because OpenSSH is one of the most peer-reviewed open source components, security exposure is greatly reduced. Ansible is decentralized–it relies on your existing OS credentials to control access to remote machines. If needed, Ansible can easily connect with Kerberos, LDAP, and other centralized authentication management systems.</p>
+<p>This documentation covers the current released version of Ansible and also some development version features. For recent features, we note in each section the version of Ansible where the feature was added.</p>
+<p>Ansible releases a new major release of Ansible approximately every two months. The core application evolves somewhat conservatively, valuing simplicity in language design and setup. However, the community around new modules and plugins being developed and contributed moves very quickly, adding many new modules in each release.</p>
+<blockquote>
+<p>Ansible Lightbulb 新版本是 Red Hat Ansible Automation Platform Workshops</p>
+</blockquote>
+<p>The Ansible Lightbulb project is an effort to provide a content toolkit and educational reference for effectively communicating and teaching Ansible topics.</p>
+<p>Ansible Lightbulb - <a target="_blank" rel="noopener" href="https://github.com/ansible/lightbulb">https://github.com/ansible/lightbulb</a></p>
+<p>Red Hat Ansible Automation Platform Workshops - <a target="_blank" rel="noopener" href="https://ansible.github.io/workshops/">https://ansible.github.io/workshops/</a></p>
+<blockquote>
+<p>Ansible Documentation 是 Ansible 官方文档，我的建议还是对英文不要害怕，多动手查多敲命令去理解</p>
+</blockquote>
+<p>Ansible Documentation - <a target="_blank" rel="noopener" href="http://docs.ansible.com/ansible/latest/index.html">http://docs.ansible.com/ansible/latest/index.html</a></p>
+<blockquote>
+<p>如果大家需要使用Role推荐阅读Ansible Best Practices</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://docs.ansible.com/ansible/2.8/user_guide/playbooks_best_practices.html">Ansible Best Practices</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">inventories/</span><br><span class="line">   production/</span><br><span class="line">      hosts               # inventory file for production servers</span><br><span class="line">      group_vars/</span><br><span class="line">         group1.yml       # here we assign variables to particular groups</span><br><span class="line">         group2.yml</span><br><span class="line">      host_vars/</span><br><span class="line">         hostname1.yml    # here we assign variables to particular systems</span><br><span class="line">         hostname2.yml</span><br><span class="line"></span><br><span class="line">   staging/</span><br><span class="line">      hosts               # inventory file for staging environment</span><br><span class="line">      group_vars/</span><br><span class="line">         group1.yml       # here we assign variables to particular groups</span><br><span class="line">         group2.yml</span><br><span class="line">      host_vars/</span><br><span class="line">         stagehost1.yml   # here we assign variables to particular systems</span><br><span class="line">         stagehost2.yml</span><br><span class="line"></span><br><span class="line">library/                  # if any custom modules, put them here (optional)</span><br><span class="line">module_utils/             # if any custom module_utils to support modules, put them here (optional)</span><br><span class="line">filter_plugins/           # if any custom filter plugins, put them here (optional)</span><br><span class="line"></span><br><span class="line">site.yml                  # master playbook</span><br><span class="line">webservers.yml            # playbook for webserver tier</span><br><span class="line">dbservers.yml             # playbook for dbserver tier</span><br><span class="line"></span><br><span class="line">files/                    # here we assign files for simple plays</span><br><span class="line">plays/                    # here we assign plays as the entrance</span><br><span class="line">tasks/                    # here we assign tasks for plays to call</span><br><span class="line"></span><br><span class="line">roles/</span><br><span class="line">    common/               # this hierarchy represents a &quot;role&quot;</span><br><span class="line">        tasks/            #</span><br><span class="line">            main.yml      #  &lt;-- tasks file can include smaller files if warranted</span><br><span class="line">        handlers/         #</span><br><span class="line">            main.yml      #  &lt;-- handlers file</span><br><span class="line">        templates/        #  &lt;-- files for use with the template resource</span><br><span class="line">            ntp.conf.j2   #  &lt;------- templates end in .j2</span><br><span class="line">        files/            #</span><br><span class="line">            bar.txt       #  &lt;-- files for use with the copy resource</span><br><span class="line">            foo.sh        #  &lt;-- script files for use with the script resource</span><br><span class="line">        vars/             #</span><br><span class="line">            main.yml      #  &lt;-- variables associated with this role</span><br><span class="line">        defaults/         #</span><br><span class="line">            main.yml      #  &lt;-- default lower priority variables for this role</span><br><span class="line">        meta/             #</span><br><span class="line">            main.yml      #  &lt;-- role dependencies</span><br><span class="line">        library/          # roles can also include custom modules</span><br><span class="line">        module_utils/     # roles can also include custom module_utils</span><br><span class="line">        lookup_plugins/   # or other types of plugins, like lookup in this case</span><br><span class="line"></span><br><span class="line">    webtier/              # same kind of structure as &quot;common&quot; was above, done for the webtier role</span><br><span class="line">    monitoring/           # &quot;&quot;</span><br><span class="line">    fooapp/               # &quot;&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="提升-Ansible-执行效率的插件"><a href="#提升-Ansible-执行效率的插件" class="headerlink" title="提升 Ansible 执行效率的插件"></a>提升 Ansible 执行效率的插件</h2><p>众所周知，Ansible是基于ssh(当然还有telnet，winrm等连接插件)的自动化配置管理工具，其简单易用，无agent式的工作方式在很多场景中都有不少优势，不过也是由于这种工作方式导致了它没有其他c&#x2F;s类的工具执行效率高，饱受其他C&#x2F;S类工具使用者的讥讽，对此，Ansible官方也对Ansible的速度效率做了不少优化手段。</p>
+<table>
+<thead>
+<tr>
+<th>参数名&#x2F;优化类别</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>fact cache</td>
+<td>将facts信息第一次收集后缓存到<code>memory</code>或者<code>redis</code>或者文件中。</td>
+</tr>
+<tr>
+<td>gather_subset</td>
+<td>可选择性的收集<code>network</code>,<code>hardware</code>等信息，而不是全部</td>
+</tr>
+<tr>
+<td>control_path</td>
+<td>开启<code>ssh socket</code>持久化，复用ssh连接</td>
+</tr>
+<tr>
+<td>pipelinling</td>
+<td>开启<code>ssh pipelining</code>,客户端从管道中读取执行渲染后的脚本，而不是在客户端创建临时文件</td>
+</tr>
+<tr>
+<td>fork</td>
+<td>提高并行执行主机的数量</td>
+</tr>
+<tr>
+<td>serial</td>
+<td>将<code>play_hosts``①</code>中主机再分批执行</td>
+</tr>
+<tr>
+<td>strategy</td>
+<td>默认<code>linear</code>,每个主机的单个task执行完成会等待其他都完成后再执行下个任务，设置<code>free</code>可不等待其他主机，继续往下执行(看起来会比较乱)，还有一个选项<code>host_pinned</code>，我也不知道干嘛的</td>
+</tr>
+</tbody></table>
+<p>无意发现了一个Mitogen的Ansible plugin（strategy plugin），当前已迭代到0.29版本，看介绍说能提升1.2x ~ 7x以上的执行效率，着实惊人！</p>
+<p>它通过高效的远程过程调用来取代ansible默认的嵌入式与纯python shell调用，它不会优化模块本身的执行效率，只会尽可能快的②去执行模块获取返回(执行模块前也是有一系列连接，发送数据，传输渲染脚本等操作的)来提高整体的效率，特性如下</p>
+<p><strong>Expect a 1.25x - 7x speedup</strong> and a <strong>CPU usage reduction of at least 2x</strong>, depending on network conditions, modules executed, and time already spent by targets on useful work. Mitogen cannot improve a module once it is executing, it can only ensure the module executes as quickly as possible.</p>
+<ul>
+<li><p><strong>One connection is used per target</strong>, in addition to one sudo invocation per user account. This is much better than SSH multiplexing combined with pipelining, as significant state can be maintained in RAM between steps, and system logs aren’t spammed with repeat authentication events.</p>
+</li>
+<li><p><strong>A single network roundtrip is used</strong> to execute a step whose code already exists in RAM on the target. Eliminating multiplexed SSH channel creation saves 4 ms runtime per 1 ms of network latency for every playbook step.</p>
+</li>
+<li><p><strong>Processes are aggressively reused</strong>, avoiding the cost of invoking Python and recompiling imports, saving 300-800 ms for every playbook step.</p>
+</li>
+<li><p>Code is ephemerally cached in RAM, <strong>reducing bandwidth usage by an order of magnitude</strong> compared to SSH pipelining, with around 5x fewer frames traversing the network in a typical run.</p>
+</li>
+<li><p><strong>Fewer writes to the target filesystem occur</strong>. In typical configurations, Ansible repeatedly rewrites and extracts ZIP files to multiple temporary directories on the target. Security issues relating to temporary files in cross-account scenarios are entirely avoided.</p>
+</li>
+</ul>
+<p>The effect is most potent on playbooks that execute many <strong>short-lived actions</strong>, where Ansible’s overhead dominates the cost of the operation, for example when executing large <code>with_items</code> loops to run simple commands or write files.</p>
+<p>大体就是执行过程中主机使用一个连接(默认每执行一个<code>task</code>或者<code>loop</code>循环都会重新打开一次连接的)；渲染的执行代码暂存于内存中；减少多路复用<code>ssh</code>隧道的时间消耗；减少临时文件传输的带宽；代码重用，避免代码的重新编译成本等</p>
+<p>实现原理的话，可以去看下<a target="_blank" rel="noopener" href="https://mitogen.readthedocs.io/en/latest/howitworks.html" title="官网解释">官网解释</a>，反正我是没怎么看懂</p>
+<p><em>① . <code>play_hosts</code>为内置参数，指当前正在执行的playbook中的主机列表</em></p>
+<p><em>②. <code>尽可能快的</code> 指到运行模块前的阶段</em></p>
+<ol>
+<li>Download and extract <a target="_blank" rel="noopener" href="https://networkgenomics.com/try/mitogen-0.2.9.tar.gz">mitogen-0.2.9.tar.gz</a></li>
+<li>Modify <code>ansible.cfg</code></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[defaults]</span><br><span class="line">strategy_plugins = /path/to/mitogen-0.2.9/ansible_mitogen/plugins/strategy</span><br><span class="line">strategy = mitogen_linear</span><br></pre></td></tr></table></figure>
+
+<p>The <code>strategy</code> key is optional. If omitted, the <code>ANSIBLE_STRATEGY=mitogen_linear</code> environment variable can be set on a per-run basis. Like <code>mitogen_linear</code>, the <code>mitogen_free</code> and <code>mitogen_host_pinned</code> strategies exists to mimic the <code>free</code> and <code>host_pinned</code> strategies.</p>
+<p><a target="_blank" rel="noopener" href="https://networkgenomics.com/ansible/">https://networkgenomics.com/ansible/</a></p>
+<p><a target="_blank" rel="noopener" href="https://mitogen.networkgenomics.com/ansible_detailed.html">https://mitogen.networkgenomics.com/ansible_detailed.html</a></p>
+<h2 id="基于-Ansible-的开源项目"><a href="#基于-Ansible-的开源项目" class="headerlink" title="基于 Ansible 的开源项目"></a>基于 Ansible 的开源项目</h2><blockquote>
+<p>第一个是ansible官方开源项目，其他都是和ansible相关的运维平台开源项目，推荐学习和参考</p>
+</blockquote>
+<p>Ansible - <a target="_blank" rel="noopener" href="https://github.com/ansible/ansible">https://github.com/ansible/ansible</a></p>
+<p>Jumpserver - <a target="_blank" rel="noopener" href="http://www.jumpserver.org/">http://www.jumpserver.org/</a> </p>
+<p>OpsManage - <a target="_blank" rel="noopener" href="https://github.com/welliamcao/OpsManage">https://github.com/welliamcao/OpsManage</a> </p>
+<p>spug - <a target="_blank" rel="noopener" href="https://github.com/openspug/spug">https://github.com/openspug/spug</a></p>
+<p>BigOps - <a target="_blank" rel="noopener" href="http://www.bigops.com/">http://www.bigops.com/</a></p>
+<h2 id="Ansible-项目实践"><a href="#Ansible-项目实践" class="headerlink" title="Ansible 项目实践"></a>Ansible 项目实践</h2><blockquote>
+<p>以下内容来自于《基于ansible的主机自动化配置管理》项目，基于ansible目前可以满足生产环境所有基线要求，相信对大家有一定的参考价值</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200122143435.png"></p>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200122143458.png"></p>
+<h3 id="ansible-部署"><a href="#ansible-部署" class="headerlink" title="ansible 部署"></a>ansible 部署</h3><blockquote>
+<p>因为生产环境为内外网物理隔离，所有的安装部署都是离线进行的</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Install Packages</span></span><br><span class="line">yum install gcc zlib zlib-devel openssl-devel -y</span><br><span class="line"></span><br><span class="line"><span class="comment"># Install Python</span></span><br><span class="line">tar xf Python-2.7.14.tgz</span><br><span class="line"><span class="built_in">cd</span> Python-2.7.14</span><br><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">make install</span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># renew python env</span></span><br><span class="line"><span class="built_in">exit</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ImportError: No module named six.moves</span></span><br><span class="line">tar xf six-1.11.0.tar.gz </span><br><span class="line"><span class="built_in">cd</span> six-1.11.0</span><br><span class="line">python setup.py install</span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># ImportError: No module named packaging.version</span></span><br><span class="line">tar xf packaging-17.1.tar.gz </span><br><span class="line"><span class="built_in">cd</span> packaging-17.1</span><br><span class="line">python setup.py install</span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># ImportError: No module named pyparsing</span></span><br><span class="line">tar xf pyparsing-2.2.0.tar.gz </span><br><span class="line"><span class="built_in">cd</span> pyparsing-2.2.0</span><br><span class="line">python setup.py install</span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># ImportError: No module named appdirs</span></span><br><span class="line">tar xf appdirs-1.4.3.tar.gz </span><br><span class="line"><span class="built_in">cd</span> appdirs-1.4.3</span><br><span class="line">python setup.py install</span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># Install Setuptools</span></span><br><span class="line">unzip setuptools-38.5.2.zip</span><br><span class="line"><span class="built_in">cd</span> setuptools-38.5.2</span><br><span class="line">python setup.py install</span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># Install pip</span></span><br><span class="line">tar xf pip-9.0.1.tar.gz</span><br><span class="line"><span class="built_in">cd</span> pip-9.0.1</span><br><span class="line">python setup.py install</span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># pip 离线下载</span></span><br><span class="line"><span class="comment"># pip download -d DIR -r requirements.txt</span></span><br><span class="line">pip download -d ~/ansible/ ansible</span><br><span class="line"></span><br><span class="line"><span class="comment"># pip 离线安装</span></span><br><span class="line"><span class="comment"># pip install --no-index --find-links=DIR -r requirements.txt</span></span><br><span class="line">pip install --no-index --find-links=pip-ansible-2.3.3/ -r requirements.txt</span><br><span class="line">pip install --no-index --find-links=pip-ansible-2.5.0/ -r requirements.txt -U</span><br><span class="line"></span><br><span class="line"><span class="comment"># pip 离线安装pipenv</span></span><br><span class="line">pip install --no-index --find-links=pip-pipenv/ pipenv</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用pipenv创建虚拟环境</span></span><br><span class="line"><span class="built_in">mkdir</span> win_ansible</span><br><span class="line"><span class="built_in">cd</span> win_ansible</span><br><span class="line">pipenv shell</span><br><span class="line">pip install --no-index --find-links=pip-ansible-2.5.2/ -r requirements.txt</span><br></pre></td></tr></table></figure>
+
+<h3 id="ansible-cfg-配置解析"><a href="#ansible-cfg-配置解析" class="headerlink" title="ansible.cfg 配置解析"></a>ansible.cfg 配置解析</h3><blockquote>
+<p>ansible.cfg不影响执行结果但合理的配置会有效提升效率</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 配置文件路径（优先级）</span></span><br><span class="line">./ansible.cfg</span><br><span class="line">/etc/ansible/ansible.cfg</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置文件内容</span></span><br><span class="line">[defaults]</span><br><span class="line"><span class="comment">#inventory = /etc/ansible/hosts</span></span><br><span class="line"><span class="comment">#log_path = /var/log/ansible.log</span></span><br><span class="line">forks = 100 <span class="comment"># 设置并发数</span></span><br><span class="line">host_key_checking = False <span class="comment"># 不检查SSH主机登录的密钥</span></span><br><span class="line">display_skipped_hosts = False <span class="comment"># 不显示已跳过的主机</span></span><br><span class="line">retry_files_enabled = False <span class="comment"># 不创建任务失败后的重试文件</span></span><br><span class="line"><span class="comment"># 按照1d设置setup缓存，优化执行效率</span></span><br><span class="line">gathering = smart</span><br><span class="line">fact_caching_timeout = 86400</span><br><span class="line">fact_caching = jsonfile</span><br><span class="line">fact_caching_connection = cachedir</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[defaults]</span><br><span class="line">forks = 50</span><br><span class="line">host_key_checking = False</span><br><span class="line">display_skipped_hosts = False</span><br><span class="line">retry_files_enabled = False</span><br><span class="line">retry_files_save_path = ansible-retry</span><br><span class="line">gathering = smart</span><br><span class="line">fact_caching = jsonfile</span><br><span class="line">fact_caching_connection = /tmp</span><br><span class="line">fact_caching_timeout = 7200</span><br><span class="line">roles_path = ./roles</span><br><span class="line"></span><br><span class="line">[ssh_connection]</span><br><span class="line">pipelining = True</span><br><span class="line">ssh_args = -o ConnectionAttempts=100 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ForwardAgent=yes</span><br><span class="line"></span><br><span class="line">[inventory]</span><br><span class="line">enable_plugins = yaml, ini</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="Ansible常见技巧"><a href="#Ansible常见技巧" class="headerlink" title="Ansible常见技巧"></a>Ansible常见技巧</h3><p><a target="_blank" rel="noopener" href="https://docs.ansible.com/ansible/latest/inventory_guide/index.html">https://docs.ansible.com/ansible/latest/inventory_guide/index.html</a><br><a target="_blank" rel="noopener" href="https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html">https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br></pre></td><td class="code"><pre><span class="line">参数								描述</span><br><span class="line">ansible_host					将要连接的远程主机名.与你想要设定的主机的别名不同的话,可通过此变量设置.</span><br><span class="line">ansible_port					连接端口号，如果是ssh的话，默认是22</span><br><span class="line">ansible_user					用于连接认证的用户名</span><br><span class="line">ansible_password				用于连接认证的用户名密码</span><br><span class="line">ansible_ssh_private_key_file	ssh 使用的私钥文件.适用于有多个密钥,而你不想使用 SSH 代理的情况.</span><br><span class="line"></span><br><span class="line">ansible_become					开启提权，等同于ansible_sudo，ansible_su</span><br><span class="line">ansible_become_method			提权方式</span><br><span class="line">ansible_become_user				提权用户，等同于ansible_sudo_user，ansible_su_user</span><br><span class="line">ansible_become_password			提权密码,等同于ansible_sudo_password，ansible_su_password</span><br><span class="line">ansible_become_flags			提权命令的参数，等同于ansible_sudo_flags,ansible_su_flags</span><br><span class="line"></span><br><span class="line">-e EXTRA_VARS, --extra-vars EXTRA_VARS							添加附加变量，比如key=value，yaml，json格式。使用@指定文件</span><br><span class="line">-f FORKS, --forks FORKS											指定定要使用的并行进程数，默认为5个。</span><br><span class="line">-i INVENTORY, --inventory INVENTORY, --inventory-file INVENTORY	指定主机清单文件或逗号分隔的主机，默认为/etc/ansible/hosts。</span><br><span class="line">-l SUBSET, --limit SUBSET										进一步限制所选主机/组模式，只执行-l后的主机和组。</span><br><span class="line">-t TAGS, --tags TAGS											运行指定的带有tags任务</span><br><span class="line">--skip-tags=SKIP_TAGS											跳过运行标记此标签的任务</span><br><span class="line">-v, --verbose													输出执行的详细信息，使用-vvv获得更多，-vvvv 启用连接调试</span><br><span class="line"></span><br><span class="line">--become-method=BECOME_METHOD	权限升级方法使用 ，默认为sudo，有效选择：[sudo | su | pbrun | pfexec | runas | doas | dzdo]</span><br><span class="line">--become-user=BECOME_USER		使用哪个用户运行，默认为root</span><br><span class="line">-K, --ask-become-pass			提供权限提升密码</span><br><span class="line">-b, --become					运行权限提升</span><br><span class="line"></span><br><span class="line">become 指令</span><br><span class="line">become 设置yes即开启提升权限</span><br><span class="line">become_user 指定提升权限的用户</span><br><span class="line">become_method 指定提升权限的方式，有sudo，su，runas等。</span><br><span class="line">become_flags 传给可执行文件的参数</span><br><span class="line"></span><br><span class="line">- name: Run a command as nobody</span><br><span class="line">  command: somecommand</span><br><span class="line">  become: yes</span><br><span class="line">  become_method: su</span><br><span class="line">  become_user: nobody</span><br><span class="line">  become_flags: &#x27;-s /bin/sh&#x27;</span><br><span class="line"></span><br><span class="line">以下是一些重要的注册变量的组件</span><br><span class="line">changed: 显示是否已更改</span><br><span class="line">cmd: 执行的命令</span><br><span class="line">rc: 命令的返回码</span><br><span class="line">stdout:命令的输出</span><br><span class="line">stdout_lines: 逐行输出</span><br><span class="line">stderr: 如果有错误，则输出错误的信息</span><br><span class="line">stderr_lines: 逐行输出错误信息</span><br><span class="line"></span><br><span class="line">默认情况下，Ansible会并行地管理一个剧本中引用的所有机器。对于滚动更新用例，可以使用serial关键字定义Ansible并行执行多少台主机</span><br><span class="line">---</span><br><span class="line">- name: test play</span><br><span class="line">  hosts: webservers</span><br><span class="line">  serial: 3</span><br><span class="line">  gather_facts: False</span><br><span class="line"></span><br><span class="line">  tasks:</span><br><span class="line">    - name: task one</span><br><span class="line">      command: hostname</span><br><span class="line">    - name: task two</span><br><span class="line">      command: hostname</span><br><span class="line">	  </span><br><span class="line">在任务上使用delegate_to关键字,可以将任务委托给指定主机去执行。delegate_to: 127.0.0.1 是将任务委派到ansible本地去执行，你可以使用简写的local_action 去执行</span><br><span class="line">---</span><br><span class="line">- hosts: webservers</span><br><span class="line">  serial: 5</span><br><span class="line"></span><br><span class="line">  tasks:</span><br><span class="line">    - name: take out of load balancer pool</span><br><span class="line">      command: /usr/bin/take_out_of_pool &#123;&#123; inventory_hostname &#125;&#125;</span><br><span class="line">      delegate_to: 127.0.0.1</span><br><span class="line"></span><br><span class="line">为运行程序指定环境变量，需指定environment关键字</span><br><span class="line">- tasks:</span><br><span class="line">  - apt:  name=cobbler state=installed</span><br><span class="line">    environment:</span><br><span class="line">      http_proxy: http://proxy.example.com:8080</span><br><span class="line">      PATH: /var/local/nvm/versions/node/v4.2.1/bin:&#123;&#123;  ansible_env.PATH &#125;&#125;</span><br><span class="line"></span><br><span class="line">ignore_errors 模块可以在任务执行错误时，忽略错误并继续执行任务。</span><br><span class="line">- tasks:</span><br><span class="line">  - command: /bin/false</span><br><span class="line">    ignore_errors: true</span><br><span class="line"></span><br><span class="line">  - debug: msg=&quot;false&quot;</span><br><span class="line"></span><br><span class="line">多行字符串可以使用|保留换行符，也可以使用&gt;折叠换行。</span><br><span class="line">this: |</span><br><span class="line">  Foo</span><br><span class="line">  Bar</span><br><span class="line"></span><br><span class="line">that: &gt;</span><br><span class="line">  Foo</span><br><span class="line">  Bar</span><br><span class="line"></span><br><span class="line">+表示保留文字块末尾的换行，-表示删除字符串末尾的换行。</span><br><span class="line">s1: |</span><br><span class="line">  Foo</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s2: |+</span><br><span class="line">  Foo</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s3: |-</span><br><span class="line">  Foo</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><ul>
+<li>服务端操作系统：RHEL 6&#x2F;7（Windows不可作为控制端）</li>
+<li>服务端Python版本：2.7.14（实测安装完成无需额外调整）</li>
+<li>Ansible版本：2.3.3.0（实测2.4以上版本已不支持rhel5.5，客户端需simplejson）</li>
+<li>管理对象：目前主要针对RHEL 5&#x2F;6&#x2F;7（Windows使用高版本Ansible）</li>
+<li>基线标准：参考《主机岗配置基线 v1.1.xlsx》</li>
+</ul>
+<blockquote>
+<p>服务端</p>
+</blockquote>
+<ul>
+<li>操作系统版本：RHEL 6&#x2F;7</li>
+<li>Python版本：2.7.14</li>
+<li>安装方式：pip离线安装依赖包</li>
+</ul>
+<blockquote>
+<p>客户端</p>
+</blockquote>
+<ul>
+<li>操作系统版本：RHEL 5&#x2F;6&#x2F;7</li>
+<li>非最小模式安装无需做调整</li>
+<li>RHEL5.5需要安装simplejson</li>
+</ul>
+<blockquote>
+<p>核心用法</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检测ansible是否可以正常访问主机</span></span><br><span class="line">ansible-playbook -i hosts playbooks/ping.yml -v</span><br><span class="line"><span class="comment"># 配置好inventory，执行以下命令创建用户并建立信任关系</span></span><br><span class="line">ansible-playbook -i hosts playbooks/user/default.yml -v</span><br><span class="line"><span class="comment"># 配置时间同步/进程服务/基线文件</span></span><br><span class="line">ansible-playbook -i hosts playbooks/baseline/cfgset.yml -v</span><br><span class="line">ansible-playbook -i hosts playbooks/baseline/cfgset.yml -v --tags=<span class="string">&quot;repo&quot;</span></span><br><span class="line">ansible-playbook -i hosts playbooks/baseline/cfgset.yml -v --skip-tags=<span class="string">&quot;ntp,repo&quot;</span></span><br><span class="line"><span class="comment"># 更新系统软件包和补丁包</span></span><br><span class="line">ansible-playbook -i hosts playbooks/baseline/pakset.yml -v</span><br><span class="line"><span class="comment"># 修改用户密码</span></span><br><span class="line">ansible-playbook -i hosts_changepw playbooks/user/changepw.yml -v -e <span class="string">&quot;@userpass.json&quot;</span></span><br><span class="line"><span class="comment"># 备份配置，支持自定义日期命名，默认为&quot;%Y%m%d&quot;</span></span><br><span class="line">ansible-playbook -i hosts backup/backup.yml -v</span><br><span class="line"><span class="comment"># 恢复配置，支持按日期目录全局或者局部主机恢复</span></span><br><span class="line">ansible-playbook -i hosts backup/restore.yml -v -e <span class="string">&quot;var_backup_date=20180305&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="Windows"><a href="#Windows" class="headerlink" title="Windows"></a>Windows</h3><ul>
+<li>服务端操作系统：RHEL 6&#x2F;7（Windows不可作为控制端）</li>
+<li>服务端Python版本：2.7.14（实测安装完成无需额外调整）</li>
+<li>Ansible版本：2.5.0（Windows原生模块支持需要持续更新Ansible新版本）</li>
+<li>管理对象：目前主要针对Windows 7&#x2F;2008&#x2F;2012（不支持xp&#x2F;2003）</li>
+<li>基线标准：参考《Windows 安全基线》</li>
+</ul>
+<blockquote>
+<p>服务端</p>
+</blockquote>
+<ul>
+<li>操作系统版本：RHEL 6&#x2F;7</li>
+<li>Python版本：2.7.14</li>
+<li>安装方式：pip离线安装依赖包（目前使用pipenv切换管理Linux和Windows）</li>
+</ul>
+<blockquote>
+<p>客户端</p>
+</blockquote>
+<ul>
+<li>操作系统版本：Window 7&#x2F;2008&#x2F;2012</li>
+<li>WinRM（Windows 7&#x2F;2008 需要升级至 Powershell v3.0）</li>
+</ul>
+<blockquote>
+<p>核心用法</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检测ansible是否可以正常访问主机</span></span><br><span class="line">ansible-playbook -i hosts win_playbooks/ping.yml -v</span><br><span class="line"><span class="comment"># 配置好inventory，执行以下命令创建用户并建立信任关系</span></span><br><span class="line">ansible-playbook -i hosts win_playbooks/user/default.yml -v</span><br><span class="line"><span class="comment"># 配置时间同步/进程服务/基线文件</span></span><br><span class="line">ansible-playbook -i hosts win_playbooks/baseline/cfgset.yml -v</span><br><span class="line">ansible-playbook -i hosts win_playbooks/baseline/cfgset.yml -v --tags=<span class="string">&quot;wsus&quot;</span></span><br><span class="line">ansible-playbook -i hosts win_playbooks/baseline/cfgset.yml -v --skip-tags=<span class="string">&quot;ntp,wsus&quot;</span></span><br><span class="line"><span class="comment"># 更新系统软件包和补丁包</span></span><br><span class="line">ansible-playbook -i hosts win_playbooks/baseline/pakset.yml -v</span><br><span class="line"><span class="comment"># 修改用户密码</span></span><br><span class="line">ansible-playbook -i win_hosts_changepw win_playbooks/user/changepw.yml -v -e <span class="string">&quot;@userpass.json&quot;</span></span><br><span class="line"><span class="comment"># 备份配置，支持自定义日期命名，默认为&quot;%Y%m%d&quot;</span></span><br><span class="line">ansible-playbook -i win_hosts win_backup/backup.yml -v</span><br><span class="line"><span class="comment"># 恢复配置，支持按日期目录全局或者局部主机恢复</span></span><br><span class="line">ansible-playbook -i win_hosts win_backup/restore.yml -v -e <span class="string">&quot;var_backup_date=20180305&quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Where-X-x3D-ansible"><a href="#Where-X-x3D-ansible" class="headerlink" title="Where X&#x3D;ansible"></a>Where X&#x3D;ansible</h2><p><a target="_blank" rel="noopener" href="https://learnxinyminutes.com/docs/ansible/">https://learnxinyminutes.com/docs/ansible/</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">&quot;&#123;&#123; Ansible &#125;&#125;&quot; is an orchestration tool written in Python.</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">- hosts: apache</span><br><span class="line"></span><br><span class="line">  vars:</span><br><span class="line">      apache2_log_level: &quot;warn&quot;</span><br><span class="line"></span><br><span class="line">  handlers:</span><br><span class="line">  - name: restart apache</span><br><span class="line">    service:</span><br><span class="line">      name: apache2</span><br><span class="line">      state: restarted</span><br><span class="line">      enabled: True</span><br><span class="line">    notify:</span><br><span class="line">      - Wait for instances to listen on port 80</span><br><span class="line">    become: True</span><br><span class="line"></span><br><span class="line">  - name: reload apache</span><br><span class="line">    service:</span><br><span class="line">      name: apache2</span><br><span class="line">      state: reloaded</span><br><span class="line">    notify:</span><br><span class="line">      - Wait for instances to listen on port 80</span><br><span class="line">    become: True</span><br><span class="line"></span><br><span class="line">  - name: Wait for instances to listen on port 80</span><br><span class="line">    wait_for:</span><br><span class="line">      state: started</span><br><span class="line">      host: localhost</span><br><span class="line">      port: 80</span><br><span class="line">      timeout: 15</span><br><span class="line">      delay: 5</span><br><span class="line"></span><br><span class="line">  tasks:</span><br><span class="line">  - name: Update cache</span><br><span class="line">    apt:</span><br><span class="line">      update_cache: yes</span><br><span class="line">      cache_valid_time: 7200</span><br><span class="line">    become: True</span><br><span class="line"></span><br><span class="line">  - name: Install packages</span><br><span class="line">    apt:</span><br><span class="line">      name=&#123;&#123; item &#125;&#125;</span><br><span class="line">    with_items:</span><br><span class="line">      - apache2</span><br><span class="line">      - logrotate</span><br><span class="line">    notify:</span><br><span class="line">      - restart apache</span><br><span class="line">    become: True</span><br><span class="line"></span><br><span class="line">  - name: Configure apache2 log level</span><br><span class="line">    lineinfile:</span><br><span class="line">      dest: /etc/apache2/apache2.conf</span><br><span class="line">      line: &quot;LogLevel &#123;&#123; apache2_log_level &#125;&#125;&quot;</span><br><span class="line">      regexp: &quot;^LogLevel&quot;</span><br><span class="line">    notify:</span><br><span class="line">      - reload apache</span><br><span class="line">    become: True</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"># Universal way</span><br><span class="line">$ pip install ansible</span><br><span class="line"></span><br><span class="line"># Debian, Ubuntu</span><br><span class="line">$ apt-get install ansible</span><br><span class="line"></span><br><span class="line"># Command pings localhost (defined in default inventory: /etc/ansible/hosts)</span><br><span class="line">$ ansible -m ping localhost</span><br><span class="line"># You should see this output</span><br><span class="line">localhost | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: false,</span><br><span class="line">    &quot;ping&quot;: &quot;pong&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$ ansible -m ping all</span><br><span class="line">$ ansible -m shell -a &#x27;date; whoami&#x27; localhost #hostname_or_a_group_name</span><br><span class="line"></span><br><span class="line">$ ansible -m command -a &#x27;date; whoami&#x27; # FAILURE</span><br><span class="line">$ ansible -m command -a &#x27;date&#x27; all</span><br><span class="line">$ ansible -m command -a &#x27;whoami&#x27; all</span><br><span class="line"></span><br><span class="line">- hosts: all</span><br><span class="line"></span><br><span class="line">  tasks:</span><br><span class="line">    - name: &quot;ping all&quot;</span><br><span class="line">      ping:</span><br><span class="line"></span><br><span class="line">    - name: &quot;execute a shell command&quot;</span><br><span class="line">      shell: &quot;date; whoami; df -h;&quot;</span><br><span class="line"></span><br><span class="line">$ ansible-playbook path/name_of_the_playbook.yml</span><br><span class="line"></span><br><span class="line">localhost</span><br><span class="line"></span><br><span class="line">[some_group]</span><br><span class="line">hostA.mydomain.com</span><br><span class="line">hostB.localdomain</span><br><span class="line">1.2.3.4</span><br><span class="line"></span><br><span class="line">[a_group_of_a_groups:children]</span><br><span class="line">some_group</span><br><span class="line">some_other_group</span><br><span class="line"></span><br><span class="line">- hosts: all</span><br><span class="line"></span><br><span class="line">  tasks:</span><br><span class="line">      - name: &quot;ping all&quot;</span><br><span class="line">        ping:</span><br><span class="line">      - name: &quot;execute a shell command&quot;</span><br><span class="line">        shell: &quot;date; whoami; df -h;&quot;</span><br><span class="line"></span><br><span class="line">  roles:</span><br><span class="line">      - some_role</span><br><span class="line">      - &#123; role: another_role, some_variable: &#x27;learnxiny&#x27;, tags: [&#x27;my_tag&#x27;] &#125;</span><br><span class="line"></span><br><span class="line">  pre_tasks:</span><br><span class="line">      - name: some pre-task</span><br><span class="line">        shell: echo &#x27;this task is the last, but would be executed before roles, and before tasks&#x27;</span><br><span class="line"></span><br><span class="line">$ # The following example contains a shell-prompt to indicate the venv and relative path</span><br><span class="line">$ git clone git@github.com:sirkubax/ansible-for-learnXinYminutes.git</span><br><span class="line">user@host:~/$ cd ansible-for-learnXinYminutes</span><br><span class="line">user@host:~/ansible-for-learnXinYminutes$ source environment.sh</span><br><span class="line">$</span><br><span class="line">$ # First lets execute the simple_playbook.yml</span><br><span class="line">(venv) user@host:~/ansible-for-learnXinYminutes$ ansible-playbook playbooks/simple_playbook.yml</span><br><span class="line"></span><br><span class="line">$ source environment.sh</span><br><span class="line">$ # Now we would run the above playbook with roles</span><br><span class="line">(venv) user@host:~/ansible-for-learnXinYminutes$ ansible-playbook playbooks/simple_role.yml</span><br><span class="line"></span><br><span class="line">roles/</span><br><span class="line">   some_role/</span><br><span class="line">     defaults/      # contains default variables</span><br><span class="line">     files/         # for static files</span><br><span class="line">     templates/     # for jinja templates</span><br><span class="line">     tasks/         # tasks</span><br><span class="line">     handlers/      # handlers</span><br><span class="line">     vars/          # more variables (higher priority)</span><br><span class="line">     meta/          # meta - package (role) info</span><br><span class="line"></span><br><span class="line">playbooks/roles/simple_apache_role/</span><br><span class="line">├── tasks</span><br><span class="line">│   └── main.yml</span><br><span class="line">└── templates</span><br><span class="line">    └── main.yml</span><br><span class="line"></span><br><span class="line"># read playbooks/lookup.yml</span><br><span class="line"># then run</span><br><span class="line">(venv) user@host:~/ansible-for-learnXinYminutes$ ansible-playbook playbooks/lookup.yml</span><br><span class="line"></span><br><span class="line">ansible -m shell -a &#x27;echo &quot;&#123;&#123; my_variable &#125;&#125;&quot;&#x27; -e &#x27;my_variable=&quot;&#123;&#123; lookup(&quot;pipe&quot;, &quot;date&quot;) &#125;&#125;&quot;&#x27; localhost</span><br><span class="line">ansible -m shell -a &#x27;echo &quot;&#123;&#123; my_variable &#125;&#125;&quot;&#x27; -e &#x27;my_variable=&quot;&#123;&#123; lookup(&quot;pipe&quot;, &quot;hostname&quot;) &#125;&#125;&quot;&#x27; all</span><br><span class="line"></span><br><span class="line"># Or use in playbook</span><br><span class="line"></span><br><span class="line">(venv) user@host:~/ansible-for-learnXinYminutes$ ansible-playbook playbooks/lookup.yml</span><br><span class="line"></span><br><span class="line">(venv) user@host:~/ansible-for-learnXinYminutes$ ansible-playbook playbooks/register_and_when.yml</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">- hosts: localhost</span><br><span class="line">  tasks:</span><br><span class="line">   - name: check the system capacity</span><br><span class="line">     shell: df -h /</span><br><span class="line">     register: root_size</span><br><span class="line"></span><br><span class="line">   - name: debug root_size</span><br><span class="line">     debug:</span><br><span class="line">        msg: &quot;&#123;&#123; root_size &#125;&#125;&quot;</span><br><span class="line"></span><br><span class="line">   - name: debug root_size return code</span><br><span class="line">     debug:</span><br><span class="line">       msg:  &quot;&#123;&#123; root_size.rc &#125;&#125;&quot;</span><br><span class="line"></span><br><span class="line"># when: example</span><br><span class="line"></span><br><span class="line">   - name: Print this message when return code of &#x27;check the system capacity&#x27; was ok</span><br><span class="line">     debug:</span><br><span class="line">       msg:  &quot;&#123;&#123; root_size.rc &#125;&#125;&quot;</span><br><span class="line">     when: root_size.rc == 0</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">- hosts: localhost</span><br><span class="line">  tasks:</span><br><span class="line">   - name: check the system capacity</span><br><span class="line">     shell: df -h /</span><br><span class="line">     when: some_variable in &#x27;a string&#x27;</span><br><span class="line">  roles:</span><br><span class="line">   - &#123; role: mid_nagios_probe, when: allow_nagios_probes &#125;</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">ansible-playbook playbooks/simple_playbook.yml --tags=tagA,tag_other</span><br><span class="line">ansible-playbook playbooks/simple_playbook.yml -t tagA,tag_other</span><br><span class="line"></span><br><span class="line">There are special tags:</span><br><span class="line">    always</span><br><span class="line"></span><br><span class="line">--skip-tags can be used to exclude a block of code</span><br><span class="line">--list-tags to list available tags</span><br><span class="line"></span><br><span class="line">ansible-playbook playbooks/simple_playbook.yml --limit localhost</span><br><span class="line"></span><br><span class="line">--limit my_hostname</span><br><span class="line">--limit groupname</span><br><span class="line">--limit some_prefix*</span><br><span class="line">--limit hostname:group #JM</span><br><span class="line"></span><br><span class="line">Some static content</span><br><span class="line"></span><br><span class="line">&#123;&#123; a_variable &#125;&#125;</span><br><span class="line"></span><br><span class="line">&#123;% for item in loop_items %&#125;</span><br><span class="line">    this line item is &#123;&#123; item &#125;&#125;</span><br><span class="line">&#123;% endfor %&#125;</span><br><span class="line"></span><br><span class="line">$ source environment.sh</span><br><span class="line">$ # Now we would run the above playbook with roles</span><br><span class="line">(venv) user@host:~/ansible-for-learnXinYminutes$ ansible-playbook playbooks/simple_role.yml --tags apache2</span><br><span class="line"></span><br><span class="line">ansible -m shell -a &#x27;echo &#123;&#123; my_variable &#125;&#125;&#x27; -e &#x27;my_variable=something, playbook_parameter=twentytwo&#x27; localhost</span><br><span class="line"></span><br><span class="line"># check part of this playbook: playbooks/roles/sys_debug/tasks/debug_time.yml</span><br><span class="line">- local_action: shell date +&#x27;%F %T&#x27;</span><br><span class="line">  register: ts</span><br><span class="line">  become: False</span><br><span class="line">  changed_when: False</span><br><span class="line"></span><br><span class="line">- name: Timestamp</span><br><span class="line">  debug: msg=&quot;&#123;&#123; ts.stdout &#125;&#125;&quot;</span><br><span class="line">  when: ts is defined and ts.stdout is defined</span><br><span class="line">  become: False</span><br><span class="line"></span><br><span class="line"># get first item of the list</span><br><span class="line">&#123;&#123; some_list | first() &#125;&#125;</span><br><span class="line"># if variable is undefined - use default value</span><br><span class="line">&#123;&#123; some_variable | default(&#x27;default_value&#x27;) &#125;&#125;</span><br><span class="line"></span><br><span class="line"># Try (this would fail)</span><br><span class="line">$ ansible-playbook playbooks/vault_example.yml</span><br><span class="line"></span><br><span class="line">$ echo some_very_very_long_secret &gt; ~/.ssh/secure_located_file</span><br><span class="line"></span><br><span class="line"># in ansible.cfg set the path to your secret file</span><br><span class="line">$ vi ansible.cfg</span><br><span class="line">  ansible_vault_password_file = ~/.ssh/secure_located_file</span><br><span class="line"></span><br><span class="line">#or use env</span><br><span class="line">$ export ANSIBLE_VAULT_PASSWORD_FILE=~/.ssh/secure_located_file</span><br><span class="line"></span><br><span class="line">$ ansible-playbook playbooks/vault_example.yml</span><br><span class="line"></span><br><span class="line">  # encrypt the file</span><br><span class="line">$ ansible-vault encrypt path/somefile</span><br><span class="line"></span><br><span class="line">  # view the file</span><br><span class="line">$ ansible-vault view path/somefile</span><br><span class="line"></span><br><span class="line">  # check the file content:</span><br><span class="line">$ cat path/somefile</span><br><span class="line"></span><br><span class="line">  # decrypt the file</span><br><span class="line">$ ansible-vault decrypt path/somefile</span><br><span class="line"></span><br><span class="line">$ etc/inv/ec2.py --refresh</span><br><span class="line">$ ansible -m ping all -i etc/inv/ec2.py</span><br><span class="line"></span><br><span class="line">vi ansible.cfg</span><br><span class="line"># set this to:</span><br><span class="line">callback_whitelist = profile_tasks</span><br><span class="line"></span><br><span class="line">vi ansible.cfg</span><br><span class="line"></span><br><span class="line"># if set to a persistent type (not &#x27;memory&#x27;, for example &#x27;redis&#x27;) fact values</span><br><span class="line"># from previous runs in Ansible will be stored.  This may be useful when</span><br><span class="line"># wanting to use, for example, IP information from one group of servers</span><br><span class="line"># without having to talk to them in the same playbook run to get their</span><br><span class="line"># current IP information.</span><br><span class="line">fact_caching = jsonfile</span><br><span class="line">fact_caching_connection = ~/facts_cache</span><br><span class="line">fact_caching_timeout = 86400</span><br><span class="line"></span><br><span class="line"># recreate ansible 2.x venv</span><br><span class="line">$ rm -rf venv2</span><br><span class="line">$ source environment2.sh</span><br><span class="line"></span><br><span class="line"># execute playbook</span><br><span class="line">(venv2)$ ansible-playbook playbooks/ansible1.9_playbook.yml # would fail - deprecated syntax</span><br><span class="line"></span><br><span class="line"># now lets install ansible 1.9.x next to ansible 2.x</span><br><span class="line">(venv2)$ deactivate</span><br><span class="line">$ source environment.1.9.sh</span><br><span class="line"></span><br><span class="line"># execute playbook</span><br><span class="line">(venv1.9)$ ansible-playbook playbooks/ansible1.9_playbook.yml # works!</span><br><span class="line"></span><br><span class="line"># please note that you have both venv1.9 and venv2 present - you need to (de)activate one - that is all</span><br><span class="line"></span><br><span class="line">- name: Ensure the httpd service is running</span><br><span class="line">  service:</span><br><span class="line">    name: httpd</span><br><span class="line">    state: started</span><br><span class="line">  become: true</span><br><span class="line"></span><br><span class="line">ansible -m ping web*</span><br><span class="line"></span><br><span class="line">ansible -m ping web*:!backend:monitoring:&amp;allow_change</span><br></pre></td></tr></table></figure>
+
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><blockquote>
+<p>很抱歉我暂时不能分享全部信息，但是这并不妨碍技术上的交流，我会逐步分享有价值的可公开代码</p>
+</blockquote>
+<ol>
+<li>遵循what&#x2F;why&#x2F;how思路，要理解ansible能解决什么问题，为什么选择ansible，怎么使用ansible去解决</li>
+<li>Ansible学习成本低但不等同于没有难度，学习路径推荐参考官方文档并积极实践，官网没有答案要善用Google搜索</li>
+<li>Ansible纯后台模式只解决了部分问题，还有更多需求要通过基于Ansible的自动化运维平台来实现，拥抱开源技术不能固步自封</li>
+</ol>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a target="_blank" rel="noopener" href="https://docs.ansible.com/ansible/latest/index.html">Ansible Documentation</a></p>
+<p><a target="_blank" rel="noopener" href="https://ansible.github.io/workshops/">ansible-workshops</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/michael-xiang/p/10462749.html">Ansible 入门指南 - 学习总结</a></p>
+<p><a target="_blank" rel="noopener" href="http://showme.codes/2019-09-19/understand-ansible/">这样理解Ansible更容易</a></p>
+<p><a target="_blank" rel="noopener" href="https://anoyi.com/p/62388a4fcbc6">前世今生：1 小时学会 Ansible</a></p>
+<p><a target="_blank" rel="noopener" href="https://lework.github.io/2016/11/19/Ansible-zhuan-ti-wen-zhang-zong-lan/">Ansible 专题文章总揽</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.zsythink.net/archives/tag/ansible/page/6/">朱双印-ansible 系列</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.junmajinlong.com/ansible/index/">骏马金龙-ansible </a></p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av33611758?from=search&seid=7420958755659258683">B站视频-ansible教程-马哥2019全新ansible入门到精通</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/kevingrace/p/11647338.html">Ansible 日常使用技巧 - 运维总结</a></p>
+<p><a target="_blank" rel="noopener" href="http://blog.leanote.com/post/benmo/Ansible-%E5%A5%87%E6%B7%AB%E6%8A%80%E5%B7%A7">Ansible–奇淫技巧</a></p>
+<p><a target="_blank" rel="noopener" href="https://getansible.com/">Ansible入门</a></p>
+<p><a target="_blank" rel="noopener" href="https://ansible.leops.cn/">Ansible Wiki</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/ansible/" data-title="Ansible学习路径 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/ethtool/" title="ethtool原理介绍和解决网卡丢包排查思路">
+  <strong>上一篇：</strong><br/>
+  <span>
+  ethtool原理介绍和解决网卡丢包排查思路</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/golang/"  title="golang学习路径">
+ <strong>下一篇：</strong><br/> 
+ <span>golang学习路径
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ansible-%E6%A0%87%E5%87%86%E5%8C%96%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84"><span class="toc-number">3.</span> <span class="toc-text">Ansible 标准化学习路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%90%E5%8D%87-Ansible-%E6%89%A7%E8%A1%8C%E6%95%88%E7%8E%87%E7%9A%84%E6%8F%92%E4%BB%B6"><span class="toc-number">4.</span> <span class="toc-text">提升 Ansible 执行效率的插件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E-Ansible-%E7%9A%84%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE"><span class="toc-number">5.</span> <span class="toc-text">基于 Ansible 的开源项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ansible-%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5"><span class="toc-number">6.</span> <span class="toc-text">Ansible 项目实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ansible-%E9%83%A8%E7%BD%B2"><span class="toc-number">6.1.</span> <span class="toc-text">ansible 部署</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ansible-cfg-%E9%85%8D%E7%BD%AE%E8%A7%A3%E6%9E%90"><span class="toc-number">6.2.</span> <span class="toc-text">ansible.cfg 配置解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Ansible%E5%B8%B8%E8%A7%81%E6%8A%80%E5%B7%A7"><span class="toc-number">6.3.</span> <span class="toc-text">Ansible常见技巧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux"><span class="toc-number">6.4.</span> <span class="toc-text">Linux</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Windows"><span class="toc-number">6.5.</span> <span class="toc-text">Windows</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Where-X-x3D-ansible"><span class="toc-number">7.</span> <span class="toc-text">Where X&#x3D;ansible</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">8.</span> <span class="toc-text">结语</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">9.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

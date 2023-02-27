@@ -1,0 +1,584 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>Redfish下一代数据中心管理标准详解和实践 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="Redfish下一代数据中心管理标准详解和实践">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redfish下一代数据中心管理标准详解和实践">
+<meta property="og:url" content="https://wsgzao.github.io/post/redfish/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="Redfish下一代数据中心管理标准详解和实践">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200428185557.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200428214055.png">
+<meta property="article:published_time" content="2020-04-28T06:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:07.055Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200428185557.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/redfish/" title="Redfish下一代数据中心管理标准详解和实践" itemprop="url">Redfish下一代数据中心管理标准详解和实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2020-04-28T06:59:49.000Z" itemprop="datePublished"> 发表于 2020-04-28</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redfish%E7%AE%80%E4%BB%8B"><span class="toc-number">3.</span> <span class="toc-text">Redfish简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redfish%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">4.</span> <span class="toc-text">Redfish应用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9REST%E3%80%81HTTP%E4%BB%A5%E5%8F%8AJSON"><span class="toc-number">5.</span> <span class="toc-text">为什么选择REST、HTTP以及JSON?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redfish%E5%AE%9E%E8%B7%B5"><span class="toc-number">6.</span> <span class="toc-text">Redfish实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">7.</span> <span class="toc-text">参考文章</span></a></li></ol>
+		
+		</div>
+		 -->
+		<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200428185557.png"></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>纵观现在的服务器从以前闭源的管理系统，如DELL的OpenManage和iDRAC，华为的iBMC，惠普的OneView和iLO，联想的XClarity和XClarity Controller 嵌入式管理，IMM2（收购自IBM的 SystemX PC Server系列）等等，都在积极拥抱开源自动化工具如Ansible等开源软件，在这种情况下被称作下一代数据中心管理标准的Redfish出现了。</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2020年04月28日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/redfish/">https://wsgzao.github.io/post/redfish/</a></p>
+<hr>
+<h2 id="Redfish简介"><a href="#Redfish简介" class="headerlink" title="Redfish简介"></a>Redfish简介</h2><p>DMTF’s Redfish® is a standard designed to deliver simple and secure management for converged, hybrid IT and the Software Defined Data Center (SDDC). Both human readable and machine capable, Redfish leverages common Internet and web services standards to expose information directly to the modern tool chain.</p>
+<p><a target="_blank" rel="noopener" href="https://www.dmtf.org/standards/redfish">https://www.dmtf.org/standards/redfish</a></p>
+<p><code>DMTF</code>的<code>Redfish®</code>是一个标准<code>API</code>，旨在为融合、混合<code>IT</code>和软件定义数据中心（<code>SDDC</code>）提供简单和安全管理。</p>
+<p>在<code>Redfish</code>出现之前，现代数据中心环境中缺乏互操作管理标准。随着机构越来越青睐于大规模的解决方案，传统标准不足以成功管理大量简单的多节点服务器或混合基础设施。<code>IPMI</code>是一种较早的带外管理标准，仅限于“最小公共集”命令集（例如，开机&#x2F;关机&#x2F;重启、温度值、文本控制台等），由于供应商扩展在所有平台上并不常见，导致了客户常用的功能集减少。许多用户开发了自己的紧密集成工具，但是也不得不依赖带内管理软件。</p>
+<p>而对于企业级用户来说，设备都是上千台，其需要统一的管理界面，就要对接不同供应商的<code>API</code>。当基本<code>IPMI</code>功能已经不太好满足大规模<code>Scale-out</code>环境时，如何以更便捷的方式调用服务器高级管理功能就是一个新的需求。</p>
+<p>为了寻求一个基于广泛使用的工具来加快发展的现代接口，现如今，客户需要一个使用互联网和<code>web</code>服务环境中常见的协议、结构和安全模型定义的<code>API</code>。</p>
+<p><code>Redfish</code>可扩展平台管理<code>API</code>（<code>The Redfish Scalable Platforms Management API</code>）是一种新的规范，其使用<code>RESTful</code>接口语义来访问定义在模型格式中的数据，用于执行带外系统管理 （<code>out of band systems management</code>）。其适用于大规模的服务器，从独立的服务器到机架式和刀片式的服务器环境，而且也同样适用于大规模的云环境。</p>
+<p><code>Redfish</code>的第<code>1</code>版侧重于服务器，为<code>IPMI-over-LAN</code>提供了一个安全、多节点的替代品。随后的<code>Redfish</code>版本增加了对网络接口(例如<code>NIC</code>、<code>CNA</code>和<code>FC HBA</code>)、<code>PCIe</code>交换、本地存储、<code>NVDIMM</code>、多功能适配器和可组合性以及固件更新服务、软件更新推送方法和安全特权映射的管理。此外，<code>Redfish</code>主机接口规范允许在操作系统上运行应用程序和工具，包括在启动前（固件）阶段与<code>Redfish</code>管理服务沟通。</p>
+<p>在定义<code>Redfish</code>标准时，协议与数据模型可分开并允许独立地修改。以模式为基础的数据模型是可伸缩和可扩展的，并且随着行业的发展，它将越来越具有人类可读性定义。</p>
+<h2 id="Redfish应用场景"><a href="#Redfish应用场景" class="headerlink" title="Redfish应用场景"></a>Redfish应用场景</h2><p>可能上面那一大段晦涩的介绍描述让你难以理解<code>Redfish</code>的用处，简而言之，如今大多数服务器厂商（比如<code>Supermicro</code>、<code>Dell</code>等等）都会自带<code>IPMI</code>系统，这个系统是独立装在主板芯片上，用户可以通过浏览器远程控制服务器，比如开关、装系统、进入服务器终端等等，而不用跑到机房忍受过高或过低的温度、忍受服务器嘈杂的声音、忍受蹩脚的显示器……</p>
+<p>传统的<code>IPMI</code>是带来了很多的便捷，但是当服务器规模变大后，单一服务器的管理已经满足不了需求，用户期望能够批量管理服务器，比如笔者想一次性给<code>100</code>个服务器安装系统，并且这<code>100</code>个服务器并不都是同一厂商，不同厂商的<code>IPMI</code>操作都不一样，比如<code>Dell</code>是<code>iDRAC</code>，你还需要专门学习<code>iDRAC</code>使用和各种对接，这会带来很多困扰。而<code>Redfish</code>标准的出现彻底改变这种情况，它是凌驾于所有服务器之上的一个标准，对服务器的基本操作都是统一的，并且是基于<code>Restful API</code>的方式实现。所以客户可以利用<code>ansible</code>等工具轻松实现自动化批量管理大规模服务器。</p>
+<p>服务器供应商都希望成为<code>Redfish</code>生态系统的一份子，但他们不想放弃对自家的服务器的管控机制。因此，他们会在<code>Redfish</code>规定范围之外，持续强化其<code>API</code>支持的功能，比如<code>Dell</code>的<code>Redfish</code>接口就要比<code>Supermicro</code>多很多，强大很多。</p>
+<h2 id="为什么选择REST、HTTP以及JSON"><a href="#为什么选择REST、HTTP以及JSON" class="headerlink" title="为什么选择REST、HTTP以及JSON?"></a>为什么选择REST、HTTP以及JSON?</h2><p>Redfish将语言支持与普遍存在的REST、HTTP和JSON相结合，使IT管理任务能够与其他IT和dev&#x2F;ops任务的技能集和工具链结合使用。随着云生态系统采用REST，RESTful协议正在迅速取代SOAP，web  API接口也紧随其后。RESTful协议比SOAP学习起来要快得多，而且它具有数据模式（因为REST严格来说不是协议）的简单性，可以直接映射到HTTP操作。</p>
+<p>HTTP以其常用的安全模型和网络配置为管理员所熟知。</p>
+<p>JSON正迅速成为现代数据格式。它本质上是人类可读的，比XML更简洁，拥有大量现代语言支持，是web服务API中增长最快的数据格式。</p>
+<p>对于嵌入式可管理性环境，JSON还有一个额外的优势：大多数基板管理控制器（BMC）已经支持web服务器，通过浏览器来管理服务器已经非常普遍（通常通过Java脚本驱动的接口）。通过在Redfish中使用JSON，可以在浏览器中直接查看来自Redfish服务的数据，从而确保数据和编程接口在语义和价值上是一致的。</p>
+<p>除了REST、HTTP和JSON之外，Redfish还采用常见的OData v4约定来描述模式、URL约定和命名，以及JSON有效负载中常见属性的结构。越来越多的通用客户端库、应用程序和工具生态系统使用Redfish。</p>
+<p>它有多简单?下面显示了使用Redfish从服务器检索序列号的示例Python代码：此示例中的输出如下所示</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">rawData= urllib.urlopen(‘http://192.168.1.135/redfish/v1/Systems/1’) </span><br><span class="line">jsonData=json.loads(rawData)</span><br><span class="line">print(jsonData[‘SerialNumber’])</span><br><span class="line"></span><br><span class="line">1A87CA442K</span><br></pre></td></tr></table></figure>
+
+<h2 id="Redfish实践"><a href="#Redfish实践" class="headerlink" title="Redfish实践"></a>Redfish实践</h2><blockquote>
+<p>更多硬件厂商的Redfish API接口可以浏览参考文章</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://pythonhosted.org/python-redfish/readme.html">The python-redfish project</a></p>
+<p><a target="_blank" rel="noopener" href="https://bbs.huaweicloud.com/forum/thread-40434-1-1.html">Python环境redfish接口获取泰山服务器和鲲鹏CPU信息</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">pip install python-redfish</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> redfish</span><br><span class="line"> </span><br><span class="line">login_host=<span class="string">&quot;https://10.93.20.10&quot;</span></span><br><span class="line">login_account=<span class="string">&quot;ADMIN&quot;</span></span><br><span class="line">login_password=<span class="string">&quot;ADMIN&quot;</span></span><br><span class="line">REDFISH_OBJ = redfish.redfish_client(base_url=login_host, username=login_account, password=login_password, default_prefix=<span class="string">&#x27;/redfish/v1&#x27;</span>)</span><br><span class="line">REDFISH_OBJ.login(auth=<span class="string">&quot;session&quot;</span>)</span><br><span class="line">response = REDFISH_OBJ.get(<span class="string">&quot;/redfish/v1/Systems/1&quot;</span>, <span class="literal">None</span>)</span><br><span class="line"><span class="built_in">print</span>(response)</span><br><span class="line">REDFISH_OBJ.logout()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>基于Redfish你可以获取详细的硬件资产信息与CMDB联动</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20200428214055.png"></p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a target="_blank" rel="noopener" href="https://www.dmtf.org/standards/redfish">DMTF’s Redfish</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.dmtf.org/sites/default/files/Redfish_tech_note_converged_hybrid_it.pdf">Redfish 融合、混合IT的简单和安全管理</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.dmtf.org/sites/default/files/DSP2044%20Redfish%20%E7%99%BD%E7%9A%AE%E4%B9%A6%201.0.0.pdf">Redfish 白皮书</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzAwODExNjI3NA==&mid=2649775148&idx=1&sn=9638581928f7fa98714c1ad24fafccdb&chksm=83773d71b400b467a9b72cbe8ae433393ab4e9f0b306c309d757ea08ba7bb4e27ddc24943951#rd">Redfish：下一代数据中心管理标准</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.tony-yin.site/2019/04/20/Redfish_Introduction/">Redfish 详解</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.supermicro.com/manuals/other/RedfishRefGuide.pdf">Supermicro Redfish Reference Guide</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.dell.com/support/article/en-sg/sln310624/redfish-api-with-dell-integrated-remote-access-controller?lang=en">Redfish API with Dell integrated Remote Access Controller</a></p>
+<p><a target="_blank" rel="noopener" href="https://support.huawei.com/enterprise/zh/doc/EDOC1000126991?idPath=7919749%7C9856522%7C9856629%7C250783947">华为服务器 iBMC Redfish 接口说明</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/redfish/" data-title="Redfish下一代数据中心管理标准详解和实践 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/chrome-extensions/" title="Google Chrome浏览器插件和油猴脚本推荐">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Google Chrome浏览器插件和油猴脚本推荐</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/swap/"  title="SWAP常见问题分析和性能调优配置实践小结">
+ <strong>下一篇：</strong><br/> 
+ <span>SWAP常见问题分析和性能调优配置实践小结
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redfish%E7%AE%80%E4%BB%8B"><span class="toc-number">3.</span> <span class="toc-text">Redfish简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redfish%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">4.</span> <span class="toc-text">Redfish应用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9REST%E3%80%81HTTP%E4%BB%A5%E5%8F%8AJSON"><span class="toc-number">5.</span> <span class="toc-text">为什么选择REST、HTTP以及JSON?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redfish%E5%AE%9E%E8%B7%B5"><span class="toc-number">6.</span> <span class="toc-text">Redfish实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">7.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

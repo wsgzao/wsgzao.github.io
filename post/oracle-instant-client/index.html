@@ -1,0 +1,576 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>Install Oracle Instant Client on Linux and Windows | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="Install Oracle instantclient basic and instantclient sqlplus on Linux and Windows.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Install Oracle Instant Client on Linux and Windows">
+<meta property="og:url" content="https://wsgzao.github.io/post/oracle-instant-client/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="Install Oracle instantclient basic and instantclient sqlplus on Linux and Windows.">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-08-22T08:40:53.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:06.983Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/oracle-instant-client/" title="Install Oracle Instant Client on Linux and Windows" itemprop="url">Install Oracle Instant Client on Linux and Windows</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2017-08-22T08:40:53.000Z" itemprop="datePublished"> 发表于 2017-08-22</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E8%AE%B0%E5%BD%95"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Oracle-Instant-Client-Downloads"><span class="toc-number">3.</span> <span class="toc-text">Oracle Instant Client Downloads</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux"><span class="toc-number">4.</span> <span class="toc-text">Linux</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Preparation"><span class="toc-number">4.1.</span> <span class="toc-text">Preparation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Install-RPMs"><span class="toc-number">4.2.</span> <span class="toc-text">Install RPMs</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Windows"><span class="toc-number">5.</span> <span class="toc-text">Windows</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Preparation-1"><span class="toc-number">5.1.</span> <span class="toc-text">Preparation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#unzip-files"><span class="toc-number">5.2.</span> <span class="toc-text">unzip files</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tnsping"><span class="toc-number">6.</span> <span class="toc-text">tnsping</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本篇文章用最简单和快速的方法介绍如何在Red Hat Enterprise Linux安装Oracle Instant Client，该方法同样适用于Windows，RHEL5&#x2F;6&#x2F;7，OEL，CentOS。Oracle Instant Client是官方免费授权的一种比Oracle Client还要简单的数据库管理工具，通过SQL*Plus或者其它工具比如Navicat等用于快速连接和管理Oracle数据库服务器。</p>
+<blockquote>
+<p>Install Oracle instantclient basic and instantclient sqlplus on Linux and Windows.</p>
+</blockquote>
+<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2017年08月22日 - 增加oracle instant client tnsping<br>2017年08月14日 - 补充ORA-24454: client host name is not set的解决方案<br>2017年08月10日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/oracle-instant-client/">https://wsgzao.github.io/post/oracle-instant-client/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>Oracle Instant Client Downloads - <a target="_blank" rel="noopener" href="http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html">http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html</a></p>
+<h2 id="Oracle-Instant-Client-Downloads"><a href="#Oracle-Instant-Client-Downloads" class="headerlink" title="Oracle Instant Client Downloads"></a>Oracle Instant Client Downloads</h2><blockquote>
+<p>文章内容均已64位版本为例，如果客户端有特殊需求请使用32位版本兼容</p>
+</blockquote>
+<ol>
+<li>Linux Oracle Instant Client推荐使用RPM方式安装，如果需要定制具体路径可以使用zip包手动配置</li>
+<li>Windows和Linux类似但需要主要PATH环境变量的配置</li>
+<li>实测12版本客户端可以向下兼容11版本的数据库服务器，Oracle Instant Client 12.2.0.1.0，Oracle Database 11.2.0.3.0</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">file://C:\Dropbox\Oracle Instant Client    (2 folders, 1 files, 5.51 KB, 479.15 MB <span class="keyword">in</span> total.)</span><br><span class="line">│ README.md    5.51 KB</span><br><span class="line">├─Linux    (2 folders, 0 files, 0 bytes, 234.26 MB <span class="keyword">in</span> total.)</span><br><span class="line">│ ├─11.2.0.4.0    (0 folders, 4 files, 116.57 MB, 116.57 MB <span class="keyword">in</span> total.)</span><br><span class="line">│ │   instantclient-basic-linux.x64-11.2.0.4.0.zip    57.89 MB</span><br><span class="line">│ │   instantclient-sqlplus-linux.x64-11.2.0.4.0.zip    814.93 KB</span><br><span class="line">│ │   oracle-instantclient11.2-basic-11.2.0.4.0-1.x86_64.rpm    57.09 MB</span><br><span class="line">│ │   oracle-instantclient11.2-sqlplus-11.2.0.4.0-1.x86_64.rpm    808.92 KB</span><br><span class="line">│ └─12.2.0.1.0    (0 folders, 4 files, 117.69 MB, 117.69 MB <span class="keyword">in</span> total.)</span><br><span class="line">│     instantclient-basic-linux.x64-12.2.0.1.0.zip    65.77 MB</span><br><span class="line">│     instantclient-sqlplus-linux.x64-12.2.0.1.0.zip    883.11 KB</span><br><span class="line">│     oracle-instantclient12.2-basic-12.2.0.1.0-1.x86_64.rpm    50.38 MB</span><br><span class="line">│     oracle-instantclient12.2-sqlplus-12.2.0.1.0-1.x86_64.rpm    691.51 KB</span><br><span class="line">└─Windows    (2 folders, 0 files, 0 bytes, 244.89 MB <span class="keyword">in</span> total.)</span><br><span class="line">  ├─11.2.0.4.0    (0 folders, 4 files, 103.01 MB, 103.01 MB <span class="keyword">in</span> total.)</span><br><span class="line">  │   instantclient-basic-nt-11.2.0.4.0.zip    49.09 MB</span><br><span class="line">  │   instantclient-basic-windows.x64-11.2.0.4.0.zip    52.41 MB</span><br><span class="line">  │   instantclient-sqlplus-nt-11.2.0.4.0.zip    739.29 KB</span><br><span class="line">  │   instantclient-sqlplus-windows.x64-11.2.0.4.0.zip    801.93 KB</span><br><span class="line">  └─12.2.0.1.0    (0 folders, 4 files, 141.88 MB, 141.88 MB <span class="keyword">in</span> total.)</span><br><span class="line">      instantclient-basic-nt-12.2.0.1.0.zip    68.55 MB</span><br><span class="line">      instantclient-basic-windows.x64-12.2.0.1.0.zip    71.59 MB</span><br><span class="line">      instantclient-sqlplus-nt-12.2.0.1.0.zip    849.21 KB</span><br><span class="line">      instantclient-sqlplus-windows.x64-12.2.0.1.0.zip    937.40 KB</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>下载地址<br><a target="_blank" rel="noopener" href="http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html">http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html</a></p>
+<p>百度网盘分流<br><a target="_blank" rel="noopener" href="http://pan.baidu.com/s/1slhoZEH">http://pan.baidu.com/s/1slhoZEH</a></p>
+<h2 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h2><blockquote>
+<p>以RPM最简方式为例</p>
+</blockquote>
+<h3 id="Preparation"><a href="#Preparation" class="headerlink" title="Preparation"></a>Preparation</h3><p>Download all the required RPM from the official site and put them on the target system.<br>Current RPMs for 64bit are:<br>oracle-instantclient12.2-basic-12.2.0.1.0-1.x86_64.rpm<br>oracle-instantclient12.2-sqlplus-12.2.0.1.0-1.x86_64.rpm</p>
+<h3 id="Install-RPMs"><a href="#Install-RPMs" class="headerlink" title="Install RPMs"></a>Install RPMs</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># install as root</span></span><br><span class="line">rpm -ivh oracle-instantclient12.2-basic-12.2.0.1.0-1.x86_64.rpm oracle-instantclient12.2-sqlplus-12.2.0.1.0-1.x86_64.rpm</span><br><span class="line"></span><br><span class="line"><span class="comment"># create oracle group and user</span></span><br><span class="line">groupadd dba</span><br><span class="line">useradd -g dba oracle</span><br><span class="line"><span class="built_in">echo</span> oracle:oracle | chpasswd</span><br><span class="line"></span><br><span class="line"><span class="comment"># configure profile</span></span><br><span class="line">su - oracle</span><br><span class="line">vi ~/.bash_profile</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> LD_LIBRARY_PATH=/usr/lib/oracle/12.2/client64/lib</span><br><span class="line"><span class="built_in">export</span> TNS_ADMIN=/usr/lib/oracle/12.2/client64/</span><br><span class="line"><span class="built_in">export</span> PATH=/usr/lib/oracle/12.2/client64/bin:<span class="variable">$PATH</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Connect to Your database with:</span></span><br><span class="line">sqlplus system/oracle@oracapdb</span><br><span class="line"></span><br><span class="line"><span class="comment"># create new tnsnames.ora</span></span><br><span class="line"><span class="comment"># ORA-12154: TNS:could not resolve the connect identifier specified</span></span><br><span class="line">vim /usr/lib/oracle/12.2/client64/tnsnames.ora</span><br><span class="line"></span><br><span class="line">oracapdb =</span><br><span class="line">   (DESCRIPTION =</span><br><span class="line">      (ADDRESS = (PROTOCOL = TCP)(HOST = 172.28.70.244)(PORT = 1521))</span><br><span class="line">          (CONNECT_DATA =</span><br><span class="line">        (SERVER = DEDICATED)</span><br><span class="line">      (SERVICE_NAME = oracapdb)</span><br><span class="line">   )</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># You can also use the Easy Connect connection string format (does not use TNSNAMES):</span></span><br><span class="line">sqlplus system/oracle@//172.28.70.244:1521/oracapdb</span><br><span class="line"></span><br><span class="line"><span class="comment"># ORA-24454: client host name is not set</span></span><br><span class="line"><span class="comment"># Cause: The network host name in files like /etc/hosts was not set.</span></span><br><span class="line"><span class="comment"># Action: Set the host name and try again.</span></span><br><span class="line">/bin/bash -c <span class="string">&quot;echo &#x27;127.0.1.1 <span class="variable">$&#123;HOSTNAME&#125;</span>&#x27; &gt;&gt; /etc/hosts&quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Windows"><a href="#Windows" class="headerlink" title="Windows"></a>Windows</h2><blockquote>
+<p>Windows的配置相比Linux差不多简单，注意环境变量尤其是TNS_ADMIN</p>
+</blockquote>
+<h3 id="Preparation-1"><a href="#Preparation-1" class="headerlink" title="Preparation"></a>Preparation</h3><p>国外一篇图文并茂的文章写的也很详细，有需要可以参考下<br>Installing Oracle instantclient basic and instantclient sqlplus on win32<br><a target="_blank" rel="noopener" href="http://www.dbatoolz.com/t/installing-oracle-instantclient-basic-and-instantclient-sqlplus-on-win32.html">http://www.dbatoolz.com/t/installing-oracle-instantclient-basic-and-instantclient-sqlplus-on-win32.html</a></p>
+<p>Go to Instant Client Downloads for Microsoft Windows download page:<br><a target="_blank" rel="noopener" href="http://www.oracle.com/technology/software/tech/oci/instantclient/htdocs/winsoft.html">http://www.oracle.com/technology/software/tech/oci/instantclient/htdocs/winsoft.html</a></p>
+<h3 id="unzip-files"><a href="#unzip-files" class="headerlink" title="unzip files"></a>unzip files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下载解压以下两个包至目录，比如C:\instantclient_12_2</span></span><br><span class="line">instantclient-basic-windows.x64-12.2.0.1.0.zip</span><br><span class="line">instantclient-sqlplus-windows.x64-12.2.0.1.0.zip</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置环境变量</span></span><br><span class="line">计算机右键【属性】----【高级系统设置】----【环境变量】----【系统变量】----【Path】</span><br><span class="line"></span><br><span class="line"><span class="comment"># Setup your system %PATH% and %TNS_ADMIN% variables</span></span><br><span class="line">C:\instantclient_12_2</span><br><span class="line"></span><br><span class="line"><span class="comment"># Connect to Your database with:</span></span><br><span class="line">sqlplus system/oracle@oracapdb</span><br><span class="line"></span><br><span class="line"><span class="comment"># TNS_ADMIN</span></span><br><span class="line"><span class="comment"># ORA-12154: TNS:could not resolve the connect identifier specified</span></span><br><span class="line">Variable Name: TNS_ADMIN</span><br><span class="line">Variable Value: C:\instantclient_12_2</span><br><span class="line"></span><br><span class="line"><span class="comment"># create new tnsnames.ora</span></span><br><span class="line">C:\instantclient_12_2\tnsnames.ora</span><br><span class="line"></span><br><span class="line">oracapdb =</span><br><span class="line">   (DESCRIPTION =</span><br><span class="line">      (ADDRESS = (PROTOCOL = TCP)(HOST = 172.28.70.244)(PORT = 1521))</span><br><span class="line">          (CONNECT_DATA =</span><br><span class="line">        (SERVER = DEDICATED)</span><br><span class="line">      (SERVICE_NAME = oracapdb)</span><br><span class="line">   )</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># You can also use the Easy Connect connection string format (does not use TNSNAMES):</span></span><br><span class="line">sqlplus system/oracle@//172.28.70.244:1521/oracapdb</span><br></pre></td></tr></table></figure>
+
+<h2 id="tnsping"><a href="#tnsping" class="headerlink" title="tnsping"></a>tnsping</h2><p>因为某种原因Oracle官方迟迟未在Oracle Instant Client里集成tnsping，尽管不是什么大问题但相信也会给习惯使用tnsping命令测试数据库连接的小伙伴带来困扰，我这里推荐采用的方法不是像网上一样复制拷贝Standard Oracle Client，也不是完全拎起炉灶自己编写一套tnsping，而是选择使用Bash Shell模拟tnsping</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/profile</span><br><span class="line">vim ~/bash_profile</span><br><span class="line"></span><br><span class="line"><span class="built_in">whence</span> tnsping &gt;/dev/null 2&gt;&amp;1 || </span><br><span class="line">  <span class="function"><span class="title">tnsping</span></span>() &#123; </span><br><span class="line">    sqlplus -L -s x/x@<span class="variable">$1</span> &lt;/dev/null | </span><br><span class="line">      grep ORA- | </span><br><span class="line">        (grep -v ORA-01017 || <span class="built_in">echo</span> OK)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">$ tnsping db999</span><br><span class="line">ORA-12154: TNS:could not resolve the connect identifier specified</span><br><span class="line">$ tnsping db01</span><br><span class="line">OK</span><br><span class="line">$ tnsping db02</span><br><span class="line">ORA-12541: TNS:no listener</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/oracle-instant-client/" data-title="Install Oracle Instant Client on Linux and Windows | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/lang/" title="NLS_LANG数据库字符集中文乱码问题分析和解决">
+  <strong>上一篇：</strong><br/>
+  <span>
+  NLS_LANG数据库字符集中文乱码问题分析和解决</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/vmware-vsphere-client/"  title="VMware vSphere Client(4.1/5.0/5.1/5.5/6.0) 客户端下载地址">
+ <strong>下一篇：</strong><br/> 
+ <span>VMware vSphere Client(4.1/5.0/5.1/5.5/6.0) 客户端下载地址
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E8%AE%B0%E5%BD%95"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Oracle-Instant-Client-Downloads"><span class="toc-number">3.</span> <span class="toc-text">Oracle Instant Client Downloads</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux"><span class="toc-number">4.</span> <span class="toc-text">Linux</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Preparation"><span class="toc-number">4.1.</span> <span class="toc-text">Preparation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Install-RPMs"><span class="toc-number">4.2.</span> <span class="toc-text">Install RPMs</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Windows"><span class="toc-number">5.</span> <span class="toc-text">Windows</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Preparation-1"><span class="toc-number">5.1.</span> <span class="toc-text">Preparation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#unzip-files"><span class="toc-number">5.2.</span> <span class="toc-text">unzip files</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tnsping"><span class="toc-number">6.</span> <span class="toc-text">tnsping</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

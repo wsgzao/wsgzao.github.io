@@ -1,0 +1,777 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>Keepalived原理介绍和配置实践 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="Keepalived原理介绍和配置实践">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Keepalived原理介绍和配置实践">
+<meta property="og:url" content="https://wsgzao.github.io/post/keepalived/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="Keepalived原理介绍和配置实践">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-05-08T06:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:06.875Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/keepalived/" title="Keepalived原理介绍和配置实践" itemprop="url">Keepalived原理介绍和配置实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2020-05-08T06:59:49.000Z" itemprop="datePublished"> 发表于 2020-05-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ReadMe"><span class="toc-number">3.</span> <span class="toc-text">ReadMe</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">3.1.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E6%9C%AF%E8%AF%AD"><span class="toc-number">3.2.</span> <span class="toc-text">相关术语</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1-LB"><span class="toc-number">4.</span> <span class="toc-text">负载均衡(LB)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#keepalived%E7%AE%80%E4%BB%8B"><span class="toc-number">5.</span> <span class="toc-text">keepalived简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E5%8E%9F%E7%90%86"><span class="toc-number">5.1.</span> <span class="toc-text">运行原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%89%E4%B8%BE%E7%AD%96%E7%95%A5"><span class="toc-number">5.2.</span> <span class="toc-text">选举策略</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#keepalived%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%B4%E6%98%8E"><span class="toc-number">6.</span> <span class="toc-text">keepalived的配置文件说明</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%A8%E5%B1%80%E5%AE%9A%E4%B9%89"><span class="toc-number">6.1.</span> <span class="toc-text">全局定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#VRRPD%E9%85%8D%E7%BD%AE"><span class="toc-number">6.2.</span> <span class="toc-text">VRRPD配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#virtual-server-%E8%99%9A%E6%8B%9F%E4%B8%BB%E6%9C%BA%E9%85%8D%E7%BD%AE"><span class="toc-number">6.3.</span> <span class="toc-text">virtual_server 虚拟主机配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84Keepalived-HA%E9%85%8D%E7%BD%AE%E5%AE%9E%E4%BE%8B"><span class="toc-number">7.</span> <span class="toc-text">最简单的Keepalived HA配置实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Keepalived%E5%8F%8C%E6%B4%BB%E5%AE%9E%E8%B7%B5"><span class="toc-number">8.</span> <span class="toc-text">Keepalived双活实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E7%9A%84Keepalived%E9%82%AE%E4%BB%B6%E5%91%8A%E8%AD%A6%E5%AE%9E%E4%BE%8B"><span class="toc-number">9.</span> <span class="toc-text">简单的Keepalived邮件告警实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Keepalived-Notification-and-Tracking-Scripts"><span class="toc-number">10.</span> <span class="toc-text">Keepalived Notification and Tracking Scripts</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Keepalived%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="toc-number">11.</span> <span class="toc-text">Keepalived常见问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LVS%E5%92%8CKeepalived%E7%B3%BB%E5%88%97"><span class="toc-number">12.</span> <span class="toc-text">LVS和Keepalived系列</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-number">13.</span> <span class="toc-text">参考文档</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文主要讲述Keepalived原理介绍和配置实践</p>
+<blockquote>
+<p>Keepalived原理介绍和配置实践</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2020年05月08日 - 增加virual_router_id冲突解决思路和单播模式的应用<br>2020年03月20日 - 增加Keepalived双活实践<br>2019年09月03日 - 拆分LVS-Keepalived中Keepalived<br>2019年08月23日 - 更新LVS&#x2F;NAT、LVS&#x2F;DR、LVS&#x2F;TUN三种模式的原理和配置实践<br>2018年12月03日 - 精简和更新配置步骤<br>2018年07月31日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/keepalived/">https://wsgzao.github.io/post/keepalived/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>LVS - <a target="_blank" rel="noopener" href="http://www.linuxvirtualserver.org/zh/index.html">http://www.linuxvirtualserver.org/zh/index.html</a><br>Keepalived - <a target="_blank" rel="noopener" href="http://www.keepalived.org/">http://www.keepalived.org/</a></p>
+<hr>
+<h2 id="ReadMe"><a href="#ReadMe" class="headerlink" title="ReadMe"></a>ReadMe</h2><h3 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h3><p>Keepalived - <a target="_blank" rel="noopener" href="http://www.keepalived.org/doc/">http://www.keepalived.org/doc/</a><br>The Keepalived Solution - <a target="_blank" rel="noopener" href="http://www.linuxvirtualserver.org/docs/ha/keepalived.html">http://www.linuxvirtualserver.org/docs/ha/keepalived.html</a><br>LVS和Keepalived官方中文手册PDF - <a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1s0P6nUt8WF6o_N3wdE3uKg">https://pan.baidu.com/s/1s0P6nUt8WF6o_N3wdE3uKg</a></p>
+<h3 id="相关术语"><a href="#相关术语" class="headerlink" title="相关术语"></a>相关术语</h3><blockquote>
+<p>以下术语涉及LVS三种工作模式的原理</p>
+</blockquote>
+<ul>
+<li>LB (Load Balancer 负载均衡) </li>
+<li>HA (High Available 高可用) </li>
+<li>Failover (失败切换) </li>
+<li>Cluster (集群) </li>
+<li>LVS (Linux Virtual Server Linux 虚拟服务器) </li>
+<li>DS (Director Server)，指的是前端负载均衡器节点</li>
+<li>RS (Real Server)，后端真实的工作服务器</li>
+<li>VIP (Virtual IP)，虚拟的IP地址，向外部直接面向用户请求，作为用户请求的目标的 IP 地址</li>
+<li>DIP (Director IP)，主要用于和内部主机通讯的 IP 地址</li>
+<li>RIP (Real Server IP)，后端服务器的 IP 地址</li>
+<li>CIP (Client IP)，访问客户端的 IP 地址</li>
+</ul>
+<h2 id="负载均衡-LB"><a href="#负载均衡-LB" class="headerlink" title="负载均衡(LB)"></a>负载均衡(LB)</h2><blockquote>
+<p>负载均衡实现方法有两种：硬件实现和软件实现</p>
+</blockquote>
+<p>硬件比较常见的有：</p>
+<ol>
+<li>F5 Big-IP</li>
+<li>Citrix Netscaler</li>
+</ol>
+<p>软件比较常见的有：</p>
+<ol>
+<li>LVS（Linux Virtual Server）</li>
+<li>HAProxy</li>
+<li>Nginx</li>
+</ol>
+<p>LVS特点是：</p>
+<ol>
+<li>首先它是基于4层的网络协议的，抗负载能力强，对于服务器的硬件要求除了网卡外，其他没有太多要求；</li>
+<li>配置性比较低，这是一个缺点也是一个优点，因为没有可太多配置的东西，大大减少了人为出错的几率；</li>
+<li>应用范围比较广，不仅仅对web服务做负载均衡，还可以对其他应用（mysql）做负载均衡；</li>
+<li>LVS架构中存在一个虚拟IP的概念，需要向IDC多申请一个IP来做虚拟IP。</li>
+</ol>
+<p>Nginx负载均衡器的特点是：</p>
+<ol>
+<li>工作在网络的7层之上，可以针对http应用做一些分流的策略，比如针对域名、目录结构；</li>
+<li>Nginx安装和配置比较简单，测试起来比较方便；</li>
+<li>也可以承担高的负载压力且稳定，一般能支撑超过上万次的并发；</li>
+<li>Nginx可以通过端口检测到服务器内部的故障，比如根据服务器处理网页返回的状态码、超时等等，并且会把返回错误的请求重新提交到另一个节点，不过其中缺点就是不支持url来检测；</li>
+<li>Nginx对请求的异步处理可以帮助节点服务器减轻负载；</li>
+<li>Nginx能支持http和Email，这样就在适用范围上面小很多；</li>
+<li>默认有三种调度算法: 轮询、weight以及ip_hash（可以解决会话保持的问题），还可以支持第三方的fair和url_hash等调度算法；</li>
+</ol>
+<p>HAProxy的特点是：</p>
+<ol>
+<li>HAProxy是工作在网络7层之上；</li>
+<li>支持Session的保持，Cookie的引导等；</li>
+<li>支持url检测后端的服务器出问题的检测会有很好的帮助；</li>
+<li>支持的负载均衡算法：动态加权轮循(Dynamic Round Robin)，加权源地址哈希(Weighted Source Hash)，加权URL哈希和加权参数哈希(Weighted Parameter Hash)；</li>
+<li>单纯从效率上来讲HAProxy更会比Nginx有更出色的负载均衡速度；</li>
+<li>HAProxy可以对Mysql进行负载均衡，对后端的DB节点进行检测和负载均衡。</li>
+</ol>
+<h2 id="keepalived简介"><a href="#keepalived简介" class="headerlink" title="keepalived简介"></a>keepalived简介</h2><p>Keepalived 是运行在lvs之上，是一个用于做双机热备（HA）的软件，它的主要功能是实现真实机的故障隔离及负载均衡器间的失败切换，提高系统的可用性。</p>
+<h3 id="运行原理"><a href="#运行原理" class="headerlink" title="运行原理"></a>运行原理</h3><p>keepalived通过选举（看服务器设置的权重）挑选出一台热备服务器做MASTER机器，MASTER机器会被分配到一个指定的虚拟ip，外部程序可通过该ip访问这台服务器，如果这台服务器出现故障（断网，重启，或者本机器上的keepalived crash等），keepalived会从其他的备份机器上重选（还是看服务器设置的权重）一台机器做MASTER并分配同样的虚拟IP，充当前一台MASTER的角色。</p>
+<h3 id="选举策略"><a href="#选举策略" class="headerlink" title="选举策略"></a>选举策略</h3><p>选举策略是根据VRRP协议，完全按照权重大小，权重最大（0～255）的是MASTER机器，下面几种情况会触发选举</p>
+<ol>
+<li>keepalived启动的时候</li>
+<li>master服务器出现故障（断网，重启，或者本机器上的keepalived crash等，而本机器上其他应用程序crash不算）</li>
+<li>有新的备份服务器加入且权重最大</li>
+</ol>
+<h2 id="keepalived的配置文件说明"><a href="#keepalived的配置文件说明" class="headerlink" title="keepalived的配置文件说明"></a>keepalived的配置文件说明</h2><p>Keepalived 是运行在lvs之上,它的主要功能是实现RealServer(真实服务器)的故障隔离及Director(负载均衡器)间的FailOver(失败切换). </p>
+<ul>
+<li>keepalived 是lvs的扩展项目,因此它们之间具备良好的兼容性</li>
+<li>对RealServer的健康检查,实现对失效机器&#x2F;服务的故障隔离</li>
+<li>负载均衡器之间的失败切换 failover</li>
+</ul>
+<h3 id="全局定义"><a href="#全局定义" class="headerlink" title="全局定义"></a>全局定义</h3><p>全局配置又包括两个子配置</p>
+<ol>
+<li>全局定义(global definition)</li>
+<li>静态路由配置(static ipaddress&#x2F;routes)</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 全局定义(global definition) </span></span><br><span class="line">global_defs &#123;                      </span><br><span class="line">   notification_email &#123;      </span><br><span class="line">   acassen@firewall.loc     </span><br><span class="line">   failover@firewall.loc</span><br><span class="line">   sysadmin@firewall.loc</span><br><span class="line">   &#125;</span><br><span class="line">   notification_email_from Alexandre.Cassen@firewall.loc   </span><br><span class="line">   smtp_server 192.168.200.1                         </span><br><span class="line">   smtp_connect_timeout 30                                  </span><br><span class="line">   router_id LVS_DEVEL     </span><br><span class="line">&#125;</span><br><span class="line">notification_email: 表示keepalived在发生诸如切换操作时需要发送email通知以及email发送给哪些邮件地址邮件地址可以多个每行一个</span><br><span class="line">notification_email_from admin@example.com: 表示发送通知邮件时邮件源地址是谁</span><br><span class="line">smtp_server 127.0.0.1: 表示发送email时使用的smtp服务器地址这里可以用本地的sendmail来实现</span><br><span class="line">smtp_connect_timeout 30: 连接smtp连接超时时间</span><br><span class="line">router_id node1: 机器标识，通常配置主机名</span><br><span class="line"></span><br><span class="line"><span class="comment"># 静态地址和路由配置范例</span></span><br><span class="line">static_ipaddress &#123;</span><br><span class="line">    192.168.1.1/24 brd + dev eth0 scope global</span><br><span class="line">    192.168.1.2/24 brd + dev eth1 scope global</span><br><span class="line">&#125;</span><br><span class="line">static_routes &#123;</span><br><span class="line">    src <span class="variable">$SRC_IP</span> to <span class="variable">$DST_IP</span> dev <span class="variable">$SRC_DEVICE</span></span><br><span class="line">    src <span class="variable">$SRC_IP</span> to <span class="variable">$DST_IP</span> via <span class="variable">$GW</span> dev <span class="variable">$SRC_DEVICE</span></span><br><span class="line">&#125;</span><br><span class="line">这里实际上和系统里面命令配置IP地址和路由一样例如</span><br><span class="line">192.168.1.1/24 brd + dev eth0 scope global 相当于: ip addr add 192.168.1.1/24 brd + dev eth0 scope global</span><br><span class="line">就是给eth0配置IP地址路由同理,一般这个区域不需要配置</span><br><span class="line">这里实际上就是给服务器配置真实的IP地址和路由的在复杂的环境下可能需要配置一般不会用这个来配置我们可以直接用vi /etc/sysconfig/network-script/ifcfg-eth1来配置切记这里可不是VIP不要搞混淆了切记切记</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="VRRPD配置"><a href="#VRRPD配置" class="headerlink" title="VRRPD配置"></a>VRRPD配置</h3><p>包括三个类:</p>
+<ol>
+<li>VRRP同步组(synchroization group) </li>
+<li>VRRP实例(VRRP Instance) </li>
+<li>VRRP脚本</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># VRRP同步组(synchroization group)配置范例</span></span><br><span class="line">vrrp_sync_group VG_1 &#123;   //注意vrrp_sync_group  后面可自定义名称如lvs_httpd ,httpd</span><br><span class="line">group &#123;</span><br><span class="line">http</span><br><span class="line">mysql</span><br><span class="line">&#125;</span><br><span class="line">notify_master /path/to/to_master.sh</span><br><span class="line">notify_backup /path_to/to_backup.sh</span><br><span class="line">notify_fault <span class="string">&quot;/path/fault.sh VG_1&quot;</span></span><br><span class="line">notify /path/to/notify.sh</span><br><span class="line">smtp_alert </span><br><span class="line">&#125;</span><br><span class="line">其中http和mysql是实例名和下面的实例名一致</span><br><span class="line">notify_master /path/to/to_master.sh //表示当切换到master状态时要执行的脚本</span><br><span class="line">notify_backup /path_to/to_backup.sh //表示当切换到backup状态时要执行的脚本</span><br><span class="line">notify_fault <span class="string">&quot;/path/fault.sh VG_1&quot;</span>  // keepalived出现故障时执行的脚本</span><br><span class="line">notify /path/to/notify.sh  </span><br><span class="line">smtp_alert           //表示切换时给global defs中定义的邮件地址发送邮件通知</span><br><span class="line"></span><br><span class="line"><span class="comment"># VRRP实例(instance)配置范例</span></span><br><span class="line">vrrp_instance http &#123;  //注意vrrp_instance 后面可自定义名称如lvs_httpd ,httpd</span><br><span class="line">state MASTER</span><br><span class="line">interface eth0</span><br><span class="line">dont_track_primary</span><br><span class="line">track_interface &#123;</span><br><span class="line">eth0</span><br><span class="line">eth1</span><br><span class="line">&#125;</span><br><span class="line">mcast_src_ip &lt;IPADDR&gt;</span><br><span class="line">garp_master_delay 10</span><br><span class="line">virtual_router_id 51</span><br><span class="line">priority 100</span><br><span class="line">advert_int 1</span><br><span class="line">authentication &#123;</span><br><span class="line">auth_type PASS</span><br><span class="line">autp_pass 1234</span><br><span class="line">&#125;</span><br><span class="line">virtual_ipaddress &#123;</span><br><span class="line"><span class="comment">#&lt;IPADDR&gt;/&lt;MASK&gt; brd &lt;IPADDR&gt; dev &lt;STRING&gt; scope &lt;SCOPT&gt; label &lt;LABEL&gt;</span></span><br><span class="line">192.168.200.17/24 dev eth1</span><br><span class="line">192.168.200.18/24 dev eth2 label eth2:1</span><br><span class="line">&#125;</span><br><span class="line">virtual_routes &#123;</span><br><span class="line"><span class="comment"># src &lt;IPADDR&gt; [to] &lt;IPADDR&gt;/&lt;MASK&gt; via|gw &lt;IPADDR&gt; dev &lt;STRING&gt; scope &lt;SCOPE&gt; tab</span></span><br><span class="line">src 192.168.100.1 to 192.168.109.0/24 via 192.168.200.254 dev eth1</span><br><span class="line">192.168.110.0/24 via 192.168.200.254 dev eth1</span><br><span class="line">192.168.111.0/24 dev eth2</span><br><span class="line">192.168.112.0/24 via 192.168.100.254</span><br><span class="line">&#125;</span><br><span class="line">nopreempt</span><br><span class="line">preemtp_delay 300</span><br><span class="line">debug</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>state: state指定instance(Initial)的初始状态就是说在配置好后这台 服务器的初始状态就是这里指定的但这里指定的不算还是得要通过竞选通过优先级来确定里如果这里设置为master但如若他的优先级不及另外一台 那么这台在发送通告时会发送自己的优先级另外一台发现优先级不如自己的高那么他会就回抢占为master</p>
+<p>interface: 实例绑定的网卡因为在配置虚拟VIP的时候必须是在已有的网卡上添加的</p>
+<p>dont track primary: 忽略VRRP的interface错误</p>
+<p>track interface: 跟踪接口设置额外的监控里面任意一块网卡出现问题都会进入故障(FAULT)状态例如用nginx做均衡器的时候内网必须正常工作如果内网出问题了这个均衡器也就无法运作了所以必须对内外网同时做健康检查</p>
+<p>mcast src ip: 发送多播数据包时的源IP地址这里注意了这里实际上就是在那个地址上发送VRRP通告这个非常重要一定要选择稳定的网卡端口来发送这里相当于heartbeat的心跳端口如果没有设置那么就用默认的绑定的网卡的IP也就是interface指定的IP地址</p>
+<p>garp master delay: 在切换到master状态后延迟进行免费的ARP(gratuitous ARP)请求，默认5s</p>
+<p>virtual router id: 这里设置VRID这里非常重要相同的VRID为一个组他将决定多播的MAC地址</p>
+<p>priority 100: 设置本节点的优先级优先级高的为master</p>
+<p>advert int: 设置MASTER与BACKUP负载均衡之间同步即主备间通告时间检查的时间间隔,单位为秒，默认1s</p>
+<p>virtual ipaddress: 这里设置的就是VIP也就是虚拟IP地址他随着state的变化而增加删除当state为master的时候就添加当state为backup的时候删除这里主要是有优先级来决定的和state设置的值没有多大关系这里可以设置多个IP地址</p>
+<p>virtual routes: 原理和virtual ipaddress一样只不过这里是增加和删除路由</p>
+<p>lvs sync daemon interface: lvs syncd绑定的网卡，类似HA中的心跳检测绑定的网卡</p>
+<p>authentication: 这里设置认证</p>
+<p>auth type: 认证方式可以是PASS或AH两种认证方式</p>
+<p>auth pass: 认证密码</p>
+<p>nopreempt: 设置不抢占master，这里只能设置在state为backup的节点上而且这个节点的优先级必须别另外的高，比如master因为异常将调度圈交给了备份serve，master serve检修后没问题，如果不设置nopreempt就会将调度权重新夺回来，这样就容易造成业务中断问题</p>
+<p>preempt delay: 抢占延迟多少秒，即延迟多少秒后竞选master</p>
+<p>debug：debug级别</p>
+<p>notify master：和sync group这里设置的含义一样可以单独设置例如不同的实例通知不同的管理人员http实例发给网站管理员mysql的就发邮件给DBA</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># VRRP脚本</span></span><br><span class="line"><span class="comment"># 如下所示为相关配置示例</span></span><br><span class="line">vrrp_script check_running &#123;</span><br><span class="line">   script <span class="string">&quot;/usr/local/bin/check_running&quot;</span></span><br><span class="line">   interval 10</span><br><span class="line">   weight 10</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance http &#123;</span><br><span class="line">   state BACKUP</span><br><span class="line">   smtp_alert</span><br><span class="line">   interface eth0</span><br><span class="line">   virtual_router_id 101</span><br><span class="line">   priority 90</span><br><span class="line">   advert_int 3</span><br><span class="line">   authentication &#123;</span><br><span class="line">   auth_type PASS</span><br><span class="line">   auth_pass whatever</span><br><span class="line">   &#125;</span><br><span class="line">   virtual_ipaddress &#123;</span><br><span class="line">   1.1.1.1</span><br><span class="line">   &#125;</span><br><span class="line">   track_script &#123;</span><br><span class="line">   check_running </span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># 首先在vrrp_script区域定义脚本名字和脚本执行的间隔和脚本执行的优先级变更,如下所示:</span></span><br><span class="line">vrrp_script check_running &#123;</span><br><span class="line">            script <span class="string">&quot;/usr/local/bin/check_running&quot;</span></span><br><span class="line">            interval 10     <span class="comment">#脚本执行间隔</span></span><br><span class="line">            weight 10       <span class="comment">#脚本结果导致的优先级变更10表示优先级+10-10则表示优先级-10</span></span><br><span class="line">            &#125;</span><br><span class="line"><span class="comment"># 然后在实例(vrrp_instance)里面引用有点类似脚本里面的函数引用一样先定义后引用函数名</span></span><br><span class="line">track_script &#123;</span><br><span class="line">      check_running </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意:<br>VRRP脚本(vrrp_script)和VRRP实例(vrrp_instance)属于同一个级别<br>keepalived会定时执行脚本并对脚本执行的结果进行分析，动态调整vrrp_instance的优先级。一般脚本检测返回的值为0，说明脚本检测成功，如果为非0数值，则说明检测失败<br>如果脚本执行结果为0，并且weight配置的值大于0，则优先级相应的增加, 如果weight为非0，则优先级不变<br>如果脚本执行结果非0，并且weight配置的值小于0，则优先级相应的减少, 如果weight为0，则优先级不变<br>其他情况，维持原本配置的优先级，即配置文件中priority对应的值。<br>这里需要注意的是：<br>1） 优先级不会不断的提高或者降低<br>2） 可以编写多个检测脚本并为每个检测脚本设置不同的weight<br>3） 不管提高优先级还是降低优先级，最终优先级的范围是在[1,254]，不会出现优先级小于等于0或者优先级大于等于255的情况<br>这样可以做到利用脚本检测业务进程的状态，并动态调整优先级从而实现主备切换。</p>
+<h3 id="virtual-server-虚拟主机配置"><a href="#virtual-server-虚拟主机配置" class="headerlink" title="virtual_server 虚拟主机配置"></a>virtual_server 虚拟主机配置</h3><p>关于keeplived的虚拟主机配置有三种如下所示<br>virtual server IP port<br>virtual server fwmark int<br>virtual server group string</p>
+<p>以常用的第一种为例<br>virtual_server 192.168.1.2 80<br>含义:设置一个virtual server: VIP:Vport</p>
+<p>delay_loop 3<br>含义:设置service polling的delay时间即服务轮询的时间间隔</p>
+<p>lb_algo rr|wrr|lc|wlc|lblc|sh|dh<br>含义:设置LVS调度算法</p>
+<p>lb_kind NAT|DR|TUN<br>含义:设置LVS集群模式  </p>
+<p>persistence_timeout 120<br>含义:设置会话保持时间秒为单位即以用户在120秒内被分配到同一个后端realserver,超过此时间就重新分配</p>
+<p>persistence_granularity <NETMASK><br>含义:设置LVS会话保持粒度ipvsadm中的-M参数默认是0xffffffff即每个客户端都做会话保持</p>
+<p>protocol TCP<br>含义:设置健康检查用的是TCP还是UDP</p>
+<p>ha_suspend<br>含义:suspendhealthchecker’s activity</p>
+<p>virtualhost <string><br>含义:HTTP_GET做健康检查时检查的web服务器的虚拟主机即host头</p>
+<p>sorry_server <IPADDR> <PORT><br>含义:设置backupserver就是当所有后端realserver节点都不可用时就用这里设置的也就是临时把所有的请求都发送到这里</p>
+<p>real_server <IPADDR> <PORT><br>含义:设置后端真实节点主机的权重等设置主要后端有几台这里就要设置几个</p>
+<p>weight 1<br>含义:设置给每台的权重0表示失效(不知给他转发请求知道他恢复正常)默认是1</p>
+<p>inhibit_on_failure<br>含义:表示在节点失败后把他权重设置成0而不是冲IPVS中删除</p>
+<p>notify_up <STRING> | <QUOTED-STRING><br>含义:设置检查服务器正常(UP)后要执行的脚本<br>notify_down <STRING> | <QUOTED-STRING><br>含义:设置检查服务器失败(down)后要执行的脚本</p>
+<p>注:keepalived检查机制说明<br>keepalived健康检查方式有:HTTP_GET|SSL_GET|TCP_CHECK|SMTP_CHECK|MISC_CHECK几种如下所示</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#HTTP/HTTPS方式 </span></span><br><span class="line">HTTP_GET|SSL_GET &#123;      <span class="comment">#设置健康检查方式</span></span><br><span class="line"></span><br><span class="line">url &#123;                   <span class="comment">#设置要检查的URL可以有多个</span></span><br><span class="line">path /                  <span class="comment">#设置URL具体路径</span></span><br><span class="line">digest &lt;STRING&gt;         <span class="comment">#检查后的摘要信息这些摘要信息可以通过genhash命令工具获取                                   </span></span><br><span class="line">status_code 200         <span class="comment">#设置返回状态码</span></span><br><span class="line">&#125;</span><br><span class="line">connect_port 80         <span class="comment">#设置监控检查的端口</span></span><br><span class="line">bindto  &lt;IPADD&gt;         <span class="comment">#设置健康检查的IP地址</span></span><br><span class="line">connect_timeout   3     <span class="comment">#设置连接超时时间</span></span><br><span class="line">nb_get_retry  3         <span class="comment">#设置重连次数</span></span><br><span class="line">delay_before_retry  2   <span class="comment">#设置重连间隔</span></span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="comment">#TCP方式  </span></span><br><span class="line">TCP_CHECK     &#123;</span><br><span class="line">connect_port 80         <span class="comment">#设置监控检查的端口</span></span><br><span class="line">bindto  &lt;IPADD&gt;         <span class="comment">#设置健康检查的IP地址</span></span><br><span class="line">connect_timeout   3     <span class="comment">#设置连接超时时间</span></span><br><span class="line">nb_get_retry  3         <span class="comment">#设置重连次数</span></span><br><span class="line">delay_before_retry  2   <span class="comment">#设置重连间隔</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">#SMTP方式 (这个可以用来给邮件服务器做集群)</span></span><br><span class="line">SMTP_CHECK &#123;</span><br><span class="line">host &#123;</span><br><span class="line">connect_ip &lt;IP ADDRESS&gt;</span><br><span class="line">connect_port &lt;PORT&gt;     <span class="comment">#默认检查25端口</span></span><br><span class="line">14 KEEPALIVED</span><br><span class="line">bindto &lt;IP ADDRESS&gt;</span><br><span class="line">&#125;</span><br><span class="line">connect_timeout &lt;INTEGER&gt;</span><br><span class="line">retry &lt;INTEGER&gt;</span><br><span class="line">delay_before_retry &lt;INTEGER&gt;</span><br><span class="line">helo_name &lt;STRING&gt;|&lt;QUOTED-STRING&gt;</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="comment">#MISC方式 这个可以用来检查很多服务器只需要自己会些脚本即可</span></span><br><span class="line">MISC_CHECK &#123;</span><br><span class="line">misc_path &lt;STRING&gt;|&lt;QUOTED-STRING&gt;  <span class="comment">#外部程序或脚本</span></span><br><span class="line">misc_timeout &lt;INT&gt;                  <span class="comment">#脚本或程序执行超时时间</span></span><br><span class="line">misc_dynamic                                              </span><br><span class="line"><span class="comment">#这个就很好用了可以非常精确的来调整权重是后端每天服务器的压力都能均衡调配这个主要是通过执行的程序或脚本返回的状态代码来动态调整weight值使权重根据真实的后端压力来适当调整不过这需要有过硬的脚本功夫才行哦</span></span><br><span class="line"><span class="comment">#返回0健康检查没问题不修改权重</span></span><br><span class="line"><span class="comment">#返回1健康检查失败权重设置为0</span></span><br><span class="line"><span class="comment">#返回2-255健康检查没问题但是权重却要根据返回代码修改为返回码-2例如如果程序或脚本执行后返回的代码为200#那么权重这回被修改为 200-2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上就是keepalived的配置项说明虽然配置项很多但很多时候很多配置项保持默认即可，以下是默认配置文件，方便大家做个对比参考</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br></pre></td><td class="code"><pre><span class="line">[root@sg-gop-10-65-32-140 wangao]<span class="comment"># cat /etc/keepalived/keepalived.conf</span></span><br><span class="line">! Configuration File <span class="keyword">for</span> keepalived</span><br><span class="line"></span><br><span class="line">global_defs &#123;</span><br><span class="line">   notification_email &#123;</span><br><span class="line">     acassen@firewall.loc</span><br><span class="line">     failover@firewall.loc</span><br><span class="line">     sysadmin@firewall.loc</span><br><span class="line">   &#125;</span><br><span class="line">   notification_email_from Alexandre.Cassen@firewall.loc</span><br><span class="line">   smtp_server 192.168.200.1</span><br><span class="line">   smtp_connect_timeout 30</span><br><span class="line">   router_id LVS_DEVEL</span><br><span class="line">   vrrp_skip_check_adv_addr</span><br><span class="line">   vrrp_strict</span><br><span class="line">   vrrp_garp_interval 0</span><br><span class="line">   vrrp_gna_interval 0</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state MASTER</span><br><span class="line">    interface eth0</span><br><span class="line">    virtual_router_id 51</span><br><span class="line">    priority 100</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        192.168.200.16</span><br><span class="line">        192.168.200.17</span><br><span class="line">        192.168.200.18</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">virtual_server 192.168.200.100 443 &#123;</span><br><span class="line">    delay_loop 6</span><br><span class="line">    lb_algo rr</span><br><span class="line">    lb_kind NAT</span><br><span class="line">    persistence_timeout 50</span><br><span class="line">    protocol TCP</span><br><span class="line"></span><br><span class="line">    real_server 192.168.201.100 443 &#123;</span><br><span class="line">        weight 1</span><br><span class="line">        SSL_GET &#123;</span><br><span class="line">            url &#123;</span><br><span class="line">              path /</span><br><span class="line">              digest ff20ad2481f97b1754ef3e12ecd3a9cc</span><br><span class="line">            &#125;</span><br><span class="line">            url &#123;</span><br><span class="line">              path /mrtg/</span><br><span class="line">              digest 9b3a0c85a887a256d6939da88aabd8cd</span><br><span class="line">            &#125;</span><br><span class="line">            connect_timeout 3</span><br><span class="line">            nb_get_retry 3</span><br><span class="line">            delay_before_retry 3</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">virtual_server 10.10.10.2 1358 &#123;</span><br><span class="line">    delay_loop 6</span><br><span class="line">    lb_algo rr</span><br><span class="line">    lb_kind NAT</span><br><span class="line">    persistence_timeout 50</span><br><span class="line">    protocol TCP</span><br><span class="line"></span><br><span class="line">    sorry_server 192.168.200.200 1358</span><br><span class="line"></span><br><span class="line">    real_server 192.168.200.2 1358 &#123;</span><br><span class="line">        weight 1</span><br><span class="line">        HTTP_GET &#123;</span><br><span class="line">            url &#123;</span><br><span class="line">              path /testurl/test.jsp</span><br><span class="line">              digest 640205b7b0fc66c1ea91c463fac6334d</span><br><span class="line">            &#125;</span><br><span class="line">            url &#123;</span><br><span class="line">              path /testurl2/test.jsp</span><br><span class="line">              digest 640205b7b0fc66c1ea91c463fac6334d</span><br><span class="line">            &#125;</span><br><span class="line">            url &#123;</span><br><span class="line">              path /testurl3/test.jsp</span><br><span class="line">              digest 640205b7b0fc66c1ea91c463fac6334d</span><br><span class="line">            &#125;</span><br><span class="line">            connect_timeout 3</span><br><span class="line">            nb_get_retry 3</span><br><span class="line">            delay_before_retry 3</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    real_server 192.168.200.3 1358 &#123;</span><br><span class="line">        weight 1</span><br><span class="line">        HTTP_GET &#123;</span><br><span class="line">            url &#123;</span><br><span class="line">              path /testurl/test.jsp</span><br><span class="line">              digest 640205b7b0fc66c1ea91c463fac6334c</span><br><span class="line">            &#125;</span><br><span class="line">            url &#123;</span><br><span class="line">              path /testurl2/test.jsp</span><br><span class="line">              digest 640205b7b0fc66c1ea91c463fac6334c</span><br><span class="line">            &#125;</span><br><span class="line">            connect_timeout 3</span><br><span class="line">            nb_get_retry 3</span><br><span class="line">            delay_before_retry 3</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">virtual_server 10.10.10.3 1358 &#123;</span><br><span class="line">    delay_loop 3</span><br><span class="line">    lb_algo rr</span><br><span class="line">    lb_kind NAT</span><br><span class="line">    persistence_timeout 50</span><br><span class="line">    protocol TCP</span><br><span class="line"></span><br><span class="line">    real_server 192.168.200.4 1358 &#123;</span><br><span class="line">        weight 1</span><br><span class="line">        HTTP_GET &#123;</span><br><span class="line">            url &#123;</span><br><span class="line">              path /testurl/test.jsp</span><br><span class="line">              digest 640205b7b0fc66c1ea91c463fac6334d</span><br><span class="line">            &#125;</span><br><span class="line">            url &#123;</span><br><span class="line">              path /testurl2/test.jsp</span><br><span class="line">              digest 640205b7b0fc66c1ea91c463fac6334d</span><br><span class="line">            &#125;</span><br><span class="line">            url &#123;</span><br><span class="line">              path /testurl3/test.jsp</span><br><span class="line">              digest 640205b7b0fc66c1ea91c463fac6334d</span><br><span class="line">            &#125;</span><br><span class="line">            connect_timeout 3</span><br><span class="line">            nb_get_retry 3</span><br><span class="line">            delay_before_retry 3</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    real_server 192.168.200.5 1358 &#123;</span><br><span class="line">        weight 1</span><br><span class="line">        HTTP_GET &#123;</span><br><span class="line">            url &#123;</span><br><span class="line">              path /testurl/test.jsp</span><br><span class="line">              digest 640205b7b0fc66c1ea91c463fac6334d</span><br><span class="line">            &#125;</span><br><span class="line">            url &#123;</span><br><span class="line">              path /testurl2/test.jsp</span><br><span class="line">              digest 640205b7b0fc66c1ea91c463fac6334d</span><br><span class="line">            &#125;</span><br><span class="line">            url &#123;</span><br><span class="line">              path /testurl3/test.jsp</span><br><span class="line">              digest 640205b7b0fc66c1ea91c463fac6334d</span><br><span class="line">            &#125;</span><br><span class="line">            connect_timeout 3</span><br><span class="line">            nb_get_retry 3</span><br><span class="line">            delay_before_retry 3</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="最简单的Keepalived-HA配置实例"><a href="#最简单的Keepalived-HA配置实例" class="headerlink" title="最简单的Keepalived HA配置实例"></a>最简单的Keepalived HA配置实例</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装keepalived,ipvsadm</span></span><br><span class="line">yum install keepalived -y</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果开启防火墙，请添加VRRP白名单</span></span><br><span class="line">-A INPUT -p vrrp -j ACCEPT</span><br><span class="line">-A INPUT -p igmp -j ACCEPT</span><br><span class="line">-A INPUT -d 224.0.0.18 -j ACCEPT</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编辑keepalived配置文件，master和backup节点配置文件一样</span></span><br><span class="line">vi /etc/keepalived/keepalived.conf</span><br><span class="line"></span><br><span class="line">vrrp_sync_group VI_GOP_NC1_HA &#123;</span><br><span class="line">    group &#123;</span><br><span class="line">        VI_GOP_NC1_HA_PRI</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_GOP_NC1_HA_PRI &#123;</span><br><span class="line">    state BACKUP</span><br><span class="line">    interface bond0</span><br><span class="line">    virtual_router_id 139</span><br><span class="line">    priority 100</span><br><span class="line">    advert_int 1</span><br><span class="line">    nopreempt</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        10.65.33.139/23 dev bond0</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 手动启动节点即为master</span></span><br><span class="line">service keepalived start</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Keepalived双活实践"><a href="#Keepalived双活实践" class="headerlink" title="Keepalived双活实践"></a>Keepalived双活实践</h2><blockquote>
+<p>最简单的keepalived双活，只需要修改state和priority</p>
+</blockquote>
+<ul>
+<li>优点：配置文件简单</li>
+<li>缺点：<ul>
+<li>当master恢复后会自动回切，影响业务流量</li>
+<li>两个节点配置不完全一致，对自动化运维管理不友好</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"># node1</span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state MASTER</span><br><span class="line">    interface bond0</span><br><span class="line">    virtual_router_id 32</span><br><span class="line">    priority 100</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        10.71.17.32/23 dev bond0</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_2 &#123;</span><br><span class="line">    state BACKUP</span><br><span class="line">    interface bond0</span><br><span class="line">    virtual_router_id 33</span><br><span class="line">    priority 98</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        10.71.17.33/23 dev bond0</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># node2</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state BACKUP</span><br><span class="line">    interface bond0</span><br><span class="line">    virtual_router_id 32</span><br><span class="line">    priority 98</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        10.71.17.32/23 dev bond0</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_2 &#123;</span><br><span class="line">    state MASTER</span><br><span class="line">    interface bond0</span><br><span class="line">    virtual_router_id 33</span><br><span class="line">    priority 100</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        10.71.17.33/23 dev bond0</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>合理的keepalived双活</p>
+</blockquote>
+<ul>
+<li>优点：<ul>
+<li>添加nopreempt可以防止自动回切</li>
+<li>添加track_script可以人为控制切换</li>
+<li>节点之间配置完全一致，便于自动化运维管理</li>
+</ul>
+</li>
+<li>缺点：配置文件较为复杂</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line"># node1</span><br><span class="line">vrrp_script maint-10.71.17.32 &#123;</span><br><span class="line">    script &quot;/bin/bash -c &#x27;[[ -e /etc/keepalived/10.71.17.32 ]]&#x27; &amp;&amp; exit 1 || exit 0&quot;</span><br><span class="line">    interval 2</span><br><span class="line">    fall 2</span><br><span class="line">    rise 2</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_script maint-10.71.17.33 &#123;</span><br><span class="line">    script &quot;/bin/bash -c &#x27;[[ -e /etc/keepalived/10.71.17.33 ]]&#x27; &amp;&amp; exit 1 || exit 0&quot;</span><br><span class="line">    interval 2</span><br><span class="line">    fall 2</span><br><span class="line">    rise 2</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state BACKUP</span><br><span class="line">    interface bond0</span><br><span class="line">    virtual_router_id 32</span><br><span class="line">    priority 100</span><br><span class="line">    advert_int 1</span><br><span class="line">    nopreempt</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        10.71.17.32/23 dev bond0</span><br><span class="line">    &#125;</span><br><span class="line">    track_script &#123;</span><br><span class="line">        maint-10.71.17.32</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_2 &#123;</span><br><span class="line">    state BACKUP</span><br><span class="line">    interface bond0</span><br><span class="line">    virtual_router_id 33</span><br><span class="line">    priority 100</span><br><span class="line">    advert_int 1</span><br><span class="line">    nopreempt</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        10.71.17.33/23 dev bond0</span><br><span class="line">    &#125;</span><br><span class="line">    track_script &#123;</span><br><span class="line">        maint-10.71.17.33</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># node2</span><br><span class="line">vrrp_script maint-10.71.17.32 &#123;</span><br><span class="line">    script &quot;/bin/bash -c &#x27;[[ -e /etc/keepalived/10.71.17.32 ]]&#x27; &amp;&amp; exit 1 || exit 0&quot;</span><br><span class="line">    interval 2</span><br><span class="line">    fall 2</span><br><span class="line">    rise 2</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_script maint-10.71.17.33 &#123;</span><br><span class="line">    script &quot;/bin/bash -c &#x27;[[ -e /etc/keepalived/10.71.17.33 ]]&#x27; &amp;&amp; exit 1 || exit 0&quot;</span><br><span class="line">    interval 2</span><br><span class="line">    fall 2</span><br><span class="line">    rise 2</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state BACKUP</span><br><span class="line">    interface bond0</span><br><span class="line">    virtual_router_id 32</span><br><span class="line">    priority 100</span><br><span class="line">    advert_int 1</span><br><span class="line">    nopreempt</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        10.71.17.32/23 dev bond0</span><br><span class="line">    &#125;</span><br><span class="line">    track_script &#123;</span><br><span class="line">        maint-10.71.17.32</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_2 &#123;</span><br><span class="line">    state BACKUP</span><br><span class="line">    interface bond0</span><br><span class="line">    virtual_router_id 33</span><br><span class="line">    priority 100</span><br><span class="line">    advert_int 1</span><br><span class="line">    nopreempt</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        10.71.17.33/23 dev bond0</span><br><span class="line">    &#125;</span><br><span class="line">    track_script &#123;</span><br><span class="line">        maint-10.71.17.33</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如果需要配合自定义脚本监控使用，可以参考<a href="https://wsgzao.github.io/post/redis/">Redis 主从同步配置实践</a></p>
+<h2 id="简单的Keepalived邮件告警实例"><a href="#简单的Keepalived邮件告警实例" class="headerlink" title="简单的Keepalived邮件告警实例"></a>简单的Keepalived邮件告警实例</h2><ol>
+<li>编写sendmail.py邮件发送脚本</li>
+<li>在keepalived.conf中配置notify_backup</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"><span class="keyword">import</span> smtplib</span><br><span class="line"></span><br><span class="line">EMAIL_CONFIG = &#123;</span><br><span class="line">    <span class="string">&#x27;EMAIL_HOST&#x27;</span>: <span class="string">&#x27;xxx&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;EMAIL_HOST_USER&#x27;</span>: <span class="string">&#x27;xxx&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;EMAIL_RECEIVER&#x27;</span>: <span class="string">&#x27;xxx&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_get_private_ip</span>():</span><br><span class="line">    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        sock.connect((<span class="string">&#x27;10.255.255.255&#x27;</span>, <span class="number">1</span>))</span><br><span class="line">        <span class="keyword">return</span> sock.getsockname()[<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;127.0.0.1&#x27;</span></span><br><span class="line">    <span class="keyword">finally</span>:</span><br><span class="line">        sock.close()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">send_email</span>():</span><br><span class="line">    ip = _get_private_ip()</span><br><span class="line">    hostname = socket.gethostname()</span><br><span class="line">    message = <span class="string">&#x27;Subject: Keepalived Failover Alert %s \n\nHOSTNAME %s on LANIP %s HA status has changed to %s&#x27;</span> % (</span><br><span class="line">        sys.argv[<span class="number">1</span>], hostname, ip, sys.argv[<span class="number">1</span>])</span><br><span class="line">    server = smtplib.SMTP(EMAIL_CONFIG[<span class="string">&quot;EMAIL_HOST&quot;</span>])</span><br><span class="line">    server.sendmail(EMAIL_CONFIG[<span class="string">&#x27;EMAIL_HOST_USER&#x27;</span>],</span><br><span class="line">                    EMAIL_CONFIG[<span class="string">&#x27;EMAIL_RECEIVER&#x27;</span>], message)</span><br><span class="line">    server.quit()</span><br><span class="line"></span><br><span class="line">send_email()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>如果有设置vrrp_sync_group可以添加在这里通过群组控制，如果没有就跟在vrrp_instance独立设置</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">           # notify scripts and alerts are optional</span><br><span class="line">           #</span><br><span class="line">           # filenames of scripts to run on transitions can be unquoted (if</span><br><span class="line">           # just filename) or quoted (if it has parameters)</span><br><span class="line">           # The username and groupname specify the user and group</span><br><span class="line">           # under which the scripts should be run. If username is</span><br><span class="line">           # specified, the group defaults to the group of the user.</span><br><span class="line">           # If username is not specified, they default to the</span><br><span class="line">           # global script_user and script_group to MASTER transition</span><br><span class="line">           notify_master /path/to_master.sh [username [groupname]]</span><br><span class="line"></span><br><span class="line">           # to BACKUP transition</span><br><span class="line">           notify_backup /path/to_backup.sh [username [groupname]]</span><br><span class="line"></span><br><span class="line">           # FAULT transition</span><br><span class="line">           notify_fault &quot;/path/fault.sh VG_1&quot; [username [groupname]]</span><br><span class="line"></span><br><span class="line">vrrp_sync_group NC-CLOUD-LOADTEST &#123;</span><br><span class="line">    group &#123;</span><br><span class="line">        NC-CLOUD-LOADTEST-PUB</span><br><span class="line">        NC-CLOUD-LOADTEST-PRI</span><br><span class="line">    &#125;</span><br><span class="line">    notify_master &quot;/bin/python /etc/keepalived/sendmail.py master&quot;</span><br><span class="line">    notify_backup &quot;/bin/python /etc/keepalived/sendmail.py backup&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Keepalived-Notification-and-Tracking-Scripts"><a href="#Keepalived-Notification-and-Tracking-Scripts" class="headerlink" title="Keepalived Notification and Tracking Scripts"></a>Keepalived Notification and Tracking Scripts</h2><p>Keepalived官方的文档并没有给出实践案例，我对上面的代码改进之后的效果如下</p>
+<ol>
+<li>实现双活，支持不中断LVS人工干预任意节点运行位置</li>
+<li>实现status状态无变化时无告警邮件</li>
+</ol>
+<p>Keepalived is a Linux implementation of the VRRP (Virtual Router Redundancy Protocol) protocol to make IPs highly available. Keepalived check and notify scripts can be used to check anything you want to ensure the Master is on the right node and take action if a state change.</p>
+<p><a target="_blank" rel="noopener" href="https://www.keepalived.org/manpage.html">notify scripts and alerts are optional</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.oracle.com/en/operating-systems/oracle-linux/7/admin/section_hxz_zdw_pr.html">About Keepalived Notification and Tracking Scripts</a></p>
+<p>Check script has two reutrn value: </p>
+<ul>
+<li>0 for everything is fine</li>
+<li>1 or other than 0 means something went wrong.</li>
+</ul>
+<p>For example:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vrrp_script maint-xxx &#123;</span><br><span class="line">    script &quot;/bin/bash -c &#x27;[[ -e /etc/keepalived/xxx ]]&#x27; &amp;&amp; exit 1 || exit 0&quot;</span><br><span class="line">    interval 2</span><br><span class="line">    fall 2</span><br><span class="line">    rise 2</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>This script defines file check to check whether the file xxx is exist. The check interval is 2 seconds, check fail and succeed twice for KO and OK.</p>
+<p>The check script is used in a <code>vrrp_instance</code> as follows</p>
+<p>The <code>track_script</code> returns other code than 0 two times, the VRRP instance will change the state to <code>FAULT</code>, or the instance will change the state to <code>running</code>if return code 0 two times.</p>
+<blockquote>
+<p>keepalived.conf</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br></pre></td><td class="code"><pre><span class="line">vrrp_sync_group VI_GROUP_xxx &#123;</span><br><span class="line">    group &#123;</span><br><span class="line">        VI_PRI_xxx</span><br><span class="line">        VI_PUB_xxx</span><br><span class="line">    &#125;</span><br><span class="line">    notify /etc/keepalived/notify.sh</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_sync_group VI_GROUP_xxx &#123;</span><br><span class="line">    group &#123;</span><br><span class="line">        VI_PRI_xxx</span><br><span class="line">        VI_PUB_xxx</span><br><span class="line">    &#125;</span><br><span class="line">    notify /etc/keepalived/notify.sh</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_script maint-xxx &#123;</span><br><span class="line">    script &quot;/bin/bash -c &#x27;[[ -e /etc/keepalived/xxx ]]&#x27; &amp;&amp; exit 1 || exit 0&quot;</span><br><span class="line">    interval 10</span><br><span class="line">    fall 6</span><br><span class="line">    rise 2</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_script maint-xxx &#123;</span><br><span class="line">    script &quot;/bin/bash -c &#x27;[[ -e /etc/keepalived/xxx ]]&#x27; &amp;&amp; exit 1 || exit 0&quot;</span><br><span class="line">    interval 10</span><br><span class="line">    fall 6</span><br><span class="line">    rise 2</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_script maint-xxx &#123;</span><br><span class="line">    script &quot;/bin/bash -c &#x27;[[ -e /etc/keepalived/xxx ]]&#x27; &amp;&amp; exit 1 || exit 0&quot;</span><br><span class="line">    interval 10</span><br><span class="line">    fall 6</span><br><span class="line">    rise 2</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_script maint-xxx &#123;</span><br><span class="line">    script &quot;/bin/bash -c &#x27;[[ -e /etc/keepalived/xxx ]]&#x27; &amp;&amp; exit 1 || exit 0&quot;</span><br><span class="line">    interval 10</span><br><span class="line">    fall 6</span><br><span class="line">    rise 2</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_PRI_xxx &#123;</span><br><span class="line">    state BACKUP</span><br><span class="line">    interface bond0</span><br><span class="line">    virtual_router_id 138</span><br><span class="line">    priority 100</span><br><span class="line">    advert_int 1</span><br><span class="line">    nopreempt</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        xxx/23 dev bond0</span><br><span class="line">    &#125;</span><br><span class="line">    track_script &#123;</span><br><span class="line">        maint-xxx</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_PRI_xxx &#123;</span><br><span class="line">    state BACKUP</span><br><span class="line">    interface bond0</span><br><span class="line">    virtual_router_id 139</span><br><span class="line">    priority 100</span><br><span class="line">    advert_int 1</span><br><span class="line">    nopreempt</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        xxx/23 dev bond0</span><br><span class="line">    &#125;</span><br><span class="line">    track_script &#123;</span><br><span class="line">        maint-xxx</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_PUB_xxx &#123;</span><br><span class="line">    state BACKUP</span><br><span class="line">    interface bond1</span><br><span class="line">    virtual_router_id 101</span><br><span class="line">    priority 100</span><br><span class="line">    advert_int 1</span><br><span class="line">    nopreempt</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        xxx/26 dev bond1</span><br><span class="line">    &#125;</span><br><span class="line">    track_script &#123;</span><br><span class="line">        maint-xxx</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_PUB_xxx &#123;</span><br><span class="line">    state BACKUP</span><br><span class="line">    interface bond1</span><br><span class="line">    virtual_router_id 102</span><br><span class="line">    priority 100</span><br><span class="line">    advert_int 1</span><br><span class="line">    nopreempt</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        xxx/26 dev bond1</span><br><span class="line">    &#125;</span><br><span class="line">    track_script &#123;</span><br><span class="line">        maint-xxx</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>notify.sh</p>
+</blockquote>
+<p>Keepalived tasks some action depending on the VRRP state.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">vrrp_sync_group VI_GROUP_xxx &#123;</span><br><span class="line">    group &#123;</span><br><span class="line">        VI_PRI_xxx</span><br><span class="line">        VI_PUB_xxx</span><br><span class="line">    &#125;</span><br><span class="line">    notify /etc/keepalived/notify.sh</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The script is called after any state change with the following parameters:</p>
+<p>$1 &#x3D; “GROUP” or “INSTANCE”<br>$2 &#x3D; name of group or instance<br>$3 &#x3D; target state of transition (“MASTER”, “BACKUP”, “FAULT”)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">TYPE=<span class="variable">$1</span></span><br><span class="line">NAME=<span class="variable">$2</span></span><br><span class="line">STATE=<span class="variable">$3</span></span><br><span class="line">FILE=<span class="string">&quot;/etc/keepalived/<span class="variable">$&#123;NAME&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ ! -f <span class="string">&quot;<span class="variable">$&#123;FILE&#125;</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">  <span class="built_in">touch</span> <span class="string">&quot;<span class="variable">$&#123;FILE&#125;</span>&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">ORI_STATE=`<span class="built_in">cat</span> <span class="variable">$&#123;FILE&#125;</span>`</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$&#123;STATE&#125;</span> == <span class="variable">$&#123;ORI_STATE&#125;</span> ];<span class="keyword">then</span></span><br><span class="line">   <span class="built_in">exit</span> 0</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="keyword">case</span> <span class="variable">$STATE</span> <span class="keyword">in</span></span><br><span class="line">            <span class="string">&quot;MASTER&quot;</span>) /bin/python /etc/keepalived/sendmail.py <span class="variable">$&#123;STATE&#125;</span> <span class="variable">$&#123;TYPE&#125;</span> <span class="variable">$&#123;NAME&#125;</span></span><br><span class="line">                      <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$&#123;STATE&#125;</span>&quot;</span> &gt; <span class="string">&quot;<span class="variable">$&#123;FILE&#125;</span>&quot;</span></span><br><span class="line">                      <span class="built_in">exit</span> 0</span><br><span class="line">                      ;;</span><br><span class="line">            <span class="string">&quot;BACKUP&quot;</span>) /bin/python /etc/keepalived/sendmail.py <span class="variable">$&#123;STATE&#125;</span> <span class="variable">$&#123;TYPE&#125;</span> <span class="variable">$&#123;NAME&#125;</span></span><br><span class="line">                      <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$&#123;STATE&#125;</span>&quot;</span> &gt; <span class="string">&quot;<span class="variable">$&#123;FILE&#125;</span>&quot;</span></span><br><span class="line">                      <span class="built_in">exit</span> 0</span><br><span class="line">                      ;;</span><br><span class="line">            <span class="string">&quot;FAULT&quot;</span>)  /bin/python /etc/keepalived/sendmail.py <span class="variable">$&#123;STATE&#125;</span> <span class="variable">$&#123;TYPE&#125;</span> <span class="variable">$&#123;NAME&#125;</span></span><br><span class="line">                      <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$&#123;STATE&#125;</span>&quot;</span> &gt; <span class="string">&quot;<span class="variable">$&#123;FILE&#125;</span>&quot;</span></span><br><span class="line">                      <span class="built_in">exit</span> 0</span><br><span class="line">                      ;;</span><br><span class="line">            *)        <span class="built_in">echo</span> <span class="string">&quot;unknown state&quot;</span></span><br><span class="line">                      <span class="built_in">exit</span> 1</span><br><span class="line">                      ;;</span><br><span class="line">    <span class="keyword">esac</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>sendmail.py</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"><span class="keyword">import</span> smtplib</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">EMAIL_CONFIG = &#123;</span><br><span class="line">    <span class="string">&#x27;EMAIL_HOST&#x27;</span>: <span class="string">&#x27;xxx&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;EMAIL_HOST_USER&#x27;</span>: <span class="string">&#x27;xxx&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;EMAIL_RECEIVER&#x27;</span>: <span class="string">&#x27;xxx&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_get_private_ip</span>():</span><br><span class="line">    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        sock.connect((<span class="string">&#x27;10.255.255.255&#x27;</span>, <span class="number">1</span>))</span><br><span class="line">        <span class="keyword">return</span> sock.getsockname()[<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;127.0.0.1&#x27;</span></span><br><span class="line">    <span class="keyword">finally</span>:</span><br><span class="line">        sock.close()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">send_email</span>():</span><br><span class="line">    ip = _get_private_ip()</span><br><span class="line">    hostname = socket.gethostname()</span><br><span class="line">    message = <span class="string">&#x27;Subject: Keepalived Failover Alert %s \n\nHOSTNAME %s on LANIP %s %s %s status has changed to %s&#x27;</span> % (</span><br><span class="line">        sys.argv[<span class="number">1</span>], hostname, ip, sys.argv[<span class="number">2</span>], sys.argv[<span class="number">3</span>], sys.argv[<span class="number">1</span>])</span><br><span class="line">    server = smtplib.SMTP(EMAIL_CONFIG[<span class="string">&quot;EMAIL_HOST&quot;</span>])</span><br><span class="line">    server.sendmail(EMAIL_CONFIG[<span class="string">&#x27;EMAIL_HOST_USER&#x27;</span>],</span><br><span class="line">                    EMAIL_CONFIG[<span class="string">&#x27;EMAIL_RECEIVER&#x27;</span>], message)</span><br><span class="line">    server.quit()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">send_email()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Keepalived常见问题"><a href="#Keepalived常见问题" class="headerlink" title="Keepalived常见问题"></a>Keepalived常见问题</h2><blockquote>
+<p>virual_router_id冲突</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"># 检查keepalived错误日志会发现</span><br><span class="line">tailf /var/log/messages</span><br><span class="line"></span><br><span class="line">May  7 23:25:18 xxx Keepalived_vrrp[90851]: bogus VRRP packet received on bond1 !!!</span><br><span class="line">May  7 23:25:18 xxx Keepalived_vrrp[90851]: VRRP_Instance(VI_PUB_xxx) ignoring received advertisment...</span><br><span class="line">May  7 23:25:19 xxx Keepalived_vrrp[90851]: (VI_PUB_xxx): ip address associated with VRID 101 not present in MASTER advert : xxx</span><br><span class="line"></span><br><span class="line"># 通过检查配置文件的方法效率太低</span><br><span class="line">grep &#x27;virtual_router_id&#x27; /etc/keepalived/keepalived.conf</span><br><span class="line">    virtual_router_id 148</span><br><span class="line">    virtual_router_id 149</span><br><span class="line">    virtual_router_id 101</span><br><span class="line">    virtual_router_id 104</span><br><span class="line"></span><br><span class="line"># 如果是vrrp广播可以通过tcpdump抓包分析</span><br><span class="line">tcpdump -i bond1 -nn &#x27; vrrp&#x27;</span><br><span class="line"></span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv for full protocol decode</span><br><span class="line">listening on bond1, link-type EN10MB (Ethernet), capture size 262144 bytes</span><br><span class="line">00:16:44.919824 IP xxx &gt; 224.0.0.18: VRRPv2, Advertisement, vrid 105, prio 100, authtype simple, intvl 1s, length 20</span><br><span class="line">00:16:44.995030 IP xxx &gt; 224.0.0.18: VRRPv2, Advertisement, vrid 101, prio 100, authtype simple, intvl 1s, length 20</span><br><span class="line">00:16:44.995046 IP xxx &gt; 224.0.0.18: VRRPv2, Advertisement, vrid 104, prio 100, authtype simple, intvl 1s, length 20</span><br><span class="line">00:16:44.996107 IP xxx &gt; 224.0.0.18: VRRPv2, Advertisement, vrid 123, prio 100, authtype simple, intvl 1s, length 20</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>keepalived 单播模式</p>
+</blockquote>
+<p>keepalived在组播模式下所有的信息都会向224.0.0.18的组播地址发送，产生众多的无用信息，并且会产生干扰和冲突，所以需要将其组播的模式改为单播。这是一种安全的方法，避免局域网内有大量的keepalived造成虚拟路由id的冲突。</p>
+<p>单薄模式需要关闭vrrp_strict，严格遵守vrrp协议这个选项</p>
+<p>单薄需要在VIP实例配置段加入单播的源地址和目标地址</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">global_defs &#123;</span><br><span class="line">   #vrrp_strict                         #将严格遵守vrrp协议这一项关闭，否则会因为不是组播而无法启动keepalived</span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"># 主备节点地址注意互换</span><br><span class="line">    unicast_src_ip 172.20.27.10         #配置单播的源地址</span><br><span class="line">    unicast_peer &#123; </span><br><span class="line">    172.20.27.11                        #配置单播的目标地址</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"># See description of global vrrp_strict</span><br><span class="line"># If vrrp_strict is not specified, it takes the value of vrrp_strict</span><br><span class="line"># If strict_mode without a parameter is specified, it defaults to on</span><br><span class="line">strict_mode [on|off|true|false|yes|no]</span><br><span class="line"></span><br><span class="line"># default IP for binding vrrpd is the primary IP</span><br><span class="line"># on interface. If you want to hide the location of vrrpd,</span><br><span class="line"># use this IP as src_addr for multicast or unicast vrrp</span><br><span class="line"># packets. (since it&#x27;s multicast, vrrpd will get the reply</span><br><span class="line"># packet no matter what src_addr is used).</span><br><span class="line"># optional</span><br><span class="line">mcast_src_ip &lt;IPADDR&gt;</span><br><span class="line">unicast_src_ip &lt;IPADDR&gt;</span><br><span class="line"></span><br><span class="line"># Do not send VRRP adverts over a VRRP multicast group.</span><br><span class="line"># Instead it sends adverts to the following list of</span><br><span class="line"># ip addresses using unicast. It can be cool to use</span><br><span class="line"># the VRRP FSM and features in a networking</span><br><span class="line"># environment where multicast is not supported!</span><br><span class="line"># IP addresses specified can be IPv4 as well as IPv6.</span><br><span class="line">unicast_peer &#123;</span><br><span class="line">    &lt;IPADDR&gt;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://blog.51cto.com/11886307/2406618">keepalived 单播模式</a></p>
+<h2 id="LVS和Keepalived系列"><a href="#LVS和Keepalived系列" class="headerlink" title="LVS和Keepalived系列"></a>LVS和Keepalived系列</h2><p><a href="https://wsgzao.github.io/post/lvs-keepalived/">LVS和Keepalived的原理介绍和配置实践</a><br><a href="https://wsgzao.github.io/post/lvs/">LVS原理介绍和配置实践</a><br><a href="https://wsgzao.github.io/post/keepalived/">Keepalived原理介绍和配置实践</a><br><a href="https://wsgzao.github.io/post/lvs-nat/">LVS-NAT原理介绍和配置实践</a><br><a href="https://wsgzao.github.io/post/lvs-dr/">LVS-DR原理介绍和配置实践</a><br><a href="https://wsgzao.github.io/post/lvs-tun/">LVS-TUN原理介绍和配置实践</a></p>
+<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><p><a target="_blank" rel="noopener" href="https://www.keepalived.org/manpage.html">Keepalived Configuration Manual Page</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.keepalived.org/doc/">Keepalived User Guide</a></p>
+<p><a target="_blank" rel="noopener" href="http://arganzheng.life/keepalived-in-action.html">keepalived实战</a></p>
+<p><a target="_blank" rel="noopener" href="https://monster0303.github.io/posts/4b9d0a4f/">实现高可用集群的神器 详解 Keepalived</a></p>
+<p><a target="_blank" rel="noopener" href="https://monster0303.github.io/posts/257304ac/">LVS 小宇宙爆发！ 当 Keepalived 遇上 LVS，实现集群高可用</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/keepalived/" data-title="Keepalived原理介绍和配置实践 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/https/" title="图解HTTPS">
+  <strong>上一篇：</strong><br/>
+  <span>
+  图解HTTPS</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/python/"  title="Python学习路径">
+ <strong>下一篇：</strong><br/> 
+ <span>Python学习路径
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ReadMe"><span class="toc-number">3.</span> <span class="toc-text">ReadMe</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">3.1.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E6%9C%AF%E8%AF%AD"><span class="toc-number">3.2.</span> <span class="toc-text">相关术语</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1-LB"><span class="toc-number">4.</span> <span class="toc-text">负载均衡(LB)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#keepalived%E7%AE%80%E4%BB%8B"><span class="toc-number">5.</span> <span class="toc-text">keepalived简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E5%8E%9F%E7%90%86"><span class="toc-number">5.1.</span> <span class="toc-text">运行原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%89%E4%B8%BE%E7%AD%96%E7%95%A5"><span class="toc-number">5.2.</span> <span class="toc-text">选举策略</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#keepalived%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%B4%E6%98%8E"><span class="toc-number">6.</span> <span class="toc-text">keepalived的配置文件说明</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%A8%E5%B1%80%E5%AE%9A%E4%B9%89"><span class="toc-number">6.1.</span> <span class="toc-text">全局定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#VRRPD%E9%85%8D%E7%BD%AE"><span class="toc-number">6.2.</span> <span class="toc-text">VRRPD配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#virtual-server-%E8%99%9A%E6%8B%9F%E4%B8%BB%E6%9C%BA%E9%85%8D%E7%BD%AE"><span class="toc-number">6.3.</span> <span class="toc-text">virtual_server 虚拟主机配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84Keepalived-HA%E9%85%8D%E7%BD%AE%E5%AE%9E%E4%BE%8B"><span class="toc-number">7.</span> <span class="toc-text">最简单的Keepalived HA配置实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Keepalived%E5%8F%8C%E6%B4%BB%E5%AE%9E%E8%B7%B5"><span class="toc-number">8.</span> <span class="toc-text">Keepalived双活实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E7%9A%84Keepalived%E9%82%AE%E4%BB%B6%E5%91%8A%E8%AD%A6%E5%AE%9E%E4%BE%8B"><span class="toc-number">9.</span> <span class="toc-text">简单的Keepalived邮件告警实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Keepalived-Notification-and-Tracking-Scripts"><span class="toc-number">10.</span> <span class="toc-text">Keepalived Notification and Tracking Scripts</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Keepalived%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="toc-number">11.</span> <span class="toc-text">Keepalived常见问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LVS%E5%92%8CKeepalived%E7%B3%BB%E5%88%97"><span class="toc-number">12.</span> <span class="toc-text">LVS和Keepalived系列</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-number">13.</span> <span class="toc-text">参考文档</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

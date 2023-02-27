@@ -1,0 +1,556 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>使用virtualenv和virtualenvwrapper管理多版本Python开发环境 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="virtualenv为应用提供了隔离的Python运行环境，解决了不同应用间多版本的冲突问题">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用virtualenv和virtualenvwrapper管理多版本Python开发环境">
+<meta property="og:url" content="https://wsgzao.github.io/post/virtualenv/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="virtualenv为应用提供了隔离的Python运行环境，解决了不同应用间多版本的冲突问题">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-04-11T06:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:07.168Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/virtualenv/" title="使用virtualenv和virtualenvwrapper管理多版本Python开发环境" itemprop="url">使用virtualenv和virtualenvwrapper管理多版本Python开发环境</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2018-04-11T06:59:49.000Z" itemprop="datePublished"> 发表于 2018-04-11</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#virtualenv"><span class="toc-number">3.</span> <span class="toc-text">virtualenv</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#virtualenvwrapper"><span class="toc-number">4.</span> <span class="toc-text">virtualenvwrapper</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>之前一篇文章分享了从Python 2.6 升级至 Python 2.7，在开发环境中我们也和很多朋友一样使用virtualenv和virtualenvwrapper来管理和解决不同用户和应用之间的冲突，比如一个DevOps团队在Linux环境中协作开发，每个用户都需要搭建一套Django+Ansible</p>
+<blockquote>
+<p>virtualenv为应用提供了隔离的Python运行环境，解决了不同应用间多版本的冲突问题</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018年04月11日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/virtualenv/">https://wsgzao.github.io/post/virtualenv/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>PyPI - <a target="_blank" rel="noopener" href="https://pypi.python.org/pypi/virtualenv">https://pypi.python.org/pypi/virtualenv</a><br>virtualenv - <a target="_blank" rel="noopener" href="http://pythonguidecn.readthedocs.io/zh/latest/dev/virtualenvs.html">http://pythonguidecn.readthedocs.io/zh/latest/dev/virtualenvs.html</a><br>virtualenvwrapper - <a target="_blank" rel="noopener" href="http://virtualenvwrapper.readthedocs.io/en/latest/index.html">http://virtualenvwrapper.readthedocs.io/en/latest/index.html</a></p>
+<hr>
+<h2 id="virtualenv"><a href="#virtualenv" class="headerlink" title="virtualenv"></a>virtualenv</h2><blockquote>
+<p>virtualenv 是一个创建隔绝的Python环境的工具。virtualenv创建一个包含所有必要的可执行文件的文件夹，用来使用Python工程所需的包。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查python版本是否升级至2.7以上</span></span><br><span class="line">python -V</span><br><span class="line">Python 2.7.13</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装virtualenv</span></span><br><span class="line">pip install virtualenv</span><br><span class="line"><span class="comment"># 切换用户创建一个虚拟环境</span></span><br><span class="line">su - wangao</span><br><span class="line"><span class="comment"># virtualenv -p /usr/bin/python2.7 venv</span></span><br><span class="line"><span class="comment"># virtualenv --no-site-packages venv</span></span><br><span class="line">[wangao@localhost ~]$ virtualenv venv</span><br><span class="line">New python executable <span class="keyword">in</span> /home/wangao/venv/bin/python</span><br><span class="line">Installing setuptools, pip, wheel...done.</span><br><span class="line"><span class="comment"># 激活虚拟环境</span></span><br><span class="line">[wangao@localhost ~]$ <span class="built_in">source</span> venv/bin/activate</span><br><span class="line">(venv) [wangao@localhost ~]$ pip install requests</span><br><span class="line"><span class="comment"># 如果你在虚拟环境中暂时完成了工作，则可以停用它：</span></span><br><span class="line">(venv) [wangao@localhost ~]$ deactivate</span><br><span class="line"><span class="comment"># 要删除一个虚拟环境，只需删除它的文件夹</span></span><br><span class="line"><span class="built_in">rm</span> -rf venv</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="virtualenvwrapper"><a href="#virtualenvwrapper" class="headerlink" title="virtualenvwrapper"></a>virtualenvwrapper</h2><blockquote>
+<p>virtualenvwrapper 提供了一系列命令使得和虚拟环境工作变得愉快许多。它把你所有的虚拟环境都放在一个地方。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 推荐直接使用virtualenvwrapper来管理python虚拟环境</span></span><br><span class="line">pip install virtualenvwrapper</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装好之后需要简单配置下，主要是设置独立环境的保存路径，推荐在.bash_profile下追加</span></span><br><span class="line">[wangao@localhost ~]$ vim .bash_profile</span><br><span class="line"></span><br><span class="line"><span class="comment"># 建议放入.bash_profile</span></span><br><span class="line"><span class="built_in">export</span> WORKON_HOME=~/.virtualenvs</span><br><span class="line"><span class="comment"># 不同系统virtualenvwrapper.sh存放的位置可能不同</span></span><br><span class="line"><span class="built_in">source</span> /usr/local/bin/virtualenvwrapper.sh</span><br><span class="line"><span class="comment"># 强制只允许在虚拟环境下安装软件</span></span><br><span class="line"><span class="built_in">export</span> PIP_REQUIRE_VIRTUALENV=<span class="literal">true</span></span><br><span class="line"></span><br><span class="line">[wangao@localhost ~]$ <span class="built_in">source</span> .bash_profile</span><br><span class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/premkproject</span><br><span class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/postmkproject</span><br><span class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/initialize</span><br><span class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/premkvirtualenv</span><br><span class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/postmkvirtualenv</span><br><span class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/prermvirtualenv</span><br><span class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/postrmvirtualenv</span><br><span class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/predeactivate</span><br><span class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/postdeactivate</span><br><span class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/preactivate</span><br><span class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/postactivate</span><br><span class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/get_env_details</span><br><span class="line"></span><br><span class="line"><span class="comment"># 基础使用</span></span><br><span class="line">su - wangao</span><br><span class="line"><span class="comment"># 创建一个虚拟环境</span></span><br><span class="line">[wangao@localhost ~]$ mkvirtualenv venv</span><br><span class="line">New python executable <span class="keyword">in</span> /home/wangao/.virtualenvs/venv/bin/python</span><br><span class="line">Installing setuptools, pip, wheel...done.</span><br><span class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/venv/bin/predeactivate</span><br><span class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/venv/bin/postdeactivate</span><br><span class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/venv/bin/preactivate</span><br><span class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/venv/bin/postactivate</span><br><span class="line">virtualenvwrapper.user_scripts creating /home/wangao/.virtualenvs/venv/bin/get_env_details</span><br><span class="line"><span class="comment"># 在虚拟环境上工作</span></span><br><span class="line">(venv) [wangao@localhost ~]$ workon venv</span><br><span class="line"><span class="comment"># 停止是一样的</span></span><br><span class="line">(venv) [wangao@localhost ~]$ deactivate</span><br><span class="line">[wangao@localhost ~]$</span><br><span class="line"><span class="comment"># 删除</span></span><br><span class="line">[wangao@localhost ~]$  rmvirtualenv venv</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/virtualenv/" data-title="使用virtualenv和virtualenvwrapper管理多版本Python开发环境 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/winsshfs/" title="Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/lang/"  title="NLS_LANG数据库字符集中文乱码问题分析和解决">
+ <strong>下一篇：</strong><br/> 
+ <span>NLS_LANG数据库字符集中文乱码问题分析和解决
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#virtualenv"><span class="toc-number">3.</span> <span class="toc-text">virtualenv</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#virtualenvwrapper"><span class="toc-number">4.</span> <span class="toc-text">virtualenvwrapper</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

@@ -1,0 +1,584 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>使用ssh config作为ssh代理轻松管理内网服务器 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="使用ssh config作为ssh代理轻松管理内网服务器">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用ssh config作为ssh代理轻松管理内网服务器">
+<meta property="og:url" content="https://wsgzao.github.io/post/ssh-config/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="使用ssh config作为ssh代理轻松管理内网服务器">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-04-28T03:18:44.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:07.114Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/ssh-config/" title="使用ssh config作为ssh代理轻松管理内网服务器" itemprop="url">使用ssh config作为ssh代理轻松管理内网服务器</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2022-04-28T03:18:44.000Z" itemprop="datePublished"> 发表于 2022-04-28</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh-config%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E6%9D%A5%E6%BA%90"><span class="toc-number">3.</span> <span class="toc-text">ssh_config的配置文件来源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh-config%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%AE%9E%E4%BE%8B"><span class="toc-number">4.</span> <span class="toc-text">ssh_config配置文件实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSH%E4%BD%BF%E7%94%A8%E5%B0%8F%E6%8A%80%E5%B7%A7"><span class="toc-number">5.</span> <span class="toc-text">SSH使用小技巧</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSH-Socks5%E9%9A%A7%E9%81%93%E4%BB%A3%E7%90%86%E5%92%8CHTTP%E5%8D%8F%E8%AE%AE%E8%BD%AC%E6%8D%A2"><span class="toc-number">6.</span> <span class="toc-text">SSH Socks5隧道代理和HTTP协议转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">7.</span> <span class="toc-text">参考</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>企业内部大部分服务器都只有内网，一般可以使用NAT方式正向代理访问公网资源。对于Linux来说一般通过ssh登录服务器，在没有公网IP的情况下可以修改ssh config配置文件，利用一台可以接入内网并具有公网IP的服务器作为代理或者称为Tunnel跳板机来管理，可以灵活定制访问规则并优化ssh参数让管理更加轻松。</p>
+<blockquote>
+<p>使用ssh config作为ssh代理轻松管理内网服务器</p>
+</blockquote>
+<hr>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2022年04月27日 - 增加SSH使用小技巧<br>2019年01月31日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/ssh-config/">https://wsgzao.github.io/post/ssh-config/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>SSH CONFIG FILE -  <a target="_blank" rel="noopener" href="https://www.ssh.com/ssh/config/">https://www.ssh.com/ssh/config/</a></p>
+<hr>
+<h2 id="ssh-config的配置文件来源"><a href="#ssh-config的配置文件来源" class="headerlink" title="ssh_config的配置文件来源"></a>ssh_config的配置文件来源</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">man ssh_config</span><br><span class="line"></span><br><span class="line">NAME</span><br><span class="line">     ssh_config -- OpenSSH SSH client configuration files</span><br><span class="line"></span><br><span class="line">DESCRIPTION</span><br><span class="line">     ssh(1) obtains configuration data from the following sources <span class="keyword">in</span> the following order:</span><br><span class="line"></span><br><span class="line">           1.   command-line options</span><br><span class="line">           2.   user<span class="string">&#x27;s configuration file (~/.ssh/config)</span></span><br><span class="line"><span class="string">           3.   system-wide configuration file (/etc/ssh/ssh_config)</span></span><br></pre></td></tr></table></figure>
+
+<p>ssh程序可以从三个途径获取配置参数：</p>
+<ol>
+<li>命令行选型，比如 -F configfile</li>
+<li>用户配置文件，放置在 ~&#x2F;.ssh&#x2F;config</li>
+<li>系统配置文件，放置在 &#x2F;etc&#x2F;ssh&#x2F;ssh_config（区别于 &#x2F;etc&#x2F;ssh&#x2F;sshd_config）</li>
+</ol>
+<p>上面三个途径，前面的途径传入的参数可以覆盖后面的途径传入的参数（与 linux 里的大部分应用类似）。因为&#x2F;etc&#x2F;ssh&#x2F;ssh_config 会影响 ssh 全局的配置，因此如果想对多主机进行管理（不影响别人的情况下），可以考虑修改自己家目录下的<del>&#x2F;.ssh&#x2F;config 文件（</del> 字符表示当前登录用户的家目录）。</p>
+<h2 id="ssh-config配置文件实例"><a href="#ssh-config配置文件实例" class="headerlink" title="ssh_config配置文件实例"></a>ssh_config配置文件实例</h2><p>首先看一个配置文件的 demo，假设8.8.8.8是你可以直接登录的Tunnel公网跳板机，10.65.32.0是需要管理的内网地址段，前提是8.8.8.8和内网服务器的防火墙策略均已配置正确，这里就不再赘述。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># cat ~/.ssh/config</span></span><br><span class="line"></span><br><span class="line">StrictHostKeyChecking no</span><br><span class="line">CheckHostIP no</span><br><span class="line"></span><br><span class="line">Host 10.65.32.*</span><br><span class="line">  HostName %h</span><br><span class="line">  ProxyCommand ssh bastion_GOP_SG_NC_MAIN -W %h:%p</span><br><span class="line">Host bastion_GOP_SG_NC_MAIN</span><br><span class="line">  HostName 8.8.8.8</span><br><span class="line">  port 22</span><br><span class="line">  User wangao</span><br><span class="line"></span><br><span class="line">Host 10.65.200.*</span><br><span class="line">  HostName %h</span><br><span class="line">  ProxyCommand ssh bastion_GOP_SG_MH_MAIN -W %h:%p</span><br><span class="line">Host bastion_GOP_SG_MH_MAIN</span><br><span class="line">  HostName 9.9.9.9</span><br><span class="line">  port 22</span><br><span class="line">  User wangao</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">StrictHostKeyChecking no</span><br><span class="line">CheckHostIP no</span><br><span class="line"></span><br><span class="line">Host 10.71.12.*</span><br><span class="line">  HostName %h</span><br><span class="line">  ProxyCommand ssh bastion_GOP_SG_NC_MAIN -W %h:%p</span><br><span class="line"></span><br><span class="line">Host 10.71.13.*</span><br><span class="line">  HostName %h</span><br><span class="line">  ProxyCommand ssh bastion_GOP_SG_NC_MAIN -W %h:%p</span><br><span class="line"></span><br><span class="line">Host 10.71.14.*</span><br><span class="line">  HostName %h</span><br><span class="line">  ProxyCommand ssh bastion_GOP_SG_NC_MAIN -W %h:%p</span><br><span class="line"></span><br><span class="line">Host 10.71.15.*</span><br><span class="line">  HostName %h</span><br><span class="line">  ProxyCommand ssh bastion_GOP_SG_NC_MAIN -W %h:%p</span><br><span class="line"></span><br><span class="line">Host bastion_GOP_SG_NC_MAIN</span><br><span class="line">  HostName 8.8.8.8</span><br><span class="line">  port 22</span><br><span class="line">  User wangao</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>CheckHostIP no，禁用known_hosts检查<br>Directs ssh to additionally check the host IP address in the known_hosts file.</p>
+<p>StrictHostKeyChecking no，跳过known_hosts写入<br>Specifies if ssh should never automatically add host keys to the ~&#x2F;.ssh&#x2F;known_hosts file, and refuses to connect to hosts whose host key has changed.</p>
+<p>Host 字段<br>Host 字段配置了登录别名，这里需要注意的是，Host 是支持通配符的， * 代表 0～n 个非空白字符，? 代表一个非空白字符，! 表示例外通配</p>
+<p>HostName 字段<br>指定远程主机名，可以直接使用 IP 地址。如果这个字段中包含 ‘%h’ ，则实际使用时会被命令行中的主机名替换</p>
+<p>User 字段<br>指定登录用户名</p>
+<p>IdentityFile 字段<br>指定密钥认证使用的私钥文件路径。默认为 ~&#x2F;.ssh&#x2F;id_rsa。这个字段可以指定多个密钥文件（以 , 分开），在连接的过程中会依次尝试这些密钥文件。和 HostName 字段一样，值也可以直接指定参数代替：</p>
+<p>Port 字段<br>指定远程主机端口号，默认为 22 。</p>
+<p>%h，远程主机名<br>%p，远程端口</p>
+<h2 id="SSH使用小技巧"><a href="#SSH使用小技巧" class="headerlink" title="SSH使用小技巧"></a>SSH使用小技巧</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 为跳板机配置ssh公钥</span></span><br><span class="line">ssh-keygen</span><br><span class="line">ssh-copy-id root@10.249.69.128</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置ssh config</span></span><br><span class="line"><span class="built_in">cd</span> ~/.ssh/</span><br><span class="line">vim config</span><br><span class="line"></span><br><span class="line">StrictHostKeyChecking no</span><br><span class="line">CheckHostIP no</span><br><span class="line"></span><br><span class="line">Host 192.168.*</span><br><span class="line">  HostName 10.249.69.128</span><br><span class="line">  User root</span><br><span class="line">  Port 22</span><br><span class="line"></span><br><span class="line"><span class="comment"># 直接跳转登录</span></span><br><span class="line">ssh root@192.168.8.0</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用ProxyCommand或者ProxyJump</span></span><br><span class="line">vim ~/.ssh/config</span><br><span class="line"></span><br><span class="line"><span class="comment"># ProxyCommand</span></span><br><span class="line">Host X</span><br><span class="line">    HostName 10.251.252.53</span><br><span class="line">    User root</span><br><span class="line">    Port 22</span><br><span class="line">    IdentityFile ~/.ssh/id_rsa</span><br><span class="line"></span><br><span class="line">Host xfljump</span><br><span class="line">    HostName 10.249.69.128</span><br><span class="line">    User root</span><br><span class="line">    Port 22</span><br><span class="line">    IdentityFile ~/.ssh/id_rsa</span><br><span class="line">    ProxyCommand ssh X -W %h:%p</span><br><span class="line"></span><br><span class="line"><span class="comment"># ProxyJump</span></span><br><span class="line">Host xfljump</span><br><span class="line">    HostName 10.249.69.128</span><br><span class="line">    User root</span><br><span class="line">    ProxyJump root@10.251.252.53</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://liwanggui.com/posts/ssh-tips/">https://liwanggui.com/posts/ssh-tips/</a><br><a target="_blank" rel="noopener" href="https://bugwz.com/2019/10/09/ssh-proxycommand/">https://bugwz.com/2019/10/09/ssh-proxycommand/</a><br><a target="_blank" rel="noopener" href="https://blog.nediiii.com/ssh-note/">https://blog.nediiii.com/ssh-note/</a><br><a target="_blank" rel="noopener" href="https://www.xiebruce.top/650.html">https://www.xiebruce.top/650.html</a><br><a target="_blank" rel="noopener" href="https://deepzz.com/post/how-to-setup-ssh-config.html">https://deepzz.com/post/how-to-setup-ssh-config.html</a></p>
+<h2 id="SSH-Socks5隧道代理和HTTP协议转换"><a href="#SSH-Socks5隧道代理和HTTP协议转换" class="headerlink" title="SSH Socks5隧道代理和HTTP协议转换"></a>SSH Socks5隧道代理和HTTP协议转换</h2><p>ssh 命令除了登陆外还有三种代理功能：</p>
+<p>正向代理（-L）：相当于 iptable 的 port forwarding<br>反向代理（-R）：相当于 frp 或者 ngrok<br>socks5 代理（-D）：相当于 ss&#x2F;ssr</p>
+<p>下面重点介绍动态转发<br>不管是本地转发还是远端转发，都需要一个具体的应用服务器的地址和端口号，要想访问其他机器的内容就得绑定很多条这样的转发命令， 通过动态转发就能省去这一个应用服务器的信息。</p>
+<p>ssh -D <local port> <SSH Server></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"># ssh_config</span><br><span class="line">vim ~/.ssh/config</span><br><span class="line"></span><br><span class="line">StrictHostKeyChecking no</span><br><span class="line">CheckHostIP no</span><br><span class="line">ServerAliveInterval  10</span><br><span class="line">ServerAliveCountMax  5</span><br><span class="line"></span><br><span class="line">Host jump</span><br><span class="line">    HostName 10.35.200.0</span><br><span class="line">    User tiger</span><br><span class="line">    ProxyJump aowang@xxx</span><br><span class="line"></span><br><span class="line">Host pdi</span><br><span class="line">    HostName 10.249.68.54</span><br><span class="line">    User root</span><br><span class="line">    ProxyJump aowang@10.251.246.148</span><br><span class="line"></span><br><span class="line"># ssh client socks5</span><br><span class="line"></span><br><span class="line">ssh -ND 1080 pdi</span><br><span class="line"></span><br><span class="line">macOS GUI can also try `Core Tunnel`</span><br><span class="line">https://codinn.com/tunnel/</span><br><span class="line"></span><br><span class="line"># client setup</span><br><span class="line"></span><br><span class="line">1. Chrome use `SwitchyOmega` extension</span><br><span class="line">2. Convert Socks5 to HTTP can use `gost`</span><br><span class="line"></span><br><span class="line">https://gost.run/</span><br><span class="line"></span><br><span class="line">gost -L http://:8080 -F socks://127.0.0.1:1080</span><br><span class="line"></span><br><span class="line">## set http_proxy</span><br><span class="line">Add this script to ~/.bash_profile</span><br><span class="line"></span><br><span class="line">export http_proxy=socks5://127.0.0.1:1080</span><br><span class="line">export https_proxy=socks5://127.0.0.1:1080</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">curl https://myip.wtf/json</span><br><span class="line">&#123;</span><br><span class="line">    &quot;YourFuckingIPAddress&quot;: &quot;128.106.228.155&quot;,</span><br><span class="line">    &quot;YourFuckingLocation&quot;: &quot;Singapore&quot;,</span><br><span class="line">    &quot;YourFuckingHostname&quot;: &quot;bb128-106-228-155.singnet.com.sg&quot;,</span><br><span class="line">    &quot;YourFuckingISP&quot;: &quot;Singtel Fibre&quot;,</span><br><span class="line">    &quot;YourFuckingTorExit&quot;: false,</span><br><span class="line">    &quot;YourFuckingCity&quot;: &quot;&quot;,</span><br><span class="line">    &quot;YourFuckingCountry&quot;: &quot;Singapore&quot;,</span><br><span class="line">    &quot;YourFuckingCountryCode&quot;: &quot;SG&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">curl -x socks5://127.0.0.1:1080 http://wtfismyip.com/json</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="http://wlwang41.github.io/content/ops/ssh%E9%9A%A7%E9%81%93%E4%BB%A3%E7%90%86.html">http://wlwang41.github.io/content/ops/ssh%E9%9A%A7%E9%81%93%E4%BB%A3%E7%90%86.html</a></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><blockquote>
+<p>如果你还不了解ssh或者对ssh端口转发感兴趣，可以参考以下内容</p>
+</blockquote>
+<p>SSH使用密钥登录并禁止口令登录实践 - <a href="https://wsgzao.github.io/post/ssh/">https://wsgzao.github.io/post/ssh/</a></p>
+<p>玩转 SSH 端口转发 - <a target="_blank" rel="noopener" href="https://blog.fundebug.com/2017/04/24/ssh-port-forwarding/">https://blog.fundebug.com/2017/04/24/ssh-port-forwarding/</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/ssh-config/" data-title="使用ssh config作为ssh代理轻松管理内网服务器 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/coredns/" title="CoreDNS 使用指北">
+  <strong>上一篇：</strong><br/>
+  <span>
+  CoreDNS 使用指北</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/ssh/"  title="SSH使用密钥登录并禁止口令登录实践">
+ <strong>下一篇：</strong><br/> 
+ <span>SSH使用密钥登录并禁止口令登录实践
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh-config%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E6%9D%A5%E6%BA%90"><span class="toc-number">3.</span> <span class="toc-text">ssh_config的配置文件来源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh-config%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%AE%9E%E4%BE%8B"><span class="toc-number">4.</span> <span class="toc-text">ssh_config配置文件实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSH%E4%BD%BF%E7%94%A8%E5%B0%8F%E6%8A%80%E5%B7%A7"><span class="toc-number">5.</span> <span class="toc-text">SSH使用小技巧</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSH-Socks5%E9%9A%A7%E9%81%93%E4%BB%A3%E7%90%86%E5%92%8CHTTP%E5%8D%8F%E8%AE%AE%E8%BD%AC%E6%8D%A2"><span class="toc-number">6.</span> <span class="toc-text">SSH Socks5隧道代理和HTTP协议转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">7.</span> <span class="toc-text">参考</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

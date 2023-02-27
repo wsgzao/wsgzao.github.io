@@ -1,0 +1,585 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>proxychains和graftcp和cgproxy使用方法 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="proxychains和graftcp和cgproxy使用方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="proxychains和graftcp和cgproxy使用方法">
+<meta property="og:url" content="https://wsgzao.github.io/post/proxychains/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="proxychains和graftcp和cgproxy使用方法">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-07T06:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T08:07:43.296Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/proxychains/" title="proxychains和graftcp和cgproxy使用方法" itemprop="url">proxychains和graftcp和cgproxy使用方法</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2022-11-07T06:59:49.000Z" itemprop="datePublished"> 发表于 2022-11-07</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#proxychains-%E7%AE%80%E4%BB%8B"><span class="toc-number">3.</span> <span class="toc-text">proxychains 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#proxychains-%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE"><span class="toc-number">4.</span> <span class="toc-text">proxychains 安装配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#proxychains-conf-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">5.</span> <span class="toc-text">proxychains.conf 配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%BB%A3%E7%90%86%E8%AE%BE%E7%BD%AE"><span class="toc-number">6.</span> <span class="toc-text">环境变量代理设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Similar-projects"><span class="toc-number">7.</span> <span class="toc-text">Similar projects</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>proxychains新的版本已经称为proxychains-ng由rofl0r托管在GitHub中维护，一般使用proxychains用于加速更新和下载国外的一些开源组件，比如yum和pip。proxychains使用十分简单，甚至都不必编译安装。</p>
+<p>新的代理方案可以由proxychains-ng过渡到graftcp或者cgproxy</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2022年11月07日 - 增加graftcp和cgproxy<br>2017年04月16日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/proxychains/">https://wsgzao.github.io/post/proxychains/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>proxychains-ng - <a target="_blank" rel="noopener" href="https://github.com/rofl0r/proxychains-ng">https://github.com/rofl0r/proxychains-ng</a></p>
+<hr>
+<h2 id="proxychains-简介"><a href="#proxychains-简介" class="headerlink" title="proxychains 简介"></a>proxychains 简介</h2><p>ProxyChains is a UNIX program, that hooks network-related libc functions in DYNAMICALLY LINKED programs via a preloaded DLL (dlsym(), LD_PRELOAD) and redirects the connections through SOCKS4a&#x2F;5 or HTTP proxies. It supports TCP only (no UDP&#x2F;ICMP etc).</p>
+<p>The way it works is basically a HACK; so it is possible that it doesn’t work with your program, especially when it’s a script, or starts numerous processes like background daemons or uses dlopen() to load “modules” (bug in glibc dynlinker).</p>
+<p>It should work with simple compiled (C&#x2F;C++) dynamically linked programs though.</p>
+<p>If your program doesn’t work with proxychains, consider using an iptables based solution instead; this is much more robust.</p>
+<p>Supported Platforms: Linux, BSD, Mac.</p>
+<h2 id="proxychains-安装配置"><a href="#proxychains-安装配置" class="headerlink" title="proxychains 安装配置"></a>proxychains 安装配置</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># needs a working C compiler, preferably gcc</span></span><br><span class="line">yum install gcc -y</span><br><span class="line">./configure --prefix=/usr --sysconfdir=/etc</span><br><span class="line">make</span><br><span class="line">[optional] sudo make install</span><br><span class="line">[optional] sudo make install-config (installs proxychains.conf)</span><br><span class="line"></span><br><span class="line"><span class="comment"># if you dont install, you can use proxychains from the build directory like this: </span></span><br><span class="line">./proxychains4 -f src/proxychains.conf telnet google.com 80</span><br><span class="line"></span><br><span class="line"><span class="comment"># 一般编辑proxychains.conf添加socks5地址即可立即使用</span></span><br><span class="line">vim /etc/proxychains.conf</span><br><span class="line"></span><br><span class="line">[ProxyList]</span><br><span class="line"><span class="comment"># add proxy here ...</span></span><br><span class="line"><span class="comment"># meanwile</span></span><br><span class="line"><span class="comment"># defaults set to &quot;tor&quot;</span></span><br><span class="line"><span class="comment">#socks4 	127.0.0.1 9050</span></span><br><span class="line">socks5 172.28.70.26 1080</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">[root@centos7 ~]<span class="comment"># curl myip.ipip.net</span></span><br><span class="line">当前 IP：116.228.53.149  来自于：中国 上海 上海  电信</span><br><span class="line">[root@centos7 ~]<span class="comment"># proxychains4 curl myip.ipip.net</span></span><br><span class="line">[proxychains] config file found: /etc/proxychains.conf</span><br><span class="line">[proxychains] preloading /usr/local/lib/libproxychains4.so</span><br><span class="line">[proxychains] DLL init: proxychains-ng 4.12</span><br><span class="line">[proxychains] Strict chain  ...  172.28.70.26:1080  ...  myip.ipip.net:80  ...  OK</span><br><span class="line">当前 IP：45.79.192.22  来自于：美国 乔治亚州 亚特兰大  linode.com</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="proxychains-conf-配置文件"><a href="#proxychains-conf-配置文件" class="headerlink" title="proxychains.conf 配置文件"></a>proxychains.conf 配置文件</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7 ~]<span class="comment"># cat /etc/proxychains.conf </span></span><br><span class="line"><span class="comment"># proxychains.conf  VER 4.x</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#        HTTP, SOCKS4a, SOCKS5 tunneling proxifier with DNS.</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># The option below identifies how the ProxyList is treated.</span></span><br><span class="line"><span class="comment"># only one option should be uncommented at time,</span></span><br><span class="line"><span class="comment"># otherwise the last appearing option will be accepted</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#dynamic_chain</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Dynamic - Each connection will be done via chained proxies</span></span><br><span class="line"><span class="comment"># all proxies chained in the order as they appear in the list</span></span><br><span class="line"><span class="comment"># at least one proxy must be online to play in chain</span></span><br><span class="line"><span class="comment"># (dead proxies are skipped)</span></span><br><span class="line"><span class="comment"># otherwise EINTR is returned to the app</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">strict_chain</span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Strict - Each connection will be done via chained proxies</span></span><br><span class="line"><span class="comment"># all proxies chained in the order as they appear in the list</span></span><br><span class="line"><span class="comment"># all proxies must be online to play in chain</span></span><br><span class="line"><span class="comment"># otherwise EINTR is returned to the app</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#round_robin_chain</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Round Robin - Each connection will be done via chained proxies</span></span><br><span class="line"><span class="comment"># of chain_len length</span></span><br><span class="line"><span class="comment"># all proxies chained in the order as they appear in the list</span></span><br><span class="line"><span class="comment"># at least one proxy must be online to play in chain</span></span><br><span class="line"><span class="comment"># (dead proxies are skipped).</span></span><br><span class="line"><span class="comment"># the start of the current proxy chain is the proxy after the last</span></span><br><span class="line"><span class="comment"># proxy in the previously invoked proxy chain.</span></span><br><span class="line"><span class="comment"># if the end of the proxy chain is reached while looking for proxies</span></span><br><span class="line"><span class="comment"># start at the beginning again.</span></span><br><span class="line"><span class="comment"># otherwise EINTR is returned to the app</span></span><br><span class="line"><span class="comment"># These semantics are not guaranteed in a multithreaded environment.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#random_chain</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Random - Each connection will be done via random proxy</span></span><br><span class="line"><span class="comment"># (or proxy chain, see  chain_len) from the list.</span></span><br><span class="line"><span class="comment"># this option is good to test your IDS :)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Make sense only if random_chain or round_robin_chain</span></span><br><span class="line"><span class="comment">#chain_len = 2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Quiet mode (no output from library)</span></span><br><span class="line"><span class="comment">#quiet_mode</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Proxy DNS requests - no leak for DNS data</span></span><br><span class="line">proxy_dns </span><br><span class="line"></span><br><span class="line"><span class="comment"># set the class A subnet number to use for the internal remote DNS mapping</span></span><br><span class="line"><span class="comment"># we use the reserved 224.x.x.x range by default,</span></span><br><span class="line"><span class="comment"># if the proxified app does a DNS request, we will return an IP from that range.</span></span><br><span class="line"><span class="comment"># on further accesses to this ip we will send the saved DNS name to the proxy.</span></span><br><span class="line"><span class="comment"># in case some control-freak app checks the returned ip, and denies to </span></span><br><span class="line"><span class="comment"># connect, you can use another subnet, e.g. 10.x.x.x or 127.x.x.x.</span></span><br><span class="line"><span class="comment"># of course you should make sure that the proxified app does not need</span></span><br><span class="line"><span class="comment"># *real* access to this subnet. </span></span><br><span class="line"><span class="comment"># i.e. dont use the same subnet then in the localnet section</span></span><br><span class="line"><span class="comment">#remote_dns_subnet 127 </span></span><br><span class="line"><span class="comment">#remote_dns_subnet 10</span></span><br><span class="line">remote_dns_subnet 224</span><br><span class="line"></span><br><span class="line"><span class="comment"># Some timeouts in milliseconds</span></span><br><span class="line">tcp_read_time_out 15000</span><br><span class="line">tcp_connect_time_out 8000</span><br><span class="line"></span><br><span class="line"><span class="comment">### Examples for localnet exclusion</span></span><br><span class="line"><span class="comment">## localnet ranges will *not* use a proxy to connect.</span></span><br><span class="line"><span class="comment">## Exclude connections to 192.168.1.0/24 with port 80</span></span><br><span class="line"><span class="comment"># localnet 192.168.1.0:80/255.255.255.0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## Exclude connections to 192.168.100.0/24</span></span><br><span class="line"><span class="comment"># localnet 192.168.100.0/255.255.255.0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## Exclude connections to ANYwhere with port 80</span></span><br><span class="line"><span class="comment"># localnet 0.0.0.0:80/0.0.0.0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## RFC5735 Loopback address range</span></span><br><span class="line"><span class="comment">## if you enable this, you have to make sure remote_dns_subnet is not 127</span></span><br><span class="line"><span class="comment">## you&#x27;ll need to enable it if you want to use an application that </span></span><br><span class="line"><span class="comment">## connects to localhost.</span></span><br><span class="line"><span class="comment"># localnet 127.0.0.0/255.0.0.0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## RFC1918 Private Address Ranges</span></span><br><span class="line"><span class="comment"># localnet 10.0.0.0/255.0.0.0</span></span><br><span class="line"><span class="comment"># localnet 172.16.0.0/255.240.0.0</span></span><br><span class="line"><span class="comment"># localnet 192.168.0.0/255.255.0.0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ProxyList format</span></span><br><span class="line"><span class="comment">#       type  ip  port [user pass]</span></span><br><span class="line"><span class="comment">#       (values separated by &#x27;tab&#x27; or &#x27;blank&#x27;)</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#       only numeric ipv4 addresses are valid</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#        Examples:</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#            	socks5	192.168.67.78	1080	lamer	secret</span></span><br><span class="line"><span class="comment">#		http	192.168.89.3	8080	justu	hidden</span></span><br><span class="line"><span class="comment">#	 	socks4	192.168.1.49	1080</span></span><br><span class="line"><span class="comment">#	        http	192.168.39.93	8080	</span></span><br><span class="line"><span class="comment">#		</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#       proxy types: http, socks4, socks5</span></span><br><span class="line"><span class="comment">#        ( auth types supported: &quot;basic&quot;-http  &quot;user/pass&quot;-socks )</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">[ProxyList]</span><br><span class="line"><span class="comment"># add proxy here ...</span></span><br><span class="line"><span class="comment"># meanwile</span></span><br><span class="line"><span class="comment"># defaults set to &quot;tor&quot;</span></span><br><span class="line"><span class="comment">#socks4 	127.0.0.1 9050</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="环境变量代理设置"><a href="#环境变量代理设置" class="headerlink" title="环境变量代理设置"></a>环境变量代理设置</h2><p>翻墙代理是用于访问 github 等不能直接访问的连接使用。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># 使用时 export http_proxy; export https_proxy</span><br><span class="line">export http_proxy=xxx</span><br><span class="line">export https_proxy=xxx</span><br><span class="line">export no_proxy=xxx</span><br><span class="line"></span><br><span class="line"># 使用完立刻 unset http_proxy; unset https_proxy</span><br><span class="line"></span><br><span class="line">vim ~/.bashrc</span><br><span class="line">with_proxy()&#123;</span><br><span class="line">   HTTPS_PROXY=http://xxx HTTP_PROXY=http://xxx &quot;$@&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">with_proxy git clone https://github.com/wsgzao/sersync.git</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Similar-projects"><a href="#Similar-projects" class="headerlink" title="Similar projects"></a>Similar projects</h2><p>There are some awesome existing work:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/hmgle/graftcp">graftcp</a>: work on most programs, but cannot proxy UDP (such as DNS) requests. <code>graftcp</code> also has performance hit on the underlying program, since it uses <code>ptrace</code>.</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/haad/proxychains">proxychains</a>: easy to use, but not working on static linked programs (such as Go programs).</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/rofl0r/proxychains-ng">proxychains-ng</a>: similar to proxychains.</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/springzfx/cgproxy">cgproxy</a>: <code>cgproxy</code> also uses cgroup to do transparent proxy, and the idea is similar to <code>cproxy</code>‘s. There are some differences in UX and system requirements:<ul>
+<li><code>cgproxy</code> requires system <code>cgroup</code> v2 support, while <code>cproxy</code> works with both v1 and v2.</li>
+<li><code>cgproxy</code> requires a background daemon process <code>cgproxyd</code> running, while <code>cproxy</code> does not.</li>
+<li><code>cgproxy</code> requires <code>tproxy</code>, which is optional in <code>cproxy</code>.</li>
+<li><code>cgproxy</code> can be used to do global proxy, while <code>cproxy</code> does not intended to support global proxy.</li>
+</ul>
+</li>
+</ul>
+<p>一个支持节点与订阅链接的 Linux 命令行代理工具 | A command-line tool for one-click proxy in your research and development without installing v2ray or anything else (only for linux)</p>
+<p>gg 是一个命令行工具，可在 Linux 环境下对任意命令进行一键代理，而无需安装 v2ray 等其他工具。</p>
+<p>你只需要在想代理的命令之前添加 <code>gg</code> 即可，例如: <code>gg python -m pip install torch</code>.</p>
+<p>感谢 <a target="_blank" rel="noopener" href="https://github.com/hmgle/graftcp">graftcp</a> 带来的灵感，gg 是它的一个纯 Go 语言实现，并且拥有更多的有用特性。</p>
+<p><strong>我为什么编写 go-graft？</strong></p>
+<p>我已经厌倦了我在科研和开发中所遇到的糟糕的网络状况。但我并不希望在我的几台工作服务器上安装 v2ray，因为它太笨重了，且配置麻烦。</p>
+<p>因此，我需要一个轻巧便携的命令行工具来帮助我在各种服务器上下载和安装依赖项和软件。</p>
+<p><strong>优势</strong></p>
+<p>相比较于 proxychains 或 graftcp，go-graft 拥有以下优势:</p>
+<ol>
+<li>gg 下载即用，不需要安装任何额外的工具。</li>
+<li>支持 UDP，从而有效应对 DNS 污染。</li>
+<li>支持 Go 语言编写的程序。见 <a target="_blank" rel="noopener" href="https://github.com/rofl0r/proxychains-ng/issues/199">applications built by Go can not be hook by proxychains-ng</a> 。</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://github.com/mzz2017/gg">https://github.com/mzz2017/gg</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/proxychains/" data-title="proxychains和graftcp和cgproxy使用方法 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/ipv6/" title="IPv6与IPv4的基础知识学习分享">
+  <strong>上一篇：</strong><br/>
+  <span>
+  IPv6与IPv4的基础知识学习分享</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/singapore-pr/"  title="新加坡申请PR永久居民和SC公民的流程介绍">
+ <strong>下一篇：</strong><br/> 
+ <span>新加坡申请PR永久居民和SC公民的流程介绍
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#proxychains-%E7%AE%80%E4%BB%8B"><span class="toc-number">3.</span> <span class="toc-text">proxychains 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#proxychains-%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE"><span class="toc-number">4.</span> <span class="toc-text">proxychains 安装配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#proxychains-conf-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">5.</span> <span class="toc-text">proxychains.conf 配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%BB%A3%E7%90%86%E8%AE%BE%E7%BD%AE"><span class="toc-number">6.</span> <span class="toc-text">环境变量代理设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Similar-projects"><span class="toc-number">7.</span> <span class="toc-text">Similar projects</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

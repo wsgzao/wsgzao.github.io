@@ -1,0 +1,606 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>使用Ansible管理Windows | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="轻轻松松使用Ansible管理Windows客户端">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Ansible管理Windows">
+<meta property="og:url" content="https://wsgzao.github.io/post/ansible-windows/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="轻轻松松使用Ansible管理Windows客户端">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://ws1.sinaimg.cn/large/7207510dgy1frixssianuj20w30ecwfi.jpg">
+<meta property="og:image" content="http://ws4.sinaimg.cn/large/7207510dgy1frizys458dj20b109k3yq.jpg">
+<meta property="article:published_time" content="2018-11-27T02:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:06.705Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://ws1.sinaimg.cn/large/7207510dgy1frixssianuj20w30ecwfi.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/ansible-windows/" title="使用Ansible管理Windows" itemprop="url">使用Ansible管理Windows</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2018-11-27T02:59:49.000Z" itemprop="datePublished"> 发表于 2018-11-27</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ansible-Windows-Support"><span class="toc-number">3.</span> <span class="toc-text">Ansible Windows Support</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="toc-number">4.</span> <span class="toc-text">客户端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="toc-number">5.</span> <span class="toc-text">服务端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BD%91%E7%9B%98%E4%B8%8B%E8%BD%BD"><span class="toc-number">6.</span> <span class="toc-text">网盘下载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#macOS%E9%85%8D%E7%BD%AE"><span class="toc-number">7.</span> <span class="toc-text">macOS配置</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文主要介绍在如何使用Ansible管理Windows客户端，Ansible官方提供了一个很方便的安装脚本，对于外网用户来说安装真的很轻松，可惜我遇到的问题是如何在内网部署，有相同烦恼的小伙伴不妨参考下</p>
+<blockquote>
+<p>轻轻松松使用Ansible管理Windows客户端</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018年11月27日 - 更新macOS使用ansible管理windows<br>2018年05月21日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/ansible-windows/">https://wsgzao.github.io/post/ansible-windows/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>Ansible Windows Guides - <a target="_blank" rel="noopener" href="http://docs.ansible.com/ansible/latest/user_guide/windows.html">http://docs.ansible.com/ansible/latest/user_guide/windows.html</a></p>
+<hr>
+<h2 id="Ansible-Windows-Support"><a href="#Ansible-Windows-Support" class="headerlink" title="Ansible Windows Support"></a>Ansible Windows Support</h2><blockquote>
+<p>Ansible在2.3版本之前对于Windows支持的并不算很友好，从2.4版本开始已经可以使用原生模块实现很多需求</p>
+</blockquote>
+<p>Because Windows is a non-POSIX-compliant operating system, there are differences between how Ansible interacts with them and the way Windows works. These guides will highlight some of the differences between Linux&#x2F;Unix hosts and hosts running Windows.</p>
+<ul>
+<li>Ansible’s supported Windows versions generally match those under current and extended support from Microsoft. Supported desktop OSs include Windows 7, 8.1, and 10, and supported server OSs are Windows Server 2008, 2008 R2, 2012, 2012 R2, and - 2016.</li>
+<li>Ansible requires PowerShell 3.0 or newer and at least .NET 4.0 to be installed on the Windows host.</li>
+<li>A WinRM listener should be created and activated. More details for this can be found below.</li>
+</ul>
+<p><img src="http://ws1.sinaimg.cn/large/7207510dgy1frixssianuj20w30ecwfi.jpg" alt="image"></p>
+<blockquote>
+<p>Ansible does not support managing Windows XP or Server 2003 hosts. The supported operating system versions are:</p>
+</blockquote>
+<p>Windows Server 2008<br>Windows Server 2008 R2<br>Windows Server 2012<br>Windows Server 2012 R2<br>Windows Server 2016<br>Windows 7<br>Windows 8.1<br>Windows 10</p>
+<ol>
+<li>在官方文档中已经提到了在Windows中使用Ansible的最要前提，WinRM</li>
+<li>WinRM依赖Powershell 3.0以上版本的支持，牵扯出PowerShell 2.0 to PowerShell 3.0&#x2F;5.0的问题</li>
+<li>而Powershell升级则带来.Net Framework是否跟随升级至4.6.2&#x2F;4.7.2的选择</li>
+<li>关于WinRM的参数配置可以参考下面的链接Setting up a Windows Host</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://github.com/ansible/ansible/blob/devel/examples/scripts/upgrade_to_ps3.ps1">https://github.com/ansible/ansible/blob/devel/examples/scripts/upgrade_to_ps3.ps1</a><br><a target="_blank" rel="noopener" href="https://github.com/ansible/ansible/blob/devel/examples/scripts/ConfigureRemotingForAnsible.ps1">https://github.com/ansible/ansible/blob/devel/examples/scripts/ConfigureRemotingForAnsible.ps1</a></p>
+<p>Setting up a Windows Host<br><a target="_blank" rel="noopener" href="http://docs.ansible.com/ansible/latest/user_guide/windows_setup.html">http://docs.ansible.com/ansible/latest/user_guide/windows_setup.html</a></p>
+<p>.NET Framework 4.7.2&#x2F;4.6.2<br><a target="_blank" rel="noopener" href="https://www.microsoft.com/net/download/dotnet-framework-runtime">https://www.microsoft.com/net/download/dotnet-framework-runtime</a></p>
+<p>Powershell 3.0<br><a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/download/details.aspx?id=34595">https://www.microsoft.com/en-us/download/details.aspx?id=34595</a></p>
+<p>Powershell 5.1<br><a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/download/details.aspx?id=54616">https://www.microsoft.com/en-us/download/details.aspx?id=54616</a></p>
+<blockquote>
+<p>我个人目前的建议是Win7&#x2F;2008升级至Powershell 3.0，.Net Framework升级至4.6.2，其他情况需要可以参考官方文档后做决定</p>
+</blockquote>
+<p>Ansible Windows Guides - <a target="_blank" rel="noopener" href="http://docs.ansible.com/ansible/latest/user_guide/windows.html">http://docs.ansible.com/ansible/latest/user_guide/windows.html</a></p>
+<h2 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h2><p>1.客户端配置windows主机,以管理员身份打开powershell, 并查看当前ps版本<br>get-host<br>2.系统自带的powershell版本是2.0，需要更新至powershell 3 以上版本<br><a target="_blank" rel="noopener" href="https://www.microsoft.com/net/download/dotnet-framework-runtime">https://www.microsoft.com/net/download/dotnet-framework-runtime</a><br><a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/download/details.aspx?id=34595">https://www.microsoft.com/en-us/download/details.aspx?id=34595</a><br>3.安装完重启服务器查看powershell版本</p>
+<p>.NET Framework 4.6以上版本无法建立到信任根颁发机构的证书链<br>原因：系统缺少信任 Microsoft Root Certificate Authority 2011 根证书<br>下载：MicrosoftRootCertificateAuthority2011.cer<br><a target="_blank" rel="noopener" href="http://go.microsoft.com/fwlink/?LinkID=747875&clcid=0x409">http://go.microsoft.com/fwlink/?LinkID=747875&amp;clcid=0x409</a><br>运行 certmgr.msc<br>导入证书到“受信任的根证书颁发机构”</p>
+<p><img src="http://ws4.sinaimg.cn/large/7207510dgy1frizys458dj20b109k3yq.jpg" alt="image"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 配置winrm</span></span><br><span class="line"><span class="built_in">mkdir</span> C:\temp</span><br><span class="line"><span class="built_in">cd</span> C:\temp</span><br><span class="line"><span class="comment"># 下载ConfigureRemotingForAnsible.ps1</span></span><br><span class="line">https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1</span><br><span class="line"><span class="comment"># 开启WinRM服务</span></span><br><span class="line">powershell -ExecutionPolicy RemoteSigned .\ConfigureRemotingForAnsible.ps1 -SkipNetworkProfileCheck</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 服务端使用pip安装pywinrm</span></span><br><span class="line">pip install pywinrm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 功能测试，配置ansible控制机</span></span><br><span class="line">vi /etc/ansible/hosts</span><br><span class="line"></span><br><span class="line">[windows]</span><br><span class="line">192.168.67.139</span><br><span class="line">[windows:vars]</span><br><span class="line">ansible_user=Administrator</span><br><span class="line">ansible_password=Admin123</span><br><span class="line">ansible_port=5986</span><br><span class="line">ansible_connection=winrm</span><br><span class="line">ansible_winrm_server_cert_validation=ignore  </span><br><span class="line"></span><br><span class="line"><span class="comment"># 要注意的是端口方面ssl即https方式的使用5986，http使用5985</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试ping通信</span></span><br><span class="line">ansible windows -m win_ping </span><br><span class="line"><span class="comment"># 查看ip地址 </span></span><br><span class="line">ansible windows -m win_command -a <span class="string">&quot;ipconfig&quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="网盘下载"><a href="#网盘下载" class="headerlink" title="网盘下载"></a>网盘下载</h2><blockquote>
+<p>Windows作为客户端所需的软件包我上传到百度网盘，.Net Framework安装失败提示证书错误记得手动导入MicrosoftRootCertificateAuthority2011.cer</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1JNV2pXjwUn14ojAtdEH_Sg">https://pan.baidu.com/s/1JNV2pXjwUn14ojAtdEH_Sg</a></p>
+<ol>
+<li><p>安装 .Net Framework 4.6.2（NDP462-KB3151800-x86-x64-AllOS-ENU.exe）</p>
+</li>
+<li><p>升级 Windows 7 SP1 和 Windows 2008 R2 SP1 的 PowerShell版本从2.0至3.0（Windows6.1-KB2506143-x64.msu）</p>
+</li>
+<li><p>执行.\ConfigureRemotingForAnsible.ps1脚本开启WinRM远程管理服务</p>
+<p> powershell -ExecutionPolicy RemoteSigned .\ConfigureRemotingForAnsible.ps1 -SkipNetworkProfileCheck</p>
+</li>
+</ol>
+<h2 id="macOS配置"><a href="#macOS配置" class="headerlink" title="macOS配置"></a>macOS配置</h2><blockquote>
+<p>macOS使用ansible管理windows里有一个小坑</p>
+</blockquote>
+<p>Ansible Error – “NSPlaceholderDate initialize may have been in progress in another thread when fork() was called”</p>
+<p>If you have came across the same error as I did  (error below) then solving this might be easier than you think</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">objc[6763]: +[__NSPlaceholderDate initialize] may have been <span class="keyword">in</span> progress <span class="keyword">in</span> another thread when fork() was called.</span><br><span class="line">objc[6763]: +[__NSPlaceholderDate initialize] may have been <span class="keyword">in</span> progress <span class="keyword">in</span> another thread when fork() was called. We cannot safely call it or ignore it <span class="keyword">in</span> the fork() child process. Crashing instead. Set a breakpoint on objc_initializeAfterForkError to debug.</span><br><span class="line"></span><br><span class="line"><span class="comment"># run this export</span></span><br><span class="line"><span class="built_in">export</span> OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>You just need to run the following ( <a target="_blank" rel="noopener" href="https://github.com/ansible/ansible/issues/31869">https://github.com/ansible/ansible/issues/31869</a> )</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># download the script</span></span><br><span class="line">(New-Object System.Net.WebClient).DownloadFile(<span class="string">&#x27;https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1&#x27;</span>, <span class="string">&#x27;./ConfigureRemotingForAnsible.ps1&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># execute the script</span></span><br><span class="line">./ConfigureRemotingForAnsible.ps1</span><br><span class="line"></span><br><span class="line"><span class="comment"># macOS ansible</span></span><br><span class="line">python3 -m venv ansible</span><br><span class="line">pip install ansible pywinrm</span><br><span class="line"></span><br><span class="line"><span class="comment"># config win_hosts file</span></span><br><span class="line">vi win_hosts</span><br><span class="line"></span><br><span class="line">[windows:vars]</span><br><span class="line">ansible_user=ox</span><br><span class="line">ansible_password=ox</span><br><span class="line">ansible_port=5986</span><br><span class="line">ansible_connection=winrm</span><br><span class="line">ansible_winrm_server_cert_validation=ignore</span><br><span class="line"></span><br><span class="line">[windows]</span><br><span class="line">192.168.56.101</span><br><span class="line"></span><br><span class="line"><span class="comment"># run test</span></span><br><span class="line">ansible -i win_hosts windows -m win_ping -vvv</span><br><span class="line"></span><br><span class="line">ansible 2.7.0</span><br><span class="line">  config file = /Users/wangao/Documents/git/wangao/ansible/ansible.cfg</span><br><span class="line">  configured module search path = [u<span class="string">&#x27;/Users/wangao/.ansible/plugins/modules&#x27;</span>, u<span class="string">&#x27;/usr/share/ansible/plugins/modules&#x27;</span>]</span><br><span class="line">  ansible python module location = /usr/local/lib/python2.7/site-packages/ansible</span><br><span class="line">  executable location = /usr/local/bin/ansible</span><br><span class="line">  python version = 2.7.15 (default, Jul 23 2018, 21:27:06) [GCC 4.2.1 Compatible Apple LLVM 9.1.0 (clang-902.0.39.2)]</span><br><span class="line">Using /Users/wangao/Documents/git/wangao/ansible/ansible.cfg as config file</span><br><span class="line">Parsed /Users/wangao/Documents/git/wangao/ansible/win_hosts inventory <span class="built_in">source</span> with ini plugin</span><br><span class="line">META: ran handlers</span><br><span class="line">Using module file /usr/local/lib/python2.7/site-packages/ansible/modules/windows/win_ping.ps1</span><br><span class="line">&lt;192.168.56.101&gt; ESTABLISH WINRM CONNECTION FOR USER: ox on PORT 5986 TO 192.168.56.101</span><br><span class="line">objc[63337]: +[__NSPlaceholderDate initialize] may have been <span class="keyword">in</span> progress <span class="keyword">in</span> another thread when fork() was called.</span><br><span class="line">objc[63337]: +[__NSPlaceholderDate initialize] may have been <span class="keyword">in</span> progress <span class="keyword">in</span> another thread when fork() was called. We cannot safely call it or ignore it <span class="keyword">in</span> the fork() child process. Crashing instead. Set a breakpoint on objc_initializeAfterForkError to debug.</span><br><span class="line"></span><br><span class="line"><span class="comment"># Fixed this on High Sierra and Mojave.</span></span><br><span class="line"><span class="built_in">export</span> OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES</span><br><span class="line"></span><br><span class="line">ansible -i win_hosts windows -m win_ping -vvv</span><br><span class="line"></span><br><span class="line">ansible 2.7.0</span><br><span class="line">  config file = /Users/wangao/Documents/git/wangao/ansible/ansible.cfg</span><br><span class="line">  configured module search path = [u<span class="string">&#x27;/Users/wangao/.ansible/plugins/modules&#x27;</span>, u<span class="string">&#x27;/usr/share/ansible/plugins/modules&#x27;</span>]</span><br><span class="line">  ansible python module location = /usr/local/lib/python2.7/site-packages/ansible</span><br><span class="line">  executable location = /usr/local/bin/ansible</span><br><span class="line">  python version = 2.7.15 (default, Jul 23 2018, 21:27:06) [GCC 4.2.1 Compatible Apple LLVM 9.1.0 (clang-902.0.39.2)]</span><br><span class="line">Using /Users/wangao/Documents/git/wangao/ansible/ansible.cfg as config file</span><br><span class="line">Parsed /Users/wangao/Documents/git/wangao/ansible/win_hosts inventory <span class="built_in">source</span> with ini plugin</span><br><span class="line">META: ran handlers</span><br><span class="line">Using module file /usr/local/lib/python2.7/site-packages/ansible/modules/windows/win_ping.ps1</span><br><span class="line">&lt;192.168.56.101&gt; ESTABLISH WINRM CONNECTION FOR USER: ox on PORT 5986 TO 192.168.56.101</span><br><span class="line">EXEC (via pipeline wrapper)</span><br><span class="line">192.168.56.101 | SUCCESS =&gt; &#123;</span><br><span class="line">    <span class="string">&quot;changed&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">    <span class="string">&quot;ping&quot;</span>: <span class="string">&quot;pong&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/ansible-windows/" data-title="使用Ansible管理Windows | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/zabbix-mysql-partition/" title="Zabbix MySQL Database Partitioning 表分区优化">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Zabbix MySQL Database Partitioning 表分区优化</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/splunk/"  title="Splunk官方培训笔记">
+ <strong>下一篇：</strong><br/> 
+ <span>Splunk官方培训笔记
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ansible-Windows-Support"><span class="toc-number">3.</span> <span class="toc-text">Ansible Windows Support</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="toc-number">4.</span> <span class="toc-text">客户端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="toc-number">5.</span> <span class="toc-text">服务端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BD%91%E7%9B%98%E4%B8%8B%E8%BD%BD"><span class="toc-number">6.</span> <span class="toc-text">网盘下载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#macOS%E9%85%8D%E7%BD%AE"><span class="toc-number">7.</span> <span class="toc-text">macOS配置</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

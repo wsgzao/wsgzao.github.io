@@ -1,0 +1,568 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>使用pipenv代替virtualenv管理python包 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="Pipenv 官方推荐的 Python 包管理工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用pipenv代替virtualenv管理python包">
+<meta property="og:url" content="https://wsgzao.github.io/post/pipenv/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="Pipenv 官方推荐的 Python 包管理工具">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2018/04/26/5ae14a41a5a8e.gif">
+<meta property="article:published_time" content="2018-04-25T06:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:07.015Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2018/04/26/5ae14a41a5a8e.gif">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/pipenv/" title="使用pipenv代替virtualenv管理python包" itemprop="url">使用pipenv代替virtualenv管理python包</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2018-04-25T06:59:49.000Z" itemprop="datePublished"> 发表于 2018-04-25</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E9%98%85%E8%AF%BB"><span class="toc-number">3.</span> <span class="toc-text">推荐阅读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pipenv-%E5%AE%98%E6%96%B9%E7%AE%80%E4%BB%8B"><span class="toc-number">4.</span> <span class="toc-text">Pipenv 官方简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pipenv-%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8"><span class="toc-number">5.</span> <span class="toc-text">Pipenv 安装和使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E5%8F%82%E8%80%83%E7%9A%84%E6%96%87%E7%AB%A0"><span class="toc-number">6.</span> <span class="toc-text">推荐参考的文章</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>第一次接触到 pipenv 是因为看到@董明伟大神的《使用pipenv管理你的项目》，之前可能和大家的选择类似使用 virtualenv 或者 pyenv 来管理 python 的包环境。virtualenv 是针对python的包的多版本管理，通过将python包安装到一个模块来作为python的包虚拟环境，通过切换目录来实现不同包环境间的切换。pyenv 是针对 python 版本的管理，通过修改环境变量的方式实现；虽然我自己对pipenv的掌握程度还不深，但是我自己能感受到更加简单而清晰的python包管理方式，并且pipenv还是Python官方正式推荐的python包管理工具。原文如下：</p>
+<p>Pipenv — the officially recommended Python packaging tool from Python.org, free (as in freedom).</p>
+<blockquote>
+<p>Pipenv 官方推荐的 Python 包管理工具</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2017年04月25日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/pipenv/">https://wsgzao.github.io/post/pipenv/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>Pipenv - <a target="_blank" rel="noopener" href="https://docs.pipenv.org/">https://docs.pipenv.org/</a><br>Pipenv &amp; 虚拟环境 - <a target="_blank" rel="noopener" href="http://pythonguidecn.readthedocs.io/zh/latest/dev/virtualenvs.html">http://pythonguidecn.readthedocs.io/zh/latest/dev/virtualenvs.html</a></p>
+<hr>
+<h2 id="推荐阅读"><a href="#推荐阅读" class="headerlink" title="推荐阅读"></a>推荐阅读</h2><p>使用pipenv管理你的项目 @董伟明<br><a target="_blank" rel="noopener" href="http://www.dongwm.com/archives/%E4%BD%BF%E7%94%A8pipenv%E7%AE%A1%E7%90%86%E4%BD%A0%E7%9A%84%E9%A1%B9%E7%9B%AE/">http://www.dongwm.com/archives/%E4%BD%BF%E7%94%A8pipenv%E7%AE%A1%E7%90%86%E4%BD%A0%E7%9A%84%E9%A1%B9%E7%9B%AE/</a></p>
+<p>【 python 基础系列 】 - pipenv 试用过程分享<br><a target="_blank" rel="noopener" href="http://pylixm.cc/posts/2018-01-13-python-pipenv.html">http://pylixm.cc/posts/2018-01-13-python-pipenv.html</a></p>
+<h2 id="Pipenv-官方简介"><a href="#Pipenv-官方简介" class="headerlink" title="Pipenv 官方简介"></a>Pipenv 官方简介</h2><blockquote>
+<p>Pipenv: Python Development Workflow for Humans</p>
+</blockquote>
+<p><strong>Pipenv</strong> — the officially recommended Python packaging tool from Python.org, free (as in freedom).</p>
+<p>Pipenv is a tool that aims to bring the best of all packaging worlds (bundler, composer, npm, cargo, yarn, etc.) to the Python world. Windows is a first–class citizen, in our world.</p>
+<p>It automatically creates and manages a virtualenv for your projects, as well as adds&#x2F;removes packages from your Pipfile as you install&#x2F;uninstall packages. It also generates the ever–important Pipfile.lock, which is used to produce deterministic builds.</p>
+<p><img src="https://i.loli.net/2018/04/26/5ae14a41a5a8e.gif"></p>
+<blockquote>
+<p>The problems that Pipenv seeks to solve are multi-faceted:</p>
+</blockquote>
+<p>You no longer need to use <code>pip</code> and <code>virtualenv</code> separately. They work together.<br>Managing a <code>requirements.txt</code> file can be problematic, so Pipenv uses the upcoming <code>Pipfile</code> and <code>Pipfile.lock</code> instead, which is superior for basic use cases.<br>Hashes are used everywhere, always. Security. Automatically expose security vulnerabilities.<br>Give you insight into your dependency graph (e.g. <code>$ pipenv graph</code>).<br>Streamline development workflow by loading <code>.env</code> files.</p>
+<h2 id="Pipenv-安装和使用"><a href="#Pipenv-安装和使用" class="headerlink" title="Pipenv 安装和使用"></a>Pipenv 安装和使用</h2><blockquote>
+<p>我的使用深度不高，就以目前我实际使用pipenv的方式为例</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># pip 离线下载</span></span><br><span class="line"><span class="comment"># pip install --download DIR -r requirements.txt</span></span><br><span class="line"><span class="built_in">mkdir</span> pipenv</span><br><span class="line">pip install -d ~/pipenv/ pipenv</span><br><span class="line"></span><br><span class="line"><span class="comment"># pip 离线安装pipenv</span></span><br><span class="line">pip install --no-index --find-links=pipenv/ pipenv</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用pipenv创建虚拟环境</span></span><br><span class="line"><span class="built_in">mkdir</span> win_ansible</span><br><span class="line"><span class="built_in">cd</span> win_ansible</span><br><span class="line">pipenv shell</span><br><span class="line">pip install --no-index --find-links=pip-ansible-2.4.3.0/ -r requirements.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 升级ansible版本</span></span><br><span class="line">pip install --no-index --find-links=pip-ansible-2.5.0/ -r requirements.txt -U</span><br><span class="line"></span><br><span class="line"><span class="comment"># 退出虚拟环境</span></span><br><span class="line"><span class="built_in">exit</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 对不同开发用户自动创建python虚拟环境</span></span><br><span class="line">vim ~/.bash_profile</span><br><span class="line">pipenv shell</span><br><span class="line"></span><br><span class="line"><span class="comment"># 虚拟环境会在当前用户家目录自动创建</span></span><br><span class="line">test101@JQ/root<span class="comment">#su - wangao</span></span><br><span class="line">Spawning environment shell (/bin/bash). Use <span class="string">&#x27;exit&#x27;</span> to leave.</span><br><span class="line">test101@JQ/home/wangao$. /home/wangao/.local/share/virtualenvs/wangao-iOSX51hl/bin/activate</span><br><span class="line"></span><br><span class="line"><span class="comment"># 沿用pip创建requirements.txt，该方法相对Pipfile来说不是最佳</span></span><br><span class="line">(wangao-iOSX51hl) test101@JQ/home/wangao/git/ansible<span class="variable">$cat</span> requirements.txt </span><br><span class="line">--index-url=http://172.31.96.201:8081/simple/</span><br><span class="line">--trusted-host=172.31.96.201</span><br><span class="line">ansible</span><br><span class="line">ansible-cmdb</span><br><span class="line">pywinrm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过gitlab同步控制python包环境</span></span><br><span class="line">git checkout develop</span><br><span class="line">git pull origin develop</span><br><span class="line">pip install -r requirements.txt -U</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="推荐参考的文章"><a href="#推荐参考的文章" class="headerlink" title="推荐参考的文章"></a>推荐参考的文章</h2><p>Python 2.6 升级至 Python 2.7 的实践心得 - <a href="https://wsgzao.github.io/post/python-2-6-update-to-2-7/">https://wsgzao.github.io/post/python-2-6-update-to-2-7/</a><br>使用pypiserver快速搭建内网离线pypi仓库实践 - <a href="https://wsgzao.github.io/post/pypiserver/">https://wsgzao.github.io/post/pypiserver/</a><br>RHEL7&#x2F;CentOS7在线和离线安装GitLab配置使用实践 - <a href="https://wsgzao.github.io/post/gitlab/">https://wsgzao.github.io/post/gitlab/</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/pipenv/" data-title="使用pipenv代替virtualenv管理python包 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/windows-update/" title="通过关闭Windows Update更新解决服务主机本地系统CPU使用率高问题">
+  <strong>上一篇：</strong><br/>
+  <span>
+  通过关闭Windows Update更新解决服务主机本地系统CPU使用率高问题</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/vmware-compatibility-guide/"  title="VMware兼容性检查指北">
+ <strong>下一篇：</strong><br/> 
+ <span>VMware兼容性检查指北
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E9%98%85%E8%AF%BB"><span class="toc-number">3.</span> <span class="toc-text">推荐阅读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pipenv-%E5%AE%98%E6%96%B9%E7%AE%80%E4%BB%8B"><span class="toc-number">4.</span> <span class="toc-text">Pipenv 官方简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pipenv-%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8"><span class="toc-number">5.</span> <span class="toc-text">Pipenv 安装和使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E5%8F%82%E8%80%83%E7%9A%84%E6%96%87%E7%AB%A0"><span class="toc-number">6.</span> <span class="toc-text">推荐参考的文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

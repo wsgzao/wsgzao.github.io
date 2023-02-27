@@ -1,0 +1,784 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>Google mtail配合Prometheus和Grafana实现自定义日志监控 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="Google mtail配合Prometheus和Grafana实现自定义日志监控">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Google mtail配合Prometheus和Grafana实现自定义日志监控">
+<meta property="og:url" content="https://wsgzao.github.io/post/mtail/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="Google mtail配合Prometheus和Grafana实现自定义日志监控">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-08-04T06:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:06.959Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/mtail/" title="Google mtail配合Prometheus和Grafana实现自定义日志监控" itemprop="url">Google mtail配合Prometheus和Grafana实现自定义日志监控</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2021-08-04T06:59:49.000Z" itemprop="datePublished"> 发表于 2021-08-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E6%97%A5%E5%BF%97%E7%9B%91%E6%8E%A7%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">3.</span> <span class="toc-text">常见的日志监控解决方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mtail%E7%AE%80%E4%BB%8B"><span class="toc-number">4.</span> <span class="toc-text">mtail简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mtail%E5%AE%89%E8%A3%85"><span class="toc-number">5.</span> <span class="toc-text">mtail安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mtail%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3"><span class="toc-number">6.</span> <span class="toc-text">mtail参数详解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mtail%E8%84%9A%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="toc-number">7.</span> <span class="toc-text">mtail脚本语法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#mtail%E8%84%9A%E6%9C%AC%E6%A0%87%E5%87%86%E6%A0%BC%E5%BC%8F"><span class="toc-number">7.1.</span> <span class="toc-text">mtail脚本标准格式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mtail%E6%94%AF%E6%8C%81%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="toc-number">7.2.</span> <span class="toc-text">mtail支持的类型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEPrometheus%E6%95%B0%E6%8D%AE%E6%BA%90"><span class="toc-number">8.</span> <span class="toc-text">配置Prometheus数据源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">9.</span> <span class="toc-text">参考文章</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>mtail是一个Google开发的日志提取工具，相比ELK&#x2F;EFK&#x2F;Grafana Loki来说会更轻量。因为我遇到的需求只是为了采集生产日志中的数据，所以采用更为简单的mtail配合Prometheus和Grafana实现自定义日志数据监控。</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2021年08月04日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/mtail/">https://wsgzao.github.io/post/mtail/</a></p>
+<hr>
+<h2 id="常见的日志监控解决方案"><a href="#常见的日志监控解决方案" class="headerlink" title="常见的日志监控解决方案"></a>常见的日志监控解决方案</h2><p>开源的业务日志监控，我重点推荐以下3个</p>
+<blockquote>
+<p>值得注意的是ELK目前有被EFK取代的趋势</p>
+</blockquote>
+<p>1：ELK-“ELK”是三个开源项目的首字母缩写，这三个项目分别是：Elasticsearch、Logstash 和 Kibana。</p>
+<p>　　Elasticsearch 是一个搜索和分析引擎。</p>
+<p>　　Logstash 是服务器端数据处理管道，能够同时从多个来源采集数据，转换数据，然后将数据发送到诸如 Elasticsearch 等“存储库”中。</p>
+<p>　　Kibana 则可以让用户在 Elasticsearch 中使用图形和图表对数据进行可视化。</p>
+<p>2：Loki，Grafana Labs 团队最新的开源项目，是一个水平可扩展，高可用性，多租户的日志聚合系统。</p>
+<p>3：mtail :它是一个google开发的日志提取工具，从应用程序日志中提取指标以导出到时间序列数据库或时间序列计算器，</p>
+<p>用途就是: 实时读取应用程序的日志、 再通过自己编写的脚本进行分析、 最终生成时间序列指标。</p>
+<p>工具适合自己的才是最好的，无论是EFK还是Loki都是功能齐全的日志采集系统，当然它们也有各自的优势，</p>
+<blockquote>
+<p>Blog中记录了一些使用经验大家可以参考</p>
+</blockquote>
+<p>Scribe安装使用 - <a href="https://wsgzao.github.io/post/scribe/">https://wsgzao.github.io/post/scribe/</a></p>
+<p>使用ELK(Elasticsearch + Logstash + Kibana) 搭建日志集中分析平台实践 - <a href="https://wsgzao.github.io/post/elk/">https://wsgzao.github.io/post/elk/</a></p>
+<p>开源日志管理方案ELK和EFK的区别 - <a href="https://wsgzao.github.io/post/efk/">https://wsgzao.github.io/post/efk/</a></p>
+<p>Grafana Loki开源日志聚合系统代替ELK或EFK - <a href="https://wsgzao.github.io/post/loki/">https://wsgzao.github.io/post/loki/</a></p>
+<h2 id="mtail简介"><a href="#mtail简介" class="headerlink" title="mtail简介"></a>mtail简介</h2><p>mtail - extract whitebox monitoring data from application logs for collection into a timeseries database</p>
+<p><code>mtail</code> is a tool for extracting metrics from application logs to be exported into a timeseries database or timeseries calculator for alerting and dashboarding.</p>
+<p>It fills a monitoring niche by being the glue between applications that do not export their own internal state (other than via logs) and existing monitoring systems, such that system operators do not need to patch those applications to instrument them or writing custom extraction code for every such application.</p>
+<p>The extraction is controlled by <a target="_blank" rel="noopener" href="https://github.com/google/mtail/blob/main/docs/Programming-Guide.md">mtail programs</a> which define patterns and actions:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># simple line counter</span><br><span class="line">counter lines_total</span><br><span class="line">/$/ &#123;</span><br><span class="line">  lines_total++</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Metrics are exported for scraping by a collector as JSON or Prometheus format over HTTP, or can be periodically sent to a collectd, StatsD, or Graphite collector socket.</p>
+<p>mtail 是用于从应用程序日志中提取指标以导出到时间序列数据库或时间序列计算器以进行警报和仪表板显示的工具。简单来说，就是实时读取应用程序的日志，并且通过自己编写的脚本实时分析，最终生成时间序列指标的工具。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/google/mtail">https://github.com/google/mtail</a></p>
+<h2 id="mtail安装"><a href="#mtail安装" class="headerlink" title="mtail安装"></a>mtail安装</h2><p>下载地址：<a target="_blank" rel="noopener" href="https://github.com/google/mtail/releases">https://github.com/google/mtail/releases</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"># check latest version from github</span><br><span class="line">wget https://github.com/google/mtail/releases/download/v3.0.0-rc47/mtail_3.0.0-rc47_Linux_x86_64.tar.gz</span><br><span class="line"></span><br><span class="line">tar xf mtail_3.0.0-rc47_Linux_x86_64.tar.gz</span><br><span class="line"># can choose to cp mtail to /usr/local/bin</span><br><span class="line"># cp mtail /usr/local/bin</span><br><span class="line"></span><br><span class="line"># 查看mtail版本</span><br><span class="line">./mtail --version</span><br><span class="line">mtail version 3.0.0-rc47 git revision 5e0099f843e4e4f2b7189c21019de18eb49181bf go version go1.16.5 go arch amd64 go os linux</span><br><span class="line"></span><br><span class="line"># mtail后台启动</span><br><span class="line">nohup mtail -port 3903 -logtostderr -progs test.mtail -logs test.log &amp;</span><br><span class="line"></span><br><span class="line"># 默认端口是3903</span><br><span class="line">nohup ./mtail -progs test.mtail -logs test.log &amp;</span><br><span class="line"></span><br><span class="line"># 查看是否启动成功</span><br><span class="line">ps -ef | grep mtail</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>参数详解：控制台运行 <code>mtail -h</code></p>
+<p>下面列举几个简单的参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">参数 　　　　　　描述</span><br><span class="line">-address 　　　　绑定HTTP监听器的主机或IP地址</span><br><span class="line">-alsologtostderr 　　记录标准错误和文件</span><br><span class="line">-emit_metric_timestamp 　　发出metric的记录时间戳。如果禁用（默认设置），则不会向收集器发送显式时间戳。</span><br><span class="line">-expired_metrics_gc_interval 　　metric的垃圾收集器运行间隔（默认为1h0m0s）</span><br><span class="line">-ignore_filename_regex_pattern 　　需要忽略的日志文件名字，支持正则表达式。</span><br><span class="line">-log_dir 　　mtail程序的日志文件的目录，与logtostderr作用类似，如果同时配置了logtostderr参数，则log_dir参数无效</span><br><span class="line">-logs 　　监控的日志文件列表，可以使用,分隔多个文件，也可以多次使用-logs参数，也可以指定一个文件目录，支持通配符*，指定文件目录时需要对目录使用单引号。如：</span><br><span class="line">　　　　　　-logs a.log,b.log</span><br><span class="line">　　　　　　-logs a.log -logs b.log</span><br><span class="line">　　　　　　-logs ‘/export/logs/*.log’</span><br><span class="line">-logtostderr 　　直接输出标准错误信息，编译问题也直接输出</span><br><span class="line">-override_timezone 　　设置时区，如果使用此参数，将在时间戳转换中使用指定的时区来替代UTC</span><br><span class="line">-port 　　监听的http端口，默认3903</span><br><span class="line">-progs 　　mtail脚本程序所在路径</span><br><span class="line">-trace_sample_period 　　用于设置跟踪的采样频率和发送到收集器的频率。将其设置为100，则100条收集一条追踪。</span><br><span class="line">-v 　　v日志的日志级别，该设置可能被 vmodule标志给覆盖.默认为0.</span><br><span class="line">-version 　　打印mtail版本</span><br></pre></td></tr></table></figure>
+
+<p>程序启动后默认监听3903端口，可以通过<a href="http://ip:3903访问，metrics可以通过http://ip:3903/metrics访问">http://ip:3903访问，metrics可以通过http://ip:3903/metrics访问</a></p>
+<h2 id="mtail参数详解"><a href="#mtail参数详解" class="headerlink" title="mtail参数详解"></a>mtail参数详解</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br></pre></td><td class="code"><pre><span class="line">./mtail -h</span><br><span class="line"></span><br><span class="line">mtail version 3.0.0-rc47 git revision 5e0099f843e4e4f2b7189c21019de18eb49181bf go version go1.16.5 go arch amd64 go os linux</span><br><span class="line"></span><br><span class="line">Usage:</span><br><span class="line">  -address string</span><br><span class="line">        Host or IP address on which to bind HTTP listener</span><br><span class="line">  -alsologtostderr</span><br><span class="line">        log to standard error as well as files</span><br><span class="line">  -block_profile_rate int</span><br><span class="line">        Nanoseconds of block time before goroutine blocking events reported. 0 turns off.  See https://golang.org/pkg/runtime/#SetBlockProfileRate</span><br><span class="line">  -collectd_prefix string</span><br><span class="line">        Prefix to use for collectd metrics.</span><br><span class="line">  -collectd_socketpath string</span><br><span class="line">        Path to collectd unixsock to write metrics to.</span><br><span class="line">  -compile_only</span><br><span class="line">        Compile programs only, do not load the virtual machine.</span><br><span class="line">  -disable_fsnotify</span><br><span class="line">        DEPRECATED: this flag is no longer in use. (default true)</span><br><span class="line">  -dump_ast</span><br><span class="line">        Dump AST of programs after parse (to INFO log).</span><br><span class="line">  -dump_ast_types</span><br><span class="line">        Dump AST of programs with type annotation after typecheck (to INFO log).</span><br><span class="line">  -dump_bytecode</span><br><span class="line">        Dump bytecode of programs (to INFO log).</span><br><span class="line">  -emit_metric_timestamp</span><br><span class="line">        Emit the recorded timestamp of a metric.  If disabled (the default) no explicit timestamp is sent to a collector.</span><br><span class="line">  -emit_prog_label</span><br><span class="line">        Emit the &#x27;prog&#x27; label in variable exports. (default true)</span><br><span class="line">  -expired_metrics_gc_interval duration</span><br><span class="line">        interval between expired metric garbage collection runs (default 1h0m0s)</span><br><span class="line">  -graphite_host_port string</span><br><span class="line">        Host:port to graphite carbon server to write metrics to.</span><br><span class="line">  -graphite_prefix string</span><br><span class="line">        Prefix to use for graphite metrics.</span><br><span class="line">  -ignore_filename_regex_pattern string</span><br><span class="line">    </span><br><span class="line">  -jaeger_endpoint string</span><br><span class="line">        If set, collector endpoint URL of jaeger thrift service</span><br><span class="line">  -log_backtrace_at value</span><br><span class="line">        when logging hits line file:N, emit a stack trace</span><br><span class="line">  -log_dir string</span><br><span class="line">        If non-empty, write log files in this directory</span><br><span class="line">  -logs value</span><br><span class="line">        List of log files to monitor, separated by commas.  This flag may be specified multiple times.</span><br><span class="line">  -logtostderr</span><br><span class="line">        log to standard error instead of files</span><br><span class="line">  -max_recursion_depth int</span><br><span class="line">        The maximum length a mtail statement can be, as measured by parsed tokens. Excessively long mtail expressions are likely to cause compilation and runtime performance problems. (default 100)</span><br><span class="line">  -max_regexp_length int</span><br><span class="line">        The maximum length a mtail regexp expression can have. Excessively long patterns are likely to cause compilation and runtime performance problems. (default 1024)</span><br><span class="line">  -metric_push_interval duration</span><br><span class="line">        interval between metric pushes to passive collectors (default 1m0s)</span><br><span class="line">  -metric_push_interval_seconds int</span><br><span class="line">        DEPRECATED: use --metric_push_interval instead</span><br><span class="line">  -metric_push_write_deadline duration</span><br><span class="line">        Time to wait for a push to succeed before exiting with an error. (default 10s)</span><br><span class="line">  -mtailDebug int</span><br><span class="line">        Set parser debug level.</span><br><span class="line">  -mutex_profile_fraction int</span><br><span class="line">        Fraction of mutex contention events reported.  0 turns off.  See http://golang.org/pkg/runtime/#SetMutexProfileFraction</span><br><span class="line">  -one_shot</span><br><span class="line">        Compile the programs, then read the contents of the provided logs from start until EOF, print the values of the metrics store and exit. This is a debugging flag only, not for production use.</span><br><span class="line">  -override_timezone string</span><br><span class="line">        If set, use the provided timezone in timestamp conversion, instead of UTC.</span><br><span class="line">  -poll_interval duration</span><br><span class="line">        Set the interval to poll all log files for data; must be positive, or zero to disable polling.  With polling mode, only the files found at mtail startup will be polled. (default 250ms)</span><br><span class="line">  -port string</span><br><span class="line">        HTTP port to listen on. (default &quot;3903&quot;)</span><br><span class="line">  -progs string</span><br><span class="line">        Name of the directory containing mtail programs</span><br><span class="line">  -stale_log_gc_interval duration</span><br><span class="line">        interval between stale log garbage collection runs (default 1h0m0s)</span><br><span class="line">  -statsd_hostport string</span><br><span class="line">        Host:port to statsd server to write metrics to.</span><br><span class="line">  -statsd_prefix string</span><br><span class="line">        Prefix to use for statsd metrics.</span><br><span class="line">  -stderrthreshold value</span><br><span class="line">        logs at or above this threshold go to stderr</span><br><span class="line">  -syslog_use_current_year</span><br><span class="line">        Patch yearless timestamps with the present year. (default true)</span><br><span class="line">  -trace_sample_period int</span><br><span class="line">        Sample period for traces.  If non-zero, every nth trace will be sampled.</span><br><span class="line">  -unix_socket string</span><br><span class="line">        UNIX Socket to listen on</span><br><span class="line">  -v value</span><br><span class="line">        log level for V logs</span><br><span class="line">  -version</span><br><span class="line">        Print mtail version information.</span><br><span class="line">  -vm_logs_runtime_errors</span><br><span class="line">        Enables logging of runtime errors to the standard log.  Set to false to only have the errors printed to the HTTP console. (default true)</span><br><span class="line">  -vmodule value</span><br><span class="line">        comma-separated list of pattern=N settings for file-filtered logging</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-address</td>
+<td>绑定HTTP监听器的主机或IP地址</td>
+</tr>
+<tr>
+<td>-alsologtostderr</td>
+<td>记录标准错误和文件</td>
+</tr>
+<tr>
+<td>-block_profile_rate</td>
+<td>报告goroutine阻塞事件之前的纳秒时间</td>
+</tr>
+<tr>
+<td>-collectd_prefix</td>
+<td>发送给collectd的指标的metrics前缀</td>
+</tr>
+<tr>
+<td>-collectd_socketpath</td>
+<td>collectd unixsock路径，用于向其写入metrics</td>
+</tr>
+<tr>
+<td>-compile_only</td>
+<td>仅尝试编译mtail脚本程序，不执行，用于测试脚本</td>
+</tr>
+<tr>
+<td>-disable_fsnotify</td>
+<td>是否禁用文件动态发现机制。为true时，不会监听动态加载发现的新文件，只会监听程序启动时的文件。</td>
+</tr>
+<tr>
+<td>-dump_ast</td>
+<td>解析后dump程序的AST（默认到&#x2F;tmp&#x2F;mtail.INFO）</td>
+</tr>
+<tr>
+<td>-dump_ast_types</td>
+<td>在类型检查之后dump带有类型注释的程序的AST（默认到&#x2F;tmp&#x2F;mtail.INFO）</td>
+</tr>
+<tr>
+<td>-dump_bytecode</td>
+<td>dump程序字节码</td>
+</tr>
+<tr>
+<td>-emit_metric_timestamp</td>
+<td>发出metric的记录时间戳。如果禁用（默认设置），则不会向收集器发送显式时间戳。</td>
+</tr>
+<tr>
+<td>-emit_prog_label</td>
+<td>在导出的变量里面展示’prog’对应的标签。默认为true</td>
+</tr>
+<tr>
+<td>-expired_metrics_gc_interval</td>
+<td>metric的垃圾收集器运行间隔（默认为1h0m0s）</td>
+</tr>
+<tr>
+<td>-graphite_host_port</td>
+<td>graphite carbon服务器地址，格式Host:port。用于向graphite carbon服务器写入metrics</td>
+</tr>
+<tr>
+<td>-graphite_prefix</td>
+<td>发送给graphite指标的metrics前缀</td>
+</tr>
+<tr>
+<td>-ignore_filename_regex_pattern</td>
+<td>需要忽略的日志文件名字，支持正则表达式。使用场景：当-logs参数指定的为一个目录时，可以使用ignore_filename_regex_pattern 参数来忽略一部分文件</td>
+</tr>
+<tr>
+<td>-jaeger_endpoint</td>
+<td>如果设为true，可以将跟踪导出到Jaeger跟踪收集器。使用–jaeger_endpoint标志指定Jaeger端点URL</td>
+</tr>
+<tr>
+<td>-log_backtrace_at</td>
+<td>当日志记录命中设置的行N时，发出堆栈跟踪</td>
+</tr>
+<tr>
+<td>-log_dir</td>
+<td>mtail程序的日志文件的目录，与logtostderr作用类似，如果同时配置了logtostderr参数，则log_dir参数无效</td>
+</tr>
+<tr>
+<td>-logs</td>
+<td>监控的日志文件列表，可以使用,分隔多个文件，也可以多次使用-logs参数，也可以指定一个文件目录，支持通配符*，指定文件目录时需要对目录使用单引号。</td>
+</tr>
+<tr>
+<td>-logtostderr</td>
+<td>直接输出标准错误信息，编译问题也直接输出</td>
+</tr>
+<tr>
+<td>-metric_push_interval_seconds</td>
+<td>metric推送时间间隔，单位：秒，默认60秒</td>
+</tr>
+<tr>
+<td>-metric_push_write_deadline</td>
+<td>在出现错误退出之前等待推送成功的时间。（默认10s）</td>
+</tr>
+<tr>
+<td>-mtailDebug</td>
+<td>设置解析器debug级别</td>
+</tr>
+<tr>
+<td>-mutex_profile_fraction</td>
+<td>报告的互斥锁争用事件的分数。0关闭。（此参数为直译，不太理解啥意思）</td>
+</tr>
+<tr>
+<td>-one_shot</td>
+<td>此参数将编译并运行mtail程序，然后<strong>从指定的文件开头</strong>开始读取日志（从头开始读取日志，不是实时tail），然后将收集的所有metrics打印到日志中。此参数用于验证mtail程序是否有预期输出，不用于生产环境。</td>
+</tr>
+<tr>
+<td>-override_timezone</td>
+<td>设置时区，如果使用此参数，将在时间戳转换中使用指定的时区来替代UTC</td>
+</tr>
+<tr>
+<td>-poll_interval</td>
+<td>设置轮询所有日志文件以获取数据的间隔；必须为正，如果为零将禁用轮询。使用轮询模式，将仅轮询在mtail启动时找到的文件</td>
+</tr>
+<tr>
+<td>-port</td>
+<td>监听的http端口，默认3903</td>
+</tr>
+<tr>
+<td>-progs</td>
+<td>mtail脚本程序所在路径</td>
+</tr>
+<tr>
+<td>-stale_log_gc_interval</td>
+<td>stale的垃圾收集器运行间隔（默认为1h0m0s）</td>
+</tr>
+<tr>
+<td>-statsd_hostport</td>
+<td>statsd地址，格式Host:port。用于向statsd写入metrics</td>
+</tr>
+<tr>
+<td>-statsd_prefix</td>
+<td>发送给statsd指标的metrics前缀</td>
+</tr>
+<tr>
+<td>-stderrthreshold</td>
+<td>严重性级别达到阈值以上的日志信息除了写入日志文件以外，还要输出到stderr。各严重性级别对应的数值：INFO—0，WARNING—1，ERROR—2，FATAL—3，默认值为2.</td>
+</tr>
+<tr>
+<td>-syslog_use_current_year</td>
+<td>如果时间戳没有年份，则用当前年替代。（默认为true）</td>
+</tr>
+<tr>
+<td>-trace_sample_period</td>
+<td>用于设置跟踪的采样频率和发送到收集器的频率。将其设置为100，则100条收集一条追踪。</td>
+</tr>
+<tr>
+<td>-v</td>
+<td>v日志的日志级别，该设置可能被 vmodule标志给覆盖.默认为0.</td>
+</tr>
+<tr>
+<td>-version</td>
+<td>打印mtail版本</td>
+</tr>
+<tr>
+<td>-vmodule</td>
+<td>按文件或模块来设置日志级别，如：-vmodule&#x3D;mapreduce&#x3D;2,file&#x3D;1,gfs*&#x3D;3</td>
+</tr>
+</tbody></table>
+<h2 id="mtail脚本语法"><a href="#mtail脚本语法" class="headerlink" title="mtail脚本语法"></a>mtail脚本语法</h2><p>Read the <a target="_blank" rel="noopener" href="https://github.com/google/mtail/blob/main/docs/Programming-Guide.md">programming guide</a> if you want to learn how to write mtail programs.</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/google/mtail/blob/main/docs/Programming-Guide.md">https://github.com/google/mtail/blob/main/docs/Programming-Guide.md</a></p>
+<h3 id="mtail脚本标准格式"><a href="#mtail脚本标准格式" class="headerlink" title="mtail脚本标准格式"></a>mtail脚本标准格式</h3><p>标准格式为：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">COND &#123;</span><br><span class="line">  ACTION</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>其中<code>COND</code>是一个条件表达式。它可以是正则表达式，也可以boolean类型的条件语句。如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">/foo/ &#123;</span><br><span class="line">  ACTION1</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">variable &gt; 0 &#123;</span><br><span class="line">  ACTION2</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/foo/ &amp;&amp; variable &gt; 0 &#123;</span><br><span class="line">  ACTION3</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><code>COND</code>表达式可用的运算符如下：</p>
+<ul>
+<li>关系运算符：</li>
+</ul>
+<blockquote>
+<p>&lt; , &lt;&#x3D; , &gt; , &gt;&#x3D; , &#x3D;&#x3D; , !&#x3D; , &#x3D;~ , !~ , || , &amp;&amp; , !</p>
+</blockquote>
+<ul>
+<li>算术运算符：</li>
+</ul>
+<blockquote>
+<p>| , &amp; , ^ , + , - , * , &#x2F;, &lt;&lt; , &gt;&gt; , **</p>
+</blockquote>
+<p><strong>导出的指标变量</strong>可用的运算符如下：</p>
+<blockquote>
+<p>= , +&#x3D; , ++ , –</p>
+</blockquote>
+<p><code>mtail</code>的目的是从日志中提取信息并将其传递到监控系统。因此，必须导出指标变量并命名，命名可以使用counter、、gauge等指标类型，并且命名的变量必须在<code>COND</code>脚本之前。<br>如，导出一个counter类型的指标lines_total：统计日志行数，脚本内容如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">simple line counter</span></span><br><span class="line">counter lines_total</span><br><span class="line"><span class="meta prompt_">/$</span><span class="language-bash">/ &#123;</span></span><br><span class="line">  lines_total++</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="mtail支持的类型"><a href="#mtail支持的类型" class="headerlink" title="mtail支持的类型"></a>mtail支持的类型</h3><p>mtail中的counter、gauge、histogram三种类型与prometheus类型中描述的作用一致。</p>
+<p>counter 类型的数据是单调递增的指标，即只增不减。如，你可以使用 counter 类型的指标来表示服务的请求数、成功任务数、失败的任务数等。</p>
+<p>gauge类型的数据是指可以任意变化的指标，可增可减。如，可以提取正则匹配到的数据，直接赋值给指标变量返回，或者计算后返回。</p>
+<p>histogram（直方图）将数据分段统计，引用prometheus中对histogram的描述：</p>
+<p>在大多数情况下人们都倾向于使用某些量化指标的平均值，例如 CPU 的平均使用率、页面的平均响应时间。这种方式的问题很明显，以系统 API 调用的平均响应时间为例：如果大多数 API 请求都维持在 100ms 的响应时间范围内，而个别请求的响应时间需要 5s，那么就会导致某些 WEB 页面的响应时间落到中位数的情况，而这种现象被称为长尾问题。<br>为了区分是平均的慢还是长尾的慢，最简单的方式就是按照请求延迟的范围进行分组。例如，统计延迟在 0<del>10ms 之间的请求数有多少而 10</del>20ms 之间的请求数又有多少。通过这种方式可以快速分析系统慢的原因。Histogram 和 Summary 都是为了能够解决这样问题的存在，通过 Histogram 和 Summary 类型的监控指标，我们可以快速了解监控样本的分布情况。<br><strong>Histogram 在一段时间范围内对数据进行采样（通常是请求持续时间或响应大小等），并将其计入可配置的存储桶（bucket）中，后续可通过指定区间筛选样本，也可以统计样本总数</strong>，最后一般将数据展示为直方图。</p>
+<p>mtail详解 - <a target="_blank" rel="noopener" href="https://blog.csdn.net/bluuusea/article/details/105508897">https://blog.csdn.net/bluuusea/article/details/105508897</a></p>
+<h2 id="配置Prometheus数据源"><a href="#配置Prometheus数据源" class="headerlink" title="配置Prometheus数据源"></a>配置Prometheus数据源</h2><p>重启Prometheus后，在Grafana Dashoard新增一个新的Panel，再为其配置已经设置好的datasource</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">vim prometheus-config.yml</span><br><span class="line"></span><br><span class="line"># 全局配置</span><br><span class="line">global:</span><br><span class="line">  scrape_interval:     15s</span><br><span class="line">  evaluation_interval: 15s</span><br><span class="line"></span><br><span class="line">scrape_configs:</span><br><span class="line">  # 监控mtail日志</span><br><span class="line">  - job_name: &#x27;mtail&#x27;  </span><br><span class="line">    static_configs:</span><br><span class="line">    - targets: [&#x27;内网ip:3903&#x27;]</span><br><span class="line">	</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a target="_blank" rel="noopener" href="https://github.com/google/mtail">Google mtail</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/google/mtail/blob/main/docs/Programming-Guide.md">mtail Programming Guide</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/bluuusea/article/details/104341054">prometheus+grafana+mtail+node_exporter实现机器负载及业务监控</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/bluuusea/article/details/105508897">mtail详解</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/mtail/" data-title="Google mtail配合Prometheus和Grafana实现自定义日志监控 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/singapore-broadband/" title="新加坡宽带套餐选择推荐和路由器配置经验分享">
+  <strong>上一篇：</strong><br/>
+  <span>
+  新加坡宽带套餐选择推荐和路由器配置经验分享</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/game/"  title="游戏行业常用术语解释">
+ <strong>下一篇：</strong><br/> 
+ <span>游戏行业常用术语解释
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E6%97%A5%E5%BF%97%E7%9B%91%E6%8E%A7%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">3.</span> <span class="toc-text">常见的日志监控解决方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mtail%E7%AE%80%E4%BB%8B"><span class="toc-number">4.</span> <span class="toc-text">mtail简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mtail%E5%AE%89%E8%A3%85"><span class="toc-number">5.</span> <span class="toc-text">mtail安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mtail%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3"><span class="toc-number">6.</span> <span class="toc-text">mtail参数详解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mtail%E8%84%9A%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="toc-number">7.</span> <span class="toc-text">mtail脚本语法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#mtail%E8%84%9A%E6%9C%AC%E6%A0%87%E5%87%86%E6%A0%BC%E5%BC%8F"><span class="toc-number">7.1.</span> <span class="toc-text">mtail脚本标准格式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mtail%E6%94%AF%E6%8C%81%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="toc-number">7.2.</span> <span class="toc-text">mtail支持的类型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEPrometheus%E6%95%B0%E6%8D%AE%E6%BA%90"><span class="toc-number">8.</span> <span class="toc-text">配置Prometheus数据源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">9.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

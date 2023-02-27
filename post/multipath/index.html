@@ -1,0 +1,566 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>Multipath 多路径配置实践心得 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="记录 3PAR8400 存储 Multipath 多路径配置">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Multipath 多路径配置实践心得">
+<meta property="og:url" content="https://wsgzao.github.io/post/multipath/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="记录 3PAR8400 存储 Multipath 多路径配置">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-05-04T06:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:06.962Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/multipath/" title="Multipath 多路径配置实践心得" itemprop="url">Multipath 多路径配置实践心得</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2017-05-04T06:59:49.000Z" itemprop="datePublished"> 发表于 2017-05-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%98%E6%96%B9%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%89%8B%E5%86%8C"><span class="toc-number">3.</span> <span class="toc-text">官方最佳实践手册</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFmultipath"><span class="toc-number">4.</span> <span class="toc-text">什么是multipath</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8multipath"><span class="toc-number">5.</span> <span class="toc-text">为什么使用multipath</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEmultipath"><span class="toc-number">6.</span> <span class="toc-text">配置multipath</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>配置存储时一定会遇到 multipath 多路径的问题，不同的厂商比如 EMC PowerPath，Veritas VxDMP 等都有独立的多路径软件，而多路径软件的功能也很清晰主要用于IO流量负载均衡和故障切换恢复等。在 Linux 环境中 device-mapper-multipath 是一个免费的通用型多路径管理软件，其配置文件也非常简单，主要通过修改 &#x2F;etc&#x2F;multipath.conf 来调整。文章提供了《HPE 3PAR Red Hat Enterprise Linux和 Oracle Linux 实施指南》，也分享了自己配置 multipath 的实践过程，希望对大家有参考价值。</p>
+<blockquote>
+<p>记录 3PAR8400 存储 Multipath 多路径配置</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2017年05月04日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/multipath/">https://wsgzao.github.io/post/multipath/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>multipath - <a target="_blank" rel="noopener" href="https://access.redhat.com/labsinfo/multipathhelper">https://access.redhat.com/labsinfo/multipathhelper</a><br>[原]红旗上使用multipath复合多条路径 - <a target="_blank" rel="noopener" href="http://www.linuxfly.org/post/513/">http://www.linuxfly.org/post/513/</a></p>
+<hr>
+<h2 id="官方最佳实践手册"><a href="#官方最佳实践手册" class="headerlink" title="官方最佳实践手册"></a>官方最佳实践手册</h2><blockquote>
+<p>HPE 3PAR Red Hat Enterprise Linux和 Oracle Linux 实施指南</p>
+</blockquote>
+<iframe src="https://www.slideshare.net/slideshow/embed_code/key/MKQJhstxnv4JFy" width="479" height="511" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> </div>
+
+<h2 id="什么是multipath"><a href="#什么是multipath" class="headerlink" title="什么是multipath"></a>什么是multipath</h2><p>普通的电脑主机都是一个硬盘挂接到一个总线上，这里是一对一的关系。而到了有光纤组成的SAN环境，由于主机和存储通过了光纤交换机连接，这样的话，就构成了多对多的关系。也就是说，主机到存储可以有多条路径可以选择。主机到存储之间的IO由多条路径可以选择。</p>
+<p>既然，每个主机到所对应的存储可以经过几条不同的路径，如果是同时使用的话，I&#x2F;O流量如何分配？其中一条路径坏掉了，如何处理？还有在操作系统的角度来看，每条路径，操作系统会认为是一个实际存在的物理盘，但实际上只是通向同一个物理盘的不同路径而已，这样是在使用的时候，就给用户带来了困惑。多路径软件就是为了解决上面的问题应运而生的，多路径的主要功能就是和存储设备一起配合实现如下功能：</p>
+<ol>
+<li>故障的切换和恢复</li>
+<li>IO流量的负载均衡</li>
+<li>磁盘的虚拟化</li>
+</ol>
+<h2 id="为什么使用multipath"><a href="#为什么使用multipath" class="headerlink" title="为什么使用multipath"></a>为什么使用multipath</h2><p>由于多路径软件是需要和存储在一起配合使用的，不同的厂商基于不同的操作系统，都提供了不同的版本。并且有的厂商，软件和硬件也不是一起卖的，如果要使用多路径软件的话，可能还需要向厂商购买license才行。比如EMC公司基于Linux下的多路径软件，就需要单独的购买license。其中，EMC提供的就是PowerPath，HDS提供的就是HDLM，Veritas提供的就是VxDMP。当然，使用系统自带的免费多路径软件包，同时也是一个比较通用的包，可以支持大多数存储厂商的设备，即使是一些不是出名的厂商，通过对配置文件进行稍作修改，也是可以支持并运行的很好。</p>
+<p>比较重要的一点还是听从原厂工程师的建议根据实际的业务和存储策略使用合适的多路径软件。</p>
+<h2 id="配置multipath"><a href="#配置multipath" class="headerlink" title="配置multipath"></a>配置multipath</h2><blockquote>
+<p>原理看了一堆，实际配置还是比较简单的，配置文件只有一个：&#x2F;etc&#x2F;multipath.conf</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#查看主机或者存储交换机上的WWN号，在存储上将LUN映射给需要的主机</span></span><br><span class="line"><span class="built_in">cat</span> /sys/class/fc_host/host*/port_name</span><br><span class="line">0x2002d0431efb7f5d</span><br><span class="line">0x2001d0431efb7f5d</span><br><span class="line"></span><br><span class="line"><span class="comment">#在系统内执行扫盘命令，没有命令先安装sg3_utils</span></span><br><span class="line">yum install sg3_utils</span><br><span class="line">rescan-scsi-bus.sh</span><br><span class="line"></span><br><span class="line"><span class="comment">#查看是否映射到对应的</span></span><br><span class="line">fdisk -l</span><br><span class="line">lsblk</span><br><span class="line"></span><br><span class="line"><span class="comment">#查看是否安装了multipath</span></span><br><span class="line">yum install device-mapper-multipath</span><br><span class="line"></span><br><span class="line">rpm -qa | grep device-mapper</span><br><span class="line">device-mapper-libs-1.02.107-5.el7_2.2.x86_64</span><br><span class="line">device-mapper-persistent-data-0.5.5-1.el7.x86_64</span><br><span class="line">device-mapper-multipath-0.4.9-85.el7_2.4.x86_64</span><br><span class="line">device-mapper-1.02.107-5.el7_2.2.x86_64</span><br><span class="line">device-mapper-event-libs-1.02.107-5.el7_2.2.x86_64</span><br><span class="line">device-mapper-event-1.02.107-5.el7_2.2.x86_64</span><br><span class="line">device-mapper-multipath-libs-0.4.9-85.el7_2.4.x86_64</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#拷贝默认的multipath.conf到/etc目录下，也可以使用mpathconf命令创建默认模板</span></span><br><span class="line"><span class="built_in">cp</span> /usr/share/doc/device-mapper-multipath-0.4.9/multipath.conf /etc/multipath.conf</span><br><span class="line">mpathconf --<span class="built_in">enable</span> --with_multipathd y</span><br><span class="line"></span><br><span class="line"><span class="comment">#查看本地存储wwid</span></span><br><span class="line">/lib/udev/scsi_id --whitelisted --device=/dev/sda</span><br><span class="line">36141877030bcca001d9c4d52106b9d90</span><br><span class="line"></span><br><span class="line"><span class="comment">#查看存储参数</span></span><br><span class="line"><span class="built_in">cat</span> /sys/block/sdb/device/vendor </span><br><span class="line">3PARdata</span><br><span class="line"><span class="built_in">cat</span> /sys/block/sdb/device/model</span><br><span class="line">VV</span><br><span class="line"></span><br><span class="line"><span class="comment">#添加本地盘到blacklist内,不同的存储和系统参考官方的最佳实践</span></span><br><span class="line">vim /etc/multipath.conf</span><br><span class="line"></span><br><span class="line">defaults &#123;</span><br><span class="line">polling_interval 10</span><br><span class="line">user_friendly_names no</span><br><span class="line">find_multipaths <span class="built_in">yes</span></span><br><span class="line">&#125;</span><br><span class="line">blacklist &#123;</span><br><span class="line">wwid <span class="string">&quot;&lt;wwid_of_the_local_disk&gt;&quot;</span></span><br><span class="line">&#125;</span><br><span class="line">devices &#123;</span><br><span class="line">device &#123;</span><br><span class="line">vendor <span class="string">&quot;3PARdata&quot;</span></span><br><span class="line">product <span class="string">&quot;VV&quot;</span></span><br><span class="line">path_grouping_policy group_by_prio</span><br><span class="line">path_selector <span class="string">&quot;round-robin 0&quot;</span></span><br><span class="line">path_checker tur</span><br><span class="line">features <span class="string">&quot;0&quot;</span></span><br><span class="line">hardware_handler <span class="string">&quot;1 alua&quot;</span></span><br><span class="line">prio alua</span><br><span class="line">failback immediate</span><br><span class="line">rr_weight uniform</span><br><span class="line">no_path_retry 18</span><br><span class="line">rr_min_io_rq 1</span><br><span class="line">detect_prio <span class="built_in">yes</span></span><br><span class="line"><span class="comment"># fast_io_fail_tmo 10</span></span><br><span class="line"><span class="comment"># dev_loss_tmo 14</span></span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#固定设备的别名</span></span><br><span class="line"><span class="built_in">cat</span> /etc/multipath/bindings </span><br><span class="line"><span class="comment"># Multipath bindings, Version : 1.0</span></span><br><span class="line"><span class="comment"># <span class="doctag">NOTE:</span> this file is automatically maintained by the multipath program.</span></span><br><span class="line"><span class="comment"># You should not need to edit this file in normal circumstances.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Format:</span></span><br><span class="line"><span class="comment"># alias wwid</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">mpatha 360002ac000000000000000260001a945</span><br><span class="line">mpathb 360002ac000000000000000270001a945</span><br><span class="line">mpathc 360002ac000000000000000280001a945</span><br><span class="line">mpathd 360002ac000000000000000290001a945</span><br><span class="line">mpathe 360002ac0000000000000002a0001a945</span><br><span class="line"></span><br><span class="line"><span class="comment">#编辑multipath.conf，增加以下字段</span></span><br><span class="line">vim /etc/multipath.conf</span><br><span class="line"></span><br><span class="line">multipaths &#123;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac000000000000000260001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN26</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac000000000000000270001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN27</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac000000000000000280001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN28</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac000000000000000290001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN29</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac0000000000000002a0001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN30</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#清空已有的multipath记录</span></span><br><span class="line">multipath -F</span><br><span class="line"><span class="comment">#打印诊断信息</span></span><br><span class="line">multipath -v3</span><br><span class="line"><span class="comment">#启用多路径守护程序以在引导时启动</span></span><br><span class="line">mpathconf --<span class="built_in">enable</span></span><br><span class="line"><span class="comment">#启动多路径服务</span></span><br><span class="line">service multipathd start</span><br><span class="line"><span class="comment">#如果在启动 multipath 守护程序后更改多路径配置文件，请运行以下命令以使更改生效。</span></span><br><span class="line">service multipathd reload </span><br><span class="line"><span class="comment">#重启系统测试</span></span><br><span class="line">init 6</span><br><span class="line"><span class="comment">#查看多路径当前状态</span></span><br><span class="line">multipath -ll</span><br><span class="line"></span><br><span class="line"><span class="comment">#Enable extended logging on the qla2xxx driver</span></span><br><span class="line"><span class="built_in">chmod</span> u+x /sys/module/qla2xxx/parameters/ql2xextended_error_logging</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;1&quot;</span> &gt; /sys/module/qla2xxx/parameters/ql2xextended_error_logging</span><br><span class="line"><span class="built_in">cat</span> /sys/module/qla2xxx/parameters/ql2xextended_error_logging</span><br><span class="line"></span><br><span class="line"><span class="comment">#重启lvm服务是识别共享存储vg信息</span></span><br><span class="line">systemctl restart lvm2-lvmetad.service</span><br><span class="line">pvs</span><br><span class="line"></span><br><span class="line"><span class="comment">#屏蔽WARNING: duplicate提示信息</span></span><br><span class="line">vim /etc/lvm/lvm.conf</span><br><span class="line"></span><br><span class="line">	<span class="comment"># Configuration option devices/filter.</span></span><br><span class="line">	<span class="comment"># Limit the block devices that are used by LVM commands.</span></span><br><span class="line">	<span class="comment"># This is a list of regular expressions used to accept or reject block</span></span><br><span class="line">	<span class="comment"># device path names. Each regex is delimited by a vertical bar &#x27;|&#x27;</span></span><br><span class="line">	<span class="comment"># (or any character) and is preceded by &#x27;a&#x27; to accept the path, or</span></span><br><span class="line">	<span class="comment"># by &#x27;r&#x27; to reject the path. The first regex in the list to match the</span></span><br><span class="line">	<span class="comment"># path is used, producing the &#x27;a&#x27; or &#x27;r&#x27; result for the device.</span></span><br><span class="line">	<span class="comment"># When multiple path names exist for a block device, if any path name</span></span><br><span class="line">	<span class="comment"># matches an &#x27;a&#x27; pattern before an &#x27;r&#x27; pattern, then the device is</span></span><br><span class="line">	<span class="comment"># accepted. If all the path names match an &#x27;r&#x27; pattern first, then the</span></span><br><span class="line">	<span class="comment"># device is rejected. Unmatching path names do not affect the accept</span></span><br><span class="line">	<span class="comment"># or reject decision. If no path names for a device match a pattern,</span></span><br><span class="line">	<span class="comment"># then the device is accepted. Be careful mixing &#x27;a&#x27; and &#x27;r&#x27; patterns,</span></span><br><span class="line">	<span class="comment"># as the combination might produce unexpected results (test changes.)</span></span><br><span class="line">	<span class="comment"># Run vgscan after changing the filter to regenerate the cache.</span></span><br><span class="line">	<span class="comment"># See the use_lvmetad comment for a special case regarding filters.</span></span><br><span class="line">	<span class="comment"># </span></span><br><span class="line">	<span class="comment"># Example</span></span><br><span class="line">	<span class="comment"># Accept every block device:</span></span><br><span class="line">	<span class="comment"># filter = [ &quot;a|.*/|&quot; ]</span></span><br><span class="line">	<span class="comment"># Reject the cdrom drive:</span></span><br><span class="line">	<span class="comment"># filter = [ &quot;r|/dev/cdrom|&quot; ]</span></span><br><span class="line">	<span class="comment"># Work with just loopback devices, e.g. for testing:</span></span><br><span class="line">	<span class="comment"># filter = [ &quot;a|loop|&quot;, &quot;r|.*|&quot; ]</span></span><br><span class="line">	<span class="comment"># Accept all loop devices and ide drives except hdc:</span></span><br><span class="line">	<span class="comment"># filter = [ &quot;a|loop|&quot;, &quot;r|/dev/hdc|&quot;, &quot;a|/dev/ide|&quot;, &quot;r|.*|&quot; ]</span></span><br><span class="line">	<span class="comment"># Use anchors to be very specific:</span></span><br><span class="line">	<span class="comment"># filter = [ &quot;a|^/dev/hda8$|&quot;, &quot;r|.*/|&quot; ]</span></span><br><span class="line">	<span class="comment"># </span></span><br><span class="line">	<span class="comment"># This configuration option has an automatic default value.</span></span><br><span class="line">	<span class="comment"># filter = [ &quot;a|.*/|&quot; ]</span></span><br><span class="line">	filter = [<span class="string">&quot;a/sda/&quot;</span>,<span class="string">&quot;a/mapper/3PAR8400_DEV_LUN26p1/&quot;</span>,<span class="string">&quot;r/.*/&quot;</span>]</span><br><span class="line"><span class="comment">#filter = [&quot;a/sda/&quot;,&quot;r/.*/&quot;]</span></span><br><span class="line"></span><br><span class="line">	<span class="comment"># Configuration option devices/global_filter.</span></span><br><span class="line">	<span class="comment"># Limit the block devices that are used by LVM system components.</span></span><br><span class="line">	<span class="comment"># Because devices/filter may be overridden from the command line, it is</span></span><br><span class="line">	<span class="comment"># not suitable for system-wide device filtering, e.g. udev and lvmetad.</span></span><br><span class="line">	<span class="comment"># Use global_filter to hide devices from these LVM system components.</span></span><br><span class="line">	<span class="comment"># The syntax is the same as devices/filter. Devices rejected by</span></span><br><span class="line">	<span class="comment"># global_filter are not opened by LVM.</span></span><br><span class="line">	<span class="comment"># This configuration option has an automatic default value.</span></span><br><span class="line">	<span class="comment"># global_filter = [ &quot;a|.*/|&quot; ]</span></span><br><span class="line">	global_filter = [<span class="string">&quot;a/sda/&quot;</span>,<span class="string">&quot;a/mapper/3PAR8400_DEV_LUN26p1/&quot;</span>,<span class="string">&quot;r/.*/&quot;</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#一个简单的multipath.conf配置文件</span></span><br><span class="line">[root@controller01 ~]<span class="comment"># cat /etc/multipath.conf</span></span><br><span class="line"><span class="comment"># This is a basic configuration file with some examples, for device mapper</span></span><br><span class="line"><span class="comment"># multipath.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># For a complete list of the default configuration values, run either</span></span><br><span class="line"><span class="comment"># multipath -t</span></span><br><span class="line"><span class="comment"># or</span></span><br><span class="line"><span class="comment"># multipathd show config</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># For a list of configuration options with descriptions, see the multipath.conf</span></span><br><span class="line"><span class="comment"># man page</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## By default, devices with vendor = &quot;IBM&quot; and product = &quot;S/390.*&quot; are</span></span><br><span class="line"><span class="comment">## blacklisted. To enable mulitpathing on these devies, uncomment the</span></span><br><span class="line"><span class="comment">## following lines.</span></span><br><span class="line"><span class="comment">#blacklist_exceptions &#123;</span></span><br><span class="line"><span class="comment">#	device &#123;</span></span><br><span class="line"><span class="comment">#		vendor	&quot;IBM&quot;</span></span><br><span class="line"><span class="comment">#		product	&quot;S/390.*&quot;</span></span><br><span class="line"><span class="comment">#	&#125;</span></span><br><span class="line"><span class="comment">#&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## Use user friendly names, instead of using WWIDs as names.</span></span><br><span class="line">defaults &#123;</span><br><span class="line">	user_friendly_names <span class="built_in">yes</span></span><br><span class="line">	find_multipaths <span class="built_in">yes</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">##</span></span><br><span class="line"><span class="comment">## Here is an example of how to configure some standard options.</span></span><br><span class="line"><span class="comment">##</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#defaults &#123;</span></span><br><span class="line"><span class="comment">#	polling_interval 	10</span></span><br><span class="line"><span class="comment">#	path_selector		&quot;round-robin 0&quot;</span></span><br><span class="line"><span class="comment">#	path_grouping_policy	multibus</span></span><br><span class="line"><span class="comment">#	uid_attribute		ID_SERIAL</span></span><br><span class="line"><span class="comment">#	prio			alua</span></span><br><span class="line"><span class="comment">#	path_checker		readsector0</span></span><br><span class="line"><span class="comment">#	rr_min_io		100</span></span><br><span class="line"><span class="comment">#	max_fds			8192</span></span><br><span class="line"><span class="comment">#	rr_weight		priorities</span></span><br><span class="line"><span class="comment">#	failback		immediate</span></span><br><span class="line"><span class="comment">#	no_path_retry		fail</span></span><br><span class="line"><span class="comment">#	user_friendly_names	yes</span></span><br><span class="line"><span class="comment">#&#125;</span></span><br><span class="line"><span class="comment">##</span></span><br><span class="line"><span class="comment">## The wwid line in the following blacklist section is shown as an example</span></span><br><span class="line"><span class="comment">## of how to blacklist devices by wwid.  The 2 devnode lines are the</span></span><br><span class="line"><span class="comment">## compiled in default blacklist. If you want to blacklist entire types</span></span><br><span class="line"><span class="comment">## of devices, such as all scsi devices, you should use a devnode line.</span></span><br><span class="line"><span class="comment">## However, if you want to blacklist specific devices, you should use</span></span><br><span class="line"><span class="comment">## a wwid line.  Since there is no guarantee that a specific device will</span></span><br><span class="line"><span class="comment">## not change names on reboot (from /dev/sda to /dev/sdb for example)</span></span><br><span class="line"><span class="comment">## devnode lines are not recommended for blacklisting specific devices.</span></span><br><span class="line"><span class="comment">##</span></span><br><span class="line"><span class="comment">#blacklist &#123;</span></span><br><span class="line"><span class="comment">#       wwid 26353900f02796769</span></span><br><span class="line"><span class="comment">#	devnode &quot;^(ram|raw|loop|fd|md|dm-|sr|scd|st)[0-9]*&quot;</span></span><br><span class="line"><span class="comment">#	devnode &quot;^hd[a-z]&quot;</span></span><br><span class="line"><span class="comment">#&#125;</span></span><br><span class="line"><span class="comment">#multipaths &#123;</span></span><br><span class="line"><span class="comment">#	multipath &#123;</span></span><br><span class="line"><span class="comment">#		wwid			3600508b4000156d700012000000b0000</span></span><br><span class="line"><span class="comment">#		alias			yellow</span></span><br><span class="line"><span class="comment">#		path_grouping_policy	multibus</span></span><br><span class="line"><span class="comment">#		path_selector		&quot;round-robin 0&quot;</span></span><br><span class="line"><span class="comment">#		failback		manual</span></span><br><span class="line"><span class="comment">#		rr_weight		priorities</span></span><br><span class="line"><span class="comment">#		no_path_retry		5</span></span><br><span class="line"><span class="comment">#	&#125;</span></span><br><span class="line"><span class="comment">#	multipath &#123;</span></span><br><span class="line"><span class="comment">#		wwid			1DEC_____321816758474</span></span><br><span class="line"><span class="comment">#		alias			red</span></span><br><span class="line"><span class="comment">#	&#125;</span></span><br><span class="line"><span class="comment">#&#125;</span></span><br><span class="line"><span class="comment">#devices &#123;</span></span><br><span class="line"><span class="comment">#	device &#123;</span></span><br><span class="line"><span class="comment">#		vendor			&quot;COMPAQ  &quot;</span></span><br><span class="line"><span class="comment">#		product			&quot;HSV110 (C)COMPAQ&quot;</span></span><br><span class="line"><span class="comment">#		path_grouping_policy	multibus</span></span><br><span class="line"><span class="comment">#		path_checker		readsector0</span></span><br><span class="line"><span class="comment">#		path_selector		&quot;round-robin 0&quot;</span></span><br><span class="line"><span class="comment">#		hardware_handler	&quot;0&quot;</span></span><br><span class="line"><span class="comment">#		failback		15</span></span><br><span class="line"><span class="comment">#		rr_weight		priorities</span></span><br><span class="line"><span class="comment">#		no_path_retry		queue</span></span><br><span class="line"><span class="comment">#	&#125;</span></span><br><span class="line"><span class="comment">#	device &#123;</span></span><br><span class="line"><span class="comment">#		vendor			&quot;COMPAQ  &quot;</span></span><br><span class="line"><span class="comment">#		product			&quot;MSA1000         &quot;</span></span><br><span class="line"><span class="comment">#		path_grouping_policy	multibus</span></span><br><span class="line"><span class="comment">#	&#125;</span></span><br><span class="line"><span class="comment">#&#125;</span></span><br><span class="line">multipaths &#123;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac000000000000000260001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN26</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac000000000000000270001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN27</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac000000000000000280001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN28</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac000000000000000290001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN29</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac0000000000000002a0001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN30</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac0000000000000002b0001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN31</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac0000000000000002c0001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN32</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac0000000000000002d0001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN33</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac0000000000000002e0001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN34</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac0000000000000002f0001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN35</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac000000000000000320001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN36</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac000000000000000330001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN37</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac000000000000000340001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN38</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac000000000000000350001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN39</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac000000000000000360001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN40</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac000000000000000370001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN41</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac000000000000000380001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN42</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac000000000000000390001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN43</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac0000000000000003a0001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN44</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac0000000000000003b0001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN45</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac0000000000000003d0001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN46</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac0000000000000003e0001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN47</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac0000000000000003f0001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN48</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac000000000000000400001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN49</span><br><span class="line">  &#125;</span><br><span class="line">  multipath &#123;</span><br><span class="line">  wwid 360002ac000000000000000410001a945</span><br><span class="line">  <span class="built_in">alias</span> 3PAR8400_DEV_LUN50</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/multipath/" data-title="Multipath 多路径配置实践心得 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/samba/" title="使用Samba实现Linux与Windows文件共享实践">
+  <strong>上一篇：</strong><br/>
+  <span>
+  使用Samba实现Linux与Windows文件共享实践</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/nbu/"  title="Veritas NetBackup 学习笔记">
+ <strong>下一篇：</strong><br/> 
+ <span>Veritas NetBackup 学习笔记
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%98%E6%96%B9%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%89%8B%E5%86%8C"><span class="toc-number">3.</span> <span class="toc-text">官方最佳实践手册</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFmultipath"><span class="toc-number">4.</span> <span class="toc-text">什么是multipath</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8multipath"><span class="toc-number">5.</span> <span class="toc-text">为什么使用multipath</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEmultipath"><span class="toc-number">6.</span> <span class="toc-text">配置multipath</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

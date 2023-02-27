@@ -1,0 +1,606 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>Nginx禁止未绑定域名或IP访问80和443端口实践小结 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="Nginx禁止未绑定域名或IP访问80和443端口实践小结">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx禁止未绑定域名或IP访问80和443端口实践小结">
+<meta property="og:url" content="https://wsgzao.github.io/post/nginx-default-server/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="Nginx禁止未绑定域名或IP访问80和443端口实践小结">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-02-26T06:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:06.972Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/nginx-default-server/" title="Nginx禁止未绑定域名或IP访问80和443端口实践小结" itemprop="url">Nginx禁止未绑定域名或IP访问80和443端口实践小结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2020-02-26T06:59:49.000Z" itemprop="datePublished"> 发表于 2020-02-26</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Server-name%E6%8C%87%E4%BB%A4"><span class="toc-number">3.</span> <span class="toc-text">Server_name指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nginx%E5%AE%98%E6%96%B9%E5%AF%B9default-server%E7%9A%84%E8%A7%A3%E9%87%8A"><span class="toc-number">4.</span> <span class="toc-text">Nginx官方对default_server的解释</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nginx%E7%A6%81%E6%AD%A2%E6%9C%AA%E7%BB%91%E5%AE%9A%E5%9F%9F%E5%90%8D%E6%88%96IP%E8%AE%BF%E9%97%AE80%E5%92%8C443%E7%AB%AF%E5%8F%A3%E5%AE%9E%E8%B7%B5"><span class="toc-number">5.</span> <span class="toc-text">nginx禁止未绑定域名或IP访问80和443端口实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">6.</span> <span class="toc-text">参考文章</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>nginx在决定请求由哪个server块执行时，主要关注的是server块中的listen和server_name两个字段，如果根据listen指令无法得到最佳匹配，将会开始解析server_name指令。nginx会检查请求中的”Host”头，这个值包含了客户端实际试图请求的域名或者ip地址。nginx会根据这个值去匹配server_name指令，匹配规则会在文章中详细描述。其中有一个需要大家注意的地方是如果没有匹配到任何规则的话，则会选择可用列表中的第一个server，带来的问题就是未绑定域名或IP直接访问80和443端口会给后端逻辑服务增加压力并产生不合理的错误日志，合适的解决办法是通过在nginx的server块中添加default_server禁止未绑定域名或IP访问80和443端口过滤不合理的流量。</p>
+<blockquote>
+<p>Nginx禁止未绑定域名或IP访问80和443端口实践小结</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2020年02月26日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/nginx-default-server/">https://wsgzao.github.io/post/nginx-default-server/</a></p>
+<hr>
+<h2 id="Server-name指令"><a href="#Server-name指令" class="headerlink" title="Server_name指令"></a>Server_name指令</h2><p>如果根据listen指令无法得到最佳匹配,将会开始解析server_name指令.nginx会检查请求中的”Host”头,这个值包含了客户端实际试图请求的域名或者ip地址.nginx会根据这个值去匹配server_name指令,匹配规则如下:</p>
+<ol>
+<li>nginx会尝试寻找一个和sever_name和Host值完全匹配的server块,如果找到多个精确匹配,则会使用第一个匹配的server块</li>
+<li>如果没有找到精确匹配的server块,则nginx尝试找到server_name带有*开头的server块,如果找到多个,则选择最长匹配的server块</li>
+<li>如果没有找到使用开头的server块,则会寻找以结尾的server块,同样,如果有多个匹配, 选择最长匹配</li>
+<li>如果没有找到使用*匹配的server块,则会寻找使用正则表达式(以~开头)定义server_name的server块,如果找到多个匹配,会使用第一个匹配</li>
+<li>如果没有找到正则表达式匹配的server块,则nginx将会选择一个匹配listen字段的default server块.每一个ip和端口组合都可以配置一个且只能配置一个默认的default_server块,如果没有的话,则会选择可用列表中的第一个server</li>
+</ol>
+<p>示例如下:</p>
+<p>（1）准确的server_name匹配,例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">     listen       80;</span><br><span class="line">     server_name  www.domain.com;</span><br><span class="line">     ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>（2）以*通配符开始的字符串：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">     listen       80;</span><br><span class="line">     server_name  *.domain.com;</span><br><span class="line">     ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>（3）以*通配符结束的字符串：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">     listen       80;</span><br><span class="line">     server_name  www.*;</span><br><span class="line">     ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>（4）匹配正则表达式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">     listen       80;</span><br><span class="line">     server_name  ~^(?.+)\.domain\.com$;</span><br><span class="line">     ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>（5）如果以上都没有匹配,则使用default_server.如果没有指定default_server,则会选择第一个可用的server.我们可以指定对于没有匹配的host值时,返回错误到客户端.可以用来防止别人把垃圾流量转到你的网站。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen  80   default_server;</span><br><span class="line">    server_name  _;    return 444;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过返回444这个nginx的非标准错误码让nginx断开与浏览器的连接</p>
+<h2 id="Nginx官方对default-server的解释"><a href="#Nginx官方对default-server的解释" class="headerlink" title="Nginx官方对default_server的解释"></a>Nginx官方对default_server的解释</h2><blockquote>
+<p>Miscellaneous names</p>
+</blockquote>
+<p>If someone makes a request using an IP address instead of a server name, the “Host” request header field will contain the IP address and the request can be handled using the IP address as the server name:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  example.org</span><br><span class="line">                 www.example.org</span><br><span class="line">                 &quot;&quot;</span><br><span class="line">                 192.168.1.1</span><br><span class="line">                 ;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>In catch-all server examples the strange name “_” can be seen:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen       80  default_server;</span><br><span class="line">    server_name  _;</span><br><span class="line">    return       444;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>There is nothing special about this name, it is just one of a myriad of invalid domain names which never intersect with any real name. Other invalid names like “–” and “!@#” may equally be used.</p>
+<blockquote>
+<p>Name-based virtual servers</p>
+</blockquote>
+<p>nginx first decides which server should process the request. Let’s start with a simple configuration where all three virtual servers listen on port *:80:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen      80;</span><br><span class="line">    server_name example.org www.example.org;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">    listen      80;</span><br><span class="line">    server_name example.net www.example.net;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">    listen      80;</span><br><span class="line">    server_name example.com www.example.com;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In this configuration nginx tests only the request’s header field “Host” to determine which server the request should be routed to. If its value does not match any server name, or the request does not contain this header field at all, then nginx will route the request to the default server for this port. In the configuration above, the default server is the first one — which is nginx’s standard default behaviour. It can also be set explicitly which server should be default, with the default_server parameter in the listen directive:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen      80 default_server;</span><br><span class="line">    server_name example.net www.example.net;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The default_server parameter has been available since version 0.8.21. In earlier versions the default parameter should be used instead.<br>Note that the default server is a property of the listen port and not of the server name. More about this later.</p>
+<blockquote>
+<p>How to prevent processing requests with undefined server names</p>
+</blockquote>
+<p>If requests without the “Host” header field should not be allowed, a server that just drops the requests can be defined:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen      80;</span><br><span class="line">    server_name &quot;&quot;;</span><br><span class="line">    return      444;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Here, the server name is set to an empty string that will match requests without the “Host” header field, and a special nginx’s non-standard code 444 is returned that closes the connection.</p>
+<p>Since version 0.8.48, this is the default setting for the server name, so the server_name “” can be omitted. In earlier versions, the machine’s hostname was used as a default server name.</p>
+<h2 id="nginx禁止未绑定域名或IP访问80和443端口实践"><a href="#nginx禁止未绑定域名或IP访问80和443端口实践" class="headerlink" title="nginx禁止未绑定域名或IP访问80和443端口实践"></a>nginx禁止未绑定域名或IP访问80和443端口实践</h2><p>Nginx uses ‘Host’ header for server_name matching. It does not use TLS SNI. This means that for an SSL server, nginx must be able to accept SSL connection, which boils down to having certificate&#x2F;key. The cert&#x2F;key can be any, e.g. self-signed.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    server_name _;</span><br><span class="line">    listen 80 default_server;</span><br><span class="line">    listen 443 ssl default_server;</span><br><span class="line"></span><br><span class="line">    <span class="comment">## To also support IPv6, uncomment this block</span></span><br><span class="line">    <span class="comment"># listen [::]:80 default_server;</span></span><br><span class="line">    <span class="comment"># listen [::]:443 ssl default_server;</span></span><br><span class="line"></span><br><span class="line">    ssl_certificate &lt;path to cert&gt;;</span><br><span class="line">    ssl_certificate_key &lt;path to key&gt;;</span><br><span class="line">    <span class="built_in">return</span> 444; <span class="comment"># or whatever</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>详细的配置步骤</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 未设置default_server，会根据列表第一个server服务，产生垃圾流量</span></span><br><span class="line">xxx - - [27/Feb/2020:15:17:58 +0800] <span class="string">&quot;GET / HTTP/1.1&quot;</span> 301 162 <span class="string">&quot;-&quot;</span> <span class="string">&quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.116 Safari/537.36&quot;</span></span><br><span class="line">xxx - - [27/Feb/2020:15:18:24 +0800] <span class="string">&quot;GET /api HTTP/1.1&quot;</span> 301 162 <span class="string">&quot;-&quot;</span> <span class="string">&quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.116 Safari/537.36&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 手动生成本地ssl公私钥</span></span><br><span class="line">openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout /etc/nginx/ssl/nginx.key -out /etc/nginx/ssl/nginx.crt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 增加default_server</span></span><br><span class="line"><span class="built_in">cat</span> &lt;&lt; <span class="string">&#x27;EOF&#x27;</span> &gt; /etc/nginx/sites-available/000_default</span><br><span class="line">server &#123;</span><br><span class="line">    listen 80 default_server;</span><br><span class="line">    listen 443 ssl default_server;</span><br><span class="line">    ssl_certificate        /etc/nginx/ssl/nginx.crt;</span><br><span class="line">    ssl_certificate_key    /etc/nginx/ssl/nginx.key;</span><br><span class="line">    server_name _;</span><br><span class="line">    <span class="built_in">return</span> 444;</span><br><span class="line">    access_log /var/log/nginx/000_default.access.log;</span><br><span class="line">    error_log /var/log/nginx/000_default.error.log;</span><br><span class="line">&#125; </span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置软链接</span></span><br><span class="line"><span class="built_in">ln</span> -s /etc/nginx/sites-available/000_default /etc/nginx/sites-enabled/000_default</span><br><span class="line"></span><br><span class="line"><span class="comment"># reload nginx</span></span><br><span class="line">nginx -t</span><br><span class="line">nginx -s reload</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看日志，检查其他域名是否正常</span></span><br><span class="line">tailf /var/log/nginx/000_default.access.log</span><br><span class="line"></span><br><span class="line">xxx - - [27/Feb/2020:12:15:52 +0800] <span class="string">&quot;GET /api HTTP/1.1&quot;</span> 444 0 <span class="string">&quot;-&quot;</span> <span class="string">&quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.116 Safari/537.36&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a target="_blank" rel="noopener" href="http://nginx.org/en/docs/http/server_names.html">nginx Server names</a></p>
+<p><a target="_blank" rel="noopener" href="http://nginx.org/en/docs/http/request_processing.html">How nginx processes a request</a></p>
+<p><a target="_blank" rel="noopener" href="https://serverfault.com/questions/578648/properly-setting-up-a-default-nginx-server-for-https">Properly setting up a “default” nginx server for https</a></p>
+<p><a target="_blank" rel="noopener" href="https://juejin.im/post/5c89f96f518825573a5e630b">理解Nginx中Server和Location的匹配逻辑</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/nginx-default-server/" data-title="Nginx禁止未绑定域名或IP访问80和443端口实践小结 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/glasses/" title="作为程序猿我为什么选择了一副比A4纸还轻的眼镜">
+  <strong>上一篇：</strong><br/>
+  <span>
+  作为程序猿我为什么选择了一副比A4纸还轻的眼镜</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/nginx/"  title="Nginx基础知识从小白到入门">
+ <strong>下一篇：</strong><br/> 
+ <span>Nginx基础知识从小白到入门
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Server-name%E6%8C%87%E4%BB%A4"><span class="toc-number">3.</span> <span class="toc-text">Server_name指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nginx%E5%AE%98%E6%96%B9%E5%AF%B9default-server%E7%9A%84%E8%A7%A3%E9%87%8A"><span class="toc-number">4.</span> <span class="toc-text">Nginx官方对default_server的解释</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nginx%E7%A6%81%E6%AD%A2%E6%9C%AA%E7%BB%91%E5%AE%9A%E5%9F%9F%E5%90%8D%E6%88%96IP%E8%AE%BF%E9%97%AE80%E5%92%8C443%E7%AB%AF%E5%8F%A3%E5%AE%9E%E8%B7%B5"><span class="toc-number">5.</span> <span class="toc-text">nginx禁止未绑定域名或IP访问80和443端口实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">6.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

@@ -1,0 +1,566 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>RHEL/CentOS安装EPEL/Remi扩展仓库配置小结 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="RHEL&#x2F;CentOS安装EPEL&#x2F;Remi扩展仓库配置小结">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RHEL&#x2F;CentOS安装EPEL&#x2F;Remi扩展仓库配置小结">
+<meta property="og:url" content="https://wsgzao.github.io/post/epel/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="RHEL&#x2F;CentOS安装EPEL&#x2F;Remi扩展仓库配置小结">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-04-06T03:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:06.775Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/epel/" title="RHEL/CentOS安装EPEL/Remi扩展仓库配置小结" itemprop="url">RHEL/CentOS安装EPEL/Remi扩展仓库配置小结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2020-04-06T03:59:49.000Z" itemprop="datePublished"> 发表于 2020-04-06</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Repo%E4%BB%93%E5%BA%93%E4%BB%8B%E7%BB%8D"><span class="toc-number">3.</span> <span class="toc-text">Repo仓库介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EPEL%E4%BB%93%E5%BA%93%E4%BB%8B%E7%BB%8D"><span class="toc-number">4.</span> <span class="toc-text">EPEL仓库介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85EPEL"><span class="toc-number">4.1.</span> <span class="toc-text">安装EPEL</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Remi%E6%BA%90"><span class="toc-number">5.</span> <span class="toc-text">Remi源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E5%AE%83%E6%BA%90"><span class="toc-number">6.</span> <span class="toc-text">其它源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">7.</span> <span class="toc-text">参考文章</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近因为需要编译<code>libip2location</code>，原本计划像之前一样<a href="https://wsgzao.github.io/post/rpmbuild/">使用rpmbuild制作Nginx的RPM包</a>整合为一个rpm包，结果按照IP2Location官方的步骤愣是没有搞定，只能退而求其次选择了<code>libip2location-8.0.7-1.el7.remi.src.rpm</code>，简单总结下大部分人经常用到的EPEL和这次新出现的Remi。</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2020年04月06日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/epel/">https://wsgzao.github.io/post/epel/</a></p>
+<hr>
+<h2 id="Repo仓库介绍"><a href="#Repo仓库介绍" class="headerlink" title="Repo仓库介绍"></a>Repo仓库介绍</h2><p><code>CentOS</code> 默认自带 <code>CentOS-Base.repo</code> 源, 但官方源中去除了很多有版权争议的软件, 而且安装的软件也不是最新的稳定版</p>
+<p><code>Fedora</code> 自带的源中也找不到很多多媒体软件, 如果需要安装, 必需先添加其他源, 如 <code>RPMFusion</code> 和 <code>RPMForge</code> 等第三方软件库</p>
+<p>但是除了 <code>EPEL</code> 之外还有很多其他三方软件包, 下面我们介绍各种第三方软件库, 以下软件库适用于与 <code>RHEL</code> 完全兼容的 <code>linux</code> 发行版, 如 <code>CentOS</code>, <code>Fedora</code>, <code>Scientific Linux</code>. <code>Scientific Linux</code> 大家可能有点陌生, 它与 <code>CentOS</code> 类似, 是 <code>RedHat Linux</code> 的克隆版</p>
+<h2 id="EPEL仓库介绍"><a href="#EPEL仓库介绍" class="headerlink" title="EPEL仓库介绍"></a>EPEL仓库介绍</h2><p><code>EPEL</code> 是 <code>yum</code> 的一个软件源, 里面包含了许多基本源里没有的软件了, 但在我们在使用 <code>epel</code> 时是需要安装它才可以了, 下文来介绍 <code>CentOS7/RHEL7</code> 安装 <code>EPEL</code> 步骤</p>
+<p><code>EPEL</code>, 即 <code>Extra Packages for Enterprise Linux</code> 的简称, 是为企业级 <code>Linux</code> 提供的一组高质量的额外软件包, 包括但不限于 <code>Red Hat Enterprise Linux (RHEL), CentOS and Scientific Linux (SL), Oracle Enterprise Linux (OEL)</code>.</p>
+<h3 id="安装EPEL"><a href="#安装EPEL" class="headerlink" title="安装EPEL"></a>安装EPEL</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 一般用户直接可以在线yum安装</span></span><br><span class="line">yum -y install epel-release</span><br><span class="line"></span><br><span class="line"><span class="comment"># 手动安装</span></span><br><span class="line">rpm -ivh https://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-12.noarch.rpm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 更新元数据缓存(非必须)</span></span><br><span class="line">yum clean all &amp;&amp; yum makecache</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证EPEL，w3m 是基础包中没有的, 而 epel 包中才有的软件包</span></span><br><span class="line">yum search w3m</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在 /etc/yum.repos.d/ 下多了两个 epel 的 repo 文件</span></span><br><span class="line">ll /etc/yum.repos.d/</span><br><span class="line">epel.repo</span><br><span class="line">epel-testing.repo</span><br></pre></td></tr></table></figure>
+
+<p>针对系统架构选择相应的类型 : <a target="_blank" rel="noopener" href="http://dl.fedoraproject.org/pub/epel/7/">http://dl.fedoraproject.org/pub/epel/7/</a></p>
+<p>国内用户可以使用<a target="_blank" rel="noopener" href="https://mirrors.tuna.tsinghua.edu.cn/help/epel/">清华源–EPEL 镜像使用帮助</a>加速</p>
+<h2 id="Remi源"><a href="#Remi源" class="headerlink" title="Remi源"></a>Remi源</h2><p><code>Remi</code> 源大家或许很少听说， 但是我们强烈推荐, 尤其对于不想编译最新版的 <code>Linux</code> 使用者, 因为 <code>Remi</code> 源中的软件几乎都是最新稳定版.</p>
+<p>或许您会怀疑稳定不?</p>
+<p>放心吧, 这些都是 <code>Linux</code> 骨灰级的玩家编译好放进源里的, 他们对于系统环境和软件编译参数的熟悉程度毋庸置疑.</p>
+<p>Remi下载地址 : <a target="_blank" rel="noopener" href="https://rpms.remirepo.net/">https://rpms.remirepo.net/</a></p>
+<p>Remi SRPMS下载地址: <a target="_blank" rel="noopener" href="https://rpms.remirepo.net/SRPMS/">https://rpms.remirepo.net/SRPMS/</a></p>
+<p>您也需要针对不同的版本号下载.</p>
+<p>例如 <code>CentOS 7</code>添加官方的 <code>Remi</code> 源</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装remi</span></span><br><span class="line">rpm -ivh https://rpms.remirepo.net/enterprise/remi-release-7.rpm</span><br><span class="line"><span class="comment"># 单独安装某个rpm</span></span><br><span class="line">rpm -Uvh https://rpms.remirepo.net/enterprise/7/remi/x86_64/libip2location-8.0.7-1.el7.remi.x86_64.rpm</span><br></pre></td></tr></table></figure>
+
+<h2 id="其它源"><a href="#其它源" class="headerlink" title="其它源"></a>其它源</h2><p>我在实际解决问题的过程中是通过包搜索引擎逐步找到解决方案的，我做下分享</p>
+<p>pkgs.org - Packages Search for Linux and Unix operating systems.</p>
+<p><a target="_blank" rel="noopener" href="https://pkgs.org/">https://pkgs.org/</a></p>
+<p><a target="_blank" rel="noopener" href="https://centos.pkgs.org/7/remi-x86_64/libip2location-8.0.7-1.el7.remi.x86_64.rpm.html">https://centos.pkgs.org/7/remi-x86_64/libip2location-8.0.7-1.el7.remi.x86_64.rpm.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/gatieme/article/details/71056309">RHEL&#x2F;CentOS&#x2F;Fedora各种源(EPEL、Remi、RPMForge、RPMFusion)配置</a></p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a target="_blank" rel="noopener" href="http://fedoraproject.org/wiki/EPEL">Extra Packages for Enterprise Linux (EPEL)</a></p>
+<p><a target="_blank" rel="noopener" href="https://mirrors.tuna.tsinghua.edu.cn/help/epel/">清华大学–EPEL镜像使用帮助</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/epel/" data-title="RHEL/CentOS安装EPEL/Remi扩展仓库配置小结 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/rpmbuild/" title="使用rpmbuild制作Nginx的RPM包">
+  <strong>上一篇：</strong><br/>
+  <span>
+  使用rpmbuild制作Nginx的RPM包</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/weread/"  title="我的微信读书书架">
+ <strong>下一篇：</strong><br/> 
+ <span>我的微信读书书架
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Repo%E4%BB%93%E5%BA%93%E4%BB%8B%E7%BB%8D"><span class="toc-number">3.</span> <span class="toc-text">Repo仓库介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EPEL%E4%BB%93%E5%BA%93%E4%BB%8B%E7%BB%8D"><span class="toc-number">4.</span> <span class="toc-text">EPEL仓库介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85EPEL"><span class="toc-number">4.1.</span> <span class="toc-text">安装EPEL</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Remi%E6%BA%90"><span class="toc-number">5.</span> <span class="toc-text">Remi源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E5%AE%83%E6%BA%90"><span class="toc-number">6.</span> <span class="toc-text">其它源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">7.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

@@ -1,0 +1,569 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>使用RockMongo管理MongoDB | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="和phpMyAdmin一样好用的MongoDB管理工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用RockMongo管理MongoDB">
+<meta property="og:url" content="https://wsgzao.github.io/post/rockmongo/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="和phpMyAdmin一样好用的MongoDB管理工具">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-10-05T08:17:05.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:07.062Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/rockmongo/" title="使用RockMongo管理MongoDB" itemprop="url">使用RockMongo管理MongoDB</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2015-10-05T08:17:05.000Z" itemprop="datePublished"> 发表于 2015-10-05</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E8%AE%B0%E5%BD%95"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP%E7%8E%AF%E5%A2%83%E6%94%AF%E6%8C%81"><span class="toc-number">3.</span> <span class="toc-text">PHP环境支持</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2RockMongo"><span class="toc-number">4.</span> <span class="toc-text">部署RockMongo</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#mongo-php-driver"><span class="toc-number">4.1.</span> <span class="toc-text">mongo-php-driver</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AERockMongo"><span class="toc-number">4.2.</span> <span class="toc-text">配置RockMongo</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%BF%9E%E6%8E%A5"><span class="toc-number">5.</span> <span class="toc-text">使用客户端连接</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#mongodb-linux"><span class="toc-number">5.1.</span> <span class="toc-text">mongodb-linux</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MongoVUE"><span class="toc-number">5.2.</span> <span class="toc-text">MongoVUE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%93%E5%8C%85%E4%B8%8B%E8%BD%BD"><span class="toc-number">6.</span> <span class="toc-text">打包下载</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>和MySQL数据库相比MongoDB的管理工具其实不算多，除了MongoVUE客户端以外想要通过类似phpMyAdmin一样通过Web管理MongoDB的数据库应该也只剩下RockMongo了。</p>
+<blockquote>
+<p>和phpMyAdmin一样好用的MongoDB管理工具</p>
+</blockquote>
+<hr>
+<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2015年10月05日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/rockmongo/">https://wsgzao.github.io/post/rockmongo/</a></p>
+<p>扩展阅读</p>
+<p>MongoDB - <a target="_blank" rel="noopener" href="https://www.mongodb.org/">https://www.mongodb.org/</a><br>RockMongo - <a target="_blank" rel="noopener" href="http://rockmongo.com/">http://rockmongo.com/</a></p>
+<hr>
+<h2 id="PHP环境支持"><a href="#PHP环境支持" class="headerlink" title="PHP环境支持"></a>PHP环境支持</h2><p>LTMP手动编译安装以及全自动化部署实践 - <a href="https://wsgzao.github.io/post/ltmp/">https://wsgzao.github.io/post/ltmp/</a></p>
+<h2 id="部署RockMongo"><a href="#部署RockMongo" class="headerlink" title="部署RockMongo"></a>部署RockMongo</h2><h3 id="mongo-php-driver"><a href="#mongo-php-driver" class="headerlink" title="mongo-php-driver"></a>mongo-php-driver</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#下载驱动</span></span><br><span class="line">https://pecl.php.net/package/mongo</span><br><span class="line">https://github.com/mongodb/mongo-php-driver/</span><br><span class="line"></span><br><span class="line"><span class="comment">#phpize</span></span><br><span class="line">/app/local/php/bin/phpize </span><br><span class="line"><span class="comment">#./configure</span></span><br><span class="line">./configure --with-php-config=/app/local/php/bin/php-config</span><br><span class="line">make &amp;&amp; make install</span><br><span class="line"></span><br><span class="line"><span class="comment">#编辑php.ini</span></span><br><span class="line">extension=mongo.so</span><br><span class="line"></span><br><span class="line"><span class="comment">#重启php-fpm</span></span><br><span class="line"><span class="built_in">kill</span> -USR2 `<span class="built_in">cat</span> /app/local/php/var/run/php-fpm.pid`</span><br><span class="line"></span><br><span class="line"><span class="comment">#检查phpinfo</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;&lt;?php phpinfo(); ?&gt;&quot;</span> &gt; /app/data/test/phpinfo.php</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="配置RockMongo"><a href="#配置RockMongo" class="headerlink" title="配置RockMongo"></a>配置RockMongo</h3><blockquote>
+<p>修改config.php，注意mongo_auth和control_auth的配置关系</p>
+</blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * RockMongo configuration</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Defining default options and server configuration</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@package</span> rockmongo</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"> </span><br><span class="line"><span class="variable">$MONGO</span> = <span class="keyword">array</span>();</span><br><span class="line"><span class="variable">$MONGO</span>[<span class="string">&quot;features&quot;</span>][<span class="string">&quot;log_query&quot;</span>] = <span class="string">&quot;on&quot;</span>;<span class="comment">//log queries</span></span><br><span class="line"><span class="variable">$MONGO</span>[<span class="string">&quot;features&quot;</span>][<span class="string">&quot;theme&quot;</span>] = <span class="string">&quot;default&quot;</span>;<span class="comment">//theme</span></span><br><span class="line"><span class="variable">$MONGO</span>[<span class="string">&quot;features&quot;</span>][<span class="string">&quot;plugins&quot;</span>] = <span class="string">&quot;on&quot;</span>;<span class="comment">//plugins</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$i</span> = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Configuration of MongoDB servers</span></span><br><span class="line"><span class="comment">* </span></span><br><span class="line"><span class="comment">* <span class="doctag">@see</span> more details at http://rockmongo.com/wiki/configuration?lang=en_us</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="variable">$MONGO</span>[<span class="string">&quot;servers&quot;</span>][<span class="variable">$i</span>][<span class="string">&quot;mongo_name&quot;</span>] = <span class="string">&quot;mongodb &quot;</span>;<span class="comment">//mongo server name</span></span><br><span class="line"><span class="comment">//$MONGO[&quot;servers&quot;][$i][&quot;mongo_sock&quot;] = &quot;/var/run/mongo.sock&quot;;//mongo socket path (instead of host and port)</span></span><br><span class="line"><span class="variable">$MONGO</span>[<span class="string">&quot;servers&quot;</span>][<span class="variable">$i</span>][<span class="string">&quot;mongo_host&quot;</span>] = <span class="string">&quot;192.168.1.199&quot;</span>;<span class="comment">//mongo host</span></span><br><span class="line"><span class="variable">$MONGO</span>[<span class="string">&quot;servers&quot;</span>][<span class="variable">$i</span>][<span class="string">&quot;mongo_port&quot;</span>] = <span class="string">&quot;27017&quot;</span>;<span class="comment">//mongo port</span></span><br><span class="line"><span class="variable">$MONGO</span>[<span class="string">&quot;servers&quot;</span>][<span class="variable">$i</span>][<span class="string">&quot;mongo_timeout&quot;</span>] = <span class="number">0</span>;<span class="comment">//mongo connection timeout</span></span><br><span class="line"><span class="comment">//$MONGO[&quot;servers&quot;][$i][&quot;mongo_db&quot;] = &quot;MONGO_DATABASE&quot;;//default mongo db to connect, works only if mongo_auth=false</span></span><br><span class="line"><span class="comment">//$MONGO[&quot;servers&quot;][$i][&quot;mongo_user&quot;] = &quot;MONGO_USERNAME&quot;;//mongo authentication user name, works only if mongo_auth=false</span></span><br><span class="line"><span class="comment">//$MONGO[&quot;servers&quot;][$i][&quot;mongo_pass&quot;] = &quot;MONGO_PASSWORD&quot;;//mongo authentication password, works only if mongo_auth=false</span></span><br><span class="line"><span class="variable">$MONGO</span>[<span class="string">&quot;servers&quot;</span>][<span class="variable">$i</span>][<span class="string">&quot;mongo_auth&quot;</span>] = <span class="literal">true</span>;<span class="comment">//enable mongo authentication?</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$MONGO</span>[<span class="string">&quot;servers&quot;</span>][<span class="variable">$i</span>][<span class="string">&quot;control_auth&quot;</span>] = <span class="literal">false</span>;<span class="comment">//enable control users, works only if mongo_auth=false</span></span><br><span class="line"><span class="variable">$MONGO</span>[<span class="string">&quot;servers&quot;</span>][<span class="variable">$i</span>][<span class="string">&quot;control_users&quot;</span>][<span class="string">&quot;admin&quot;</span>] = <span class="string">&quot;admin&quot;</span>;<span class="comment">//one of control users [&quot;USERNAME&quot;]=PASSWORD, works only if mongo_auth=false</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$MONGO</span>[<span class="string">&quot;servers&quot;</span>][<span class="variable">$i</span>][<span class="string">&quot;ui_only_dbs&quot;</span>] = <span class="string">&quot;&quot;</span>;<span class="comment">//databases to display</span></span><br><span class="line"><span class="variable">$MONGO</span>[<span class="string">&quot;servers&quot;</span>][<span class="variable">$i</span>][<span class="string">&quot;ui_hide_dbs&quot;</span>] = <span class="string">&quot;&quot;</span>;<span class="comment">//databases to hide</span></span><br><span class="line"><span class="variable">$MONGO</span>[<span class="string">&quot;servers&quot;</span>][<span class="variable">$i</span>][<span class="string">&quot;ui_hide_collections&quot;</span>] = <span class="string">&quot;&quot;</span>;<span class="comment">//collections to hide</span></span><br><span class="line"><span class="variable">$MONGO</span>[<span class="string">&quot;servers&quot;</span>][<span class="variable">$i</span>][<span class="string">&quot;ui_hide_system_collections&quot;</span>] = <span class="literal">false</span>;<span class="comment">//whether hide the system collections</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//$MONGO[&quot;servers&quot;][$i][&quot;docs_nature_order&quot;] = false;//whether show documents by nature order, default is by _id field</span></span><br><span class="line"><span class="comment">//$MONGO[&quot;servers&quot;][$i][&quot;docs_render&quot;] = &quot;default&quot;;//document highlight render, can be &quot;default&quot; or &quot;plain&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$i</span> ++;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * mini configuration for another mongo server</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">$MONGO[&quot;servers&quot;][$i][&quot;mongo_name&quot;] = &quot;Localhost2&quot;;</span></span><br><span class="line"><span class="comment">$MONGO[&quot;servers&quot;][$i][&quot;mongo_host&quot;] = &quot;127.0.0.1&quot;;</span></span><br><span class="line"><span class="comment">$MONGO[&quot;servers&quot;][$i][&quot;mongo_port&quot;] = &quot;27017&quot;;</span></span><br><span class="line"><span class="comment">$MONGO[&quot;servers&quot;][$i][&quot;control_users&quot;][&quot;admin&quot;] = &quot;password&quot;;</span></span><br><span class="line"><span class="comment">$i ++;</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="使用客户端连接"><a href="#使用客户端连接" class="headerlink" title="使用客户端连接"></a>使用客户端连接</h2><h3 id="mongodb-linux"><a href="#mongodb-linux" class="headerlink" title="mongodb-linux"></a>mongodb-linux</h3><p>选择Linux 64-bit legacy<br><a target="_blank" rel="noopener" href="https://www.mongodb.org/downloads#linux">https://www.mongodb.org/downloads#linux</a></p>
+<p>解压后可以直接执行二进制文件连接数据库</p>
+<pre><code> ./mongo ip:port/admin -u root -p root
+</code></pre>
+<h3 id="MongoVUE"><a href="#MongoVUE" class="headerlink" title="MongoVUE"></a>MongoVUE</h3><blockquote>
+<p>MongoVUE管理MongoDB的Gui客户端工具，非常方便</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="http://www.mongovue.com/downloads/">http://www.mongovue.com/downloads/</a></p>
+<h2 id="打包下载"><a href="#打包下载" class="headerlink" title="打包下载"></a>打包下载</h2><blockquote>
+<p>我把自己实践的介质都打包放在百度云中</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">file://E:\MongoDB     (0 folders, 4 files, 56.74 MB, 56.74 MB <span class="keyword">in</span> total.)</span><br><span class="line">    mongo-php-driver-master.zip     1.45 MB</span><br><span class="line">    mongodb-linux-x86_64-3.0.4.tgz     38.41 MB</span><br><span class="line">    MongoVUE.zip     16.56 MB</span><br><span class="line">    rockmongo.zip     324.67 KB</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="http://pan.baidu.com/s/1kTvhGyz">http://pan.baidu.com/s/1kTvhGyz</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/rockmongo/" data-title="使用RockMongo管理MongoDB | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/autoyast/" title="基于AutoYaST自动化安装SuSE实践">
+  <strong>上一篇：</strong><br/>
+  <span>
+  基于AutoYaST自动化安装SuSE实践</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/os/"  title="常用操作系统分享">
+ <strong>下一篇：</strong><br/> 
+ <span>常用操作系统分享
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E8%AE%B0%E5%BD%95"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP%E7%8E%AF%E5%A2%83%E6%94%AF%E6%8C%81"><span class="toc-number">3.</span> <span class="toc-text">PHP环境支持</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2RockMongo"><span class="toc-number">4.</span> <span class="toc-text">部署RockMongo</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#mongo-php-driver"><span class="toc-number">4.1.</span> <span class="toc-text">mongo-php-driver</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AERockMongo"><span class="toc-number">4.2.</span> <span class="toc-text">配置RockMongo</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%BF%9E%E6%8E%A5"><span class="toc-number">5.</span> <span class="toc-text">使用客户端连接</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#mongodb-linux"><span class="toc-number">5.1.</span> <span class="toc-text">mongodb-linux</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MongoVUE"><span class="toc-number">5.2.</span> <span class="toc-text">MongoVUE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%93%E5%8C%85%E4%B8%8B%E8%BD%BD"><span class="toc-number">6.</span> <span class="toc-text">打包下载</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

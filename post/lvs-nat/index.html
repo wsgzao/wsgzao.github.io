@@ -1,0 +1,697 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>LVS-NAT原理介绍和配置实践 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="LVS-NAT原理介绍和配置实践">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LVS-NAT原理介绍和配置实践">
+<meta property="og:url" content="https://wsgzao.github.io/post/lvs-nat/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="LVS-NAT原理介绍和配置实践">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190823142206.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190823142555.png">
+<meta property="article:published_time" content="2019-09-03T08:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:06.921Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190823142206.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/lvs-nat/" title="LVS-NAT原理介绍和配置实践" itemprop="url">LVS-NAT原理介绍和配置实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2019-09-03T08:59:49.000Z" itemprop="datePublished"> 发表于 2019-09-03</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ReadMe"><span class="toc-number">3.</span> <span class="toc-text">ReadMe</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">3.1.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E6%9C%AF%E8%AF%AD"><span class="toc-number">3.2.</span> <span class="toc-text">相关术语</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LVS%E4%B8%89%E7%A7%8D%E6%A8%A1%E5%BC%8F%E7%9A%84%E4%B8%BB%E8%A6%81%E5%8C%BA%E5%88%AB"><span class="toc-number">4.</span> <span class="toc-text">LVS三种模式的主要区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LVS%E5%9F%BA%E6%9C%AC%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">5.</span> <span class="toc-text">LVS基本工作原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#LVS%E7%9A%84%E7%BB%84%E6%88%90"><span class="toc-number">5.1.</span> <span class="toc-text">LVS的组成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LVS%E5%92%8CKeepalived"><span class="toc-number">5.2.</span> <span class="toc-text">LVS和Keepalived</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LVS-x2F-NAT"><span class="toc-number">5.3.</span> <span class="toc-text">LVS&#x2F;NAT</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AELVS-NAT"><span class="toc-number">6.</span> <span class="toc-text">配置LVS-NAT</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#DS"><span class="toc-number">6.1.</span> <span class="toc-text">DS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RS"><span class="toc-number">6.2.</span> <span class="toc-text">RS</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LVS%E5%92%8CKeepalived%E7%B3%BB%E5%88%97"><span class="toc-number">7.</span> <span class="toc-text">LVS和Keepalived系列</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文主要讲述LVS-NAT原理介绍和配置实践，HA高可用方案基于Keepalived。</p>
+<blockquote>
+<p>LVS-NAT原理介绍和配置实践</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019年09月03日 - 拆分LVS-Keepalived中LVS-NAT<br>2019年08月23日 - 更新LVS&#x2F;NAT、LVS&#x2F;DR、LVS&#x2F;TUN三种模式的原理和配置实践<br>2018年12月03日 - 精简和更新配置步骤<br>2018年07月31日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/lvs-nat/">https://wsgzao.github.io/post/lvs-nat/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>LVS - <a target="_blank" rel="noopener" href="http://www.linuxvirtualserver.org/zh/index.html">http://www.linuxvirtualserver.org/zh/index.html</a><br>Keepalived - <a target="_blank" rel="noopener" href="http://www.keepalived.org/">http://www.keepalived.org/</a></p>
+<hr>
+<h2 id="ReadMe"><a href="#ReadMe" class="headerlink" title="ReadMe"></a>ReadMe</h2><h3 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h3><p>Virtual Server via NAT - <a target="_blank" rel="noopener" href="http://www.linuxvirtualserver.org/VS-NAT.html">http://www.linuxvirtualserver.org/VS-NAT.html</a><br>LVS和Keepalived官方中文手册PDF - <a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1s0P6nUt8WF6o_N3wdE3uKg">https://pan.baidu.com/s/1s0P6nUt8WF6o_N3wdE3uKg</a></p>
+<h3 id="相关术语"><a href="#相关术语" class="headerlink" title="相关术语"></a>相关术语</h3><blockquote>
+<p>以下术语涉及LVS三种工作模式的原理</p>
+</blockquote>
+<ul>
+<li>LB (Load Balancer 负载均衡) </li>
+<li>HA (High Available 高可用) </li>
+<li>Failover (失败切换) </li>
+<li>Cluster (集群) </li>
+<li>LVS (Linux Virtual Server Linux 虚拟服务器) </li>
+<li>DS (Director Server)，指的是前端负载均衡器节点</li>
+<li>RS (Real Server)，后端真实的工作服务器</li>
+<li>VIP (Virtual IP)，虚拟的IP地址，向外部直接面向用户请求，作为用户请求的目标的 IP 地址</li>
+<li>DIP (Director IP)，主要用于和内部主机通讯的 IP 地址</li>
+<li>RIP (Real Server IP)，后端服务器的 IP 地址</li>
+<li>CIP (Client IP)，访问客户端的 IP 地址</li>
+</ul>
+<h2 id="LVS三种模式的主要区别"><a href="#LVS三种模式的主要区别" class="headerlink" title="LVS三种模式的主要区别"></a>LVS三种模式的主要区别</h2><table>
+<thead>
+<tr>
+<th></th>
+<th>VS&#x2F;NAT</th>
+<th>VS&#x2F;TUN</th>
+<th>VS&#x2F;DR</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>server</td>
+<td>any</td>
+<td>tunneling</td>
+<td>non-arp device</td>
+</tr>
+<tr>
+<td>server network</td>
+<td>private</td>
+<td>LAN&#x2F;WAN</td>
+<td>LAN</td>
+</tr>
+<tr>
+<td>server number</td>
+<td>low (10~20)</td>
+<td>high</td>
+<td>high</td>
+</tr>
+<tr>
+<td>server gateway</td>
+<td>load balancer</td>
+<td>own router</td>
+<td>own router</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>模式与特点</th>
+<th>NAT 模式</th>
+<th>IPIP 模式</th>
+<th>DR 模式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>对服务器的要求</td>
+<td>服务节点可以使任何操作系统</td>
+<td>必须支持 IP 隧道，目前只有 Linux 系统支持</td>
+<td>服务器节点支持虚拟网卡设备，能够禁用设备的 ARP 响应</td>
+</tr>
+<tr>
+<td>网络要求</td>
+<td>拥有私有 IP 地址的局域网络</td>
+<td>拥有合法 IP 地址的局域，网或广域网</td>
+<td>拥有合法 IP 地址的局域，服务器节点与负载均衡器必须在同一个网段</td>
+</tr>
+<tr>
+<td>通常支持节点数量</td>
+<td>10 到 20 个，根据负载均衡器的处理能力而定</td>
+<td>较高，可以支持 100 个服务节点</td>
+<td>较高，可以支持 100 个服务节点</td>
+</tr>
+<tr>
+<td>网关</td>
+<td>负载均衡器为服务器节点网关</td>
+<td>服务器的节点同自己的网关或者路由器连接，不经过负载均衡器</td>
+<td>服务节点同自己的网关或者路由器连接，不经过负载均衡器</td>
+</tr>
+<tr>
+<td>服务节点安全性</td>
+<td>较好，采用内部 IP，服务节点隐蔽</td>
+<td>较差，采用公用 IP 地址，节点安全暴露</td>
+<td>较差，采用公用 IP 地址，节点安全暴露</td>
+</tr>
+<tr>
+<td>IP 要求</td>
+<td>仅需要一个合法的 IP 地址作为 VIP 地址</td>
+<td>除了 VIPO 地址外，每个服务器界定啊需要拥有合法的 IP 地址，可以直接从路由到客户端</td>
+<td>除了 VIP 外，每个服务节点需拥有合法的 IP 地址，可以直接从路由到客户端</td>
+</tr>
+<tr>
+<td>特点</td>
+<td>地址转换</td>
+<td>封装 IP</td>
+<td>修改 MAC 地址</td>
+</tr>
+<tr>
+<td>配置复杂度</td>
+<td>简单</td>
+<td>复杂</td>
+<td>复杂</td>
+</tr>
+</tbody></table>
+<h2 id="LVS基本工作原理"><a href="#LVS基本工作原理" class="headerlink" title="LVS基本工作原理"></a>LVS基本工作原理</h2><p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190823142206.png"></p>
+<ol>
+<li>当用户向负载均衡调度器（Director Server）发起请求，调度器将请求发往至内核空间</li>
+<li>PREROUTING链首先会接收到用户请求，判断目标IP确定是本机IP，将数据包发往INPUT链</li>
+<li>IPVS是工作在INPUT链上的，当用户请求到达INPUT时，IPVS会将用户请求和自己已定义好的集群服务进行比对，如果用户请求的就是定义的集群服务，那么此时IPVS会强行修改数据包里的目标IP地址及端口，并将新的数据包发往POSTROUTING链</li>
+<li>POSTROUTING链接收数据包后发现目标IP地址刚好是自己的后端服务器，那么此时通过选路，将数据包最终发送给后端的服务器</li>
+</ol>
+<h3 id="LVS的组成"><a href="#LVS的组成" class="headerlink" title="LVS的组成"></a>LVS的组成</h3><blockquote>
+<p>LVS 由2部分程序组成，包括 ipvs 和 ipvsadm。</p>
+</blockquote>
+<ol>
+<li>ipvs(ip virtual server)：一段代码工作在内核空间，叫ipvs，是真正生效实现调度的代码。</li>
+<li>ipvsadm：另外一段是工作在用户空间，叫ipvsadm，负责为ipvs内核框架编写规则，定义谁是集群服务，而谁是后端真实的服务器(Real Server)</li>
+</ol>
+<h3 id="LVS和Keepalived"><a href="#LVS和Keepalived" class="headerlink" title="LVS和Keepalived"></a>LVS和Keepalived</h3><p>在lvs+keepalived环境里面，lvs主要的工作是提供调度算法，把客户端请求按照需求调度在real服务器，keepalived主要的工作是提供lvs控制器的一个冗余，并且对real服务器做健康检查，发现不健康的real服务器，就把它从lvs集群中剔除，real服务器只负责提供服务。</p>
+<h3 id="LVS-x2F-NAT"><a href="#LVS-x2F-NAT" class="headerlink" title="LVS&#x2F;NAT"></a>LVS&#x2F;NAT</h3><p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190823142555.png"></p>
+<blockquote>
+<p>重点理解NAT方式的实现原理和数据包的改变。</p>
+</blockquote>
+<p>(1). 当用户请求到达Director Server，此时请求的数据报文会先到内核空间的PREROUTING链。 此时报文的源IP为CIP，目标IP为VIP<br>(2). PREROUTING检查发现数据包的目标IP是本机，将数据包送至INPUT链<br>(3). IPVS比对数据包请求的服务是否为集群服务，若是，修改数据包的目标IP地址为后端服务器IP，然后将数据包发至POSTROUTING链。 此时报文的源IP为CIP，目标IP为RIP<br>(4). POSTROUTING链通过选路，将数据包发送给Real Server<br>(5). Real Server比对发现目标为自己的IP，开始构建响应报文发回给Director Server。 此时报文的源IP为RIP，目标IP为CIP<br>(6). Director Server在响应客户端前，此时会将源IP地址修改为自己的VIP地址，然后响应给客户端。 此时报文的源IP为VIP，目标IP为CIP</p>
+<blockquote>
+<p>LVS&#x2F;NAT模型的特性</p>
+</blockquote>
+<ul>
+<li>RS应该使用私有地址，RS的网关必须指向DIP</li>
+<li>DIP和RIP必须在同一个网段内</li>
+<li>请求和响应报文都需要经过Director Server，高负载场景中，Director Server易成为性能瓶颈</li>
+<li>支持端口映射</li>
+<li>RS可以使用任意操作系统</li>
+<li>缺陷：对Director Server压力会比较大，请求和响应都需经过director server</li>
+</ul>
+<p>NAT（Network Address Translation 网络地址转换）是一种外网和内外地址映射的技术，内网可以是私有网址，外网可以使用NAT方法修改数据报头，让外网与内网能够互相通信。NAT模式下，网络数据报的进出都要经过LVS的处理。LVS需作为RS（真实服务器）的网关。当包到达LVS时，LVS做目标地址转换（DNAT），将目标IP改为RS的IP。RS接收到包以后，仿佛是客户端直接发给它的一样。RS处理完，返回响应时，源IP是RS IP，目标IP是客户端的IP。这时RS的包通过网（LVS）中转，LVS会做源地址转换（SNAT），将包的源地址改为VIP，这样，这个包对客户端看起来就仿佛是LVS直接返回给它的。客户端无法感知到后端RS的存在。</p>
+<p>（1）RIP和DIP必须在同一个IP网络，且应该使用私网地址；RS的网关要指向DIP；<br>（2）请求报文和响应报文都必须经由Director转发；Director易于成为系统瓶颈；<br>（3）支持端口映射，可修改请求报文的目标PORT；<br>（4）vs必须是Linux系统，rs可以是任意系统；</p>
+<p>缺点：在整个过程中，所有输入输出的流量都要经过LVS 调度服务器。显然，LVS 调度服务器的网络I&#x2F;O压力将会非常大，因此很容易成为瓶颈，特别是对于请求流量很小，而响应流量很大的Web类应用来说尤为如此。</p>
+<p>优点：NAT模式的优点在于配置及管理简单，由于了使用NAT技术，LVS 调度器及应用服务器可以在不同网段中，网络架构更灵活，应用服务器只需要进行简单的网络设定即可加入集群。</p>
+<h2 id="配置LVS-NAT"><a href="#配置LVS-NAT" class="headerlink" title="配置LVS-NAT"></a>配置LVS-NAT</h2><h3 id="DS"><a href="#DS" class="headerlink" title="DS"></a>DS</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Install keepalived</span></span><br><span class="line"><span class="comment"># Ubuntu</span></span><br><span class="line">apt-get install keepalived ipvsadm</span><br><span class="line"><span class="comment"># CentOS</span></span><br><span class="line">yum install keepalived ipvsadm</span><br><span class="line"></span><br><span class="line"><span class="comment"># update iptables</span></span><br><span class="line">vim /etc/sysconfig/iptables</span><br><span class="line"></span><br><span class="line"><span class="comment"># For keepalived:</span></span><br><span class="line"><span class="comment"># allow vrrp </span></span><br><span class="line">-A INPUT -p vrrp -j ACCEPT</span><br><span class="line">-A INPUT -p igmp -j ACCEPT</span><br><span class="line"><span class="comment"># allow multicast</span></span><br><span class="line">-A INPUT -d 224.0.0.18 -j ACCEPT</span><br><span class="line"></span><br><span class="line"><span class="comment"># reload iptables</span></span><br><span class="line">service iptables reload</span><br><span class="line"></span><br><span class="line"><span class="comment"># open ip_forward</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;1&quot;</span> &gt; /proc/sys/net/ipv4/ip_forward</span><br><span class="line"><span class="comment"># edit sysctl.conf</span></span><br><span class="line">vi /etc/sysctl.conf</span><br><span class="line">net.ipv4.ip_forward = 1</span><br><span class="line"></span><br><span class="line">sysctl -p</span><br><span class="line"></span><br><span class="line"><span class="comment"># keepalived for lvs-nat</span></span><br><span class="line">vim /etc/keepalived/keepalived.conf</span><br><span class="line"></span><br><span class="line">vrrp_sync_group NC-MAIN-API &#123;</span><br><span class="line">    group &#123;</span><br><span class="line">        NC-MAIN-API-PUB</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance NC-MAIN-API-PUB &#123;</span><br><span class="line">    state BACKUP</span><br><span class="line">    interface bond1</span><br><span class="line">    virtual_router_id 222</span><br><span class="line">    priority 100</span><br><span class="line">    advert_int 1</span><br><span class="line">    nopreempt</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        xx.xx.xx.xx/25 dev bond1</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">virtual_server xx.xx.xx.xx 15000 &#123;</span><br><span class="line">    delay_loop 6</span><br><span class="line">    lb_algo rr</span><br><span class="line">    lb_kind NAT</span><br><span class="line">    protocol TCP</span><br><span class="line"></span><br><span class="line">    real_server 10.71.12.69 15000 &#123;</span><br><span class="line">        weight 100</span><br><span class="line">        TCP_CHECK &#123;</span><br><span class="line">                connect_timeout 3</span><br><span class="line">                nb_get_retry 3</span><br><span class="line">                delay_before_retry 3</span><br><span class="line">                connect_port 15000</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    real_server 10.71.12.76 15000 &#123;</span><br><span class="line">        weight 100</span><br><span class="line">        TCP_CHECK &#123;</span><br><span class="line">                connect_timeout 3</span><br><span class="line">                nb_get_retry 3</span><br><span class="line">                delay_before_retry 3</span><br><span class="line">                connect_port 15000</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># enable and start keepalived</span></span><br><span class="line">systemctl start keepalived</span><br><span class="line">systemctl <span class="built_in">enable</span> keepalived</span><br><span class="line">watch ipvsadm -L -n --stats</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="RS"><a href="#RS" class="headerlink" title="RS"></a>RS</h3><p>修改默认网关指向NAT的VIP地址</p>
+<h2 id="LVS和Keepalived系列"><a href="#LVS和Keepalived系列" class="headerlink" title="LVS和Keepalived系列"></a>LVS和Keepalived系列</h2><p><a href="https://wsgzao.github.io/post/lvs-keepalived/">LVS和Keepalived的原理介绍和配置实践</a><br><a href="https://wsgzao.github.io/post/lvs/">LVS原理介绍和配置实践</a><br><a href="https://wsgzao.github.io/post/keepalived/">Keepalived原理介绍和配置实践</a><br><a href="https://wsgzao.github.io/post/lvs-nat/">LVS-NAT原理介绍和配置实践</a><br><a href="https://wsgzao.github.io/post/lvs-dr/">LVS-DR原理介绍和配置实践</a><br><a href="https://wsgzao.github.io/post/lvs-tun/">LVS-TUN原理介绍和配置实践</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/lvs-nat/" data-title="LVS-NAT原理介绍和配置实践 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/lvs-tun/" title="LVS-TUN原理介绍和配置实践">
+  <strong>上一篇：</strong><br/>
+  <span>
+  LVS-TUN原理介绍和配置实践</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/lvs/"  title="LVS原理介绍和配置实践">
+ <strong>下一篇：</strong><br/> 
+ <span>LVS原理介绍和配置实践
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ReadMe"><span class="toc-number">3.</span> <span class="toc-text">ReadMe</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">3.1.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E6%9C%AF%E8%AF%AD"><span class="toc-number">3.2.</span> <span class="toc-text">相关术语</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LVS%E4%B8%89%E7%A7%8D%E6%A8%A1%E5%BC%8F%E7%9A%84%E4%B8%BB%E8%A6%81%E5%8C%BA%E5%88%AB"><span class="toc-number">4.</span> <span class="toc-text">LVS三种模式的主要区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LVS%E5%9F%BA%E6%9C%AC%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">5.</span> <span class="toc-text">LVS基本工作原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#LVS%E7%9A%84%E7%BB%84%E6%88%90"><span class="toc-number">5.1.</span> <span class="toc-text">LVS的组成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LVS%E5%92%8CKeepalived"><span class="toc-number">5.2.</span> <span class="toc-text">LVS和Keepalived</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LVS-x2F-NAT"><span class="toc-number">5.3.</span> <span class="toc-text">LVS&#x2F;NAT</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AELVS-NAT"><span class="toc-number">6.</span> <span class="toc-text">配置LVS-NAT</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#DS"><span class="toc-number">6.1.</span> <span class="toc-text">DS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RS"><span class="toc-number">6.2.</span> <span class="toc-text">RS</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LVS%E5%92%8CKeepalived%E7%B3%BB%E5%88%97"><span class="toc-number">7.</span> <span class="toc-text">LVS和Keepalived系列</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

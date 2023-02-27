@@ -1,0 +1,593 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>SRE学习路径 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="SRE学习路径">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SRE学习路径">
+<meta property="og:url" content="https://wsgzao.github.io/post/sre/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="SRE学习路径">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://roadmap.sh/roadmaps/devops.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/202207281617861.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/202207281618938.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/202207281615158.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/202207281615561.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/202207281614362.png">
+<meta property="og:image" content="https://github.com/donnemartin/system-design-primer/blob/master/images/jj3A5N8.png">
+<meta property="article:published_time" content="2022-08-13T08:31:24.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:07.113Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://roadmap.sh/roadmaps/devops.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/sre/" title="SRE学习路径" itemprop="url">SRE学习路径</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2022-08-13T08:31:24.000Z" itemprop="datePublished"> 发表于 2022-08-13</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SRE%E7%AE%80%E4%BB%8B"><span class="toc-number">3.</span> <span class="toc-text">SRE简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%9C%89SRE%EF%BC%9F"><span class="toc-number">4.</span> <span class="toc-text">为什么要有SRE？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DevOps-Roadmap"><span class="toc-number">5.</span> <span class="toc-text">DevOps Roadmap</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Agile-and-Scrum"><span class="toc-number">6.</span> <span class="toc-text">Agile and Scrum</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Network-TCP-x2F-IP-and-OSI"><span class="toc-number">7.</span> <span class="toc-text">Network TCP&#x2F;IP and OSI</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#System-Design"><span class="toc-number">8.</span> <span class="toc-text">System Design</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Coding"><span class="toc-number">9.</span> <span class="toc-text">Coding</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E8%82%A1%E6%96%87"><span class="toc-number">10.</span> <span class="toc-text">八股文</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%81%8C%E7%BA%A7%E5%92%8C%E8%96%AA%E8%B5%84%E8%8C%83%E5%9B%B4%E8%AF%84%E4%BC%B0"><span class="toc-number">11.</span> <span class="toc-text">职级和薪资范围评估</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>之前分享过DevOps但一直忘记补SRE相关的信息，其实两者本质没有太多区别，都是运维。</p>
+<ul>
+<li>按运维阶段划分<ul>
+<li>人肉运维 -&gt; 脚本运维 -&gt; 平台运维 -&gt; 智能运维</li>
+</ul>
+</li>
+<li>按技术栈来划分<ul>
+<li>物理机堆硬件 -&gt; x86虚拟化 -&gt; 私有云+公有云 -&gt; 云原生</li>
+</ul>
+</li>
+</ul>
+<p>本文主要记录一些SRE的背景和学习面试资料，方便需要时串起来。</p>
+<hr>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2022年08月13日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/sre/">https://wsgzao.github.io/post/sre/</a></p>
+<hr>
+<h2 id="SRE简介"><a href="#SRE简介" class="headerlink" title="SRE简介"></a>SRE简介</h2><p>SRE 从字面意义来看是 Google 技术VP <a target="_blank" rel="noopener" href="https://www.crunchbase.com/person/benjamin-treynor-sloss">Ben Treynor Sloss</a> 定义的一个岗位，全名叫 Site Reliability Engineering，翻译过来就是网站可靠性工程(师)。然而在我看来他不仅仅是一份工作，反而是一套服务保障体系。</p>
+<h2 id="为什么要有SRE？"><a href="#为什么要有SRE？" class="headerlink" title="为什么要有SRE？"></a>为什么要有SRE？</h2><p>为什么会出现SRE这个岗位呢？这就要从大名鼎鼎的 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/DevOps">DevOps</a> 说起了，这个是 Google 高级研发总监 Melody Meckfessel 在2017年提出的理论体系，这套体系是通过构建一些列 DevOps 工具链和标准把研发过程中的各个角色高效整合在一起，高效的产出稳定的交付结果。这个体系打破了研发与运维的边界，使研发期望的构建更多特性而运维期望的不要引入太多的不稳定性的目标合二为一。</p>
+<p>DevOps 解决了高效生产稳定服务的流程，使服务的生产迭代周期进一步的缩短。但是随着各个服务的搭建，越来越多的服务都在持续演进着，然而运维维护服务的工作也就越来越多，线上的不稳定状态也就越来越多。那么如何解决这个问题呢？是由开发人员时刻关注着自己的服务么？那整体架构的稳定性又如何保证呢？</p>
+<p>由此就产生了 SRE。SRE 的职责就是负责整体站点（服务）的稳定性。然而保证稳定性一定不是在出现问题是解决问题，而是体系化的方式观测与避免问题。这就是我所理解的 SRE 体系。</p>
+<p><a target="_blank" rel="noopener" href="https://sre.google/">https://sre.google/</a><br><a target="_blank" rel="noopener" href="https://www.googblogs.com/sre-vs-devops-competing-standards-or-close-friends/">https://www.googblogs.com/sre-vs-devops-competing-standards-or-close-friends/</a><br><a target="_blank" rel="noopener" href="https://sre.google/sre-book/table-of-contents/">https://sre.google/sre-book/table-of-contents/</a><br><a target="_blank" rel="noopener" href="https://linkedin.github.io/school-of-sre/">https://linkedin.github.io/school-of-sre/</a></p>
+<h2 id="DevOps-Roadmap"><a href="#DevOps-Roadmap" class="headerlink" title="DevOps Roadmap"></a>DevOps Roadmap</h2><p>关于DevOps Roadmap之前也分享过，保持终身学习的态度吧</p>
+<p><a target="_blank" rel="noopener" href="https://roadmap.sh/">https://roadmap.sh/</a><br><a target="_blank" rel="noopener" href="https://roadmap.sh/devops">https://roadmap.sh/devops</a></p>
+<p><img src="https://roadmap.sh/roadmaps/devops.png"></p>
+<h2 id="Agile-and-Scrum"><a href="#Agile-and-Scrum" class="headerlink" title="Agile and Scrum"></a>Agile and Scrum</h2><p>Agile Product Ownership in a nutshell<br><a target="_blank" rel="noopener" href="https://blog.crisp.se/2012/10/25/henrikkniberg/agile-product-ownership-in-a-nutshell">https://blog.crisp.se/2012/10/25/henrikkniberg/agile-product-ownership-in-a-nutshell</a></p>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/202207281617861.png"></p>
+<p>Introduction to Scrum - 7 Minutes<br><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=9TycLR0TqFA">https://www.youtube.com/watch?v=9TycLR0TqFA</a></p>
+<p>凤凰项目 - The Phoenix Project<br><a target="_blank" rel="noopener" href="https://m.douban.com/book/subject/26644070/">https://m.douban.com/book/subject/26644070/</a></p>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/202207281618938.png"></p>
+<h2 id="Network-TCP-x2F-IP-and-OSI"><a href="#Network-TCP-x2F-IP-and-OSI" class="headerlink" title="Network TCP&#x2F;IP and OSI"></a>Network TCP&#x2F;IP and OSI</h2><p><a target="_blank" rel="noopener" href="https://community.fs.com/blog/tcpip-vs-osi-whats-the-difference-between-the-two-models.html">https://community.fs.com/blog/tcpip-vs-osi-whats-the-difference-between-the-two-models.html</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.52im.net/thread-180-1-1.html">http://www.52im.net/thread-180-1-1.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://zqlxtt.cn/2020/09/23/tcpip-overview/">https://zqlxtt.cn/2020/09/23/tcpip-overview/</a></p>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/202207281615158.png"><br><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/202207281615561.png"><br><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/202207281614362.png"></p>
+<h2 id="System-Design"><a href="#System-Design" class="headerlink" title="System Design"></a>System Design</h2><p>The System Design Primer<br><a target="_blank" rel="noopener" href="https://github.com/donnemartin/system-design-primer">https://github.com/donnemartin/system-design-primer</a></p>
+<p><img src="https://github.com/donnemartin/system-design-primer/blob/master/images/jj3A5N8.png"></p>
+<p>What happens when you type google.com into your browser’s address box and press enter?<br><a target="_blank" rel="noopener" href="https://github.com/alex/what-happens-when">https://github.com/alex/what-happens-when</a><br><a target="_blank" rel="noopener" href="https://4ark.me/post/b6c7c0a2.html">https://4ark.me/post/b6c7c0a2.html</a></p>
+<h2 id="Coding"><a href="#Coding" class="headerlink" title="Coding"></a>Coding</h2><p>LeetCode<br><a target="_blank" rel="noopener" href="https://leetcode.com/">https://leetcode.com/</a><br><a target="_blank" rel="noopener" href="https://leetcode.com/discuss/interview-question">https://leetcode.com/discuss/interview-question</a></p>
+<p>LeetCode solutions in any programming language | 多种编程语言实现 LeetCode、《剑指 Offer（第 2 版）》、《程序员面试金典（第 6 版）》题解<br><a target="_blank" rel="noopener" href="https://leetcode.cn/">https://leetcode.cn/</a><br><a target="_blank" rel="noopener" href="https://github.com/doocs/leetcode">https://github.com/doocs/leetcode</a></p>
+<p>labuladong算法小抄<br><a target="_blank" rel="noopener" href="https://github.com/labuladong/fucking-algorithm">https://github.com/labuladong/fucking-algorithm</a></p>
+<p>代码随想录<br><a target="_blank" rel="noopener" href="https://www.programmercarl.com/">https://www.programmercarl.com/</a></p>
+<p>小浩算法<br><a target="_blank" rel="noopener" href="https://github.com/geekxh/hello-algorithm">https://github.com/geekxh/hello-algorithm</a></p>
+<h2 id="八股文"><a href="#八股文" class="headerlink" title="八股文"></a>八股文</h2><blockquote>
+<p>什么是八股文？八股文不是死东西，八股文本应该指计算机基础知识，考验的是面试者基础能力、广度以及深度，大厂面试不会很重视死八股，往往是很灵活的分析。</p>
+</blockquote>
+<p>计算机网络常见知识点&amp;面试题<br><a target="_blank" rel="noopener" href="https://javaguide.cn/cs-basics/network/other-network-questions.html">https://javaguide.cn/cs-basics/network/other-network-questions.html</a></p>
+<p>操作系统常见面试题总结<br><a target="_blank" rel="noopener" href="https://javaguide.cn/cs-basics/operating-system/operating-system-basic-questions-01.html">https://javaguide.cn/cs-basics/operating-system/operating-system-basic-questions-01.html</a></p>
+<p>Linux 基础知识总结<br><a target="_blank" rel="noopener" href="https://javaguide.cn/cs-basics/operating-system/linux-intro.html">https://javaguide.cn/cs-basics/operating-system/linux-intro.html</a></p>
+<h2 id="职级和薪资范围评估"><a href="#职级和薪资范围评估" class="headerlink" title="职级和薪资范围评估"></a>职级和薪资范围评估</h2><p><a target="_blank" rel="noopener" href="https://www.levels.fyi/">https://www.levels.fyi/</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/sre/" data-title="SRE学习路径 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/singapore-iras/" title="新加坡IRAS居民个人报税减税和SRS退休辅助计划介绍">
+  <strong>上一篇：</strong><br/>
+  <span>
+  新加坡IRAS居民个人报税减税和SRS退休辅助计划介绍</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/3proxy/"  title="3proxy安装配置实践">
+ <strong>下一篇：</strong><br/> 
+ <span>3proxy安装配置实践
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SRE%E7%AE%80%E4%BB%8B"><span class="toc-number">3.</span> <span class="toc-text">SRE简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%9C%89SRE%EF%BC%9F"><span class="toc-number">4.</span> <span class="toc-text">为什么要有SRE？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DevOps-Roadmap"><span class="toc-number">5.</span> <span class="toc-text">DevOps Roadmap</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Agile-and-Scrum"><span class="toc-number">6.</span> <span class="toc-text">Agile and Scrum</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Network-TCP-x2F-IP-and-OSI"><span class="toc-number">7.</span> <span class="toc-text">Network TCP&#x2F;IP and OSI</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#System-Design"><span class="toc-number">8.</span> <span class="toc-text">System Design</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Coding"><span class="toc-number">9.</span> <span class="toc-text">Coding</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E8%82%A1%E6%96%87"><span class="toc-number">10.</span> <span class="toc-text">八股文</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%81%8C%E7%BA%A7%E5%92%8C%E8%96%AA%E8%B5%84%E8%8C%83%E5%9B%B4%E8%AF%84%E4%BC%B0"><span class="toc-number">11.</span> <span class="toc-text">职级和薪资范围评估</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

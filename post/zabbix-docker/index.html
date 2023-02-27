@@ -1,0 +1,568 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>使用Docker安装Zabbix实践 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="使用Docker安装Zabbix实践">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Docker安装Zabbix实践">
+<meta property="og:url" content="https://wsgzao.github.io/post/zabbix-docker/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="使用Docker安装Zabbix实践">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-10-30T06:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:07.217Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/zabbix-docker/" title="使用Docker安装Zabbix实践" itemprop="url">使用Docker安装Zabbix实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2018-10-30T06:59:49.000Z" itemprop="datePublished"> 发表于 2018-10-30</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3"><span class="toc-number">3.</span> <span class="toc-text">官方文档</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#zabbix-server"><span class="toc-number">4.</span> <span class="toc-text">zabbix-server</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zabbix%E5%AE%B9%E5%99%A8%E5%8C%96%E5%90%8E%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="toc-number">5.</span> <span class="toc-text">Zabbix容器化后的配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%87%E7%BA%A7%E5%AE%B9%E5%99%A8"><span class="toc-number">5.1.</span> <span class="toc-text">升级容器</span></a></li></ol></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Zabbix是目前最为主流的开源监控方案之一，前面的文章主要介绍了传统的安装方式，在Docker容器出现后我们也拥有更高效的安装方式，这里就主要分享基于Docker安装和配置Zabbix的相关心得。</p>
+<blockquote>
+<p>使用Docker安装Zabbix实践</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018年10月30日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/zabbix-docker/">https://wsgzao.github.io/post/zabbix-docker/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>Zabbix - <a target="_blank" rel="noopener" href="https://www.zabbix.com/">https://www.zabbix.com/</a></p>
+<hr>
+<h2 id="官方文档"><a href="#官方文档" class="headerlink" title="官方文档"></a>官方文档</h2><p><a target="_blank" rel="noopener" href="https://www.zabbix.com/download">https://www.zabbix.com/download</a><br><a target="_blank" rel="noopener" href="https://www.zabbix.com/documentation">https://www.zabbix.com/documentation</a></p>
+<h2 id="zabbix-server"><a href="#zabbix-server" class="headerlink" title="zabbix-server"></a>zabbix-server</h2><blockquote>
+<p>从容器安装Zabbix Server最简单的方式之一，关于数据卷是否需要映射，看实际需求吧</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://hub.docker.com/r/zabbix/zabbix-server-mysql/tags/">https://hub.docker.com/r/zabbix/zabbix-server-mysql/tags/</a><br><a target="_blank" rel="noopener" href="https://hub.docker.com/r/zabbix/zabbix-web-nginx-mysql/tags/">https://hub.docker.com/r/zabbix/zabbix-web-nginx-mysql/tags/</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># install docker-ce</span></span><br><span class="line">sudo yum install -y yum-utils device-mapper-persistent-data lvm2</span><br><span class="line">sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo</span><br><span class="line">sudo yum install -y docker-ce</span><br><span class="line">sudo systemctl start docker</span><br><span class="line"></span><br><span class="line"><span class="comment"># Install mysql, zabbix, nginx in docker </span></span><br><span class="line">docker run --name mysql-server -t \</span><br><span class="line">-e MYSQL_DATABASE=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_USER=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_PASSWORD=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_ROOT_PASSWORD=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-p 127.0.0.1:3306:3306 \</span><br><span class="line">-d mysql:5.7 \</span><br><span class="line">--character-set-server=utf8 --collation-server=utf8_bin</span><br><span class="line"></span><br><span class="line">docker run --name zabbix-server-mysql -t \</span><br><span class="line">--<span class="built_in">link</span> mysql-server:mysql \</span><br><span class="line">-e DB_SERVER_HOST=<span class="string">&quot;mysql-server&quot;</span> \</span><br><span class="line">-e MYSQL_DATABASE=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_USER=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_PASSWORD=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_ROOT_PASSWORD=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-p 10051:10051 \</span><br><span class="line">-d \</span><br><span class="line">zabbix/zabbix-server-mysql:centos-4.0-latest</span><br><span class="line"></span><br><span class="line">docker run --name zabbix-web-nginx-mysql -t \</span><br><span class="line">--<span class="built_in">link</span> mysql-server:mysql \</span><br><span class="line">--<span class="built_in">link</span> zabbix-server-mysql:zabbix-server \</span><br><span class="line">-e DB_SERVER_HOST=<span class="string">&quot;mysql-server&quot;</span> \</span><br><span class="line">-e MYSQL_DATABASE=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_USER=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_PASSWORD=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_ROOT_PASSWORD=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e PHP_TZ=<span class="string">&quot;Asia/Singapore&quot;</span> \</span><br><span class="line">-p 80:80 \</span><br><span class="line">-d \</span><br><span class="line">zabbix/zabbix-web-nginx-mysql:centos-4.0-latest</span><br><span class="line">			</span><br><span class="line"></span><br><span class="line"><span class="comment"># 做数据映射后的方案</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">mkdir</span> -p /data/docker/mysql/zabbix/data</span><br><span class="line"><span class="built_in">mkdir</span> -p /data/docker/zabbix/alertscripts</span><br><span class="line"><span class="built_in">mkdir</span> -p /data/docker/zabbix/externalscripts</span><br><span class="line"></span><br><span class="line">docker run --name mysql-server -t \</span><br><span class="line">-e MYSQL_DATABASE=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_USER=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_PASSWORD=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_ROOT_PASSWORD=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-v /data/docker/mysql/zabbix/data:/var/lib/mysql \</span><br><span class="line">-p 127.0.0.1:3306:3306 \</span><br><span class="line">-d mysql:5.7 \</span><br><span class="line">--character-set-server=utf8 --collation-server=utf8_bin</span><br><span class="line"></span><br><span class="line">docker run --name zabbix-server-mysql -t \</span><br><span class="line">--<span class="built_in">link</span> mysql-server:mysql \</span><br><span class="line">-e DB_SERVER_HOST=<span class="string">&quot;mysql-server&quot;</span> \</span><br><span class="line">-e MYSQL_DATABASE=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_USER=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_PASSWORD=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_ROOT_PASSWORD=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-v /etc/localtime:/etc/localtime:ro \</span><br><span class="line">-v /data/docker/zabbix/alertscripts:/usr/lib/zabbix/alertscripts \</span><br><span class="line">-v /data/docker/zabbix/externalscripts:/usr/lib/zabbix/externalscripts \</span><br><span class="line">-p 10051:10051 \</span><br><span class="line">-d \</span><br><span class="line">zabbix/zabbix-server-mysql:centos-4.0-latest</span><br><span class="line"></span><br><span class="line">docker run --name zabbix-web-nginx-mysql -t \</span><br><span class="line">--<span class="built_in">link</span> mysql-server:mysql \</span><br><span class="line">--<span class="built_in">link</span> zabbix-server-mysql:zabbix-server \</span><br><span class="line">-e DB_SERVER_HOST=<span class="string">&quot;mysql-server&quot;</span> \</span><br><span class="line">-e MYSQL_DATABASE=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_USER=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_PASSWORD=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_ROOT_PASSWORD=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e PHP_TZ=<span class="string">&quot;Asia/Singapore&quot;</span> \</span><br><span class="line">-p 80:80 \</span><br><span class="line">-d \</span><br><span class="line">zabbix/zabbix-web-nginx-mysql:centos-4.0-latest</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>zabbix-proxy和zabbix-agent也可以用容器安装，不过agent就不推荐容器化了，针对容器本身的监控可以使用zabbix-docker-monitoring，当然Prometheus才是监控容器的利刃。<br><a target="_blank" rel="noopener" href="https://github.com/monitoringartist/zabbix-docker-monitoring">https://github.com/monitoringartist/zabbix-docker-monitoring</a></p>
+<p>zabbix-docker官方的GitHub站点还包含更详细的docker compose配置<br><a target="_blank" rel="noopener" href="https://github.com/zabbix/zabbix-docker">https://github.com/zabbix/zabbix-docker</a></p>
+<p>关于Docker常用命令可以参考Docker从入门到实践<br><a href="https://wsgzao.github.io/post/docker/">https://wsgzao.github.io/post/docker/</a></p>
+<h2 id="Zabbix容器化后的配置"><a href="#Zabbix容器化后的配置" class="headerlink" title="Zabbix容器化后的配置"></a>Zabbix容器化后的配置</h2><blockquote>
+<p>容器化的配置和传统方式略有不同，尤其是网络防火墙策略</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 根据zabbix_server.conf配置文件内容创建对应的目录和权限</span></span><br><span class="line">LogFile=/var/log/zabbix/zabbix_server.log</span><br><span class="line">LogFileSize=0</span><br><span class="line">PidFile=/var/run/zabbix/zabbix_server.pid</span><br><span class="line">SocketDir=/var/run/zabbix</span><br><span class="line">DBName=zabbix</span><br><span class="line">DBUser=zabbix</span><br><span class="line">DBPassword=zabbix</span><br><span class="line">StartPollers=500</span><br><span class="line">StartPingers=50</span><br><span class="line">SNMPTrapperFile=/var/log/snmptrap/snmptrap.log</span><br><span class="line">CacheSize=8G</span><br><span class="line">TrendCacheSize=1G</span><br><span class="line">Timeout=15</span><br><span class="line">AlertScriptsPath=/usr/lib/zabbix/alertscripts</span><br><span class="line">ExternalScripts=/usr/lib/zabbix/externalscripts</span><br><span class="line">LogSlowQueries=3000</span><br><span class="line"></span><br><span class="line"><span class="comment"># Zabbix容器默认的配置</span></span><br><span class="line">LogType=console</span><br><span class="line">DBHost=mysql-server</span><br><span class="line">DBName=zabbix</span><br><span class="line">DBUser=zabbix</span><br><span class="line">DBPassword=zabbix</span><br><span class="line">DBPort=3306</span><br><span class="line">AlertScriptsPath=/usr/lib/zabbix/alertscripts</span><br><span class="line">ExternalScripts=/usr/lib/zabbix/externalscripts</span><br><span class="line">FpingLocation=/usr/sbin/fping</span><br><span class="line">Fping6Location=/usr/sbin/fping6</span><br><span class="line">SSHKeyLocation=/var/lib/zabbix/ssh_keys</span><br><span class="line">SSLCertLocation=/var/lib/zabbix/ssl/certs/</span><br><span class="line">SSLKeyLocation=/var/lib/zabbix/ssl/keys/</span><br><span class="line">SSLCALocation=/var/lib/zabbix/ssl/ssl_ca/</span><br><span class="line">LoadModulePath=/var/lib/zabbix/modules/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 按照规范映射指定卷并做好脚本权限设置</span></span><br><span class="line">-v /data/docker/zabbix/alertscripts:/usr/lib/zabbix/alertscripts \</span><br><span class="line">-v /data/docker/zabbix/externalscripts:/usr/lib/zabbix/externalscripts \</span><br><span class="line"></span><br><span class="line"><span class="comment"># Zabbix partition optimization</span></span><br><span class="line">1. <span class="built_in">disable</span> Housekeeping</span><br><span class="line">2. mysql_partition</span><br><span class="line"></span><br><span class="line">https://www.zabbix.org/wiki/Docs/howto/mysql_partition</span><br><span class="line"></span><br><span class="line"><span class="comment"># 容器内部的调整</span></span><br><span class="line">apt-get update</span><br><span class="line">apt-get install lrzsz vim cron -y</span><br><span class="line"></span><br><span class="line">mysql -uzabbix -pzabbix zabbix &lt; partition.sql</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置定时任务</span></span><br><span class="line">vim /etc/crontab</span><br><span class="line">01 01 * * *  root mysql -uzabbix -pzabbix zabbix -e<span class="string">&quot;CALL partition_maintenance_all(&#x27;zabbix&#x27;)&quot;</span> </span><br><span class="line"></span><br><span class="line">service cron restart</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在宿主机上配置定时任务的方法</span></span><br><span class="line">docker <span class="built_in">exec</span> $(docker ps -aqf <span class="string">&quot;name=mysql-server&quot;</span>) mysql -uzabbix -pzabbix zabbix -e<span class="string">&quot;CALL partition_maintenance_all(&#x27;zabbix&#x27;)&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="升级容器"><a href="#升级容器" class="headerlink" title="升级容器"></a>升级容器</h3><ol>
+<li>拉取最新镜像</li>
+<li>停止并删除当前运行容器</li>
+<li>用最新镜像重新创建容器</li>
+<li>All Done</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查找当前系统中使用的镜像</span></span><br><span class="line">docker images</span><br><span class="line"><span class="comment"># 拉取最新镜像</span></span><br><span class="line">docker pull zabbix/zabbix-web-nginx-mysql</span><br><span class="line">docker pull zabbix/zabbix-server-mysql</span><br><span class="line"><span class="comment"># 查找容器ID</span></span><br><span class="line">docker ps</span><br><span class="line"><span class="comment"># 导出之前的容器配置信息</span></span><br><span class="line">docker inspect 14fd67405076</span><br><span class="line"><span class="comment"># 停止容器</span></span><br><span class="line">docker stop 14fd67405076</span><br><span class="line">docker <span class="built_in">kill</span> 14fd67405076</span><br><span class="line"><span class="comment"># 删除容器</span></span><br><span class="line">docker <span class="built_in">rm</span> 14fd67405076</span><br><span class="line"><span class="comment"># 用最新镜像重新创建容器</span></span><br><span class="line">docker run --name zabbix-server-mysql -t \</span><br><span class="line">--<span class="built_in">link</span> mysql-server:mysql \</span><br><span class="line">-e DB_SERVER_HOST=<span class="string">&quot;mysql-server&quot;</span> \</span><br><span class="line">-e MYSQL_DATABASE=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_USER=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_PASSWORD=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_ROOT_PASSWORD=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-v /etc/localtime:/etc/localtime:ro \</span><br><span class="line">-v /data/docker/zabbix/alertscripts:/usr/lib/zabbix/alertscripts \</span><br><span class="line">-v /data/docker/zabbix/externalscripts:/usr/lib/zabbix/externalscripts \</span><br><span class="line">-p 10051:10051 \</span><br><span class="line">-d \</span><br><span class="line">zabbix/zabbix-server-mysql</span><br><span class="line"></span><br><span class="line">docker run --name zabbix-web-nginx-mysql -t \</span><br><span class="line">--<span class="built_in">link</span> mysql-server:mysql \</span><br><span class="line">--<span class="built_in">link</span> zabbix-server-mysql:zabbix-server \</span><br><span class="line">-e DB_SERVER_HOST=<span class="string">&quot;mysql-server&quot;</span> \</span><br><span class="line">-e MYSQL_DATABASE=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_USER=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_PASSWORD=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_ROOT_PASSWORD=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e PHP_TZ=<span class="string">&quot;Asia/Singapore&quot;</span> \</span><br><span class="line">-p 80:80 \</span><br><span class="line">-d \</span><br><span class="line">zabbix/zabbix-web-nginx-mysql</span><br><span class="line"></span><br></pre></td></tr></table></figure>  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/zabbix-docker/" data-title="使用Docker安装Zabbix实践 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/zabbix/" title="Zabbix安装和使用配置小结">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Zabbix安装和使用配置小结</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/zabbix-alert-wechat/"  title="Zabbix使用企业微信告警配置小结">
+ <strong>下一篇：</strong><br/> 
+ <span>Zabbix使用企业微信告警配置小结
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3"><span class="toc-number">3.</span> <span class="toc-text">官方文档</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#zabbix-server"><span class="toc-number">4.</span> <span class="toc-text">zabbix-server</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zabbix%E5%AE%B9%E5%99%A8%E5%8C%96%E5%90%8E%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="toc-number">5.</span> <span class="toc-text">Zabbix容器化后的配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%87%E7%BA%A7%E5%AE%B9%E5%99%A8"><span class="toc-number">5.1.</span> <span class="toc-text">升级容器</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

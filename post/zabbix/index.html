@@ -1,0 +1,579 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>Zabbix安装和使用配置小结 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="学习使用Zabbix">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Zabbix安装和使用配置小结">
+<meta property="og:url" content="https://wsgzao.github.io/post/zabbix/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="学习使用Zabbix">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-11-01T06:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:07.226Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/zabbix/" title="Zabbix安装和使用配置小结" itemprop="url">Zabbix安装和使用配置小结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2018-11-01T06:59:49.000Z" itemprop="datePublished"> 发表于 2018-11-01</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3"><span class="toc-number">3.</span> <span class="toc-text">官方文档</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zabbix-Server"><span class="toc-number">4.</span> <span class="toc-text">Zabbix Server</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zabbix%E8%A1%A8%E5%88%86%E5%8C%BA%E4%BC%98%E5%8C%96"><span class="toc-number">5.</span> <span class="toc-text">Zabbix表分区优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#docker"><span class="toc-number">6.</span> <span class="toc-text">docker</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zabbix%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9B%91%E6%8E%A7"><span class="toc-number">7.</span> <span class="toc-text">Zabbix自定义监控</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zabbix%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D"><span class="toc-number">8.</span> <span class="toc-text">Zabbix备份恢复</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Zabbix是目前最为主流的开源监控方案之一，部署本身并不困难，难的是深入理解。根据在生产环境的实践从新版Zabbix 4.0 LTS开始全部使用Docker部署，我相信未来越来越多的开源组件都会以容器化的形式呈现在我们面前。</p>
+<blockquote>
+<p>Zabbix安装和使用配置小结</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018年11月01日 - 更新官方LAMP部署过程<br>2018年10月16日 - 更新Docker部署Zabbix 4.0<br>2018年08月06日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/zabbix/">https://wsgzao.github.io/post/zabbix/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>Zabbix - <a target="_blank" rel="noopener" href="https://www.zabbix.com/">https://www.zabbix.com/</a></p>
+<hr>
+<h2 id="官方文档"><a href="#官方文档" class="headerlink" title="官方文档"></a>官方文档</h2><p><a target="_blank" rel="noopener" href="https://www.zabbix.com/download">https://www.zabbix.com/download</a><br><a target="_blank" rel="noopener" href="https://www.zabbix.com/documentation">https://www.zabbix.com/documentation</a></p>
+<h2 id="Zabbix-Server"><a href="#Zabbix-Server" class="headerlink" title="Zabbix Server"></a>Zabbix Server</h2><blockquote>
+<p>基于官方的LAMP架构，按照最简单的原生方式来部署，不做任何多余优化</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装必要依赖包</span></span><br><span class="line">yum install -y httpd mariadb-server mariadb php php-mysql php-gd libjpeg* php-ldap php-odbc php-pear php-xml php-xmlrpc php-mhash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改apache配置</span></span><br><span class="line">vim /etc/httpd/conf/httpd.conf</span><br><span class="line">ServerName 192.168.56.103</span><br><span class="line">DirectoryIndex index.html index.php</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改php时区</span></span><br><span class="line">vim /etc/php.ini</span><br><span class="line">date.timezone = Asia/Singapore</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动 httpd 服务</span></span><br><span class="line">systemctl start httpd.service</span><br><span class="line"><span class="comment"># 启动 mariadb 服务</span></span><br><span class="line">systemctl start mariadb.service</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化 mysql 数据库，并配置 root 用户密码</span></span><br><span class="line">mysql_secure_installation</span><br><span class="line"></span><br><span class="line"><span class="comment"># 万一新版本忘记随机密码可以通过日志获取</span></span><br><span class="line">grep <span class="string">&#x27;temporary password&#x27;</span> /var/log/mysqld.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个测试页，测试 LAMP 是否搭建成功</span></span><br><span class="line"><span class="built_in">cat</span> &gt; /var/www/html/index.php &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">&lt;?php</span></span><br><span class="line"><span class="string">phpinfo();</span></span><br><span class="line"><span class="string">?&gt;</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建zabbix数据库</span></span><br><span class="line">mysql -uroot -p</span><br><span class="line"></span><br><span class="line">mysql&gt; create database zabbix character <span class="built_in">set</span> utf8 collate utf8_bin;</span><br><span class="line">mysql&gt; grant all privileges on zabbix.* to zabbix@localhost identified by <span class="string">&#x27;zabbix&#x27;</span>;</span><br><span class="line">mysql&gt; quit;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 部署zabbix</span></span><br><span class="line">rpm -Uvh https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-release-4.0-1.el7.noarch.rpm</span><br><span class="line">yum clean all</span><br><span class="line">yum install -y zabbix-server-mysql zabbix-web-mysql zabbix-agent</span><br><span class="line">zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -uzabbix -p zabbix</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置数据库用户及密码</span></span><br><span class="line">vim /etc/zabbix/zabbix_server.conf</span><br><span class="line">DBPassword=zabbix</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改时区</span></span><br><span class="line">vim /etc/httpd/conf.d/zabbix.conf</span><br><span class="line">php_value date.timezone Asia/Singapore</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动zabbix并设置自启动服务</span></span><br><span class="line">systemctl restart zabbix-server zabbix-agent httpd</span><br><span class="line">systemctl <span class="built_in">enable</span> zabbix-server zabbix-agent httpd mariadb</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p>以下是基于LNMP手动编译安装Zabbix的过程，仅供参考</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># hostname</span></span><br><span class="line">hostnamectl set-hostname &lt;host-name&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># firewall</span></span><br><span class="line">systemctl stop firewalld</span><br><span class="line">systemctl <span class="built_in">disable</span> firewalld</span><br><span class="line"></span><br><span class="line"><span class="comment"># selinux</span></span><br><span class="line">getenforce</span><br><span class="line">setenforce 0</span><br><span class="line">sed -i <span class="string">&quot;s/SELINUX=enforcing/SELINUX=disabled/g&quot;</span> /etc/selinux/config</span><br><span class="line"></span><br><span class="line"><span class="comment"># epel</span></span><br><span class="line">yum install epel-release</span><br><span class="line"></span><br><span class="line"><span class="comment"># nginx</span></span><br><span class="line">yum install nginx</span><br><span class="line">systemctl <span class="built_in">enable</span> nginx</span><br><span class="line">systemctl start nginx</span><br><span class="line">systemctl status nginx</span><br><span class="line">nginx -s reload</span><br><span class="line"></span><br><span class="line"><span class="comment"># mysql | mariadb</span></span><br><span class="line">yum -y install mariadb mariadb-server</span><br><span class="line">systemctl <span class="built_in">enable</span> mariadb.service</span><br><span class="line">systemctl start mariadb.service</span><br><span class="line">mysql_secure_installation</span><br><span class="line"></span><br><span class="line"><span class="comment"># php</span></span><br><span class="line">wget http://cn2.php.net/distributions/php-7.2.8.tar.gz</span><br><span class="line">tar xf php-7.2.8.tar.gz </span><br><span class="line"><span class="built_in">cd</span> ./php-7.2.8/</span><br><span class="line">yum install -y libxml2 libxml2-devel openssl openssl-devel bzip2 bzip2-devel libcurl libcurl-devel libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel gmp gmp-devel libmcrypt libmcrypt-devel readline readline-devel libxslt libxslt-devel </span><br><span class="line">yum install -y libmcrypt libmcrypt-devel gcc</span><br><span class="line">./configure --prefix=/usr/local/php --with-config-file-path=/etc --enable-fpm --with-fpm-user=nginx  --with-fpm-group=nginx --enable-inline-optimization --disable-debug --disable-rpath --enable-shared  --enable-soap --with-libxml-dir --with-xmlrpc --with-openssl --with-mcrypt --with-mhash --with-pcre-regex --with-sqlite3 --with-zlib --enable-bcmath  --with-iconv --with-bz2 --enable-calendar --with-curl --with-cdb --enable-dom --enable-exif --enable-fileinfo --enable-filter --with-pcre-dir --enable-ftp --with-gd --with-openssl-dir  --with-jpeg-dir --with-png-dir --with-zlib-dir --with-freetype-dir --enable-gd-native-ttf --enable-gd-jis-conv --with-gettext --with-gmp --with-mhash --enable-json --enable-mbstring --enable-mbregex --enable-mbregex-backtrack --with-libmbfl --with-onig --enable-pdo --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --with-zlib-dir --with-pdo-sqlite --with-readline --enable-session --enable-shmop --enable-simplexml --enable-sockets  --enable-sysvmsg --enable-sysvsem --enable-sysvshm --enable-wddx --with-libxml-dir --with-xsl --enable-zip --enable-mysqlnd-compression-support --with-pear --enable-opcache</span><br><span class="line">make &amp;&amp; make install</span><br><span class="line"></span><br><span class="line">vi /etc/profile</span><br><span class="line"></span><br><span class="line">PATH=<span class="variable">$PATH</span>:/usr/local/php/bin</span><br><span class="line"><span class="built_in">export</span> PATH</span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> /etc/profile</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$PATH</span></span><br><span class="line">php -v</span><br><span class="line"></span><br><span class="line"><span class="comment"># php-fpm </span></span><br><span class="line"><span class="built_in">cp</span> ./php.ini-production /etc/php.ini</span><br><span class="line"><span class="built_in">cp</span> /usr/local/php/etc/php-fpm.conf.default /usr/local/php/etc/php-fpm.conf</span><br><span class="line"><span class="built_in">cp</span> /usr/local/php/etc/php-fpm.d/www.conf.default /usr/local/php/etc/php-fpm.d/www.conf</span><br><span class="line"><span class="built_in">cp</span> sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm</span><br><span class="line"><span class="built_in">chmod</span> +x /etc/init.d/php-fpm</span><br><span class="line"></span><br><span class="line">vi /etc/php.ini</span><br><span class="line"></span><br><span class="line">max_execution_time = 300</span><br><span class="line">max_input_time = 300</span><br><span class="line">memory_limit = 128M</span><br><span class="line">post_max_size = 16M</span><br><span class="line">date.timezone = Asia/Singapore</span><br><span class="line"></span><br><span class="line">/etc/init.d/php-fpm start</span><br><span class="line"></span><br><span class="line"><span class="comment"># nginx</span></span><br><span class="line">vi /etc/nginx/conf.d/default.conf</span><br><span class="line"></span><br><span class="line">server&#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    server_name localhost;</span><br><span class="line">    root /data/www;</span><br><span class="line">    location / &#123;</span><br><span class="line">        index  index.php index.html index.htm;</span><br><span class="line">        <span class="keyword">if</span> (!-e <span class="variable">$request_filename</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            rewrite ^/(.*)$ /index.php/<span class="variable">$1</span>;</span><br><span class="line">            <span class="comment">#rewrite ^/subdir/(.*)$ /subdir/index.php/$1;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">#proxy the php scripts to php-fpm</span></span><br><span class="line">    location ~ \.php &#123;</span><br><span class="line">        include fastcgi_params;</span><br><span class="line">        <span class="built_in">set</span> <span class="variable">$path_info</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">        <span class="built_in">set</span> <span class="variable">$real_script_name</span> <span class="variable">$fastcgi_script_name</span>;</span><br><span class="line">        <span class="keyword">if</span> (<span class="variable">$fastcgi_script_name</span> ~ <span class="string">&quot;^(.+?\.php)(/.+)$&quot;</span>) &#123;</span><br><span class="line">            <span class="built_in">set</span> <span class="variable">$real_script_name</span> <span class="variable">$1</span>;</span><br><span class="line">            <span class="built_in">set</span> <span class="variable">$path_info</span> <span class="variable">$2</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        fastcgi_param SCRIPT_FILENAME $document_root<span class="variable">$real_script_name</span>;</span><br><span class="line">        fastcgi_param SCRIPT_NAME <span class="variable">$real_script_name</span>;</span><br><span class="line">        fastcgi_param PATH_INFO <span class="variable">$path_info</span>;</span><br><span class="line">        fastcgi_intercept_errors on;</span><br><span class="line">        fastcgi_pass   127.0.0.1:9000;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">nginx -s reload</span><br><span class="line"></span><br><span class="line">vi /data/www/info.php</span><br><span class="line"></span><br><span class="line">&lt;?php</span><br><span class="line">    phpinfo();</span><br><span class="line">?&gt;</span><br><span class="line"></span><br><span class="line">http://127.0.0.1/info.php </span><br><span class="line"></span><br><span class="line"><span class="comment"># zabbix-server</span></span><br><span class="line">rpm -ivh http://repo.zabbix.com/zabbix/3.4/rhel/7/x86_64/zabbix-release-3.4-2.el7.noarch.rpm</span><br><span class="line">yum -y install zabbix-server-mysql zabbix-agent</span><br><span class="line"></span><br><span class="line"><span class="comment"># create zabbix in db</span></span><br><span class="line">mysql -u root -p</span><br><span class="line">create database zabbix character <span class="built_in">set</span> utf8 collate utf8_bin;</span><br><span class="line">grant all privileges on zabbix.* to <span class="string">&#x27;zabbix&#x27;</span>@<span class="string">&#x27;%&#x27;</span> identified by <span class="string">&#x27;zabbix&#x27;</span>;</span><br><span class="line">flush privileges;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /usr/share/doc/zabbix-server-mysql-3.4.11/</span><br><span class="line">zcat create.sql.gz | mysql -u root -p zabbix</span><br><span class="line"></span><br><span class="line">vi /etc/zabbix/zabbix_server.conf</span><br><span class="line"></span><br><span class="line">DBHost=localhost</span><br><span class="line">DBName=zabbix</span><br><span class="line">DBUser=zabbix</span><br><span class="line">DBPassword=zabbix</span><br><span class="line"></span><br><span class="line"><span class="built_in">chown</span> -R zabbix:zabbix /etc/zabbix</span><br><span class="line"><span class="built_in">chown</span> -R zabbix:zabbix /usr/lib/zabbix</span><br><span class="line">systemctl <span class="built_in">enable</span> zabbix-server</span><br><span class="line">systemctl start zabbix-server</span><br><span class="line"></span><br><span class="line"><span class="comment"># zabbix-web</span></span><br><span class="line">wget -O zabbix-3.4.11.tar.gz https://excellmedia.dl.sourceforge.net/project/zabbix/ZABBIX%20Latest%20Stable/3.4.11/zabbix-3.4.11.tar.gz</span><br><span class="line">tar zxvf zabbix-3.4.11.tar.gz</span><br><span class="line"><span class="built_in">cp</span> -rf ./zabbix-3.4.11/frontends/php/ /data/www/zabbix</span><br><span class="line"><span class="built_in">mv</span> /data/www/zabbix/conf/zabbix.conf.php.example /data/www/zabbix/conf/zabbix.conf.php </span><br><span class="line">vi /data/www/zabbix/conf/zabbix.conf.php</span><br><span class="line"></span><br><span class="line">&lt;?php</span><br><span class="line">// Zabbix GUI configuration file.</span><br><span class="line">global <span class="variable">$DB</span>, <span class="variable">$HISTORY</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable">$DB</span>[<span class="string">&#x27;TYPE&#x27;</span>]                             = <span class="string">&#x27;MYSQL&#x27;</span>;</span><br><span class="line"><span class="variable">$DB</span>[<span class="string">&#x27;SERVER&#x27;</span>]                   = <span class="string">&#x27;127.0.0.1&#x27;</span>;</span><br><span class="line"><span class="variable">$DB</span>[<span class="string">&#x27;PORT&#x27;</span>]                             = <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line"><span class="variable">$DB</span>[<span class="string">&#x27;DATABASE&#x27;</span>]                 = <span class="string">&#x27;zabbix&#x27;</span>;</span><br><span class="line"><span class="variable">$DB</span>[<span class="string">&#x27;USER&#x27;</span>]                             = <span class="string">&#x27;zabbix&#x27;</span>;</span><br><span class="line"><span class="variable">$DB</span>[<span class="string">&#x27;PASSWORD&#x27;</span>]                 = <span class="string">&#x27;zabbix&#x27;</span>;</span><br><span class="line">// Schema name. Used <span class="keyword">for</span> IBM DB2 and PostgreSQL.</span><br><span class="line"><span class="variable">$DB</span>[<span class="string">&#x27;SCHEMA&#x27;</span>]                   = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable">$ZBX_SERVER</span>                             = <span class="string">&#x27;localhost&#x27;</span>;</span><br><span class="line"><span class="variable">$ZBX_SERVER_PORT</span>                = <span class="string">&#x27;10051&#x27;</span>;</span><br><span class="line"><span class="variable">$ZBX_SERVER_NAME</span>                = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable">$IMAGE_FORMAT_DEFAULT</span>   = IMAGE_FORMAT_PNG;</span><br><span class="line"></span><br><span class="line">// Elasticsearch url (can be string <span class="keyword">if</span> same url is used <span class="keyword">for</span> all types).</span><br><span class="line"><span class="variable">$HISTORY</span>[<span class="string">&#x27;url&#x27;</span>]   = [</span><br><span class="line">                <span class="string">&#x27;uint&#x27;</span> =&gt; <span class="string">&#x27;http://127.0.0.1:9200&#x27;</span>,</span><br><span class="line">                <span class="string">&#x27;text&#x27;</span> =&gt; <span class="string">&#x27;http://127.0.0.1:9200&#x27;</span></span><br><span class="line">];</span><br><span class="line">// Value types stored <span class="keyword">in</span> Elasticsearch.</span><br><span class="line"><span class="variable">$HISTORY</span>[<span class="string">&#x27;types&#x27;</span>] = [<span class="string">&#x27;uint&#x27;</span>, <span class="string">&#x27;text&#x27;</span>];</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">http://127.0.0.1/zabbix</span><br><span class="line"></span><br><span class="line"><span class="comment">## zabbix-agent</span></span><br><span class="line">rpm -ivh http://repo.zabbix.com/zabbix/3.4/rhel/7/x86_64/zabbix-release-3.4-2.el7.noarch.rpm</span><br><span class="line">yum -y install zabbix-agent</span><br><span class="line">vi /etc/zabbix/zabbix_agentd.conf</span><br><span class="line"></span><br><span class="line">Server=127.0.0.1</span><br><span class="line">ServerActive=127.0.0.1</span><br><span class="line">Hostname=Zabbix server</span><br><span class="line"></span><br><span class="line">systemctl <span class="built_in">enable</span> zabbix-agent</span><br><span class="line">systemctl start zabbix-agent</span><br><span class="line"></span><br><span class="line"><span class="comment"># CPU test</span></span><br><span class="line"></span><br><span class="line">CPU use percent gt 80%</span><br><span class="line">&#123;Template OS Linux:system.cpu.util[,idle].avg(1m)&#125;&lt;80</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;scale=5000; 4*a(1)&quot;</span> | bc -l -q</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Zabbix表分区优化"><a href="#Zabbix表分区优化" class="headerlink" title="Zabbix表分区优化"></a>Zabbix表分区优化</h2><p>Zabbix MySQL Database Partitioning 表分区优化禁用housekeeping提升历史数据清理性能</p>
+<p><a href="https://wsgzao.github.io/post/zabbix-mysql-partition/">https://wsgzao.github.io/post/zabbix-mysql-partition/</a></p>
+<h2 id="docker"><a href="#docker" class="headerlink" title="docker"></a>docker</h2><p><a target="_blank" rel="noopener" href="https://www.zabbix.com/documentation/3.4/zh/manual/installation/containers">https://www.zabbix.com/documentation/3.4/zh/manual/installation/containers</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># install docker-ce</span></span><br><span class="line">sudo yum install -y yum-utils device-mapper-persistent-data lvm2</span><br><span class="line">sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo</span><br><span class="line">sudo yum install -y docker-ce</span><br><span class="line">sudo systemctl start docker</span><br><span class="line"></span><br><span class="line"><span class="comment"># docker: Error response from daemon: Get https://registry-1.docker.io/v2/: x509: certificate has expired or is not yet valid.</span></span><br><span class="line">ntpdate 0.pool.ntp.org</span><br><span class="line"></span><br><span class="line"><span class="comment"># Install mysql, zabbix, nginx in docker </span></span><br><span class="line">docker run --name mysql-server -t \</span><br><span class="line">-e MYSQL_DATABASE=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_USER=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_PASSWORD=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_ROOT_PASSWORD=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-p 127.0.0.1:3306:3306 \</span><br><span class="line">-d mysql:5.7 \</span><br><span class="line">--character-set-server=utf8 --collation-server=utf8_bin</span><br><span class="line"></span><br><span class="line">docker run --name zabbix-server-mysql -t \</span><br><span class="line">--<span class="built_in">link</span> mysql-server:mysql \</span><br><span class="line">-e DB_SERVER_HOST=<span class="string">&quot;mysql-server&quot;</span> \</span><br><span class="line">-e MYSQL_DATABASE=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_USER=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_PASSWORD=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_ROOT_PASSWORD=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-p 10051:10051 \</span><br><span class="line">-d \</span><br><span class="line">zabbix/zabbix-server-mysql:centos-4.0-latest</span><br><span class="line"></span><br><span class="line">docker run --name zabbix-web-nginx-mysql -t \</span><br><span class="line">--<span class="built_in">link</span> mysql-server:mysql \</span><br><span class="line">--<span class="built_in">link</span> zabbix-server-mysql:zabbix-server \</span><br><span class="line">-e DB_SERVER_HOST=<span class="string">&quot;mysql-server&quot;</span> \</span><br><span class="line">-e MYSQL_DATABASE=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_USER=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_PASSWORD=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e MYSQL_ROOT_PASSWORD=<span class="string">&quot;zabbix&quot;</span> \</span><br><span class="line">-e PHP_TZ=<span class="string">&quot;Asia/Singapore&quot;</span> \</span><br><span class="line">-p 80:80 \</span><br><span class="line">-d \</span><br><span class="line">zabbix/zabbix-web-nginx-mysql:centos-4.0-latest</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@zabbix_server ~]<span class="comment"># docker ps</span></span><br><span class="line">CONTAINER ID        IMAGE                                  COMMAND                  CREATED              STATUS              PORTS                           NAMES</span><br><span class="line">98cbe8d8a6bd        zabbix/zabbix-web-nginx-mysql:latest   <span class="string">&quot;docker-entrypoint.sh&quot;</span>   6 seconds ago        Up 5 seconds        443/tcp, 0.0.0.0:8080-&gt;80/tcp   zabbix-web-nginx-mysql</span><br><span class="line">de040d43d60f        zabbix/zabbix-server-mysql:latest      <span class="string">&quot;docker-entrypoint.sh&quot;</span>   59 seconds ago       Up 59 seconds       0.0.0.0:10051-&gt;10051/tcp        zabbix-server-mysql</span><br><span class="line">3276f18def8d        mysql:5.7                              <span class="string">&quot;docker-entrypoint.s…&quot;</span>   About a minute ago   Up About a minute   3306/tcp                        mysql-server</span><br><span class="line"></span><br><span class="line">[root@zabbix_server ~]<span class="comment"># docker images</span></span><br><span class="line">REPOSITORY                      TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">zabbix/zabbix-web-nginx-mysql   latest              4db891b4393a        10 hours ago        177MB</span><br><span class="line">zabbix/zabbix-server-mysql      latest              f5e58dafe9ac        10 hours ago        62.2MB</span><br><span class="line">mysql                           5.7                 f0f3956a9dd8        7 days ago          409MB</span><br><span class="line"></span><br><span class="line">http://127.0.0.1:8080</span><br><span class="line"></span><br><span class="line">Admin/zabbix</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Zabbix自定义监控"><a href="#Zabbix自定义监控" class="headerlink" title="Zabbix自定义监控"></a>Zabbix自定义监控</h2><blockquote>
+<p>以监控文件系统目录的权限为例</p>
+</blockquote>
+<p>Zabbix用户自定义参数<br><a target="_blank" rel="noopener" href="https://www.zabbix.com/documentation/3.4/zh/manual/config/items/userparameters">https://www.zabbix.com/documentation/3.4/zh/manual/config/items/userparameters</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 新建自定义监控配置文件userparameter</span></span><br><span class="line"><span class="built_in">cd</span> /etc/zabbix/zabbix_agentd.d</span><br><span class="line">vi userparameter_tmp.conf</span><br><span class="line">UserParameter=check.tmp[*],<span class="built_in">stat</span> -c %a /tmp</span><br><span class="line"><span class="comment"># 重启zabbix agent</span></span><br><span class="line">service zabbix-agent restart</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在Zabbix Server服务端验证</span></span><br><span class="line">zabbix_get -s 10.65.200.90 -k check.tmp</span><br><span class="line">1777</span><br><span class="line">zabbix_get -s 10.65.200.90 -k agent.version</span><br><span class="line">3.0.9</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在WebUI中创建新的Template或者使用已有新增Items</span></span><br><span class="line">Items: Key为check.tmp</span><br><span class="line">Triggers: 定义Serverity，Expression如下所示</span><br><span class="line">&#123;Template Sea Ops WangAo:check.tmp.last()&#125;&lt;&gt;1777</span><br><span class="line"></span><br><span class="line"><span class="comment"># 点击Monitoring Latest data查看Item最新数据</span></span><br><span class="line">Moniroting -&gt; Latest data -&gt; Hosts -&gt; check /tmp permission</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如果需要配置Actions可以查看Zabbix使用企业微信告警配置小结</p>
+<p><a href="https://wsgzao.github.io/post/zabbix-alert-wechat/">https://wsgzao.github.io/post/zabbix-alert-wechat/</a></p>
+<h2 id="Zabbix备份恢复"><a href="#Zabbix备份恢复" class="headerlink" title="Zabbix备份恢复"></a>Zabbix备份恢复</h2><p>mysql数据库备份通常使用mysqldump或者xtrabackup</p>
+<p>因为一般历史数据较大，如果需要保留所有数据可以考虑主从同步，如果不需要保留数据直接过滤历史数据备份相关的告警配置即可</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看当前版本Zabbix的数据库表结构</span></span><br><span class="line">mysql -uzabbix -pzabbix zabbix -e <span class="string">&quot;show tables&quot;</span>|egrep -v <span class="string">&quot;(Tables_in_zabbix)&quot;</span></span><br><span class="line">mysql -uzabbix -pzabbix zabbix -e <span class="string">&quot;show tables&quot;</span>|egrep -v <span class="string">&quot;(Tables_in_zabbix|history*|trends*|acknowledges|alerts|auditlog|events|service_alarms)&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 以下表中标记+号为需要过滤的表</span></span><br><span class="line">+acknowledges</span><br><span class="line">actions</span><br><span class="line">+alerts</span><br><span class="line">application_discovery</span><br><span class="line">application_prototype</span><br><span class="line">application_template</span><br><span class="line">applications</span><br><span class="line">+auditlog</span><br><span class="line">+auditlog_details</span><br><span class="line">autoreg_host</span><br><span class="line">conditions</span><br><span class="line">config</span><br><span class="line">corr_condition</span><br><span class="line">corr_condition_group</span><br><span class="line">corr_condition_tag</span><br><span class="line">corr_condition_tagpair</span><br><span class="line">corr_condition_tagvalue</span><br><span class="line">corr_operation</span><br><span class="line">correlation</span><br><span class="line">dashboard</span><br><span class="line">dashboard_user</span><br><span class="line">dashboard_usrgrp</span><br><span class="line">dbversion</span><br><span class="line">dchecks</span><br><span class="line">dhosts</span><br><span class="line">drules</span><br><span class="line">dservices</span><br><span class="line">escalations</span><br><span class="line">event_recovery</span><br><span class="line">event_tag</span><br><span class="line">+events</span><br><span class="line">expressions</span><br><span class="line"><span class="built_in">functions</span></span><br><span class="line">globalmacro</span><br><span class="line">globalvars</span><br><span class="line">graph_discovery</span><br><span class="line">graph_theme</span><br><span class="line">graphs</span><br><span class="line">graphs_items</span><br><span class="line">group_discovery</span><br><span class="line">group_prototype</span><br><span class="line"><span class="built_in">groups</span></span><br><span class="line">+<span class="built_in">history</span></span><br><span class="line">+history_log</span><br><span class="line">+history_str</span><br><span class="line">+history_text</span><br><span class="line">+history_uint</span><br><span class="line">host_discovery</span><br><span class="line">host_inventory</span><br><span class="line">hostmacro</span><br><span class="line">hosts</span><br><span class="line">hosts_groups</span><br><span class="line">hosts_templates</span><br><span class="line">housekeeper</span><br><span class="line">httpstep</span><br><span class="line">httpstep_field</span><br><span class="line">httpstepitem</span><br><span class="line">httptest</span><br><span class="line">httptest_field</span><br><span class="line">httptestitem</span><br><span class="line">icon_map</span><br><span class="line">icon_mapping</span><br><span class="line">ids</span><br><span class="line">images</span><br><span class="line">interface</span><br><span class="line">interface_discovery</span><br><span class="line">item_application_prototype</span><br><span class="line">item_condition</span><br><span class="line">item_discovery</span><br><span class="line">item_preproc</span><br><span class="line">items</span><br><span class="line">items_applications</span><br><span class="line">maintenances</span><br><span class="line">maintenances_groups</span><br><span class="line">maintenances_hosts</span><br><span class="line">maintenances_windows</span><br><span class="line">mappings</span><br><span class="line">media</span><br><span class="line">media_type</span><br><span class="line">opcommand</span><br><span class="line">opcommand_grp</span><br><span class="line">opcommand_hst</span><br><span class="line">opconditions</span><br><span class="line">operations</span><br><span class="line">opgroup</span><br><span class="line">opinventory</span><br><span class="line">opmessage</span><br><span class="line">opmessage_grp</span><br><span class="line">opmessage_usr</span><br><span class="line">optemplate</span><br><span class="line">problem</span><br><span class="line">problem_tag</span><br><span class="line">profiles</span><br><span class="line">proxy_autoreg_host</span><br><span class="line">+proxy_dhistory</span><br><span class="line">+proxy_history</span><br><span class="line">regexps</span><br><span class="line">rights</span><br><span class="line">screen_user</span><br><span class="line">screen_usrgrp</span><br><span class="line">screens</span><br><span class="line">screens_items</span><br><span class="line">scripts</span><br><span class="line">+service_alarms</span><br><span class="line">services</span><br><span class="line">services_links</span><br><span class="line">services_times</span><br><span class="line">sessions</span><br><span class="line">slides</span><br><span class="line">slideshow_user</span><br><span class="line">slideshow_usrgrp</span><br><span class="line">slideshows</span><br><span class="line">sysmap_element_trigger</span><br><span class="line">sysmap_element_url</span><br><span class="line">sysmap_shape</span><br><span class="line">sysmap_url</span><br><span class="line">sysmap_user</span><br><span class="line">sysmap_usrgrp</span><br><span class="line">sysmaps</span><br><span class="line">sysmaps_elements</span><br><span class="line">sysmaps_link_triggers</span><br><span class="line">sysmaps_links</span><br><span class="line">task</span><br><span class="line">task_acknowledge</span><br><span class="line">task_close_problem</span><br><span class="line">task_remote_command</span><br><span class="line">task_remote_command_result</span><br><span class="line">timeperiods</span><br><span class="line">+trends</span><br><span class="line">+trends_uint</span><br><span class="line">trigger_depends</span><br><span class="line">trigger_discovery</span><br><span class="line">trigger_tag</span><br><span class="line">triggers</span><br><span class="line"><span class="built_in">users</span></span><br><span class="line">users_groups</span><br><span class="line">usrgrp</span><br><span class="line">valuemaps</span><br><span class="line">widget</span><br><span class="line">widget_field</span><br><span class="line"></span><br><span class="line"><span class="comment"># 我们直接提取需要过滤的表</span></span><br><span class="line">acknowledges</span><br><span class="line">alerts</span><br><span class="line">auditlog</span><br><span class="line">auditlog_details</span><br><span class="line">events</span><br><span class="line"><span class="built_in">history</span></span><br><span class="line">history_log</span><br><span class="line">history_str</span><br><span class="line">history_text</span><br><span class="line">history_uint</span><br><span class="line">proxy_dhistory</span><br><span class="line">proxy_history</span><br><span class="line">service_alarms</span><br><span class="line">trends</span><br><span class="line">trends_uint</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用--ignore-table跳过不需要备份的表</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 过滤最简单的表只需要history*和trends*</span></span><br><span class="line">mysqldump -uzabbix -pzabbix --databases zabbix \</span><br><span class="line">--ignore-table=zabbix.history \</span><br><span class="line">--ignore-table=zabbix.history_log \</span><br><span class="line">--ignore-table=zabbix.history_str \</span><br><span class="line">--ignore-table=zabbix.history_text \</span><br><span class="line">--ignore-table=zabbix.history_uint \</span><br><span class="line">--ignore-table=zabbix.trends \</span><br><span class="line">--ignore-table=zabbix.trends_uint &gt; /tmp/zabbix_config.sql</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果需要做更细化的过滤，可以参考下面的过滤表</span></span><br><span class="line">mysqldump -uzabbix -pzabbix --databases zabbix \</span><br><span class="line">--ignore-table=zabbix.acknowledges \</span><br><span class="line">--ignore-table=zabbix.alerts \</span><br><span class="line">--ignore-table=zabbix.auditlog \</span><br><span class="line">--ignore-table=zabbix.auditlog_details \</span><br><span class="line">--ignore-table=zabbix.events \</span><br><span class="line">--ignore-table=zabbix.history \</span><br><span class="line">--ignore-table=zabbix.history_log \</span><br><span class="line">--ignore-table=zabbix.history_str \</span><br><span class="line">--ignore-table=zabbix.history_text \</span><br><span class="line">--ignore-table=zabbix.history_uint \</span><br><span class="line">--ignore-table=zabbix.proxy_dhistory \</span><br><span class="line">--ignore-table=zabbix.proxy_history \</span><br><span class="line">--ignore-table=zabbix.service_alarms \</span><br><span class="line">--ignore-table=zabbix.services_times \</span><br><span class="line">--ignore-table=zabbix.trends \</span><br><span class="line">--ignore-table=zabbix.trends_uint &gt; /tmp/zabbix_config.sql</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果数据量交大，可以考虑使用gzip压缩</span></span><br><span class="line">--ignore-table=zabbix.trends_uint | gzip &gt; zabbix_`<span class="built_in">date</span> +<span class="string">&#x27;%Y%m%d%H%M%S&#x27;</span>`.sql.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 上传至新的数据库执行导入</span></span><br><span class="line">mysql -uzabbix -pzabbix zabbix &lt; zabbix_config.sql</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>itnihao的书中分享了一部分代码，可以做些许参考吧<br><a target="_blank" rel="noopener" href="https://github.com/itnihao/zabbix-book/tree/master/03-chapter">https://github.com/itnihao/zabbix-book/tree/master/03-chapter</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/zabbix/" data-title="Zabbix安装和使用配置小结 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/zabbix-upgrade/" title="Zabbix 3.x 升级到 Zabbix 4.x">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Zabbix 3.x 升级到 Zabbix 4.x</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/zabbix-docker/"  title="使用Docker安装Zabbix实践">
+ <strong>下一篇：</strong><br/> 
+ <span>使用Docker安装Zabbix实践
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3"><span class="toc-number">3.</span> <span class="toc-text">官方文档</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zabbix-Server"><span class="toc-number">4.</span> <span class="toc-text">Zabbix Server</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zabbix%E8%A1%A8%E5%88%86%E5%8C%BA%E4%BC%98%E5%8C%96"><span class="toc-number">5.</span> <span class="toc-text">Zabbix表分区优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#docker"><span class="toc-number">6.</span> <span class="toc-text">docker</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zabbix%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9B%91%E6%8E%A7"><span class="toc-number">7.</span> <span class="toc-text">Zabbix自定义监控</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zabbix%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D"><span class="toc-number">8.</span> <span class="toc-text">Zabbix备份恢复</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

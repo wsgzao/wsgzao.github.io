@@ -1,0 +1,649 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>Windows上使用Vagrant打造Laravel Homestead可协同跨平台开发环境 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="用Vagrant为自己打造一个奇妙的跨平台开发环境">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows上使用Vagrant打造Laravel Homestead可协同跨平台开发环境">
+<meta property="og:url" content="https://wsgzao.github.io/post/vagrant/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="用Vagrant为自己打造一个奇妙的跨平台开发环境">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://i.v2ex.co/vyf30F6d.png">
+<meta property="article:published_time" content="2015-07-18T10:29:28.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:07.164Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://i.v2ex.co/vyf30F6d.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/vagrant/" title="Windows上使用Vagrant打造Laravel Homestead可协同跨平台开发环境" itemprop="url">Windows上使用Vagrant打造Laravel Homestead可协同跨平台开发环境</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2015-07-18T10:29:28.000Z" itemprop="datePublished"> 发表于 2015-07-18</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-number">3.</span> <span class="toc-text">环境准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85git"><span class="toc-number">4.</span> <span class="toc-text">安装git</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85php"><span class="toc-number">5.</span> <span class="toc-text">安装php</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85Laravel"><span class="toc-number">6.</span> <span class="toc-text">安装Laravel</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85Composer"><span class="toc-number">7.</span> <span class="toc-text">安装Composer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85Vagrant"><span class="toc-number">8.</span> <span class="toc-text">安装Vagrant</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85VirtualBox"><span class="toc-number">9.</span> <span class="toc-text">安装VirtualBox</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Vagrant%E9%85%8D%E7%BD%AE"><span class="toc-number">10.</span> <span class="toc-text">Vagrant配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8Vagrant"><span class="toc-number">10.1.</span> <span class="toc-text">启动Vagrant</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%BC%E5%87%BAbox"><span class="toc-number">10.2.</span> <span class="toc-text">导出box</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B6%E5%AE%83%E5%91%BD%E4%BB%A4"><span class="toc-number">10.3.</span> <span class="toc-text">其它命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Laravel-Homestead"><span class="toc-number">11.</span> <span class="toc-text">Laravel Homestead</span></a></li></ol>
+		
+		</div>
+		 -->
+		<p><img src="http://i.v2ex.co/vyf30F6d.png"></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>大家对<code>VMware</code>或者<code>VirtualBox</code>一定不会陌生，虚拟化的好处自然深入人心，而现在我们可以通过<code>Vagrant</code>搭建一套类似<code>Laravel Homestead</code>完整开发环境，这样极大的减少了架设开发环境的时间，同时还支持在<code>Windows/Mac/Linux</code>不同平台上分享定制包，统一团队之间的开发环境提高工作效率，而<code>Docker</code>的出现也让未来更值得期待。</p>
+<blockquote>
+<p>用Vagrant为自己打造一个奇妙的跨平台开发环境</p>
+</blockquote>
+<hr>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2015年07月18日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/vagrant/">https://wsgzao.github.io/post/vagrant/</a></p>
+<p>扩展阅读</p>
+<p>Vagrant - <a target="_blank" rel="noopener" href="https://www.vagrantup.com/">https://www.vagrantup.com/</a><br>Laravel Homestead - <a target="_blank" rel="noopener" href="http://laravel.com/docs/5.1/homestead">http://laravel.com/docs/5.1/homestead</a><br>在windows下进行linux开发：利用Vagrant+virtualbox - <a target="_blank" rel="noopener" href="http://blog.star7th.com/2015/06/1538.html">http://blog.star7th.com/2015/06/1538.html</a><br>在 Mac&#x2F;win7 下上使用 Vagrant 打造本地开发环境 - <a target="_blank" rel="noopener" href="http://segmentfault.com/a/1190000002645737">http://segmentfault.com/a/1190000002645737</a></p>
+<hr>
+<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><ol>
+<li>Git（非必需）</li>
+<li>PHP（非必需）</li>
+<li>Laravel（非必需）</li>
+<li>Composer（非必需）</li>
+<li>Vagrant</li>
+<li>VirtualBox</li>
+</ol>
+<p>如果大家有需要离线安装欢迎直接留言回复哈</p>
+<h2 id="安装git"><a href="#安装git" class="headerlink" title="安装git"></a>安装git</h2><p>1.下载GitHub for Windows</p>
+<p><a target="_blank" rel="noopener" href="https://windows.github.com/">https://windows.github.com/</a></p>
+<h2 id="安装php"><a href="#安装php" class="headerlink" title="安装php"></a>安装php</h2><blockquote>
+<p>建议大家尽量安装当前最新版本的 PHP </p>
+</blockquote>
+<p>1.下载PHP</p>
+<p><a target="_blank" rel="noopener" href="http://windows.php.net/download/">http://windows.php.net/download/</a></p>
+<p>2.解压目录</p>
+<p>我的路径<code>D:\php</code></p>
+<p>3.添加环境变量</p>
+<p>右键计算机-&gt;高级系统设置-&gt;环境变量-&gt;系统变量-&gt;PATH</p>
+<p><code>C:\ProgramData\Oracle\Java\javapath;%SystemRoot%\system32;%SystemRoot%;%SystemRoot%\System32\Wbem;%SYSTEMROOT%\System32\WindowsPowerShell\v1.0\;C:\nodejs\;D:\php;C:\ProgramData\ComposerSetup\bin</code></p>
+<p>4.设置php.ini</p>
+<p>进入 PHP 安装目录（例如 <code>D:\php</code>）。找到 <code>php.ini-development</code> 文件并复制一份到当前目录，重命名为 <code>php.ini</code>，修改以下配置<br>去掉<code>extension=php_mbstring.dll</code> 前面的分号（888 行左右）<br>去掉<code>extension=php_openssl.dll</code>前面的分号（893 行左右）<br>去掉<code>extension_dir = &quot;ext&quot;</code>前面的分号（736 行左右）</p>
+<p>5.使环境变量生效</p>
+<p>重启<code>explorer.exe</code></p>
+<h2 id="安装Laravel"><a href="#安装Laravel" class="headerlink" title="安装Laravel"></a>安装Laravel</h2><p>1.下载Laravel</p>
+<p><a target="_blank" rel="noopener" href="http://www.golaravel.com/download/">http://www.golaravel.com/download/</a></p>
+<p>2.解压目录</p>
+<p>我的路径<code>D:\laravel-v5.1.4</code></p>
+<p>3.启动Laravel</p>
+<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">d:</span></span><br><span class="line"><span class="function"><span class="title">cd</span> <span class="title">laravel</span>-<span class="title">v5</span>.1.4</span></span><br><span class="line"><span class="function"><span class="title">D</span>:\<span class="title">laravel</span>-<span class="title">v5</span>.1.4&gt;<span class="title">php</span> <span class="title">artisan</span> <span class="title">serve</span></span></span><br><span class="line"><span class="function"><span class="title">Laravel</span> <span class="title">development</span> <span class="title">server</span> <span class="title">started</span> <span class="title">on</span> <span class="title">http</span>://<span class="title">localhost</span>:8000/</span></span><br></pre></td></tr></table></figure>
+
+<p>在浏览器中访问<a target="_blank" rel="noopener" href="http://localhost:8000/">http://localhost:8000/</a></p>
+<p><code>artisan</code> 的 <code>serve</code> 命令还支持两个参数：</p>
+<p><code>host</code> 设置主机地址<br><code>port</code> 设置 web server 监听的端口号<br>例如：<code>php artisan serve --port=8888</code></p>
+<h2 id="安装Composer"><a href="#安装Composer" class="headerlink" title="安装Composer"></a>安装Composer</h2><p>1.下载<code>Composer-Setup.exe</code></p>
+<p><a target="_blank" rel="noopener" href="https://getcomposer.org/doc/00-intro.md#installation-windows">https://getcomposer.org/doc/00-intro.md#installation-windows</a></p>
+<p>2.配置Composer</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Loading composer repositories with package information</span><br><span class="line">Installing dependencies (including require-dev)</span><br><span class="line">SSL certificate problem, verify that the CA cert is OK. Details: </span><br><span class="line">error:14090086:SSL routines:SSL3_GET_SERVER_CERTIFICATE:certificate verify failed”</span><br></pre></td></tr></table></figure>
+
+<p>如果安装过程提示报错为缺少CA证书，下载<code>cacert.pem</code>到自定义路径<br><a target="_blank" rel="noopener" href="http://curl.haxx.se/docs/caextract.html">http://curl.haxx.se/docs/caextract.html</a></p>
+<p>然后修改php.ini文件（1983行左右）</p>
+<p><code>openssl.cafile=D:\php\verify\cacert.pem</code></p>
+<p>3.测试Composer</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">composer -V</span><br><span class="line"></span><br><span class="line">Composer version 1.0-dev (d79427f1a7b15e8f4d46ce8124a4d0c58ba1479c) 2015-07-04 1</span><br><span class="line">1:22:58</span><br></pre></td></tr></table></figure>
+
+<h2 id="安装Vagrant"><a href="#安装Vagrant" class="headerlink" title="安装Vagrant"></a>安装Vagrant</h2><p>1.下载Vagrant</p>
+<p><a target="_blank" rel="noopener" href="https://www.vagrantup.com/downloads.html">https://www.vagrantup.com/downloads.html</a></p>
+<p>2.离线下载虚拟镜像</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/tommy-muehle/puppet-vagrant-boxes/releases/download/1.0.0/centos-6.6-x86_64.box">https://github.com/tommy-muehle/puppet-vagrant-boxes/releases/download/1.0.0/centos-6.6-x86_64.box</a></p>
+<p>上面给出的是centos-6.6镜像下载链接，要下载其他镜像请访问官网<br><a target="_blank" rel="noopener" href="http://www.vagrantbox.es/">http://www.vagrantbox.es/</a></p>
+<h2 id="安装VirtualBox"><a href="#安装VirtualBox" class="headerlink" title="安装VirtualBox"></a>安装VirtualBox</h2><blockquote>
+<p>BIOS里面开启CPU硬件虚拟化支持VT(Virtualization Technology)</p>
+</blockquote>
+<p>1.下载VirtualBox</p>
+<p><a target="_blank" rel="noopener" href="https://www.virtualbox.org/wiki/Downloads">https://www.virtualbox.org/wiki/Downloads</a></p>
+<p>2.导入镜像</p>
+<p>设置VirtualBox目录并拷贝镜像<code>centos-6.6-x86_64.box</code><br>E:\VirtualBox\centos-6.6-x86_64.box</p>
+<p>3.命令初始化Vagrant</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#切换VirtualBox目录</span></span><br><span class="line">e:</span><br><span class="line"><span class="built_in">cd</span> .\VirtualBox</span><br><span class="line"></span><br><span class="line"><span class="comment">#输入命令初始化</span></span><br><span class="line">E:\VirtualBox&gt; vagrant init centos6.6</span><br><span class="line">A `Vagrantfile` has been placed <span class="keyword">in</span> this directory. You are now</span><br><span class="line">ready to `vagrant up` your first virtual environment! Please <span class="built_in">read</span></span><br><span class="line">the comments <span class="keyword">in</span> the Vagrantfile as well as documentation on</span><br><span class="line">`vagrantup.com` <span class="keyword">for</span> more information on using Vagrant.</span><br><span class="line"></span><br><span class="line"><span class="comment">#执行添加命令</span></span><br><span class="line">E:\VirtualBox&gt; vagrant box add centos6.6 centos-6.6-x86_64.box</span><br><span class="line">==&gt; box: Adding box <span class="string">&#x27;centos6.6&#x27;</span> (v0) <span class="keyword">for</span> provider:</span><br><span class="line">    box: Downloading: file://E:/VirtualBox/centos-6.6-x86_64.box</span><br><span class="line">    box: Progress: 100% (Rate: 670M/s, Estimated time remaining: --:--:--)</span><br><span class="line">==&gt; box: Successfully added box <span class="string">&#x27;centos6.6&#x27;</span> (v0) <span class="keyword">for</span> <span class="string">&#x27;virtualbox&#x27;</span>!</span><br><span class="line"></span><br><span class="line"><span class="comment">#检查是否导入成功</span></span><br><span class="line">E:\VirtualBox&gt; vagrant box list</span><br><span class="line">centos6.6 (virtualbox, 0)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Vagrant配置"><a href="#Vagrant配置" class="headerlink" title="Vagrant配置"></a>Vagrant配置</h2><blockquote>
+<p>详细配置文档可以参考官方手册 - <a target="_blank" rel="noopener" href="https://docs.vagrantup.com/v2/">https://docs.vagrantup.com/v2/</a></p>
+</blockquote>
+<h3 id="启动Vagrant"><a href="#启动Vagrant" class="headerlink" title="启动Vagrant"></a>启动Vagrant</h3><p>通过Shell进入目录<code>E:\VirtualBox</code>后执行命令</p>
+<pre><code> vagrant up
+</code></pre>
+<blockquote>
+<p>顺利启动的完整过程如下所示</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">E:\VirtualBox&gt;vagrant up</span><br><span class="line">Bringing machine <span class="string">&#x27;default&#x27;</span> up with <span class="string">&#x27;virtualbox&#x27;</span> provider...</span><br><span class="line">==&gt; default: Importing base box <span class="string">&#x27;centos6.6&#x27;</span>...</span><br><span class="line">==&gt; default: Matching MAC address <span class="keyword">for</span> NAT networking...</span><br><span class="line">==&gt; default: Setting the name of the VM: VirtualBox_default_1437213832296_68434</span><br><span class="line">==&gt; default: Clearing any previously <span class="built_in">set</span> forwarded ports...</span><br><span class="line">==&gt; default: Clearing any previously <span class="built_in">set</span> network interfaces...</span><br><span class="line">==&gt; default: Preparing network interfaces based on configuration...</span><br><span class="line">    default: Adapter 1: nat</span><br><span class="line">==&gt; default: Forwarding ports...</span><br><span class="line">    default: 22 =&gt; 2222 (adapter 1)</span><br><span class="line">==&gt; default: Booting VM...</span><br><span class="line">==&gt; default: Waiting <span class="keyword">for</span> machine to boot. This may take a few minutes...</span><br><span class="line">    default: SSH address: 127.0.0.1:2222</span><br><span class="line">    default: SSH username: vagrant</span><br><span class="line">    default: SSH auth method: private key</span><br><span class="line">    default: Warning: Connection <span class="built_in">timeout</span>. Retrying...</span><br><span class="line">    default:</span><br><span class="line">    default: Vagrant insecure key detected. Vagrant will automatically replace</span><br><span class="line">    default: this with a newly generated keypair <span class="keyword">for</span> better security.</span><br><span class="line">    default:</span><br><span class="line">    default: Inserting generated public key within guest...</span><br><span class="line">    default: Removing insecure key from the guest <span class="keyword">if</span> it<span class="string">&#x27;s present...</span></span><br><span class="line"><span class="string">    default: Key inserted! Disconnecting and reconnecting using new SSH key...</span></span><br><span class="line"><span class="string">==&gt; default: Machine booted and ready!</span></span><br><span class="line"><span class="string">==&gt; default: Checking for guest additions in VM...</span></span><br><span class="line"><span class="string">    default: The guest additions on this VM do not match the installed version of</span></span><br><span class="line"><span class="string">    default: VirtualBox! In most cases this is fine, but in rare cases it can</span></span><br><span class="line"><span class="string">    default: prevent things such as shared folders from working properly. If you see</span></span><br><span class="line"><span class="string">    default: shared folder errors, please make sure the guest additions within the</span></span><br><span class="line"><span class="string">    default: virtual machine match the version of VirtualBox you have installed on</span></span><br><span class="line"><span class="string">    default: your host and reload your VM.</span></span><br><span class="line"><span class="string">    default:</span></span><br><span class="line"><span class="string">    default: Guest Additions Version: 4.3.28</span></span><br><span class="line"><span class="string">    default: VirtualBox Version: 5.0</span></span><br><span class="line"><span class="string">==&gt; default: Mounting shared folders...</span></span><br><span class="line"><span class="string">    default: /vagrant =&gt; E:/VirtualBox</span></span><br></pre></td></tr></table></figure>
+
+<p>虚拟机启动之后则可以通过 vagrant ssh 联入虚拟机进行进一步的环境配置，或者软件安装相关的工作，在Windows系统下，并不能直接通过<code>vagrant ssh</code>连到虚拟机，需要使用<code>SecureCRT/Putty/Xshell</code>等第三方工具进行连接。连接地址<code>127.0.0.1</code>，端口<code>2222</code>。登录的帐号<code>root</code>的密码为<code>vagrant</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">E:\VirtualBox&gt; vagrant up</span><br><span class="line">Bringing machine <span class="string">&#x27;default&#x27;</span> up with <span class="string">&#x27;virtualbox&#x27;</span> provider...</span><br><span class="line">==&gt; default: Clearing any previously <span class="built_in">set</span> forwarded ports...</span><br><span class="line">==&gt; default: Clearing any previously <span class="built_in">set</span> network interfaces...</span><br><span class="line">==&gt; default: Preparing network interfaces based on configuration...</span><br><span class="line">    default: Adapter 1: nat</span><br><span class="line">    default: Adapter 2: bridged</span><br><span class="line">==&gt; default: Forwarding ports...</span><br><span class="line">    default: 80 =&gt; 8080 (adapter 1)</span><br><span class="line">    default: 22 =&gt; 2222 (adapter 1)</span><br><span class="line">==&gt; default: Booting VM...</span><br><span class="line">==&gt; default: Waiting <span class="keyword">for</span> machine to boot. This may take a few minutes...</span><br><span class="line">The guest machine entered an invalid state <span class="keyword">while</span> waiting <span class="keyword">for</span> it</span><br><span class="line">to boot. Valid states are <span class="string">&#x27;starting, running&#x27;</span>. The machine is <span class="keyword">in</span> the</span><br><span class="line"><span class="string">&#x27;poweroff&#x27;</span> state. Please verify everything is configured</span><br><span class="line">properly and try again.</span><br><span class="line"></span><br><span class="line">If the provider you<span class="string">&#x27;re using has a GUI that comes with it,</span></span><br><span class="line"><span class="string">it is often helpful to open that and watch the machine, since the</span></span><br><span class="line"><span class="string">GUI often has more helpful error messages than Vagrant can retrieve.</span></span><br><span class="line"><span class="string">For example, if you&#x27;</span>re using VirtualBox, run `vagrant up` <span class="keyword">while</span> the</span><br><span class="line">VirtualBox GUI is open.</span><br></pre></td></tr></table></figure>
+
+<p>如果有报上述错误，并且运行Virtualbox去安装系统时出错：<code>Failed to open a session for the virtual machine，Unable to load R3 module C:\Program Files\Oracle\VirtualBox/VBoxDD.DLL (VBoxDD): GetLastError=1790 (VERR_UNRESOLVED_ERROR).</code>，需要使用<code>UniversalThemePatcher</code>还原未破解的<code>themeservice.dll   themeui.dll   uxtheme.dll</code>文件</p>
+<blockquote>
+<p>已经打包好的下载链接 - <a target="_blank" rel="noopener" href="http://pan.baidu.com/s/1c0HGj2g">http://pan.baidu.com/s/1c0HGj2g</a></p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">==&gt; default: Booting VM...</span><br><span class="line">==&gt; default: Waiting <span class="keyword">for</span> machine to boot. This may take a few minutes...</span><br><span class="line">    default: SSH address: 127.0.0.1:2222</span><br><span class="line">    default: SSH username: vagrant</span><br><span class="line">    default: SSH auth method: private key</span><br><span class="line">    default: Warning: Connection <span class="built_in">timeout</span>. Retrying...</span><br><span class="line">    default: Warning: Connection <span class="built_in">timeout</span>. Retrying...</span><br><span class="line">    default: Warning: Connection <span class="built_in">timeout</span>. Retrying...</span><br></pre></td></tr></table></figure>
+
+<p>如果报<code> default: Warning: Connection timeout. Retrying...</code>，建议打编辑<code>Vagrantfile</code>打开VirtualBox图形化界面<code>vb.gui = true</code>进一步分析错误代码和原因。</p>
+<h3 id="导出box"><a href="#导出box" class="headerlink" title="导出box"></a>导出box</h3><p>通过Shell进入目录<code>E:\VirtualBox</code>后执行命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">vagrant package</span><br><span class="line"></span><br><span class="line">vagrant package --output NAME --vagrantfile FILE</span><br><span class="line"></span><br><span class="line"><span class="comment">#可选参数：</span></span><br><span class="line">--output NAME ： （可选）设置通过NAME来指定输出的文件名</span><br><span class="line">--vagrantfile FILE：（可选）可以将Vagrantfile直接封进box中</span><br></pre></td></tr></table></figure>
+
+<p>完成后会在当前目录就会生成package.box，可以在家或者团队成员共享开发环境保持一致性</p>
+<h3 id="其它命令"><a href="#其它命令" class="headerlink" title="其它命令"></a>其它命令</h3><p>vagrant up （启动虚拟机）<br>vagrant halt （关闭虚拟机——对应就是关机）<br>vagrant suspend （暂停虚拟机——只是暂停，虚拟机内存等信息将以状态文件的方式保存在本地，可以执行恢复操作后继续使用）<br>vagrant resume （恢复虚拟机 —— 与前面的暂停相对应）<br>vagrant box remove centos6.6 （移除box，其中centos6.6是box名）<br>vagrant destroy （删除虚拟机，删除后在当前虚拟机所做进行的除开Vagrantfile中的配置都不会保留）</p>
+<h2 id="Laravel-Homestead"><a href="#Laravel-Homestead" class="headerlink" title="Laravel Homestead"></a>Laravel Homestead</h2><blockquote>
+<p>细节部分可参考官方文档 - <a target="_blank" rel="noopener" href="http://laravel.com/docs/5.1/homestead">http://laravel.com/docs/5.1/homestead</a></p>
+</blockquote>
+<p>1.下载安装包</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">vagrant box add laravel/homestead</span><br><span class="line"></span><br><span class="line">E:\Homestead&gt;vagrant box add laravel/homestead</span><br><span class="line">==&gt; box: Loading metadata <span class="keyword">for</span> box <span class="string">&#x27;laravel/homestead&#x27;</span></span><br><span class="line">    box: URL: https://atlas.hashicorp.com/laravel/homestead</span><br><span class="line">This box can work with multiple providers! The providers that it</span><br><span class="line">can work with are listed below. Please review the list and choose</span><br><span class="line">the provider you will be working with.</span><br><span class="line"></span><br><span class="line">1) virtualbox</span><br><span class="line">2) vmware_desktop</span><br><span class="line"></span><br><span class="line">Enter your choice: 1</span><br><span class="line">==&gt; box: Adding box <span class="string">&#x27;laravel/homestead&#x27;</span> (v0.2.7) <span class="keyword">for</span> provider: virtualbox</span><br><span class="line">    box: Downloading: https://vagrantcloud.com/laravel/boxes/homestead/versions/0.2.7/providers/virtualbox.box</span><br><span class="line">    box: Progress: 0% (Rate: 9d/s, Estimated time remaining: 0:05:30)11))</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>由于国内网络环境问题建议离线下载后手动导入</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#输入命令初始化</span></span><br><span class="line">E:\Homestead&gt;vagrant init laravel</span><br><span class="line">A `Vagrantfile` has been placed <span class="keyword">in</span> this directory. You are now</span><br><span class="line">ready to `vagrant up` your first virtual environment! Please <span class="built_in">read</span></span><br><span class="line">the comments <span class="keyword">in</span> the Vagrantfile as well as documentation on</span><br><span class="line">`vagrantup.com` <span class="keyword">for</span> more information on using Vagrant.</span><br><span class="line"></span><br><span class="line"><span class="comment">#执行添加命令</span></span><br><span class="line">E:\Homestead&gt;vagrant box add laravel laravel.box</span><br><span class="line">==&gt; box: Box file was not detected as metadata. Adding it directly...</span><br><span class="line">==&gt; box: Adding box <span class="string">&#x27;laravel&#x27;</span> (v0) <span class="keyword">for</span> provider:</span><br><span class="line">    box: Unpacking necessary files from: file://E:/Homestead/laravel.box</span><br><span class="line">    box: Progress: 100% (Rate: 141M/s, Estimated time remaining: --:--:--)</span><br><span class="line">==&gt; box: Successfully added box <span class="string">&#x27;laravel&#x27;</span> (v0) <span class="keyword">for</span> <span class="string">&#x27;virtualbox&#x27;</span>!</span><br><span class="line"></span><br><span class="line"><span class="comment">#检查是否导入成功</span></span><br><span class="line">E:\Homestead&gt;vagrant box list</span><br><span class="line">centos6.6 (virtualbox, 0)</span><br><span class="line">laravel   (virtualbox, 0)</span><br><span class="line"></span><br><span class="line"><span class="comment">#启动Lavarel Homestead</span></span><br><span class="line">E:\Homestead&gt;vagrant up</span><br><span class="line">Bringing machine <span class="string">&#x27;default&#x27;</span> up with <span class="string">&#x27;virtualbox&#x27;</span> provider...</span><br><span class="line">==&gt; default: Importing base box <span class="string">&#x27;laravel&#x27;</span>...</span><br><span class="line">==&gt; default: Matching MAC address <span class="keyword">for</span> NAT networking...</span><br><span class="line">==&gt; default: Setting the name of the VM: Homestead_default_1437217549272_56101</span><br><span class="line">==&gt; default: Clearing any previously <span class="built_in">set</span> network interfaces...</span><br><span class="line">==&gt; default: Preparing network interfaces based on configuration...</span><br><span class="line">    default: Adapter 1: nat</span><br><span class="line">==&gt; default: Forwarding ports...</span><br><span class="line">    default: 22 =&gt; 2222 (adapter 1)</span><br><span class="line">==&gt; default: Booting VM...</span><br><span class="line">==&gt; default: Waiting <span class="keyword">for</span> machine to boot. This may take a few minutes...</span><br><span class="line">    default: SSH address: 127.0.0.1:2222</span><br><span class="line">    default: SSH username: vagrant</span><br><span class="line">    default: SSH auth method: private key</span><br><span class="line">    default: Warning: Connection <span class="built_in">timeout</span>. Retrying...</span><br><span class="line">    default:</span><br><span class="line">    default: Vagrant insecure key detected. Vagrant will automatically replace</span><br><span class="line">    default: this with a newly generated keypair <span class="keyword">for</span> better security.</span><br><span class="line">    default:</span><br><span class="line">    default: Inserting generated public key within guest...</span><br><span class="line">    default: Removing insecure key from the guest <span class="keyword">if</span> it<span class="string">&#x27;s present...</span></span><br><span class="line"><span class="string">    default: Key inserted! Disconnecting and reconnecting using new SSH key...</span></span><br><span class="line"><span class="string">==&gt; default: Machine booted and ready!</span></span><br><span class="line"><span class="string">==&gt; default: Checking for guest additions in VM...</span></span><br><span class="line"><span class="string">    default: The guest additions on this VM do not match the installed version of</span></span><br><span class="line"><span class="string">    default: VirtualBox! In most cases this is fine, but in rare cases it can</span></span><br><span class="line"><span class="string">    default: prevent things such as shared folders from working properly. If you see</span></span><br><span class="line"><span class="string">    default: shared folder errors, please make sure the guest additions within the</span></span><br><span class="line"><span class="string">    default: virtual machine match the version of VirtualBox you have installed on</span></span><br><span class="line"><span class="string">    default: your host and reload your VM.</span></span><br><span class="line"><span class="string">    default:</span></span><br><span class="line"><span class="string">    default: Guest Additions Version: 4.3.14</span></span><br><span class="line"><span class="string">    default: VirtualBox Version: 5.0</span></span><br><span class="line"><span class="string">==&gt; default: Mounting shared folders...</span></span><br><span class="line"><span class="string">    default: /vagrant =&gt; E:/Homestead</span></span><br></pre></td></tr></table></figure>
+
+<p>登录帐户<code>vagrant/vagrant</code>，开始全新的<code>Laravel Homestead</code>体验之旅吧。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/vagrant/" data-title="Windows上使用Vagrant打造Laravel Homestead可协同跨平台开发环境 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/cygwin/" title="使用Cygwin在Windows上体验Linux的快感">
+  <strong>上一篇：</strong><br/>
+  <span>
+  使用Cygwin在Windows上体验Linux的快感</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/bash-json/"  title="使用Bash Shell处理JSON文件">
+ <strong>下一篇：</strong><br/> 
+ <span>使用Bash Shell处理JSON文件
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-number">3.</span> <span class="toc-text">环境准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85git"><span class="toc-number">4.</span> <span class="toc-text">安装git</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85php"><span class="toc-number">5.</span> <span class="toc-text">安装php</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85Laravel"><span class="toc-number">6.</span> <span class="toc-text">安装Laravel</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85Composer"><span class="toc-number">7.</span> <span class="toc-text">安装Composer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85Vagrant"><span class="toc-number">8.</span> <span class="toc-text">安装Vagrant</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85VirtualBox"><span class="toc-number">9.</span> <span class="toc-text">安装VirtualBox</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Vagrant%E9%85%8D%E7%BD%AE"><span class="toc-number">10.</span> <span class="toc-text">Vagrant配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8Vagrant"><span class="toc-number">10.1.</span> <span class="toc-text">启动Vagrant</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%BC%E5%87%BAbox"><span class="toc-number">10.2.</span> <span class="toc-text">导出box</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B6%E5%AE%83%E5%91%BD%E4%BB%A4"><span class="toc-number">10.3.</span> <span class="toc-text">其它命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Laravel-Homestead"><span class="toc-number">11.</span> <span class="toc-text">Laravel Homestead</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

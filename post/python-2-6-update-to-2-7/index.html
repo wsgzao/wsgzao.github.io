@@ -1,0 +1,571 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>Python 2.6 升级至 Python 2.7 的实践心得 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="Python 2.6 升级至 Python 2.7 的实践心得">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python 2.6 升级至 Python 2.7 的实践心得">
+<meta property="og:url" content="https://wsgzao.github.io/post/python-2-6-update-to-2-7/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="Python 2.6 升级至 Python 2.7 的实践心得">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-04-12T06:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:07.031Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/python-2-6-update-to-2-7/" title="Python 2.6 升级至 Python 2.7 的实践心得" itemprop="url">Python 2.6 升级至 Python 2.7 的实践心得</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2018-04-12T06:59:49.000Z" itemprop="datePublished"> 发表于 2018-04-12</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E5%AE%89%E8%A3%85"><span class="toc-number">3.</span> <span class="toc-text">简单安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ansible%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85%E5%AE%9E%E8%B7%B5"><span class="toc-number">4.</span> <span class="toc-text">ansible离线安装实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Windows-%E5%AE%89%E8%A3%85-Python-2-7-x"><span class="toc-number">5.</span> <span class="toc-text">Windows 安装 Python 2.7.x</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Python-2-7-14"><span class="toc-number">6.</span> <span class="toc-text">Python 2.7.14</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>CentOS 6.8 安装 Python 2.7.13，因为软件版本上的需求所以考虑将 Python 升级至 2.7.14，加上生产环境还是以 RHEL 6 为主，互联网自动化运维平台大多数也推荐以Python 2.7.x + CentOS 6.x 来操作，选择 Python 2 还是 Python 3 也没有定论，找到适合的搭配即可。</p>
+<blockquote>
+<p>Python 2.6 升级至 Python 2.7 的实践心得</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018年04月12日 - 升级Python 2.7.14<br>2017年07月11日 - 完善Windows下Python的部署细节<br>2017年04月26日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/python-2-6-update-to-2-7/">https://wsgzao.github.io/post/python-2-6-update-to-2-7/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>Python - <a target="_blank" rel="noopener" href="https://www.python.org/">https://www.python.org/</a><br>PyPI - <a target="_blank" rel="noopener" href="https://pypi.python.org/pypi">https://pypi.python.org/pypi</a><br>pip - <a target="_blank" rel="noopener" href="https://pip.pypa.io/en/stable/user_guide/#configuration">https://pip.pypa.io/en/stable/user_guide/#configuration</a></p>
+<hr>
+<h2 id="简单安装"><a href="#简单安装" class="headerlink" title="简单安装"></a>简单安装</h2><blockquote>
+<p>Python 2.7.13以后版本可以正常执行编译安装，不必参考网上文章去修改其他地方(很抱歉我不知道Python2.7.x为什么不需要像Python3那样调整)</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 针对Python3调整安装目录</span></span><br><span class="line">./configure --prefix=/usr/local/python3.6</span><br><span class="line">make &amp;&amp; make install</span><br><span class="line"><span class="comment"># 先修改老的连接，执行</span></span><br><span class="line"><span class="built_in">mv</span> /usr/bin/python /usr/bin/python2.6</span><br><span class="line"><span class="comment"># 再建立新连接</span></span><br><span class="line"><span class="built_in">ln</span> -s /usr/local/python3.6/bin/python3.6 /usr/bin/python</span><br><span class="line"><span class="comment"># 解决升级后YUM无法使用</span></span><br><span class="line">vim /usr/bin/yum</span><br><span class="line"></span><br><span class="line">将<span class="comment">#!/usr/bin/python 修改为 #!/usr/bin/python2.6</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试是否修复</span></span><br><span class="line">yum repolist  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看当前系统中的 Python 版本，返回 Python 2.6.6 为正常，rhel7以上版本为2.7.5</span></span><br><span class="line">python --version</span><br><span class="line"></span><br><span class="line">Python 2.6.6</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查 CentOS 版本，返回 CentOS release 6.8 (Final) 为正常</span></span><br><span class="line"><span class="built_in">cat</span> /etc/redhat-release</span><br><span class="line"></span><br><span class="line">CentOS release 6.8 (Final)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装所有的开发工具包</span></span><br><span class="line">yum groupinstall -y <span class="string">&quot;Development tools&quot;</span></span><br><span class="line"><span class="comment"># 安装其它的必需包</span></span><br><span class="line">yum install -y zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载、编译和安装 Python 2.7.13</span></span><br><span class="line"><span class="comment">#wget https://www.python.org/ftp/python/2.7.13/Python-2.7.13.tgz</span></span><br><span class="line">tar zxf Python-2.7.13.tgz</span><br><span class="line"><span class="built_in">cd</span> Python-2.7.13</span><br><span class="line">./configure</span><br><span class="line">make &amp;&amp; make install</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看新的 Python 版本，返回 Python 2.7.13 为正常</span></span><br><span class="line">python --version</span><br><span class="line"></span><br><span class="line">Python 2.7.13</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="ansible离线安装实践"><a href="#ansible离线安装实践" class="headerlink" title="ansible离线安装实践"></a>ansible离线安装实践</h2><blockquote>
+<p>这里利用了一些内网离线安装ansible的小技巧</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Install Python</span></span><br><span class="line">tar xf Python-2.7.13.tgz</span><br><span class="line"><span class="built_in">cd</span> Python-2.7.13</span><br><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">make install</span><br><span class="line"></span><br><span class="line"><span class="comment"># ImportError: No module named six.moves</span></span><br><span class="line">tar xf six-1.10.0.tar.gz</span><br><span class="line"><span class="built_in">cd</span> six-1.10.0</span><br><span class="line">python setup.py install</span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># ImportError: No module named packaging.version</span></span><br><span class="line">tar xf packaging-16.8.tar.gz</span><br><span class="line"><span class="built_in">cd</span> packaging-16.8</span><br><span class="line">python setup.py install</span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"><span class="comment"># ImportError: No module named pyparsing</span></span><br><span class="line">tar xf pyparsing-2.2.0.tar.gz</span><br><span class="line"><span class="built_in">cd</span> pyparsing-2.2.0</span><br><span class="line">python setup.py install</span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># ImportError: No module named appdirs</span></span><br><span class="line">tar xf appdirs-1.4.3.tar.gz</span><br><span class="line"><span class="built_in">cd</span> appdirs-1.4.3</span><br><span class="line">python setup.py install</span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># Install Setuptools</span></span><br><span class="line">unzip setuptools-34.2.0.zip</span><br><span class="line"><span class="built_in">cd</span> setuptools-34.2.0</span><br><span class="line">python setup.py install</span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># Install pip</span></span><br><span class="line">tar xf pip-9.0.1.tar.gz</span><br><span class="line"><span class="built_in">cd</span> pip-9.0.1</span><br><span class="line">python setup.py install</span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># pip 离线下载依赖包</span></span><br><span class="line">pip install -d ~/tmp/ ansible</span><br><span class="line">pip install -d ~/tmp/ ansible-cmdb</span><br><span class="line"></span><br><span class="line"><span class="comment"># pip 离线安装</span></span><br><span class="line">pip install ansible --index-url=http://172.31.197.1:7000/simple/ --trusted-host=172.31.197.1</span><br><span class="line">pip install ansible-cmdb --index-url=http://172.31.197.1:7000/simple/ --trusted-host=172.31.197.1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看安装好的版本</span></span><br><span class="line">[root@ansible-wangao ansible]<span class="comment"># pip -V</span></span><br><span class="line">pip 9.0.1 from /usr/local/lib/python2.7/site-packages/pip-9.0.1-py2.7.egg (python 2.7)</span><br><span class="line"></span><br><span class="line">[root@ansible-wangao ansible]<span class="comment"># ansible --version</span></span><br><span class="line">ansible 2.3.0.0</span><br><span class="line">  config file = /etc/ansible/ansible.cfg</span><br><span class="line">  configured module search path = Default w/o overrides</span><br><span class="line">  python version = 2.7.13 (default, Apr 25 2017, 17:19:23) [GCC 4.4.7 20120313 (Red Hat 4.4.7-17)]</span><br><span class="line"></span><br><span class="line">[root@ansible-wangao ansible]<span class="comment"># ansible-cmdb --version</span></span><br><span class="line">ansible-cmdb v1.20</span><br><span class="line"></span><br><span class="line"><span class="comment"># 更换豆瓣pip源</span></span><br><span class="line">vim  <span class="variable">$HOME</span>/.pip/pip.conf</span><br><span class="line"></span><br><span class="line">[global]</span><br><span class="line">index-url = https://pypi.doubanio.com/simple/</span><br><span class="line">[install]</span><br><span class="line"></span><br><span class="line">trusted-host=pypi.doubanio.com</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Windows-安装-Python-2-7-x"><a href="#Windows-安装-Python-2-7-x" class="headerlink" title="Windows 安装 Python 2.7.x"></a>Windows 安装 Python 2.7.x</h2><blockquote>
+<p>Windows下安装扩展包可能没有想象中那么顺利，遇到安装不上的包推荐去下面这个网址看看</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="http://www.lfd.uci.edu/~gohlke/pythonlibs/">http://www.lfd.uci.edu/~gohlke/pythonlibs/</a></p>
+<p>一般情况先安装编译库Microsoft Visual C++ Compiler for Python 2.7<br><a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/download/details.aspx?id=44266">https://www.microsoft.com/en-us/download/details.aspx?id=44266</a></p>
+<p>下载Python，如 2.7.13<br><a target="_blank" rel="noopener" href="https://www.python.org/downloads/">https://www.python.org/downloads/</a><br><a target="_blank" rel="noopener" href="https://www.python.org/ftp/python/2.7.13/python-2.7.13.msi">https://www.python.org/ftp/python/2.7.13/python-2.7.13.msi</a></p>
+<p>安装时注意勾选环境变量<br>Add python.exe to Path</p>
+<p>如果忘记勾选也没关系，可以自行在PATH添加环境变量<br>右键计算机【属性】-&gt;【高级系统设置】-&gt;【环境变量】-&gt;【系统变量】-&gt;【PATH】<br>D:\Python27;D:\Python27\Scripts;</p>
+<p>安装python2.7.13默认自带pip版本为9.0.1<br>PS C:\Users\Administrator&gt; pip -V<br>pip 9.0.1 from c:\python27\lib\site-packages (python 2.7)</p>
+<p>安装Python后升级pip<br>python -m pip install –upgrade pip</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 更换pypi国内源，运行以下python代码会自动建立pip.ini</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line">ini=<span class="string">&quot;&quot;&quot;[global]</span></span><br><span class="line"><span class="string">index-url = https://pypi.doubanio.com/simple/</span></span><br><span class="line"><span class="string">[install]</span></span><br><span class="line"><span class="string">trusted-host=pypi.doubanio.com</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">pippath=os.environ[<span class="string">&quot;USERPROFILE&quot;</span>]+<span class="string">&quot;\\pip\\&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(pippath):</span><br><span class="line">    os.mkdir(pippath)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(pippath+<span class="string">&quot;pip.ini&quot;</span>,<span class="string">&quot;w+&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(ini)</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Python-2-7-14"><a href="#Python-2-7-14" class="headerlink" title="Python 2.7.14"></a>Python 2.7.14</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Install Packages</span></span><br><span class="line">yum install gcc zlib zlib-devel openssl-devel -y</span><br><span class="line"></span><br><span class="line"><span class="comment"># Install Python</span></span><br><span class="line">tar xf Python-2.7.14.tgz</span><br><span class="line"><span class="built_in">cd</span> Python-2.7.14</span><br><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">make install</span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># ImportError: No module named six.moves</span></span><br><span class="line">tar xf six-1.11.0.tar.gz </span><br><span class="line"><span class="built_in">cd</span> six-1.11.0</span><br><span class="line">python setup.py install</span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># ImportError: No module named packaging.version</span></span><br><span class="line">tar xf packaging-17.1.tar.gz </span><br><span class="line"><span class="built_in">cd</span> packaging-17.1</span><br><span class="line">python setup.py install</span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># ImportError: No module named pyparsing</span></span><br><span class="line">tar xf pyparsing-2.2.0.tar.gz </span><br><span class="line"><span class="built_in">cd</span> pyparsing-2.2.0</span><br><span class="line">python setup.py install</span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># ImportError: No module named appdirs</span></span><br><span class="line">tar xf appdirs-1.4.3.tar.gz </span><br><span class="line"><span class="built_in">cd</span> appdirs-1.4.3</span><br><span class="line">python setup.py install</span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># Install Setuptools</span></span><br><span class="line">unzip setuptools-38.5.2.zip</span><br><span class="line"><span class="built_in">cd</span> setuptools-38.5.2</span><br><span class="line">python setup.py install</span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># Install pip</span></span><br><span class="line">tar xf pip-9.0.1.tar.gz</span><br><span class="line"><span class="built_in">cd</span> pip-9.0.1</span><br><span class="line">python setup.py install</span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># pip 离线下载</span></span><br><span class="line"><span class="comment"># pip install --download DIR -r requirements.txt</span></span><br><span class="line">pip install -d ~/ansible/ ansible</span><br><span class="line"></span><br><span class="line"><span class="comment"># pip 离线安装</span></span><br><span class="line"><span class="comment"># pip install --no-index --find-links=DIR -r requirements.txt</span></span><br><span class="line">pip install --no-index --find-links=pip-ansible-2.3.3.0/ -r requirements.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># pip 离线安装pipenv</span></span><br><span class="line">pip install --no-index --find-links=pip-pipenv/ pipenv</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用pipenv创建虚拟环境</span></span><br><span class="line"><span class="built_in">mkdir</span> win_ansible</span><br><span class="line"><span class="built_in">cd</span> win_ansible</span><br><span class="line">pipenv shell</span><br><span class="line">pip install --no-index --find-links=pip-ansible-2.4.3.0/ -r requirements.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 退出虚拟环境</span></span><br><span class="line"><span class="built_in">exit</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># RuntimeError: Compression requires the (missing) zlib module</span></span><br><span class="line">yum install zlib zlib-devel -y</span><br><span class="line"><span class="built_in">cd</span> Python-2.7.14</span><br><span class="line">make</span><br><span class="line">make install</span><br><span class="line"></span><br><span class="line"><span class="comment"># pip is configured with locations that require TLS/SSL, however the ssl module in Python is not available.</span></span><br><span class="line">yum install openssl-devel -y</span><br><span class="line"><span class="built_in">cd</span> Python-2.7.14</span><br><span class="line">make</span><br><span class="line">make install</span><br><span class="line"></span><br></pre></td></tr></table></figure>  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/python-2-6-update-to-2-7/" data-title="Python 2.6 升级至 Python 2.7 的实践心得 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/pypiserver/" title="使用pypiserver快速搭建内网离线pypi仓库实践">
+  <strong>上一篇：</strong><br/>
+  <span>
+  使用pypiserver快速搭建内网离线pypi仓库实践</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/winsshfs/"  title="Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选">
+ <strong>下一篇：</strong><br/> 
+ <span>Dokan+SSHFS 文件系统共享心得，代替Samba的理想之选
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E5%AE%89%E8%A3%85"><span class="toc-number">3.</span> <span class="toc-text">简单安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ansible%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85%E5%AE%9E%E8%B7%B5"><span class="toc-number">4.</span> <span class="toc-text">ansible离线安装实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Windows-%E5%AE%89%E8%A3%85-Python-2-7-x"><span class="toc-number">5.</span> <span class="toc-text">Windows 安装 Python 2.7.x</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Python-2-7-14"><span class="toc-number">6.</span> <span class="toc-text">Python 2.7.14</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

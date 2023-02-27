@@ -1,0 +1,753 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>tcpdump抓包使用小结 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="tcpdump 是一款灵活、功能强大的抓包工具，能有效地帮助排查网络故障问题。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="tcpdump抓包使用小结">
+<meta property="og:url" content="https://wsgzao.github.io/post/tcpdump/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="tcpdump 是一款灵活、功能强大的抓包工具，能有效地帮助排查网络故障问题。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190813152622.png">
+<meta property="article:published_time" content="2019-02-27T06:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:07.128Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190813152622.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/tcpdump/" title="tcpdump抓包使用小结" itemprop="url">tcpdump抓包使用小结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2019-02-27T06:59:49.000Z" itemprop="datePublished"> 发表于 2019-02-27</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tcpdump%E7%AE%80%E4%BB%8B"><span class="toc-number">3.</span> <span class="toc-text">tcpdump简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tcpdump%E5%AE%89%E8%A3%85"><span class="toc-number">4.</span> <span class="toc-text">tcpdump安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tcpdump%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A7%A3%E9%87%8A"><span class="toc-number">5.</span> <span class="toc-text">tcpdump常用命令解释</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tcpdump%E5%8F%82%E6%95%B0%E5%AE%9E%E4%BE%8B"><span class="toc-number">6.</span> <span class="toc-text">tcpdump参数实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tcpdump%E5%91%BD%E4%BB%A4%E6%BC%94%E7%A4%BA"><span class="toc-number">7.</span> <span class="toc-text">tcpdump命令演示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tcpdump%E6%8A%93%E5%8C%85%E8%A7%84%E5%88%99%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">8.</span> <span class="toc-text">tcpdump抓包规则常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tcpdump%E6%8A%93%E5%8C%85%E5%AE%9E%E8%B7%B5"><span class="toc-number">9.</span> <span class="toc-text">tcpdump抓包实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%90%86%E8%A7%A3%E6%8A%93%E5%8F%96%E7%9A%84%E6%8A%A5%E6%96%87"><span class="toc-number">9.1.</span> <span class="toc-text">理解抓取的报文</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4%E6%95%B0%E6%8D%AE%E5%8C%85"><span class="toc-number">9.2.</span> <span class="toc-text">过滤数据包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A3%80%E6%9F%A5%E6%95%B0%E6%8D%AE%E5%8C%85%E5%86%85%E5%AE%B9"><span class="toc-number">9.3.</span> <span class="toc-text">检查数据包内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%9D%E5%AD%98%E6%8A%93%E5%8C%85%E6%95%B0%E6%8D%AE"><span class="toc-number">9.4.</span> <span class="toc-text">保存抓包数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8B%E4%B8%80%E6%AD%A5%E5%81%9A%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">10.</span> <span class="toc-text">下一步做什么？</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>tcpdump 是一个很常用的网络包分析工具，可以用来显示通过网络传输到本系统的 TCP&#x2F;IP 以及其他网络的数据包。tcpdump 使用 libpcap 库来抓取网络报，这个库在几乎在所有的 Linux&#x2F;Unix 中都有。在 Windows 中我们通常会使用 Wireshark 进行图形化操作相当便捷，然而在 Linux 环境中如何巧妙应用 tcpdump 的命令来操作提升效率就显得尤为重要。在本文中，我们将会通过一些实例来演示如何使用 tcpdump 命令。</p>
+<blockquote>
+<p>tcpdump 是一款灵活、功能强大的抓包工具，能有效地帮助排查网络故障问题。</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019年02月27日 - 更新tcpdump抓包规则常用命令<br>2018年12月11日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/tcpdump/">https://wsgzao.github.io/post/tcpdump/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>Wireshark - <a target="_blank" rel="noopener" href="https://www.wireshark.org/#download">https://www.wireshark.org/#download</a><br>tcpdump - <a target="_blank" rel="noopener" href="http://www.tcpdump.org/">http://www.tcpdump.org/</a><br>在 Linux 命令行中使用 tcpdump 抓包 - <a target="_blank" rel="noopener" href="https://linux.cn/article-10191-1.html">https://linux.cn/article-10191-1.html</a><br>抓包工具 tcpdump 用法说明 - <a target="_blank" rel="noopener" href="https://www.cnblogs.com/f-ck-need-u/p/7064286.html">https://www.cnblogs.com/f-ck-need-u/p/7064286.html</a></p>
+<hr>
+<h2 id="tcpdump简介"><a href="#tcpdump简介" class="headerlink" title="tcpdump简介"></a>tcpdump简介</h2><blockquote>
+<p>tcpdump, a powerful command-line packet analyzer; and libpcap, a portable C&#x2F;C++ library for network traffic capture.</p>
+</blockquote>
+<p>Tcpdump prints out a description of the contents of packets on a network interface that match the boolean expression; the description is preceded by a time stamp, printed, by default, as hours, minutes, seconds, and fractions of a second since midnight. It can also be run with the -w flag, which causes it to save the packet data to a file for later analysis, and&#x2F;or with the -r flag, which causes it to read from a saved packet file rather than to read packets from a network interface. It can also be run with the -V flag, which causes it to read a list of saved packet files. In all cases, only packets that match expression will be processed by tcpdump.</p>
+<p>tcpdump 是一款用于截取网络分组，并过滤输出分组内容的工具。tcpdump 凭借强大的功能和灵活的截取策略，使其成为类 UNIX 系统下用于网络分析和问题排查的首选工具。 tcpdump 提供了源代码，公开了接口，因此具备很强的可扩展性，对于网络维护和入侵者都是非常有用的工具。tcpdump 存在于基本的 Linux 系统中，由于它需要将网络界面设置为混杂模式，普通用户不能正常执行，但具备 root 权限的用户可以直接执行它来获取网络上的信息。因此系统中存在网络分析工具主要不是对本机安全的威胁，而是对网络上的其他计算机的安全存在威胁。tcpdump 可以将网络中传送的数据包的 “头” 完全截获下来提供分析。它支持针对网络层、协议、主机、网络或端口的过滤，并提供 and、or、not 等逻辑语句来帮助我们去掉无用的信息。</p>
+<h2 id="tcpdump安装"><a href="#tcpdump安装" class="headerlink" title="tcpdump安装"></a>tcpdump安装</h2><blockquote>
+<p>tcpdump 默认在几乎所有的 Linux 发行版中都可用，但若你的 Linux 上没有的话，使用下面方法进行安装。</p>
+</blockquote>
+<p>CentOS&#x2F;RHEL<br>使用下面命令在 CentOS 和 RHEL 上安装 tcpdump，</p>
+<pre><code>sudo yum install tcpdump*
+</code></pre>
+<p>Fedora<br>使用下面命令在 Fedora 上安装 tcpdump：</p>
+<pre><code>dnf install tcpdump
+</code></pre>
+<p>Ubuntu&#x2F;Debian&#x2F;Linux Mint<br>在 Ubuntu&#x2F;Debain&#x2F;Linux Mint 上使用下面命令安装 tcpdump：</p>
+<pre><code>apt-get install tcpdump
+</code></pre>
+<h2 id="tcpdump常用命令解释"><a href="#tcpdump常用命令解释" class="headerlink" title="tcpdump常用命令解释"></a>tcpdump常用命令解释</h2><p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/20190813152622.png"></p>
+<p>tcpdump [ 选项 ] [ -c 数量 ] [ -i 网络接口 ] [ -w 文件名 ] [ 表达式 ]</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">man tcpdump</span><br><span class="line">...</span><br><span class="line">tcpdump [ -AbdDefhHIJKlLnNOpqStuUvxX<span class="comment"># ] [ -B buffer_size ]</span></span><br><span class="line">        [ -c count ]</span><br><span class="line">        [ -C file_size ] [ -G rotate_seconds ] [ -F file ]</span><br><span class="line">        [ -i interface ] [ -j tstamp_type ] [ -m module ] [ -M secret ]</span><br><span class="line">        [ --number ] [ -Q <span class="keyword">in</span>|out|inout ]</span><br><span class="line">        [ -r file ] [ -V file ] [ -s snaplen ] [ -T <span class="built_in">type</span> ] [ -w file ]</span><br><span class="line">        [ -W filecount ]</span><br><span class="line">        [ -E spi@ipaddr algo:secret,...  ]</span><br><span class="line">        [ -y datalinktype ] [ -z postrotate-command ] [ -Z user ]</span><br><span class="line">        [ --time-stamp-precision=tstamp_precision ]</span><br><span class="line">        [ --immediate-mode ] [ --version ]</span><br><span class="line">        [ expression ]</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">选项翻译如下： </span><br><span class="line"></span><br><span class="line">-l：使标准输出变为缓冲行形式；</span><br><span class="line">-c：抓包次数；</span><br><span class="line">-nn：直接以 IP 及 Port Number 显示，而非主机名与服务名称；</span><br><span class="line">-s ：&lt;数据包大小&gt; 设置每个数据包的大小；</span><br><span class="line">-i：指定监听的网络接口；</span><br><span class="line">-r：从指定的文件中读取包；</span><br><span class="line">-w：输出信息保存到指定文件；</span><br><span class="line">-a：将网络地址和广播地址转变成名字；</span><br><span class="line">-d：将匹配信息包的代码以人们能够理解的汇编格式给出；</span><br><span class="line">-e：在输出行打印出数据链路层的头部信息；</span><br><span class="line">-f：将外部的Internet地址以数字的形式打印出来；</span><br><span class="line">-t：在输出的每一行不打印时间戳；</span><br><span class="line">-v ：输出稍微详细的报文信息；--vv则输出更详细信息。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>表达式指正则表达式，tcpdump 利用它作为过滤报文的条件，如果一个报文满足表达式的条件，则会捕获该报文。如果没有给出任何条件，则会截获网络上所有的信息包。<br>在表达式中一般有如下几种类型的关键字： </p>
+<ol>
+<li><p>关于类型的关键字：<br>host(缺省类型): 指明一台主机，如：host 10.215.20.13<br>net: 指定网络地址,net 10.215.20.0<br>port: 指明端口号,port 3306</p>
+</li>
+<li><p>确定传输方向的关键字：</p>
+</li>
+</ol>
+<p>dst or src(缺省值) 指定源或者目标地址是 10.215.20.13的流量包<br>src: src 10.9.51.13, 指定源地址是10.9.51.13<br>dst: dst net 172.0.0.0, 指定目标网络地址是172.0.0.0<br>dst and src  比如: src host 10.9.51.13 and dst host 10.215.20.13 </p>
+<ol start="3">
+<li>协议的关键字：</li>
+</ol>
+<p>协议的关键字：缺省值是监听所有协议的信息包<br>ip<br>arp<br>tcp<br>udp<br>icmp</p>
+<ol start="4">
+<li>三种逻辑运算：</li>
+</ol>
+<p>非 : ! , not<br>与 : &amp;&amp; , and<br>或 : || , or</p>
+<p>例子: 抓取所有经过 bond0，目的地址是 10.10.1.254 或 10.10.1.200 端口是 80 的 TCP 数据</p>
+<pre><code>tcpdump -i bond0 &#39;((tcp) and (port 80) and ((dst host 10.10.1.254) or (dst host 10.10.1.200)))&#39;
+</code></pre>
+<ol start="5">
+<li>其他重要的关键字：</li>
+</ol>
+<p>gateway, broadcast, less（小于）, greater（大于）</p>
+<h2 id="tcpdump参数实例"><a href="#tcpdump参数实例" class="headerlink" title="tcpdump参数实例"></a>tcpdump参数实例</h2><pre><code>tcpdump tcp -i bond0 -tttt -s 0 -c 100 and dst port ! 22 and src net 10.10.1.0/24 -w 20190131.tcpdump
+</code></pre>
+<p>(1) tcp: 协议类型，用来过滤数据报的协议类型。<br>(2) -i bond0 : 只抓取经过接口bond0的包<br>(3) -tttt : 使用格式 2019-02-02 10:37:37.120297,便于分析。<br>(4) -s 0: 抓取数据包时默认抓取长度为68字节。加上-s 0 后可以抓到完整的数据包<br>(5) -c 100: 只抓取100个数据包<br>(6) dst port ! 22: 不抓取目标端口是22的数据包<br>(7) src net 10.10.1.0&#x2F;24:数据包的源网络地址为10.10.1.0&#x2F;24<br>(8) -w 20190131.tcpdump:保存成tcpdump文件中,方便使用wireshark分析抓包结果。</p>
+<p>还有其他常用的参数:</p>
+<p>-D:列出所有可用的网络接口<br>-n:禁用域名解析，让tcpdump直接输出IP地址.<br>-X:以16进制格式输出数据包的内容,不加该参数,会只输出iptcp&#x2F;udp头部信息。<br>                            加上该选项会将整个数据包输出。<br>-vvvv  该参数其实是-v与-vvv的组合。<br>       -v会输出稍微详细一点的信息包括校验和ttl之类的；<br>       -vvv会尝试解析应用层协议，输出详细信息。二者组合就能完整的详细信息。<br>-A:以ASCII值显示抓到的包,比如和MySQL的交互时，可以通过-A查看包的文本内容.   </p>
+<h2 id="tcpdump命令演示"><a href="#tcpdump命令演示" class="headerlink" title="tcpdump命令演示"></a>tcpdump命令演示</h2><p>从所有网卡中捕获数据包<br>运行下面命令来从所有网卡中捕获数据包：</p>
+<pre><code>tcpdump -i any
+</code></pre>
+<p>从指定网卡中捕获数据包<br>要从指定网卡中捕获数据包，运行：</p>
+<pre><code>tcpdump -i eth0
+</code></pre>
+<p>将捕获的包写入文件<br>使用 -w 选项将所有捕获的包写入文件：</p>
+<pre><code>tcpdump -i eth1 -w packets_file
+</code></pre>
+<p>读取之前产生的 tcpdump 文件<br>使用下面命令从之前创建的 tcpdump 文件中读取内容：</p>
+<pre><code>tcpdump -r packets_file
+</code></pre>
+<p>获取更多的包信息，并且以可读的形式显示时间戳<br>要获取更多的包信息同时以可读的形式显示时间戳，使用：</p>
+<pre><code>tcpdump -ttttnnvvS
+</code></pre>
+<p>查看整个网络的数据包<br>要获取整个网络的数据包，在终端执行下面命令：</p>
+<pre><code>tcpdump net 192.168.1.0/24
+</code></pre>
+<p>根据 IP 地址查看报文<br>要获取指定 IP 的数据包，不管是作为源地址还是目的地址，使用下面命令：</p>
+<pre><code>tcpdump host 192.168.1.100
+</code></pre>
+<p>要指定 IP 地址是源地址或是目的地址则使用：</p>
+<pre><code>tcpdump src 192.168.1.100
+tcpdump dst 192.168.1.100
+</code></pre>
+<p>查看某个协议或端口号的数据包<br>要查看某个协议的数据包，运行下面命令：</p>
+<pre><code>tcpdump ssh
+</code></pre>
+<p>要捕获某个端口或一个范围的数据包，使用：</p>
+<pre><code>tcpdump port 22
+tcpdump portrange 22-125
+</code></pre>
+<p>我们也可以与 src 和 dst 选项连用来捕获指定源端口或指定目的端口的报文。</p>
+<p>我们还可以使用 “与” （and，&amp;&amp;）、“或” （or，|| ) 和 “非”（not，!） 来将两个条件组合起来。当我们需要基于某些条件来分析网络报文是非常有用。</p>
+<p>使用 “与”<br>可以使用 and 或者符号 &amp;&amp; 来将两个或多个条件组合起来。比如：</p>
+<pre><code>tcpdump src 192.168.1.100 &amp;&amp; port 22 -w ssh_packets
+</code></pre>
+<p>使用 “或”<br>“或” 会检查是否匹配命令所列条件中的其中一条，像这样：</p>
+<pre><code>tcpdump src 192.168.1.100 or dst 192.168.1.50 &amp;&amp; port 22 -w ssh_packets
+tcpdump port 443 or 80 -w http_packets
+</code></pre>
+<p>使用 “非”<br>当我们想表达不匹配某项条件时可以使用 “非”，像这样：</p>
+<pre><code>tcpdump -i eth0 src port not 22
+</code></pre>
+<p>这会捕获 eth0 上除了 22 号端口的所有通讯。</p>
+<h2 id="tcpdump抓包规则常用命令"><a href="#tcpdump抓包规则常用命令" class="headerlink" title="tcpdump抓包规则常用命令"></a>tcpdump抓包规则常用命令</h2><blockquote>
+<p>下面的例子全是以抓取 eth0 接口为例，如果不加”-i eth0” 是表示抓取所有的接口包括 lo</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#抓取包含172.16.1.122的数据包  </span></span><br><span class="line">tcpdump -i eth0 -vnn host 172.16.1.122  </span><br><span class="line"><span class="comment">#抓取包含172.16.1.0/24网段的数据包  </span></span><br><span class="line">tcpdump -i eth0 -vnn net 172.16.1.0/24  </span><br><span class="line"><span class="comment">#抓取包含端口22的数据包  </span></span><br><span class="line">tcpdump -i eth0 -vnn port 22  </span><br><span class="line"><span class="comment">#抓取udp协议的数据包  </span></span><br><span class="line">tcpdump -i eth0 -vnn  udp  </span><br><span class="line"><span class="comment">#抓取icmp协议的数据包  </span></span><br><span class="line">tcpdump -i eth0 -vnn icmp  </span><br><span class="line"><span class="comment">#抓取arp协议的数据包  </span></span><br><span class="line">tcpdump -i eth0 -vnn arp  </span><br><span class="line"><span class="comment">#抓取ip协议的数据包  </span></span><br><span class="line">tcpdump -i eth0 -vnn ip  </span><br><span class="line"><span class="comment">#抓取源ip是172.16.1.122数据包。  </span></span><br><span class="line">tcpdump -i eth0 -vnn src host 172.16.1.122  </span><br><span class="line"><span class="comment">#抓取目的ip是172.16.1.122数据包  </span></span><br><span class="line">tcpdump -i eth0 -vnn dst host 172.16.1.122  </span><br><span class="line"><span class="comment">#抓取源端口是22的数据包  </span></span><br><span class="line">tcpdump -i eth0 -vnn src port 22  </span><br><span class="line"><span class="comment">#抓取源ip是172.16.1.253且目的ip是22的数据包  </span></span><br><span class="line">tcpdump -i eth0 -vnn src host 172.16.1.253 and dst port 22  </span><br><span class="line"><span class="comment">#抓取源ip是172.16.1.122或者包含端口是22的数据包  </span></span><br><span class="line">tcpdump -i eth0 -vnn src host 172.16.1.122 or port 22  </span><br><span class="line"><span class="comment">#抓取源ip是172.16.1.122且端口不是22的数据包  </span></span><br><span class="line">tcpdump -i eth0 -vnn src host 172.16.1.122 and not port 22  </span><br><span class="line"><span class="comment">#抓取源ip是172.16.1.2且目的端口是22，或源ip是172.16.1.65且目的端口是80的数据包。  </span></span><br><span class="line">tcpdump -i eth0 -vnn \( src host 172.16.1.2 and dst port 22 \) or   \( src host 172.16.1.65 and dst port 80 \)  </span><br><span class="line"><span class="comment">#抓取源ip是172.16.1.59且目的端口是22，或源ip是172.16.1.68且目的端口是80的数据包。  </span></span><br><span class="line">tcpdump -i  eth0 -vnn <span class="string">&#x27;src host 172.16.1.59 and dst port 22&#x27;</span> or  <span class="string">&#x27; src host 172.16.1.68 and dst port 80 &#x27;</span>  </span><br><span class="line"><span class="comment">#把抓取的数据包记录存到/tmp/fill文件中，当抓取100个数据包后就退出程序。  </span></span><br><span class="line">tcpdump –i eth0 -vnn -w  /tmp/fil1 -c 100  </span><br><span class="line"><span class="comment">#从/tmp/fill记录中读取tcp协议的数据包  </span></span><br><span class="line">tcpdump –i eth0 -vnn -r  /tmp/fil1 tcp</span><br><span class="line"><span class="comment">#从/tmp/fill记录中读取包含172.16.1.58的数据包  </span></span><br><span class="line">tcpdump –i eth0 -vnn -r  /tmp/fil1 host  172.16.1.58 </span><br><span class="line"><span class="comment"># 抓取目的地址范围是 10 网段</span></span><br><span class="line">tcpdump -i any -nn <span class="string">&#x27;ip[16] == 10&#x27;</span></span><br><span class="line"><span class="comment"># 抓取目的地址范围是 192.168.1.10 ~ 192.168.1.100</span></span><br><span class="line">tcpdump -i any -nn <span class="string">&#x27;ip[16] == 192 and ip[17] == 168 and ip[18] == 1 and ip[19] &gt; 9 and ip[19] &lt; 101&#x27;</span></span><br><span class="line"><span class="comment">#保存10000个数据包过滤条件为443端口，并解析来源IP</span></span><br><span class="line">tcpdump -i any -nn -c 10000 port 443 &gt; tcpdump.log</span><br><span class="line"><span class="built_in">cat</span> tcpdump.log | awk <span class="string">&#x27;&#123;print $3&#125;&#x27;</span> | awk -F <span class="string">&#x27;.&#x27;</span> <span class="string">&#x27;&#123;print $1 &quot;.&quot; $2 &quot;.&quot; $3 &quot;.&quot; $4&#125;&#x27;</span> | <span class="built_in">sort</span> | <span class="built_in">uniq</span> -c | <span class="built_in">sort</span> -rn</span><br><span class="line"><span class="comment">#查看source IP</span></span><br><span class="line"><span class="built_in">cat</span> tcpdump.log | awk <span class="string">&#x27;&#123;print $1&#125;&#x27;</span> | awk -F <span class="string">&#x27;.&#x27;</span> <span class="string">&#x27;&#123;print $1&quot;.&quot;$2&quot;.&quot;$3&quot;.&quot;$4&#125;&#x27;</span> | <span class="built_in">sort</span> | <span class="built_in">uniq</span> -c | <span class="built_in">sort</span> -rn | grep -v <span class="string">&quot;:&quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="tcpdump抓包实践"><a href="#tcpdump抓包实践" class="headerlink" title="tcpdump抓包实践"></a>tcpdump抓包实践</h2><p>使用 tcpdump 抓包，需要管理员权限，因此下面的示例中绝大多数命令都是以 sudo 开头。</p>
+<p>首先，先用 tcpdump -D 命令列出可以抓包的网络接口：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ sudo tcpdump -D</span><br><span class="line">1.eth0</span><br><span class="line">2.virbr0</span><br><span class="line">3.eth1</span><br><span class="line">4.any (Pseudo-device that captures on all interfaces)</span><br><span class="line">5.lo [Loopback]</span><br></pre></td></tr></table></figure>
+
+<p>如上所示，可以看到我的机器中所有可以抓包的网络接口。其中特殊接口 any 可用于抓取所有活动的网络接口的数据包。</p>
+<p>我们就用如下命令先对 any 接口进行抓包：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">$ sudo tcpdump -i any</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv <span class="keyword">for</span> full protocol decode</span><br><span class="line">listening on any, link-type LINUX_SLL (Linux cooked), capture size 262144 bytes</span><br><span class="line">09:56:18.293641 IP rhel75.localdomain.ssh &gt; 192.168.64.1.56322: Flags [P.], <span class="built_in">seq</span> 3770820720:3770820916, ack 3503648727, win 309, options [nop,nop,TS val 76577898 ecr 510770929], length 196</span><br><span class="line">09:56:18.293794 IP 192.168.64.1.56322 &gt; rhel75.localdomain.ssh: Flags [.], ack 196, win 391, options [nop,nop,TS val 510771017 ecr 76577898], length 0</span><br><span class="line">09:56:18.295058 IP rhel75.59883 &gt; gateway.domain: 2486+ PTR? 1.64.168.192.in-addr.arpa. (43)</span><br><span class="line">09:56:18.310225 IP gateway.domain &gt; rhel75.59883: 2486 NXDomain* 0/1/0 (102)</span><br><span class="line">09:56:18.312482 IP rhel75.49685 &gt; gateway.domain: 34242+ PTR? 28.64.168.192.in-addr.arpa. (44)</span><br><span class="line">09:56:18.322425 IP gateway.domain &gt; rhel75.49685: 34242 NXDomain* 0/1/0 (103)</span><br><span class="line">09:56:18.323164 IP rhel75.56631 &gt; gateway.domain: 29904+ PTR? 1.122.168.192.in-addr.arpa. (44)</span><br><span class="line">09:56:18.323342 IP rhel75.localdomain.ssh &gt; 192.168.64.1.56322: Flags [P.], <span class="built_in">seq</span> 196:584, ack 1, win 309, options [nop,nop,TS val 76577928 ecr 510771017], length 388</span><br><span class="line">09:56:18.323563 IP 192.168.64.1.56322 &gt; rhel75.localdomain.ssh: Flags [.], ack 584, win 411, options [nop,nop,TS val 510771047 ecr 76577928], length 0</span><br><span class="line">09:56:18.335569 IP gateway.domain &gt; rhel75.56631: 29904 NXDomain* 0/1/0 (103)</span><br><span class="line">09:56:18.336429 IP rhel75.44007 &gt; gateway.domain: 61677+ PTR? 98.122.168.192.in-addr.arpa. (45)</span><br><span class="line">09:56:18.336655 IP gateway.domain &gt; rhel75.44007: 61677* 1/0/0 PTR rhel75. (65)</span><br><span class="line">09:56:18.337177 IP rhel75.localdomain.ssh &gt; 192.168.64.1.56322: Flags [P.], <span class="built_in">seq</span> 584:1644, ack 1, win 309, options [nop,nop,TS val 76577942 ecr 510771047], length 1060</span><br><span class="line">---- SKIPPING LONG OUTPUT -----</span><br><span class="line">09:56:19.342939 IP 192.168.64.1.56322 &gt; rhel75.localdomain.ssh: Flags [.], ack 1752016, win 1444, options [nop,nop,TS val 510772067 ecr 76578948], length 0</span><br><span class="line">^C</span><br><span class="line">9003 packets captured</span><br><span class="line">9010 packets received by filter</span><br><span class="line">7 packets dropped by kernel</span><br><span class="line">$</span><br></pre></td></tr></table></figure>
+
+<p>tcpdump 会持续抓包直到收到中断信号。你可以按 Ctrl+C 来停止抓包。正如上面示例所示，tcpdump 抓取了超过 9000 个数据包。在这个示例中，由于我是通过 ssh 连接到服务器，所以 tcpdump 也捕获了所有这类数据包。-c 选项可以用于限制 tcpdump 抓包的数量：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ sudo tcpdump -i any -c 5</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv <span class="keyword">for</span> full protocol decode</span><br><span class="line">listening on any, link-type LINUX_SLL (Linux cooked), capture size 262144 bytes</span><br><span class="line">11:21:30.242740 IP rhel75.localdomain.ssh &gt; 192.168.64.1.56322: Flags [P.], <span class="built_in">seq</span> 3772575680:3772575876, ack 3503651743, win 309, options [nop,nop,TS val 81689848 ecr 515883153], length 196</span><br><span class="line">11:21:30.242906 IP 192.168.64.1.56322 &gt; rhel75.localdomain.ssh: Flags [.], ack 196, win 1443, options [nop,nop,TS val 515883235 ecr 81689848], length 0</span><br><span class="line">11:21:30.244442 IP rhel75.43634 &gt; gateway.domain: 57680+ PTR? 1.64.168.192.in-addr.arpa. (43)</span><br><span class="line">11:21:30.244829 IP gateway.domain &gt; rhel75.43634: 57680 NXDomain 0/0/0 (43)</span><br><span class="line">11:21:30.247048 IP rhel75.33696 &gt; gateway.domain: 37429+ PTR? 28.64.168.192.in-addr.arpa. (44)</span><br><span class="line">5 packets captured</span><br><span class="line">12 packets received by filter</span><br><span class="line">0 packets dropped by kernel</span><br><span class="line">$</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如上所示，tcpdump 在抓取 5 个数据包后自动停止了抓包。这在有些场景中十分有用 —— 比如你只需要抓取少量的数据包用于分析。当我们需要使用过滤规则抓取特定的数据包（如下所示）时，-c 的作用就十分突出了。</p>
+<p>在上面示例中，tcpdump 默认是将 IP 地址和端口号解析为对应的接口名以及服务协议名称。而通常在网络故障排查中，使用 IP 地址和端口号更便于分析问题；用 -n 选项显示 IP 地址，-nn 选项显示端口号：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ sudo tcpdump -i any -c5 -nn</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv <span class="keyword">for</span> full protocol decode</span><br><span class="line">listening on any, link-type LINUX_SLL (Linux cooked), capture size 262144 bytes</span><br><span class="line">23:56:24.292206 IP 192.168.64.28.22 &gt; 192.168.64.1.35110: Flags [P.], <span class="built_in">seq</span> 166198580:166198776, ack 2414541257, win 309, options [nop,nop,TS val 615664 ecr 540031155], length 196</span><br><span class="line">23:56:24.292357 IP 192.168.64.1.35110 &gt; 192.168.64.28.22: Flags [.], ack 196, win 1377, options [nop,nop,TS val 540031229 ecr 615664], length 0</span><br><span class="line">23:56:24.292570 IP 192.168.64.28.22 &gt; 192.168.64.1.35110: Flags [P.], <span class="built_in">seq</span> 196:568, ack 1, win 309, options [nop,nop,TS val 615664 ecr 540031229], length 372</span><br><span class="line">23:56:24.292655 IP 192.168.64.1.35110 &gt; 192.168.64.28.22: Flags [.], ack 568, win 1400, options [nop,nop,TS val 540031229 ecr 615664], length 0</span><br><span class="line">23:56:24.292752 IP 192.168.64.28.22 &gt; 192.168.64.1.35110: Flags [P.], <span class="built_in">seq</span> 568:908, ack 1, win 309, options [nop,nop,TS val 615664 ecr 540031229], length 340</span><br><span class="line">5 packets captured</span><br><span class="line">6 packets received by filter</span><br><span class="line">0 packets dropped by kernel</span><br></pre></td></tr></table></figure>
+
+<p>如上所示，抓取的数据包中显示 IP 地址和端口号。这样还可以阻止 tcpdump 发出 DNS 查找，有助于在网络故障排查中减少数据流量。</p>
+<p>现在你已经会抓包了，让我们来分析一下这些抓包输出的含义吧。</p>
+<h3 id="理解抓取的报文"><a href="#理解抓取的报文" class="headerlink" title="理解抓取的报文"></a>理解抓取的报文</h3><p>tcpdump 能够抓取并解码多种协议类型的数据报文，如 TCP、UDP、ICMP 等等。虽然这里我们不可能介绍所有的数据报文类型，但可以分析下 TCP 类型的数据报文，来帮助你入门。更多有关 tcpdump 的详细介绍可以参考其 帮助手册。tcpdump 抓取的 TCP 报文看起来如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">08:41:13.729687 IP 192.168.64.28.22 &gt; 192.168.64.1.41916: Flags [P.], <span class="built_in">seq</span> 196:568, ack 1, win 309, options [nop,nop,TS val 117964079 ecr 816509256], length 372</span><br></pre></td></tr></table></figure>
+
+<p>具体的字段根据不同的报文类型会有不同，但上面这个例子是一般的格式形式。</p>
+<p>第一个字段 08:41:13.729687 是该数据报文被抓取的系统本地时间戳。</p>
+<p>然后，IP 是网络层协议类型，这里是 IPv4，如果是 IPv6 协议，该字段值是 IP6。</p>
+<p>192.168.64.28.22 是源 ip 地址和端口号，紧跟其后的是目的 ip 地址和其端口号，这里是 192.168.64.1.41916。</p>
+<p>在源 IP 和目的 IP 之后，可以看到是 TCP 报文标记段 Flags [P.]。该字段通常取值如下：</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>标志类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>S</td>
+<td>SYN</td>
+<td>Connection Start 发起连接标志</td>
+</tr>
+<tr>
+<td>F</td>
+<td>FIN</td>
+<td>Connection Finish 关闭连接标志</td>
+</tr>
+<tr>
+<td>P</td>
+<td>PUSH</td>
+<td>Data push 传送数据标志</td>
+</tr>
+<tr>
+<td>R</td>
+<td>RST</td>
+<td>Connection reset 异常关闭连接</td>
+</tr>
+<tr>
+<td>.</td>
+<td>ACK</td>
+<td>Acknowledgment 表示确认包</td>
+</tr>
+</tbody></table>
+<p>该字段也可以是这些值的组合，例如 [S.] 代表 SYN-ACK 数据包。</p>
+<p>接下来是该数据包中数据的序列号。对于抓取的第一个数据包，该字段值是一个绝对数字，后续包使用相对数值，以便更容易查询跟踪。例如此处 seq 196:568 代表该数据包包含该数据流的第 196 到 568 字节。</p>
+<p>接下来是 ack 值：ack 1。该数据包是数据发送方，ack 值为 1。在数据接收方，该字段代表数据流上的下一个预期字节数据，例如，该数据流中下一个数据包的 ack 值应该是 568。</p>
+<p>接下来字段是接收窗口大小 win 309，它表示接收缓冲区中可用的字节数，后跟 TCP 选项如 MSS（最大段大小）或者窗口比例值。更详尽的 TCP 协议内容请参考 Transmission Control Protocol(TCP) Parameters。</p>
+<p>最后，length 372 代表数据包有效载荷字节长度。这个长度和 seq 序列号中字节数值长度是不一样的。</p>
+<p>现在让我们学习如何过滤数据报文以便更容易的分析定位问题。</p>
+<h3 id="过滤数据包"><a href="#过滤数据包" class="headerlink" title="过滤数据包"></a>过滤数据包</h3><p>正如上面所提，tcpdump 可以抓取很多种类型的数据报文，其中很多可能和我们需要查找的问题并没有关系。举个例子，假设你正在定位一个与 web 服务器连接的网络问题，就不必关系 SSH 数据报文，因此在抓包结果中过滤掉 SSH 报文可能更便于你分析问题。</p>
+<p>tcpdump 有很多参数选项可以设置数据包过滤规则，例如根据源 IP 以及目的 IP 地址，端口号，协议等等规则来过滤数据包。下面就介绍一些最常用的过滤方法。</p>
+<p>协议<br>在命令中指定协议便可以按照协议类型来筛选数据包。比方说用如下命令只要抓取 ICMP 报文：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">$ sudo tcpdump -i any -c5 icmp</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv <span class="keyword">for</span> full protocol decode</span><br><span class="line">listening on any, link-type LINUX_SLL (Linux cooked), capture size 262144 bytes</span><br><span class="line">然后再打开一个终端，去 ping 另一台机器：</span><br><span class="line"></span><br><span class="line">$ ping opensource.com</span><br><span class="line">PING opensource.com (54.204.39.132) 56(84) bytes of data.</span><br><span class="line">64 bytes from ec2-54-204-39-132.compute-1.amazonaws.com (54.204.39.132): icmp_seq=1 ttl=47 time=39.6 ms</span><br><span class="line">回到运行 tcpdump 命令的终端中，可以看到它筛选出了 ICMP 报文。这里 tcpdump 并没有显示有关 opensource.com 的域名解析数据包：</span><br><span class="line"></span><br><span class="line">09:34:20.136766 IP rhel75 &gt; ec2-54-204-39-132.compute-1.amazonaws.com: ICMP <span class="built_in">echo</span> request, <span class="built_in">id</span> 20361, <span class="built_in">seq</span> 1, length 64</span><br><span class="line">09:34:20.176402 IP ec2-54-204-39-132.compute-1.amazonaws.com &gt; rhel75: ICMP <span class="built_in">echo</span> reply, <span class="built_in">id</span> 20361, <span class="built_in">seq</span> 1, length 64</span><br><span class="line">09:34:21.140230 IP rhel75 &gt; ec2-54-204-39-132.compute-1.amazonaws.com: ICMP <span class="built_in">echo</span> request, <span class="built_in">id</span> 20361, <span class="built_in">seq</span> 2, length 64</span><br><span class="line">09:34:21.180020 IP ec2-54-204-39-132.compute-1.amazonaws.com &gt; rhel75: ICMP <span class="built_in">echo</span> reply, <span class="built_in">id</span> 20361, <span class="built_in">seq</span> 2, length 64</span><br><span class="line">09:34:22.141777 IP rhel75 &gt; ec2-54-204-39-132.compute-1.amazonaws.com: ICMP <span class="built_in">echo</span> request, <span class="built_in">id</span> 20361, <span class="built_in">seq</span> 3, length 64</span><br><span class="line">5 packets captured</span><br><span class="line">5 packets received by filter</span><br><span class="line">0 packets dropped by kernel</span><br></pre></td></tr></table></figure>
+
+<p>主机<br>用 host 参数只抓取和特定主机相关的数据包：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ sudo tcpdump -i any -c5 -nn host 54.204.39.132</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv <span class="keyword">for</span> full protocol decode</span><br><span class="line">listening on any, link-type LINUX_SLL (Linux cooked), capture size 262144 bytes</span><br><span class="line">09:54:20.042023 IP 192.168.122.98.39326 &gt; 54.204.39.132.80: Flags [S], <span class="built_in">seq</span> 1375157070, win 29200, options [mss 1460,sackOK,TS val 122350391 ecr 0,nop,wscale 7], length 0</span><br><span class="line">09:54:20.088127 IP 54.204.39.132.80 &gt; 192.168.122.98.39326: Flags [S.], <span class="built_in">seq</span> 1935542841, ack 1375157071, win 28960, options [mss 1460,sackOK,TS val 522713542 ecr 122350391,nop,wscale 9], length 0</span><br><span class="line">09:54:20.088204 IP 192.168.122.98.39326 &gt; 54.204.39.132.80: Flags [.], ack 1, win 229, options [nop,nop,TS val 122350437 ecr 522713542], length 0</span><br><span class="line">09:54:20.088734 IP 192.168.122.98.39326 &gt; 54.204.39.132.80: Flags [P.], <span class="built_in">seq</span> 1:113, ack 1, win 229, options [nop,nop,TS val 122350438 ecr 522713542], length 112: HTTP: GET / HTTP/1.1</span><br><span class="line">09:54:20.129733 IP 54.204.39.132.80 &gt; 192.168.122.98.39326: Flags [.], ack 113, win 57, options [nop,nop,TS val 522713552 ecr 122350438], length 0</span><br><span class="line">5 packets captured</span><br><span class="line">5 packets received by filter</span><br><span class="line">0 packets dropped by kernel</span><br><span class="line">如上所示，只抓取和显示与 54.204.39.132 有关的数据包。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>端口号<br>tcpdump 可以根据服务类型或者端口号来筛选数据包。例如，抓取和 HTTP 服务相关的数据包：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ sudo tcpdump -i any -c5 -nn port 80</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv <span class="keyword">for</span> full protocol decode</span><br><span class="line">listening on any, link-type LINUX_SLL (Linux cooked), capture size 262144 bytes</span><br><span class="line">09:58:28.790548 IP 192.168.122.98.39330 &gt; 54.204.39.132.80: Flags [S], <span class="built_in">seq</span> 1745665159, win 29200, options [mss 1460,sackOK,TS val 122599140 ecr 0,nop,wscale 7], length 0</span><br><span class="line">09:58:28.834026 IP 54.204.39.132.80 &gt; 192.168.122.98.39330: Flags [S.], <span class="built_in">seq</span> 4063583040, ack 1745665160, win 28960, options [mss 1460,sackOK,TS val 522775728 ecr 122599140,nop,wscale 9], length 0</span><br><span class="line">09:58:28.834093 IP 192.168.122.98.39330 &gt; 54.204.39.132.80: Flags [.], ack 1, win 229, options [nop,nop,TS val 122599183 ecr 522775728], length 0</span><br><span class="line">09:58:28.834588 IP 192.168.122.98.39330 &gt; 54.204.39.132.80: Flags [P.], <span class="built_in">seq</span> 1:113, ack 1, win 229, options [nop,nop,TS val 122599184 ecr 522775728], length 112: HTTP: GET / HTTP/1.1</span><br><span class="line">09:58:28.878445 IP 54.204.39.132.80 &gt; 192.168.122.98.39330: Flags [.], ack 113, win 57, options [nop,nop,TS val 522775739 ecr 122599184], length 0</span><br><span class="line">5 packets captured</span><br><span class="line">5 packets received by filter</span><br><span class="line">0 packets dropped by kernel</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>IP 地址 &#x2F; 主机名<br>同样，你也可以根据源 IP 地址或者目的 IP 地址或者主机名来筛选数据包。例如抓取源 IP 地址为 192.168.122.98 的数据包：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">$ sudo tcpdump -i any -c5 -nn src 192.168.122.98</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv <span class="keyword">for</span> full protocol decode</span><br><span class="line">listening on any, link-type LINUX_SLL (Linux cooked), capture size 262144 bytes</span><br><span class="line">10:02:15.220824 IP 192.168.122.98.39436 &gt; 192.168.122.1.53: 59332+ A? opensource.com. (32)</span><br><span class="line">10:02:15.220862 IP 192.168.122.98.39436 &gt; 192.168.122.1.53: 20749+ AAAA? opensource.com. (32)</span><br><span class="line">10:02:15.364062 IP 192.168.122.98.39334 &gt; 54.204.39.132.80: Flags [S], <span class="built_in">seq</span> 1108640533, win 29200, options [mss 1460,sackOK,TS val 122825713 ecr 0,nop,wscale 7], length 0</span><br><span class="line">10:02:15.409229 IP 192.168.122.98.39334 &gt; 54.204.39.132.80: Flags [.], ack 669337581, win 229, options [nop,nop,TS val 122825758 ecr 522832372], length 0</span><br><span class="line">10:02:15.409667 IP 192.168.122.98.39334 &gt; 54.204.39.132.80: Flags [P.], <span class="built_in">seq</span> 0:112, ack 1, win 229, options [nop,nop,TS val 122825759 ecr 522832372], length 112: HTTP: GET / HTTP/1.1</span><br><span class="line">5 packets captured</span><br><span class="line">5 packets received by filter</span><br><span class="line">0 packets dropped by kernel</span><br><span class="line">注意此处示例中抓取了来自源 IP 地址 192.168.122.98 的 53 端口以及 80 端口的数据包，它们的应答包没有显示出来因为那些包的源 IP 地址已经变了。</span><br><span class="line"></span><br><span class="line">相对的，使用 dst 就是按目的 IP / 主机名来筛选数据包。</span><br><span class="line"></span><br><span class="line">$ sudo tcpdump -i any -c5 -nn dst 192.168.122.98</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv <span class="keyword">for</span> full protocol decode</span><br><span class="line">listening on any, link-type LINUX_SLL (Linux cooked), capture size 262144 bytes</span><br><span class="line">10:05:03.572931 IP 192.168.122.1.53 &gt; 192.168.122.98.47049: 2248 1/0/0 A 54.204.39.132 (48)</span><br><span class="line">10:05:03.572944 IP 192.168.122.1.53 &gt; 192.168.122.98.47049: 33770 0/0/0 (32)</span><br><span class="line">10:05:03.621833 IP 54.204.39.132.80 &gt; 192.168.122.98.39338: Flags [S.], <span class="built_in">seq</span> 3474204576, ack 3256851264, win 28960, options [mss 1460,sackOK,TS val 522874425 ecr 122993922,nop,wscale 9], length 0</span><br><span class="line">10:05:03.667767 IP 54.204.39.132.80 &gt; 192.168.122.98.39338: Flags [.], ack 113, win 57, options [nop,nop,TS val 522874436 ecr 122993972], length 0</span><br><span class="line">10:05:03.672221 IP 54.204.39.132.80 &gt; 192.168.122.98.39338: Flags [P.], <span class="built_in">seq</span> 1:643, ack 113, win 57, options [nop,nop,TS val 522874437 ecr 122993972], length 642: HTTP: HTTP/1.1 302 Found</span><br><span class="line">5 packets captured</span><br><span class="line">5 packets received by filter</span><br><span class="line">0 packets dropped by kernel</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>多条件筛选<br>当然，可以使用多条件组合来筛选数据包，使用 and 以及 or 逻辑操作符来创建过滤规则。例如，筛选来自源 IP 地址 192.168.122.98 的 HTTP 数据包：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">$ sudo tcpdump -i any -c5 -nn src 192.168.122.98 and port 80</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv <span class="keyword">for</span> full protocol decode</span><br><span class="line">listening on any, link-type LINUX_SLL (Linux cooked), capture size 262144 bytes</span><br><span class="line">10:08:00.472696 IP 192.168.122.98.39342 &gt; 54.204.39.132.80: Flags [S], <span class="built_in">seq</span> 2712685325, win 29200, options [mss 1460,sackOK,TS val 123170822 ecr 0,nop,wscale 7], length 0</span><br><span class="line">10:08:00.516118 IP 192.168.122.98.39342 &gt; 54.204.39.132.80: Flags [.], ack 268723504, win 229, options [nop,nop,TS val 123170865 ecr 522918648], length 0</span><br><span class="line">10:08:00.516583 IP 192.168.122.98.39342 &gt; 54.204.39.132.80: Flags [P.], <span class="built_in">seq</span> 0:112, ack 1, win 229, options [nop,nop,TS val 123170866 ecr 522918648], length 112: HTTP: GET / HTTP/1.1</span><br><span class="line">10:08:00.567044 IP 192.168.122.98.39342 &gt; 54.204.39.132.80: Flags [.], ack 643, win 239, options [nop,nop,TS val 123170916 ecr 522918661], length 0</span><br><span class="line">10:08:00.788153 IP 192.168.122.98.39342 &gt; 54.204.39.132.80: Flags [F.], <span class="built_in">seq</span> 112, ack 643, win 239, options [nop,nop,TS val 123171137 ecr 522918661], length 0</span><br><span class="line">5 packets captured</span><br><span class="line">5 packets received by filter</span><br><span class="line">0 packets dropped by kernel</span><br><span class="line">你也可以使用括号来创建更为复杂的过滤规则，但在 shell 中请用引号包含你的过滤规则以防止被识别为 shell 表达式：</span><br><span class="line"></span><br><span class="line">$ sudo tcpdump -i any -c5 -nn <span class="string">&quot;port 80 and (src 192.168.122.98 or src 54.204.39.132)&quot;</span></span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv <span class="keyword">for</span> full protocol decode</span><br><span class="line">listening on any, link-type LINUX_SLL (Linux cooked), capture size 262144 bytes</span><br><span class="line">10:10:37.602214 IP 192.168.122.98.39346 &gt; 54.204.39.132.80: Flags [S], <span class="built_in">seq</span> 871108679, win 29200, options [mss 1460,sackOK,TS val 123327951 ecr 0,nop,wscale 7], length 0</span><br><span class="line">10:10:37.650651 IP 54.204.39.132.80 &gt; 192.168.122.98.39346: Flags [S.], <span class="built_in">seq</span> 854753193, ack 871108680, win 28960, options [mss 1460,sackOK,TS val 522957932 ecr 123327951,nop,wscale 9], length 0</span><br><span class="line">10:10:37.650708 IP 192.168.122.98.39346 &gt; 54.204.39.132.80: Flags [.], ack 1, win 229, options [nop,nop,TS val 123328000 ecr 522957932], length 0</span><br><span class="line">10:10:37.651097 IP 192.168.122.98.39346 &gt; 54.204.39.132.80: Flags [P.], <span class="built_in">seq</span> 1:113, ack 1, win 229, options [nop,nop,TS val 123328000 ecr 522957932], length 112: HTTP: GET / HTTP/1.1</span><br><span class="line">10:10:37.692900 IP 54.204.39.132.80 &gt; 192.168.122.98.39346: Flags [.], ack 113, win 57, options [nop,nop,TS val 522957942 ecr 123328000], length 0</span><br><span class="line">5 packets captured</span><br><span class="line">5 packets received by filter</span><br><span class="line">0 packets dropped by kernel</span><br><span class="line">该例子中我们只抓取了来自源 IP 为 192.168.122.98 或者 54.204.39.132 的 HTTP （端口号 80）的数据包。使用该方法就很容易抓取到数据流中交互双方的数据包了。</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="检查数据包内容"><a href="#检查数据包内容" class="headerlink" title="检查数据包内容"></a>检查数据包内容</h3><p>在以上的示例中，我们只按数据包头部的信息来建立规则筛选数据包，例如源地址、目的地址、端口号等等。有时我们需要分析网络连接问题，可能需要分析数据包中的内容来判断什么内容需要被发送、什么内容需要被接收等。tcpdump 提供了两个选项可以查看数据包内容，-X 以十六进制打印出数据报文内容，-A 打印数据报文的 ASCII 值。</p>
+<p>例如，HTTP 请求报文内容如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">$ sudo tcpdump -i any -c10 -nn -A port 80</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv <span class="keyword">for</span> full protocol decode</span><br><span class="line">listening on any, link-type LINUX_SLL (Linux cooked), capture size 262144 bytes</span><br><span class="line">13:02:14.871803 IP 192.168.122.98.39366 &gt; 54.204.39.132.80: Flags [S], <span class="built_in">seq</span> 2546602048, win 29200, options [mss 1460,sackOK,TS val 133625221 ecr 0,nop,wscale 7], length 0</span><br><span class="line">E..&lt;..@.@.....zb6.<span class="string">&#x27;....P...@......r............</span></span><br><span class="line"><span class="string">............................</span></span><br><span class="line"><span class="string">13:02:14.910734 IP 54.204.39.132.80 &gt; 192.168.122.98.39366: Flags [S.], seq 1877348646, ack 2546602049, win 28960, options [mss 1460,sackOK,TS val 525532247 ecr 133625221,nop,wscale 9], length 0</span></span><br><span class="line"><span class="string">E..&lt;..@./..a6.&#x27;</span>...zb.P..o..&amp;...A..q a..........</span><br><span class="line">.R.W.......     ................</span><br><span class="line">13:02:14.910832 IP 192.168.122.98.39366 &gt; 54.204.39.132.80: Flags [.], ack 1, win 229, options [nop,nop,TS val 133625260 ecr 525532247], length 0</span><br><span class="line">E..4..@.@.....zb6.<span class="string">&#x27;....P...Ao..&#x27;</span>...........</span><br><span class="line">.....R.W................</span><br><span class="line">13:02:14.911808 IP 192.168.122.98.39366 &gt; 54.204.39.132.80: Flags [P.], <span class="built_in">seq</span> 1:113, ack 1, win 229, options [nop,nop,TS val 133625261 ecr 525532247], length 112: HTTP: GET / HTTP/1.1</span><br><span class="line">E.....@.@..1..zb6.<span class="string">&#x27;....P...Ao..&#x27;</span>...........</span><br><span class="line">.....R.WGET / HTTP/1.1</span><br><span class="line">User-Agent: Wget/1.14 (linux-gnu)</span><br><span class="line">Accept: */*</span><br><span class="line">Host: opensource.com</span><br><span class="line">Connection: Keep-Alive</span><br><span class="line">................</span><br><span class="line">13:02:14.951199 IP 54.204.39.132.80 &gt; 192.168.122.98.39366: Flags [.], ack 113, win 57, options [nop,nop,TS val 525532257 ecr 133625261], length 0</span><br><span class="line">E..4.F@./..<span class="string">&quot;6.&#x27;...zb.P..o..&#x27;.......9.2.....</span></span><br><span class="line"><span class="string">.R.a....................</span></span><br><span class="line"><span class="string">13:02:14.955030 IP 54.204.39.132.80 &gt; 192.168.122.98.39366: Flags [P.], seq 1:643, ack 113, win 57, options [nop,nop,TS val 525532258 ecr 133625261], length 642: HTTP: HTTP/1.1 302 Found</span></span><br><span class="line"><span class="string">E....G@./...6.&#x27;...zb.P..o..&#x27;.......9.......</span></span><br><span class="line"><span class="string">.R.b....HTTP/1.1 302 Found</span></span><br><span class="line"><span class="string">Server: nginx</span></span><br><span class="line"><span class="string">Date: Sun, 23 Sep 2018 17:02:14 GMT</span></span><br><span class="line"><span class="string">Content-Type: text/html; charset=iso-8859-1</span></span><br><span class="line"><span class="string">Content-Length: 207</span></span><br><span class="line"><span class="string">X-Content-Type-Options: nosniff</span></span><br><span class="line"><span class="string">Location: https://opensource.com/</span></span><br><span class="line"><span class="string">Cache-Control: max-age=1209600</span></span><br><span class="line"><span class="string">Expires: Sun, 07 Oct 2018 17:02:14 GMT</span></span><br><span class="line"><span class="string">X-Request-ID: v-6baa3acc-bf52-11e8-9195-22000ab8cf2d</span></span><br><span class="line"><span class="string">X-Varnish: 632951979</span></span><br><span class="line"><span class="string">Age: 0</span></span><br><span class="line"><span class="string">Via: 1.1 varnish (Varnish/5.2)</span></span><br><span class="line"><span class="string">X-Cache: MISS</span></span><br><span class="line"><span class="string">Connection: keep-alive</span></span><br><span class="line"><span class="string">&lt;!DOCTYPE HTML PUBLIC &quot;</span>-//IETF//DTD HTML 2.0//EN<span class="string">&quot;&gt;</span></span><br><span class="line"><span class="string">&lt;html&gt;&lt;head&gt;</span></span><br><span class="line"><span class="string">&lt;title&gt;302 Found&lt;/title&gt;</span></span><br><span class="line"><span class="string">&lt;/head&gt;&lt;body&gt;</span></span><br><span class="line"><span class="string">&lt;h1&gt;Found&lt;/h1&gt;</span></span><br><span class="line"><span class="string">&lt;p&gt;The document has moved &lt;a href=&quot;</span>https://opensource.com/<span class="string">&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;</span></span><br><span class="line"><span class="string">&lt;/body&gt;&lt;/html&gt;</span></span><br><span class="line"><span class="string">................</span></span><br><span class="line"><span class="string">13:02:14.955083 IP 192.168.122.98.39366 &gt; 54.204.39.132.80: Flags [.], ack 643, win 239, options [nop,nop,TS val 133625304 ecr 525532258], length 0</span></span><br><span class="line"><span class="string">E..4..@.@.....zb6.&#x27;....P....o..............</span></span><br><span class="line"><span class="string">.....R.b................</span></span><br><span class="line"><span class="string">13:02:15.195524 IP 192.168.122.98.39366 &gt; 54.204.39.132.80: Flags [F.], seq 113, ack 643, win 239, options [nop,nop,TS val 133625545 ecr 525532258], length 0</span></span><br><span class="line"><span class="string">E..4..@.@.....zb6.&#x27;....P....o..............</span></span><br><span class="line"><span class="string">.....R.b................</span></span><br><span class="line"><span class="string">13:02:15.236592 IP 54.204.39.132.80 &gt; 192.168.122.98.39366: Flags [F.], seq 643, ack 114, win 57, options [nop,nop,TS val 525532329 ecr 133625545], length 0</span></span><br><span class="line"><span class="string">E..4.H@./.. 6.&#x27;...zb.P..o..........9.I.....</span></span><br><span class="line"><span class="string">.R......................</span></span><br><span class="line"><span class="string">13:02:15.236656 IP 192.168.122.98.39366 &gt; 54.204.39.132.80: Flags [.], ack 644, win 239, options [nop,nop,TS val 133625586 ecr 525532329], length 0</span></span><br><span class="line"><span class="string">E..4..@.@.....zb6.&#x27;....P....o..............</span></span><br><span class="line"><span class="string">.....R..................</span></span><br><span class="line"><span class="string">10 packets captured</span></span><br><span class="line"><span class="string">10 packets received by filter</span></span><br><span class="line"><span class="string">0 packets dropped by kernel</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+
+<p>这对定位一些普通 HTTP 调用 API 接口的问题很有用。当然如果是加密报文，这个输出也就没多大用了。</p>
+<h3 id="保存抓包数据"><a href="#保存抓包数据" class="headerlink" title="保存抓包数据"></a>保存抓包数据</h3><p>tcpdump 提供了保存抓包数据的功能以便后续分析数据包。例如，你可以夜里让它在那里抓包，然后早上起来再去分析它。同样当有很多数据包时，显示过快也不利于分析，将数据包保存下来，更有利于分析问题。</p>
+<p>使用 -w 选项来保存数据包而不是在屏幕上显示出抓取的数据包：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ sudo tcpdump -i any -c10 -nn -w webserver.pcap port 80</span><br><span class="line">[sudo] password <span class="keyword">for</span> ricardo:</span><br><span class="line">tcpdump: listening on any, link-type LINUX_SLL (Linux cooked), capture size 262144 bytes</span><br><span class="line">10 packets captured</span><br><span class="line">10 packets received by filter</span><br><span class="line">0 packets dropped by kernel</span><br></pre></td></tr></table></figure>
+
+<p>该命令将抓取的数据包保存到文件 webserver.pcap。后缀名 pcap 表示文件是抓取的数据包格式。</p>
+<p>正如示例中所示，保存数据包到文件中时屏幕上就没有任何有关数据报文的输出，其中 -c10 表示抓取到 10 个数据包后就停止抓包。如果想有一些反馈来提示确实抓取到了数据包，可以使用 -v 选项。</p>
+<p>tcpdump 将数据包保存在二进制文件中，所以不能简单的用文本编辑器去打开它。使用 -r 选项参数来阅读该文件中的报文内容：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ tcpdump -nn -r webserver.pcap</span><br><span class="line">reading from file webserver.pcap, link-type LINUX_SLL (Linux cooked)</span><br><span class="line">13:36:57.679494 IP 192.168.122.98.39378 &gt; 54.204.39.132.80: Flags [S], <span class="built_in">seq</span> 3709732619, win 29200, options [mss 1460,sackOK,TS val 135708029 ecr 0,nop,wscale 7], length 0</span><br><span class="line">13:36:57.718932 IP 54.204.39.132.80 &gt; 192.168.122.98.39378: Flags [S.], <span class="built_in">seq</span> 1999298316, ack 3709732620, win 28960, options [mss 1460,sackOK,TS val 526052949 ecr 135708029,nop,wscale 9], length 0</span><br><span class="line">13:36:57.719005 IP 192.168.122.98.39378 &gt; 54.204.39.132.80: Flags [.], ack 1, win 229, options [nop,nop,TS val 135708068 ecr 526052949], length 0</span><br><span class="line">13:36:57.719186 IP 192.168.122.98.39378 &gt; 54.204.39.132.80: Flags [P.], <span class="built_in">seq</span> 1:113, ack 1, win 229, options [nop,nop,TS val 135708068 ecr 526052949], length 112: HTTP: GET / HTTP/1.1</span><br><span class="line">13:36:57.756979 IP 54.204.39.132.80 &gt; 192.168.122.98.39378: Flags [.], ack 113, win 57, options [nop,nop,TS val 526052959 ecr 135708068], length 0</span><br><span class="line">13:36:57.760122 IP 54.204.39.132.80 &gt; 192.168.122.98.39378: Flags [P.], <span class="built_in">seq</span> 1:643, ack 113, win 57, options [nop,nop,TS val 526052959 ecr 135708068], length 642: HTTP: HTTP/1.1 302 Found</span><br><span class="line">13:36:57.760182 IP 192.168.122.98.39378 &gt; 54.204.39.132.80: Flags [.], ack 643, win 239, options [nop,nop,TS val 135708109 ecr 526052959], length 0</span><br><span class="line">13:36:57.977602 IP 192.168.122.98.39378 &gt; 54.204.39.132.80: Flags [F.], <span class="built_in">seq</span> 113, ack 643, win 239, options [nop,nop,TS val 135708327 ecr 526052959], length 0</span><br><span class="line">13:36:58.022089 IP 54.204.39.132.80 &gt; 192.168.122.98.39378: Flags [F.], <span class="built_in">seq</span> 643, ack 114, win 57, options [nop,nop,TS val 526053025 ecr 135708327], length 0</span><br><span class="line">13:36:58.022132 IP 192.168.122.98.39378 &gt; 54.204.39.132.80: Flags [.], ack 644, win 239, options [nop,nop,TS val 135708371 ecr 526053025], length 0</span><br><span class="line">$</span><br></pre></td></tr></table></figure>
+
+<p>这里不需要管理员权限 sudo 了，因为此刻并不是在网络接口处抓包。</p>
+<p>你还可以使用我们讨论过的任何过滤规则来过滤文件中的内容，就像使用实时数据一样。 例如，通过执行以下命令从源 IP 地址 54.204.39.132 检查文件中的数据包：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ tcpdump -nn -r webserver.pcap src 54.204.39.132</span><br><span class="line">reading from file webserver.pcap, link-type LINUX_SLL (Linux cooked)</span><br><span class="line">13:36:57.718932 IP 54.204.39.132.80 &gt; 192.168.122.98.39378: Flags [S.], <span class="built_in">seq</span> 1999298316, ack 3709732620, win 28960, options [mss 1460,sackOK,TS val 526052949 ecr 135708029,nop,wscale 9], length 0</span><br><span class="line">13:36:57.756979 IP 54.204.39.132.80 &gt; 192.168.122.98.39378: Flags [.], ack 113, win 57, options [nop,nop,TS val 526052959 ecr 135708068], length 0</span><br><span class="line">13:36:57.760122 IP 54.204.39.132.80 &gt; 192.168.122.98.39378: Flags [P.], <span class="built_in">seq</span> 1:643, ack 113, win 57, options [nop,nop,TS val 526052959 ecr 135708068], length 642: HTTP: HTTP/1.1 302 Found</span><br><span class="line">13:36:58.022089 IP 54.204.39.132.80 &gt; 192.168.122.98.39378: Flags [F.], <span class="built_in">seq</span> 643, ack 114, win 57, options [nop,nop,TS val 526053025 ecr 135708327], length 0</span><br></pre></td></tr></table></figure>
+
+<h2 id="下一步做什么？"><a href="#下一步做什么？" class="headerlink" title="下一步做什么？"></a>下一步做什么？</h2><p>以上的基本功能已经可以帮助你使用强大的 tcpdump 抓包工具了。更多的内容请参考 tcpdump 网站以及它的帮助文件。</p>
+<p><a target="_blank" rel="noopener" href="https://hackertarget.com/tcpdump-examples/">https://hackertarget.com/tcpdump-examples/</a></p>
+<p>tcpdump 命令行工具为分析网络流量数据包提供了强大的灵活性。如果需要使用图形工具来抓包请参考 Wireshark。</p>
+<p>Wireshark 还可以用来读取 tcpdump 保存的 pcap 文件。你可以使用 tcpdump 命令行在没有 GUI 界面的远程机器上抓包然后在 Wireshark 中分析数据包。</p>
+<p>一站式学习 Wireshark<br><a target="_blank" rel="noopener" href="https://community.emc.com/thread/194901">https://community.emc.com/thread/194901</a><br><a target="_blank" rel="noopener" href="https://www.w3cschool.cn/wireshark/">https://www.w3cschool.cn/wireshark/</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/tcpdump/" data-title="tcpdump抓包使用小结 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/scrapy/" title="Python爬虫框架Scrapy入门与实践之爬取豆瓣电影Top250榜单">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Python爬虫框架Scrapy入门与实践之爬取豆瓣电影Top250榜单</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/ac18/"  title="腾达AC18刷梅林固件(KoolShare)和恢复原厂固件实践心得">
+ <strong>下一篇：</strong><br/> 
+ <span>腾达AC18刷梅林固件(KoolShare)和恢复原厂固件实践心得
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tcpdump%E7%AE%80%E4%BB%8B"><span class="toc-number">3.</span> <span class="toc-text">tcpdump简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tcpdump%E5%AE%89%E8%A3%85"><span class="toc-number">4.</span> <span class="toc-text">tcpdump安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tcpdump%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A7%A3%E9%87%8A"><span class="toc-number">5.</span> <span class="toc-text">tcpdump常用命令解释</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tcpdump%E5%8F%82%E6%95%B0%E5%AE%9E%E4%BE%8B"><span class="toc-number">6.</span> <span class="toc-text">tcpdump参数实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tcpdump%E5%91%BD%E4%BB%A4%E6%BC%94%E7%A4%BA"><span class="toc-number">7.</span> <span class="toc-text">tcpdump命令演示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tcpdump%E6%8A%93%E5%8C%85%E8%A7%84%E5%88%99%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">8.</span> <span class="toc-text">tcpdump抓包规则常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tcpdump%E6%8A%93%E5%8C%85%E5%AE%9E%E8%B7%B5"><span class="toc-number">9.</span> <span class="toc-text">tcpdump抓包实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%90%86%E8%A7%A3%E6%8A%93%E5%8F%96%E7%9A%84%E6%8A%A5%E6%96%87"><span class="toc-number">9.1.</span> <span class="toc-text">理解抓取的报文</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4%E6%95%B0%E6%8D%AE%E5%8C%85"><span class="toc-number">9.2.</span> <span class="toc-text">过滤数据包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A3%80%E6%9F%A5%E6%95%B0%E6%8D%AE%E5%8C%85%E5%86%85%E5%AE%B9"><span class="toc-number">9.3.</span> <span class="toc-text">检查数据包内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%9D%E5%AD%98%E6%8A%93%E5%8C%85%E6%95%B0%E6%8D%AE"><span class="toc-number">9.4.</span> <span class="toc-text">保存抓包数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8B%E4%B8%80%E6%AD%A5%E5%81%9A%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">10.</span> <span class="toc-text">下一步做什么？</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

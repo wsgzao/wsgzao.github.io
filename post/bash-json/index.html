@@ -1,0 +1,578 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>使用Bash Shell处理JSON文件 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="巧用jq处理JSON数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Bash Shell处理JSON文件">
+<meta property="og:url" content="https://wsgzao.github.io/post/bash-json/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="巧用jq处理JSON数据">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://json.org/img/json160.gif">
+<meta property="article:published_time" content="2015-06-19T06:46:15.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:06.713Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://json.org/img/json160.gif">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/bash-json/" title="使用Bash Shell处理JSON文件" itemprop="url">使用Bash Shell处理JSON文件</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2015-06-19T06:46:15.000Z" itemprop="datePublished"> 发表于 2015-06-19</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Test-Case"><span class="toc-number">3.</span> <span class="toc-text">Test Case</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bash-Shell"><span class="toc-number">4.</span> <span class="toc-text">Bash Shell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">5.</span> <span class="toc-text">小结</span></a></li></ol>
+		
+		</div>
+		 -->
+		<p><img src="http://json.org/img/json160.gif"></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>JSON(JavaScript Object Notation) 是一种轻量级的数据交换格式，易于人阅读和编写，同时也易于机器解析和生成。本文提供一个真实的测试用例需求，设计逻辑类似<code>Makefile</code>，我以Bash处理JSON为例，Coding水平有限，请各位多多包涵哈，欢迎大家一起学习和挑战各种不同的语言来实现。 </p>
+<blockquote>
+<p>巧用jq处理JSON数据 </p>
+</blockquote>
+<hr>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2015年06月19日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/bash-json/">https://wsgzao.github.io/post/bash-json/</a></p>
+<p>扩展阅读</p>
+<ul>
+<li>JSON - <a target="_blank" rel="noopener" href="http://json.org/">http://json.org/</a></li>
+<li>jq - <a target="_blank" rel="noopener" href="http://stedolan.github.io/jq/">http://stedolan.github.io/jq/</a></li>
+</ul>
+<hr>
+<h2 id="Test-Case"><a href="#Test-Case" class="headerlink" title="Test Case"></a>Test Case</h2><p>In data pipeline system and configuration management systems, it’s very common that you need execute a bunch of jobs which has dependencies with each other.</p>
+<p>Write a program <code>pipeline_runner</code> to execute a list of shell scripts. The definition of those scripts and their dependencies are described in a JSON file. The program only takes in one argument which is the file path of JSON file that defines the jobs. </p>
+<p>For example,<br>&#x2F;&#x2F; jobs.json</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;log0_compressed&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;commands&quot;</span><span class="punctuation">:</span> <span class="string">&quot;curl http://websrv0/logs/access.log.gz &gt; access0.log.gz&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;input&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;output&quot;</span><span class="punctuation">:</span> <span class="string">&quot;access0.log.gz&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;log0&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;commands&quot;</span><span class="punctuation">:</span> <span class="string">&quot;gunzip access0.log.gz&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;input&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;access0.log.gz&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;output&quot;</span><span class="punctuation">:</span> <span class="string">&quot;access0.log&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;log1_compressed&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;commands&quot;</span><span class="punctuation">:</span> <span class="string">&quot;curl http://websrv1/logs/access.log.gz &gt; access1.log.gz&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;input&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;output&quot;</span><span class="punctuation">:</span> <span class="string">&quot;access1.log.gz&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;log1&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;commands&quot;</span><span class="punctuation">:</span> <span class="string">&quot;gunzip access1.log.gz&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;input&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;access1.log.gz&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;output&quot;</span><span class="punctuation">:</span> <span class="string">&quot;access1.log&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;log_combined&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;commands&quot;</span><span class="punctuation">:</span> <span class="string">&quot;cat access0.log access1.log &gt; access.log&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;input&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;access0.log&quot;</span><span class="punctuation">,</span> <span class="string">&quot;access1.log&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;output&quot;</span><span class="punctuation">:</span> <span class="string">&quot;access.log&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>To run the program</p>
+<pre><code>pipeline_runner jobs.json
+</code></pre>
+<p>As you can see, each job has its input files and output files.</p>
+<ul>
+<li>A job will only be executed if all its input files exist.</li>
+<li>A job can have multiple input files (or none) but only produce one output file.</li>
+<li>Users could run the program multiple times, but if a job’s output file already exists, the program would skip the job.</li>
+</ul>
+<p>If you’re still not very clear,  think of <code>Makefile</code> in Linux systems. The logic is quite similar.</p>
+<blockquote>
+<p>You could complete the test with the programming language you preferred. </p>
+</blockquote>
+<h2 id="Bash-Shell"><a href="#Bash-Shell" class="headerlink" title="Bash Shell"></a>Bash Shell</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># dos2unix *.sh</span></span><br><span class="line"><span class="comment"># Program:</span></span><br><span class="line"><span class="comment"># This program to test json.</span></span><br><span class="line"><span class="comment"># History:</span></span><br><span class="line"><span class="comment"># 2015/06/18 by OX</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#---------------------------- custom variables ---------------------start</span></span><br><span class="line">runuser=root</span><br><span class="line"></span><br><span class="line"><span class="comment"># commands</span></span><br><span class="line">log_combined_commands=`<span class="built_in">cat</span> jobs.json | ./jq -r <span class="string">&#x27;.log_combined.commands&#x27;</span>`</span><br><span class="line">log1_commands=`<span class="built_in">cat</span> jobs.json | ./jq -r <span class="string">&#x27;.log1.commands&#x27;</span>`</span><br><span class="line">log1_compressed_commands=`<span class="built_in">cat</span> jobs.json | ./jq -r <span class="string">&#x27;.log1_compressed.commands&#x27;</span>`</span><br><span class="line">log0_commands=`<span class="built_in">cat</span> jobs.json | ./jq -r <span class="string">&#x27;.log0.commands&#x27;</span>`</span><br><span class="line">log0_compressed_commands=`<span class="built_in">cat</span> jobs.json | ./jq -r <span class="string">&#x27;.log0_compressed.commands&#x27;</span>`</span><br><span class="line"></span><br><span class="line"><span class="comment"># input file name</span></span><br><span class="line">log0_input=`<span class="built_in">cat</span> jobs.json | ./jq -r <span class="string">&#x27;.log0.input[0]&#x27;</span>`</span><br><span class="line">log1_input=`<span class="built_in">cat</span> jobs.json | ./jq -r <span class="string">&#x27;.log1.input[0]&#x27;</span>`</span><br><span class="line">log_combined_input1=`<span class="built_in">cat</span> jobs.json | ./jq -r <span class="string">&#x27;.log_combined.input[0]&#x27;</span>`</span><br><span class="line">log_combined_input2=`<span class="built_in">cat</span> jobs.json | ./jq -r <span class="string">&#x27;.log_combined.input[1]&#x27;</span>`</span><br><span class="line"></span><br><span class="line"><span class="comment"># output file name</span></span><br><span class="line">log_combined_output=`<span class="built_in">cat</span> jobs.json | ./jq -r <span class="string">&#x27;.log_combined.output&#x27;</span>`</span><br><span class="line">log1_output=`<span class="built_in">cat</span> jobs.json | ./jq -r <span class="string">&#x27;.log1.output&#x27;</span>`</span><br><span class="line">log1_compressed_output=`<span class="built_in">cat</span> jobs.json | ./jq -r <span class="string">&#x27;.log1_compressed.output&#x27;</span>`</span><br><span class="line">log0_output=`<span class="built_in">cat</span> jobs.json | ./jq -r <span class="string">&#x27;.log0.output&#x27;</span>`</span><br><span class="line">log0_compressed_output=`<span class="built_in">cat</span> jobs.json | ./jq -r <span class="string">&#x27;.log0_compressed.output&#x27;</span>`</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#---------------------------- custom variables ---------------------end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#---------------------------- user check ---------------------start</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">&quot;`whoami`&quot;</span> != <span class="string">&quot;<span class="variable">$runuser</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;Please re-run <span class="variable">$&#123;this_file&#125;</span> as <span class="variable">$runuser</span>.&quot;</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="comment">#---------------------------- user check ---------------------end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#---------------------------- function ---------------------start</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">pause</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">read</span> -n1 -p <span class="string">&quot;Press any key to continue...&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">log_combined_check_first</span></span>()</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">if</span> [ -f <span class="string">&quot;<span class="variable">$log_combined_output</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">   <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$&#123;log_combined_output&#125;</span> has been generated, the programe will exit&quot;</span></span><br><span class="line">   <span class="built_in">exit</span> 0</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">log0_compressed_check</span></span>()</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">if</span> [ ! -f <span class="string">&quot;<span class="variable">$log0_compressed_output</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">   <span class="built_in">eval</span> <span class="variable">$&#123;log0_compressed_commands&#125;</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">log0_check</span></span>()</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">if</span> [ ! -f <span class="string">&quot;<span class="variable">$log0_output</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">   <span class="built_in">eval</span> <span class="variable">$&#123;log0_commands&#125;</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">log1_compressed_check</span></span>()</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">if</span> [ ! -f <span class="string">&quot;<span class="variable">$log1_compressed_output</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">   <span class="built_in">eval</span> <span class="variable">$&#123;log1_compressed_commands&#125;</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">log1_check</span></span>()</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">if</span> [ ! -f <span class="string">&quot;<span class="variable">$log1_output</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">   <span class="built_in">eval</span> <span class="variable">$&#123;log1_commands&#125;</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">log_combined_check</span></span>()</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">if</span> [ ! -f <span class="string">&quot;<span class="variable">$log_combined_output</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">   <span class="built_in">eval</span> <span class="variable">$&#123;log_combined_commands&#125;</span></span><br><span class="line">   <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$&#123;log_combined_output&#125;</span> has been generated, the programe will exit&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#---------------------------- function ---------------------end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#---------------------------- main ---------------------start</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;</span></span><br><span class="line"><span class="string">Please read first:</span></span><br><span class="line"><span class="string">[0]Check jobs.json and jq by yourself first</span></span><br><span class="line"><span class="string">[1]A job will only be executed if all its input files exist.</span></span><br><span class="line"><span class="string">[2]A job can have multiple input files (or none) but only produce one output file.</span></span><br><span class="line"><span class="string">[3]Users could run the program multiple times, but if a job&#x27;s output file already exists, the program would skip the job.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&quot;</span></span><br><span class="line">pause</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#check if file exist and do the job</span></span><br><span class="line"></span><br><span class="line">log_combined_check_first</span><br><span class="line"></span><br><span class="line">log0_compressed_check</span><br><span class="line">log0_check</span><br><span class="line"></span><br><span class="line">log1_compressed_check</span><br><span class="line">log1_check</span><br><span class="line"></span><br><span class="line">log_combined_check</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#---------------------------- main ---------------------end</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><blockquote>
+<p>我的代码未实现任意数量jobs的input，希望大牛指点</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">file://D:\pipeline (2 folders, 4 files, 490.55 KB, 531.04 KB <span class="keyword">in</span> total.)</span><br><span class="line">│  jobs.json 794 bytes</span><br><span class="line">│  jq 486.13 KB</span><br><span class="line">│  pipeline_runner 2.95 KB</span><br><span class="line">│  README.md 714 bytes</span><br><span class="line">├─logs (0 folders, 2 files, 248 bytes, 248 bytes <span class="keyword">in</span> total.)</span><br><span class="line">│      access0.log.gz 123 bytes</span><br><span class="line">│      access1.log.gz 125 bytes</span><br><span class="line">└─result (0 folders, 5 files, 40.25 KB, 40.25 KB <span class="keyword">in</span> total.)</span><br><span class="line">        access.log 20.00 KB</span><br><span class="line">        access0.log 10.00 KB</span><br><span class="line">        access0.log.gz 123 bytes</span><br><span class="line">        access1.log 10.00 KB</span><br><span class="line">        access1.log.gz 125 bytes</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="http://pan.baidu.com/s/1hq1rCP2">http://pan.baidu.com/s/1hq1rCP2</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/bash-json/" data-title="使用Bash Shell处理JSON文件 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/vagrant/" title="Windows上使用Vagrant打造Laravel Homestead可协同跨平台开发环境">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Windows上使用Vagrant打造Laravel Homestead可协同跨平台开发环境</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/linux-memory/"  title="Linux查看内存大小和插槽">
+ <strong>下一篇：</strong><br/> 
+ <span>Linux查看内存大小和插槽
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Test-Case"><span class="toc-number">3.</span> <span class="toc-text">Test Case</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bash-Shell"><span class="toc-number">4.</span> <span class="toc-text">Bash Shell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">5.</span> <span class="toc-text">小结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

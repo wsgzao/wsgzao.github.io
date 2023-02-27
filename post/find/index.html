@@ -1,0 +1,636 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>基于bash find命令执行log日志备份和清理的实践 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="基于bash find命令执行log日志备份和清理的实践">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于bash find命令执行log日志备份和清理的实践">
+<meta property="og:url" content="https://wsgzao.github.io/post/find/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="基于bash find命令执行log日志备份和清理的实践">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-07-29T06:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:06.783Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/find/" title="基于bash find命令执行log日志备份和清理的实践" itemprop="url">基于bash find命令执行log日志备份和清理的实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2019-07-29T06:59:49.000Z" itemprop="datePublished"> 发表于 2019-07-29</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#find"><span class="toc-number">3.</span> <span class="toc-text">find</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#How-to-use"><span class="toc-number">4.</span> <span class="toc-text">How to use</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#log-archive"><span class="toc-number">5.</span> <span class="toc-text">log archive</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#backup-and-rsync-scripts"><span class="toc-number">6.</span> <span class="toc-text">backup and rsync scripts</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#log-cleanup-exclude-list"><span class="toc-number">7.</span> <span class="toc-text">log cleanup exclude list</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>find作为最基础的bash shell命令之一我就不多做介绍了，由于每月压缩后的日志增长量已经超过20TB，和PB相比应该还不算很大，选择的日志归档同步方案是<a target="_blank" rel="noopener" href="https://github.com/facebookarchive/scribe">Facebook Scribe</a>，之后或许会基于<a target="_blank" rel="noopener" href="https://www.elastic.co/cn/what-is/elk-stack">ELK</a>或<a target="_blank" rel="noopener" href="https://grafana.com/oss/loki">Grafana Loki</a>搭建日志实时分析平台，不过眼下的问题还是想办法在没有商业化集中式存储和软件定义分布式存储的支持下，用比较简单粗暴的方法苦苦支撑，本文分享了一些简单的小技巧方便回顾和二次利用。</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019年07月29日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/find/">https://wsgzao.github.io/post/find/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p><a target="_blank" rel="noopener" href="https://linux.die.net/man/1/find">find</a></p>
+<hr>
+<h2 id="find"><a href="#find" class="headerlink" title="find"></a>find</h2><p>find - search for files in a directory hierarchy</p>
+<p><a target="_blank" rel="noopener" href="https://linux.die.net/man/1/find">https://linux.die.net/man/1/find</a></p>
+<p>find 命令用来在指定目录下查找文件。任何位于参数之前的字符串都将被视为欲查找的目录名。如果使用该命令时，不设置任何参数，则 find 命令将在当前目录下查找子目录与文件。并且将查找到的子目录和文件全部进行显示。</p>
+<p><a target="_blank" rel="noopener" href="https://man.linuxde.net/find">https://man.linuxde.net/find</a></p>
+<h2 id="How-to-use"><a href="#How-to-use" class="headerlink" title="How to use"></a>How to use</h2><blockquote>
+<p>log archive</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">SHELL=/bin/bash</span><br><span class="line">PATH=/sbin:/bin:/usr/sbin:/usr/bin</span><br><span class="line">MAILTO=root</span><br><span class="line"></span><br><span class="line"><span class="comment"># For details see man 4 crontabs</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Example of job definition:</span></span><br><span class="line"><span class="comment"># .---------------- minute (0 - 59)</span></span><br><span class="line"><span class="comment"># |  .------------- hour (0 - 23)</span></span><br><span class="line"><span class="comment"># |  |  .---------- day of month (1 - 31)</span></span><br><span class="line"><span class="comment"># |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...</span></span><br><span class="line"><span class="comment"># |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat</span></span><br><span class="line"><span class="comment"># |  |  |  |  |</span></span><br><span class="line"><span class="comment"># *  *  *  *  * user-name  command to be executed</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#zip</span></span><br><span class="line"><span class="comment">#15 3 * * * root cd /opt/sa_scripts/archive_from_date &amp;&amp; bash run.sh   /data/gop/live/primary/gop 2</span></span><br><span class="line">15 3 * * * root bash /opt/sa_scripts/archive_from_date/one_run_2d.sh</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>log backup and cleanup</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /data/scripts</span><br><span class="line">./check_original_log.sh 2019-05</span><br><span class="line">./move_backup.sh 2019-05</span><br><span class="line">./check_backup_log.sh 2019-05</span><br><span class="line"><span class="built_in">nohup</span> sh rsync_backup_10-71-12-61.sh &gt; <span class="built_in">log</span>/2019-04.rsync.out 2&gt;&amp;1 &amp;</span><br><span class="line"><span class="built_in">nohup</span> sh rsync_backup_10-71-14-132.sh &gt; <span class="built_in">log</span>/2019-05.rsync.out 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
+
+<h2 id="log-archive"><a href="#log-archive" class="headerlink" title="log archive"></a>log archive</h2><blockquote>
+<p>archive_from_date.sh</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#to compress all files like:</span></span><br><span class="line"><span class="comment">#auth_data-2017-01-11_00000</span></span><br><span class="line"><span class="comment">#auth_data-2017-01-11_00001</span></span><br><span class="line"><span class="comment">#auth_data-2017-01-11_00002</span></span><br><span class="line"><span class="comment">#auth_data-2017-01-11_00003</span></span><br><span class="line"><span class="comment">#auth_data-2017-01-12_00000</span></span><br><span class="line"><span class="comment">#auth_data-2017-01-12_00001</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#by day till the specified date</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">&quot;<span class="variable">$#</span>&quot;</span> -lt 2 ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">&quot;Usage: <span class="variable">$0</span> path archive_days [trailing_digit]&quot;</span></span><br><span class="line">	<span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">FILE_PATH=<span class="variable">$1</span></span><br><span class="line">ARCHIVE_DAYS=<span class="variable">$2</span></span><br><span class="line"><span class="comment">#seems no need traling digit param here</span></span><br><span class="line">TRAILING_DIGIT=<span class="variable">$3</span></span><br><span class="line"><span class="keyword">if</span> [ -z <span class="string">&quot;<span class="variable">$&#123;TRAILING_DIGIT//&#125;</span>&quot;</span> ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">	TRAILING_DIGIT=6</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">start_date=<span class="string">&quot;2017-01-01&quot;</span></span><br><span class="line"></span><br><span class="line">end_date=`<span class="built_in">date</span>`</span><br><span class="line">end_date=`<span class="built_in">date</span> -d -<span class="variable">$&#123;ARCHIVE_DAYS&#125;</span>days +%Y-%m-%d`</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Scanning from <span class="variable">$start_date</span> to <span class="variable">$end_date</span> (not inclusive)&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;==================================&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [[ <span class="string">&quot;<span class="variable">$end_date</span>&quot;</span> &lt; <span class="string">&quot;<span class="variable">$start_date</span>&quot;</span> ]]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">&quot;Invalid end date: <span class="variable">$end_date</span>,it should be later than start date: <span class="variable">$&#123;start_date&#125;</span>. Exit...&quot;</span></span><br><span class="line">	<span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">RESULT_PATH=/tmp/log_archive</span><br><span class="line"><span class="keyword">if</span> [ ! -d <span class="string">&quot;<span class="variable">$RESULT_PATH</span>&quot;</span> ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">	<span class="built_in">mkdir</span> -p <span class="variable">$RESULT_PATH</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$FILE_PATH</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> [ <span class="string">&quot;<span class="variable">$start_date</span>&quot;</span> != <span class="string">&quot;<span class="variable">$end_date</span>&quot;</span> ]</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">ls</span> *<span class="variable">$&#123;start_date&#125;</span>*[0-9] 1&gt;/dev/null 2&gt;&amp;1</span><br><span class="line">	<span class="keyword">then</span></span><br><span class="line">		<span class="built_in">echo</span> <span class="string">&quot;Compressing: <span class="variable">$start_date</span>&quot;</span></span><br><span class="line">		first_file=`<span class="built_in">ls</span> *<span class="variable">$&#123;start_date&#125;</span>*[0-9]|<span class="built_in">head</span> -1`</span><br><span class="line">		file_name=<span class="variable">$&#123;first_file%_*&#125;</span></span><br><span class="line">		tar cvzf <span class="variable">$&#123;file_name&#125;</span>.tgz <span class="variable">$&#123;file_name&#125;</span>*[0-9]</span><br><span class="line"></span><br><span class="line"><span class="comment">#		#Case 1: compare tar size with origin, uncomment if needed</span></span><br><span class="line"><span class="comment">#		original_size=`ls -l *$&#123;start_date&#125;*[0-9]|awk &#x27;&#123;sum+=$5&#125; END &#123;print sum&#125;&#x27;`</span></span><br><span class="line"><span class="comment">#		weighted_size=$((original_size/20))</span></span><br><span class="line"><span class="comment">#		tar_size=`ls -l $&#123;file_name&#125;.tgz|awk &#x27;&#123;print $5&#125;&#x27;`</span></span><br><span class="line"><span class="comment">#		echo $tar_size,$weighted_size</span></span><br><span class="line"><span class="comment">#		if (( $tar_size &lt; $weighted_size ))</span></span><br><span class="line"><span class="comment">#		then</span></span><br><span class="line"><span class="comment">#			echo &quot;tar size: $&#123;tar_size&#125;; weighted size:$&#123;weighted_size&#125;&quot;</span></span><br><span class="line"><span class="comment">#			echo &quot;tar size too small; not deleting origin&quot;</span></span><br><span class="line"><span class="comment">#			echo &quot;`pwd`: $file_name&quot; &gt;&gt;/opt/sa_scripts/archive/result</span></span><br><span class="line"><span class="comment">#		else</span></span><br><span class="line"><span class="comment">#			echo &quot;Done.Deleting origin.&quot;</span></span><br><span class="line"><span class="comment">#			rm $&#123;file_name&#125;*[0-9]</span></span><br><span class="line"><span class="comment">#		fi</span></span><br><span class="line"><span class="comment">#		#End of Case 1</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">##############</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">#Case 2, compare tar size with 0</span></span><br><span class="line">		tar_size=`<span class="built_in">ls</span> -l <span class="variable">$&#123;file_name&#125;</span>.tgz|awk <span class="string">&#x27;&#123;print $5&#125;&#x27;</span>`</span><br><span class="line">		<span class="keyword">if</span> (( <span class="variable">$tar_size</span> &gt; <span class="number">0</span> ))</span><br><span class="line">		<span class="keyword">then</span></span><br><span class="line">			<span class="built_in">echo</span> <span class="string">&quot;Done.Deleting origin.&quot;</span></span><br><span class="line">			<span class="built_in">rm</span> <span class="variable">$&#123;file_name&#125;</span>*[0-9]</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">			<span class="built_in">echo</span> <span class="string">&quot;tar file size is ZERO!&quot;</span></span><br><span class="line">			<span class="built_in">echo</span> <span class="string">&quot;`pwd`: <span class="variable">$file_name</span>&quot;</span> &gt;&gt;<span class="variable">$RESULT_PATH</span></span><br><span class="line">		<span class="keyword">fi</span></span><br><span class="line">		<span class="comment">#End of Case 2</span></span><br><span class="line">	<span class="keyword">fi</span></span><br><span class="line">	start_date=$(<span class="built_in">date</span> -I -d <span class="string">&quot;<span class="variable">$start_date</span> +1day&quot;</span>)</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>archive_from_day.sh</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># bash one_day.sh /data/gop/live/primary/gop 2017-01-11</span></span><br><span class="line"></span><br><span class="line">FILE_PATH=<span class="variable">$1</span></span><br><span class="line">ARCHIVE_DAYS=<span class="variable">$2</span></span><br><span class="line"></span><br><span class="line">start_date=<span class="variable">$ARCHIVE_DAYS</span></span><br><span class="line"></span><br><span class="line">end_date=<span class="variable">$ARCHIVE_DAYS</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Scanning from <span class="variable">$start_date</span> to <span class="variable">$end_date</span> (not inclusive)&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;==================================&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">RESULT_PATH=/tmp/log_archive</span><br><span class="line"><span class="keyword">if</span> [ ! -d <span class="string">&quot;<span class="variable">$RESULT_PATH</span>&quot;</span> ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">	<span class="built_in">mkdir</span> -p <span class="variable">$RESULT_PATH</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$FILE_PATH</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="built_in">ls</span> *<span class="variable">$&#123;start_date&#125;</span>*[0-9] 1&gt;/dev/null 2&gt;&amp;1</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">&quot;Compressing: <span class="variable">$start_date</span>&quot;</span></span><br><span class="line">	first_file=`<span class="built_in">ls</span> *<span class="variable">$&#123;start_date&#125;</span>*[0-9]|<span class="built_in">head</span> -1`</span><br><span class="line">	file_name=<span class="variable">$&#123;first_file%_*&#125;</span></span><br><span class="line">	tar cvzf <span class="variable">$&#123;file_name&#125;</span>.tgz <span class="variable">$&#123;file_name&#125;</span>*[0-9]</span><br><span class="line">	<span class="comment">#Case 2, compare tar size with 0</span></span><br><span class="line">	tar_size=`<span class="built_in">ls</span> -l <span class="variable">$&#123;file_name&#125;</span>.tgz|awk <span class="string">&#x27;&#123;print $5&#125;&#x27;</span>`</span><br><span class="line">	<span class="keyword">if</span> (( <span class="variable">$tar_size</span> &gt; <span class="number">0</span> ))</span><br><span class="line">	<span class="keyword">then</span></span><br><span class="line">		<span class="built_in">echo</span> <span class="string">&quot;Done.Deleting origin.&quot;</span></span><br><span class="line">		<span class="built_in">rm</span> <span class="variable">$&#123;file_name&#125;</span>*[0-9]</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		<span class="built_in">echo</span> <span class="string">&quot;tar file size is ZERO!&quot;</span></span><br><span class="line">		<span class="built_in">echo</span> <span class="string">&quot;`pwd`: <span class="variable">$file_name</span>&quot;</span> &gt;&gt;<span class="variable">$RESULT_PATH</span></span><br><span class="line">	<span class="keyword">fi</span></span><br><span class="line">	<span class="comment">#End of Case 2</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>run.sh</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">PARENT_PATH=<span class="variable">$1</span></span><br><span class="line">ARCHIVE_DAY=<span class="variable">$2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">&quot;<span class="variable">$#</span>&quot;</span> -ne 2 ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">&quot;Usage: <span class="variable">$0</span> parent_path archive_day&quot;</span></span><br><span class="line">	<span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> folder <span class="keyword">in</span> $(find <span class="variable">$PARENT_PATH</span> -<span class="built_in">type</span> d -links 2)</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">&quot;processing:<span class="variable">$&#123;folder&#125;</span>...&quot;</span></span><br><span class="line">	./archive_from_date.sh <span class="variable">$folder</span> <span class="variable">$ARCHIVE_DAY</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>one_run_2d.sh</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">end_date=`<span class="built_in">date</span> -d -2days +%Y-%m-%d`</span><br><span class="line"></span><br><span class="line"><span class="built_in">nohup</span> bash /opt/sa_scripts/archive_from_date/one_run.sh /data/gop/live/primary/gop <span class="variable">$end_date</span> &gt; /opt/sa_scripts/archive_from_date/logs/<span class="variable">$end_date</span>.<span class="built_in">log</span> 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>one_run.sh</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">PARENT_PATH=<span class="variable">$1</span></span><br><span class="line">ARCHIVE_DAY=<span class="variable">$2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">&quot;<span class="variable">$#</span>&quot;</span> -ne 2 ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">&quot;Usage: <span class="variable">$0</span> parent_path archive_day&quot;</span></span><br><span class="line">	<span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> folder <span class="keyword">in</span> $(find <span class="variable">$PARENT_PATH</span> -<span class="built_in">type</span> d -links 2)</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">&quot;processing:<span class="variable">$&#123;folder&#125;</span>...&quot;</span></span><br><span class="line">	/opt/sa_scripts/archive_from_date/day.sh <span class="variable">$folder</span> <span class="variable">$ARCHIVE_DAY</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>log example</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br></pre></td><td class="code"><pre><span class="line">total 2197444</span><br><span class="line">-rw-r--r-- 1 root root 35386495 Jun  3 21:20 gop-live-point_txn_aggregator-data-2019-06-01.tgz</span><br><span class="line">-rw-r--r-- 1 root root 33273034 Jun  4 20:37 gop-live-point_txn_aggregator-data-2019-06-02.tgz</span><br><span class="line">-rw-r--r-- 1 root root 33390884 Jun  5 20:23 gop-live-point_txn_aggregator-data-2019-06-03.tgz</span><br><span class="line">-rw-r--r-- 1 root root 35553038 Jun  6 20:18 gop-live-point_txn_aggregator-data-2019-06-04.tgz</span><br><span class="line">-rw-r--r-- 1 root root 35081679 Jun  7 19:16 gop-live-point_txn_aggregator-data-2019-06-05.tgz</span><br><span class="line">-rw-r--r-- 1 root root 35397705 Jun  8 19:17 gop-live-point_txn_aggregator-data-2019-06-06.tgz</span><br><span class="line">-rw-r--r-- 1 root root 36039754 Jun  9 18:55 gop-live-point_txn_aggregator-data-2019-06-07.tgz</span><br><span class="line">-rw-r--r-- 1 root root 38596404 Jun 10 20:22 gop-live-point_txn_aggregator-data-2019-06-08.tgz</span><br><span class="line">-rw-r--r-- 1 root root 38048982 Jun 11 20:26 gop-live-point_txn_aggregator-data-2019-06-09.tgz</span><br><span class="line">-rw-r--r-- 1 root root 33026017 Jun 12 19:16 gop-live-point_txn_aggregator-data-2019-06-10.tgz</span><br><span class="line">-rw-r--r-- 1 root root 29198108 Jun 13 19:56 gop-live-point_txn_aggregator-data-2019-06-11.tgz</span><br><span class="line">-rw-r--r-- 1 root root 25771109 Jun 14 19:19 gop-live-point_txn_aggregator-data-2019-06-12.tgz</span><br><span class="line">-rw-r--r-- 1 root root 26092930 Jun 15 19:09 gop-live-point_txn_aggregator-data-2019-06-13.tgz</span><br><span class="line">-rw-r--r-- 1 root root 35349519 Jun 16 19:13 gop-live-point_txn_aggregator-data-2019-06-14.tgz</span><br><span class="line">-rw-r--r-- 1 root root 31780817 Jun 17 21:27 gop-live-point_txn_aggregator-data-2019-06-15.tgz</span><br><span class="line">-rw-r--r-- 1 root root 36549729 Jun 18 21:57 gop-live-point_txn_aggregator-data-2019-06-16.tgz</span><br><span class="line">-rw-r--r-- 1 root root 26007332 Jun 19 19:58 gop-live-point_txn_aggregator-data-2019-06-17.tgz</span><br><span class="line">-rw-r--r-- 1 root root 25114440 Jun 20 19:20 gop-live-point_txn_aggregator-data-2019-06-18.tgz</span><br><span class="line">-rw-r--r-- 1 root root 22494565 Jun 21 19:25 gop-live-point_txn_aggregator-data-2019-06-19.tgz</span><br><span class="line">-rw-r--r-- 1 root root 25132986 Jun 22 19:19 gop-live-point_txn_aggregator-data-2019-06-20.tgz</span><br><span class="line">-rw-r--r-- 1 root root 30698833 Jun 23 20:08 gop-live-point_txn_aggregator-data-2019-06-21.tgz</span><br><span class="line">-rw-r--r-- 1 root root 38639032 Jun 24 21:12 gop-live-point_txn_aggregator-data-2019-06-22.tgz</span><br><span class="line">-rw-r--r-- 1 root root 31422932 Jun 25 21:27 gop-live-point_txn_aggregator-data-2019-06-23.tgz</span><br><span class="line">-rw-r--r-- 1 root root 25262186 Jun 26 19:57 gop-live-point_txn_aggregator-data-2019-06-24.tgz</span><br><span class="line">-rw-r--r-- 1 root root 25402079 Jun 27 19:30 gop-live-point_txn_aggregator-data-2019-06-25.tgz</span><br><span class="line">-rw-r--r-- 1 root root 22227072 Jun 28 17:09 gop-live-point_txn_aggregator-data-2019-06-26.tgz</span><br><span class="line">-rw-r--r-- 1 root root 26174268 Jun 29 19:59 gop-live-point_txn_aggregator-data-2019-06-27.tgz</span><br><span class="line">-rw-r--r-- 1 root root 27484303 Jun 30 20:43 gop-live-point_txn_aggregator-data-2019-06-28.tgz</span><br><span class="line">-rw-r--r-- 1 root root 25607704 Jul  1 21:37 gop-live-point_txn_aggregator-data-2019-06-29.tgz</span><br><span class="line">-rw-r--r-- 1 root root 23545276 Jul  2 21:34 gop-live-point_txn_aggregator-data-2019-06-30.tgz</span><br><span class="line">-rw-r--r-- 1 root root 28956480 Jul  3 21:03 gop-live-point_txn_aggregator-data-2019-07-01.tgz</span><br><span class="line">-rw-r--r-- 1 root root 27250475 Jul  4 20:21 gop-live-point_txn_aggregator-data-2019-07-02.tgz</span><br><span class="line">-rw-r--r-- 1 root root 26443417 Jul  5 20:56 gop-live-point_txn_aggregator-data-2019-07-03.tgz</span><br><span class="line">-rw-r--r-- 1 root root 23445274 Jul  6 20:28 gop-live-point_txn_aggregator-data-2019-07-04.tgz</span><br><span class="line">-rw-r--r-- 1 root root 35914567 Jul  7 21:01 gop-live-point_txn_aggregator-data-2019-07-05.tgz</span><br><span class="line">-rw-r--r-- 1 root root 42759699 Jul  8 21:46 gop-live-point_txn_aggregator-data-2019-07-06.tgz</span><br><span class="line">-rw-r--r-- 1 root root 41146298 Jul  9 23:28 gop-live-point_txn_aggregator-data-2019-07-07.tgz</span><br><span class="line">-rw-r--r-- 1 root root 30890861 Jul 10 21:50 gop-live-point_txn_aggregator-data-2019-07-08.tgz</span><br><span class="line">-rw-r--r-- 1 root root 29505781 Jul 11 22:16 gop-live-point_txn_aggregator-data-2019-07-09.tgz</span><br><span class="line">-rw-r--r-- 1 root root 25130694 Jul 12 21:04 gop-live-point_txn_aggregator-data-2019-07-10.tgz</span><br><span class="line">-rw-r--r-- 1 root root 30355468 Jul 13 21:44 gop-live-point_txn_aggregator-data-2019-07-11.tgz</span><br><span class="line">-rw-r--r-- 1 root root 32142222 Jul 14 22:47 gop-live-point_txn_aggregator-data-2019-07-12.tgz</span><br><span class="line">-rw-r--r-- 1 root root 30846192 Jul 15 22:54 gop-live-point_txn_aggregator-data-2019-07-13.tgz</span><br><span class="line">-rw-r--r-- 1 root root 32435568 Jul 17 00:21 gop-live-point_txn_aggregator-data-2019-07-14.tgz</span><br><span class="line">-rw-r--r-- 1 root root 24601862 Jul 17 23:54 gop-live-point_txn_aggregator-data-2019-07-15.tgz</span><br><span class="line">-rw-r--r-- 1 root root 26708856 Jul 19 00:54 gop-live-point_txn_aggregator-data-2019-07-16.tgz</span><br><span class="line">-rw-r--r-- 1 root root 21915660 Jul 19 23:23 gop-live-point_txn_aggregator-data-2019-07-17.tgz</span><br><span class="line">-rw-r--r-- 1 root root 19324816 Jul 21 00:01 gop-live-point_txn_aggregator-data-2019-07-18.tgz</span><br><span class="line">-rw-r--r-- 1 root root 29234368 Jul 22 00:47 gop-live-point_txn_aggregator-data-2019-07-19.tgz</span><br><span class="line">-rw-r--r-- 1 root root 32138171 Jul 23 02:44 gop-live-point_txn_aggregator-data-2019-07-20.tgz</span><br><span class="line">-rw-r--r-- 1 root root 31359175 Jul 24 04:05 gop-live-point_txn_aggregator-data-2019-07-21.tgz</span><br><span class="line">-rw-r--r-- 1 root root 26123344 Jul 24 23:36 gop-live-point_txn_aggregator-data-2019-07-22.tgz</span><br><span class="line">-rw-r--r-- 1 root root 25337107 Jul 26 00:10 gop-live-point_txn_aggregator-data-2019-07-23.tgz</span><br><span class="line">-rw-r--r-- 1 root root 23113614 Jul 26 23:52 gop-live-point_txn_aggregator-data-2019-07-24.tgz</span><br><span class="line">-rw-r--r-- 1 root root 22578291 Jul 28 00:37 gop-live-point_txn_aggregator-data-2019-07-25.tgz</span><br><span class="line">-rw-r--r-- 1 root root 28572628 Jul 29 01:21 gop-live-point_txn_aggregator-data-2019-07-26.tgz</span><br><span class="line">-rw-r--r-- 1 root root 29820440 Jul 30 01:18 gop-live-point_txn_aggregator-data-2019-07-27.tgz</span><br><span class="line">-rw-r--r-- 1 root root 25214160 Jul 31 01:26 gop-live-point_txn_aggregator-data-2019-07-28.tgz</span><br><span class="line">-rw-r--r-- 1 root root 20978337 Aug  1 00:27 gop-live-point_txn_aggregator-data-2019-07-29.tgz</span><br><span class="line">-rw-r--r-- 1 root root 22192620 Aug  1 23:12 gop-live-point_txn_aggregator-data-2019-07-30.tgz</span><br><span class="line">-rw-r--r-- 1 root root  6329205 Jul 31 00:59 gop-live-point_txn_aggregator-data-2019-07-31_00000</span><br><span class="line">-rw-r--r-- 1 root root  5786176 Jul 31 02:00 gop-live-point_txn_aggregator-data-2019-07-31_00001</span><br><span class="line">-rw-r--r-- 1 root root  5451181 Jul 31 03:00 gop-live-point_txn_aggregator-data-2019-07-31_00002</span><br><span class="line">-rw-r--r-- 1 root root  5621760 Jul 31 04:00 gop-live-point_txn_aggregator-data-2019-07-31_00003</span><br><span class="line">-rw-r--r-- 1 root root  5820921 Jul 31 05:00 gop-live-point_txn_aggregator-data-2019-07-31_00004</span><br><span class="line">-rw-r--r-- 1 root root  6088472 Jul 31 05:59 gop-live-point_txn_aggregator-data-2019-07-31_00005</span><br><span class="line">-rw-r--r-- 1 root root  6048663 Jul 31 06:59 gop-live-point_txn_aggregator-data-2019-07-31_00006</span><br><span class="line">-rw-r--r-- 1 root root  6434107 Jul 31 08:00 gop-live-point_txn_aggregator-data-2019-07-31_00007</span><br><span class="line">-rw-r--r-- 1 root root  6937321 Jul 31 09:00 gop-live-point_txn_aggregator-data-2019-07-31_00008</span><br><span class="line">-rw-r--r-- 1 root root  6717315 Jul 31 09:59 gop-live-point_txn_aggregator-data-2019-07-31_00009</span><br><span class="line">-rw-r--r-- 1 root root  6667836 Jul 31 10:59 gop-live-point_txn_aggregator-data-2019-07-31_00010</span><br><span class="line">-rw-r--r-- 1 root root  6559363 Jul 31 12:00 gop-live-point_txn_aggregator-data-2019-07-31_00011</span><br><span class="line">-rw-r--r-- 1 root root  6107832 Jul 31 12:59 gop-live-point_txn_aggregator-data-2019-07-31_00012</span><br><span class="line">-rw-r--r-- 1 root root  6323896 Jul 31 13:59 gop-live-point_txn_aggregator-data-2019-07-31_00013</span><br><span class="line">-rw-r--r-- 1 root root  6389052 Jul 31 15:00 gop-live-point_txn_aggregator-data-2019-07-31_00014</span><br><span class="line">-rw-r--r-- 1 root root  6504740 Jul 31 16:00 gop-live-point_txn_aggregator-data-2019-07-31_00015</span><br><span class="line">-rw-r--r-- 1 root root  6796378 Jul 31 17:00 gop-live-point_txn_aggregator-data-2019-07-31_00016</span><br><span class="line">-rw-r--r-- 1 root root  7878303 Jul 31 18:00 gop-live-point_txn_aggregator-data-2019-07-31_00017</span><br><span class="line">-rw-r--r-- 1 root root  8900771 Jul 31 19:00 gop-live-point_txn_aggregator-data-2019-07-31_00018</span><br><span class="line">-rw-r--r-- 1 root root  9379681 Jul 31 20:00 gop-live-point_txn_aggregator-data-2019-07-31_00019</span><br><span class="line">-rw-r--r-- 1 root root 10435828 Jul 31 21:00 gop-live-point_txn_aggregator-data-2019-07-31_00020</span><br><span class="line">-rw-r--r-- 1 root root 10127803 Jul 31 22:00 gop-live-point_txn_aggregator-data-2019-07-31_00021</span><br><span class="line">-rw-r--r-- 1 root root  8788741 Jul 31 22:59 gop-live-point_txn_aggregator-data-2019-07-31_00022</span><br><span class="line">-rw-r--r-- 1 root root  7747234 Jul 31 23:59 gop-live-point_txn_aggregator-data-2019-07-31_00023</span><br><span class="line">-rw-r--r-- 1 root root  6983387 Aug  1 00:59 gop-live-point_txn_aggregator-data-2019-08-01_00000</span><br><span class="line">-rw-r--r-- 1 root root  6572435 Aug  1 02:00 gop-live-point_txn_aggregator-data-2019-08-01_00001</span><br><span class="line">-rw-r--r-- 1 root root  5959884 Aug  1 03:00 gop-live-point_txn_aggregator-data-2019-08-01_00002</span><br><span class="line">-rw-r--r-- 1 root root  5834298 Aug  1 04:00 gop-live-point_txn_aggregator-data-2019-08-01_00003</span><br><span class="line">-rw-r--r-- 1 root root  6008950 Aug  1 04:59 gop-live-point_txn_aggregator-data-2019-08-01_00004</span><br><span class="line">-rw-r--r-- 1 root root  6614511 Aug  1 06:00 gop-live-point_txn_aggregator-data-2019-08-01_00005</span><br><span class="line">-rw-r--r-- 1 root root  6934464 Aug  1 07:00 gop-live-point_txn_aggregator-data-2019-08-01_00006</span><br><span class="line">-rw-r--r-- 1 root root  7501841 Aug  1 08:00 gop-live-point_txn_aggregator-data-2019-08-01_00007</span><br><span class="line">-rw-r--r-- 1 root root  8018389 Aug  1 09:00 gop-live-point_txn_aggregator-data-2019-08-01_00008</span><br><span class="line">-rw-r--r-- 1 root root  8113113 Aug  1 10:00 gop-live-point_txn_aggregator-data-2019-08-01_00009</span><br><span class="line">-rw-r--r-- 1 root root  8247397 Aug  1 11:00 gop-live-point_txn_aggregator-data-2019-08-01_00010</span><br><span class="line">-rw-r--r-- 1 root root  9334051 Aug  1 12:00 gop-live-point_txn_aggregator-data-2019-08-01_00011</span><br><span class="line">-rw-r--r-- 1 root root  8284898 Aug  1 12:59 gop-live-point_txn_aggregator-data-2019-08-01_00012</span><br><span class="line">-rw-r--r-- 1 root root  9218796 Aug  1 14:00 gop-live-point_txn_aggregator-data-2019-08-01_00013</span><br><span class="line">-rw-r--r-- 1 root root  7875013 Aug  1 15:00 gop-live-point_txn_aggregator-data-2019-08-01_00014</span><br><span class="line">-rw-r--r-- 1 root root  4420827 Aug  1 16:00 gop-live-point_txn_aggregator-data-2019-08-01_00015</span><br><span class="line">-rw-r--r-- 1 root root  7999875 Aug  1 16:59 gop-live-point_txn_aggregator-data-2019-08-01_00016</span><br><span class="line">-rw-r--r-- 1 root root  9480688 Aug  1 18:00 gop-live-point_txn_aggregator-data-2019-08-01_00017</span><br><span class="line">-rw-r--r-- 1 root root 10069991 Aug  1 19:00 gop-live-point_txn_aggregator-data-2019-08-01_00018</span><br><span class="line">-rw-r--r-- 1 root root 11397317 Aug  1 20:00 gop-live-point_txn_aggregator-data-2019-08-01_00019</span><br><span class="line">-rw-r--r-- 1 root root 12597957 Aug  1 21:00 gop-live-point_txn_aggregator-data-2019-08-01_00020</span><br><span class="line">-rw-r--r-- 1 root root 11541451 Aug  1 22:00 gop-live-point_txn_aggregator-data-2019-08-01_00021</span><br><span class="line">-rw-r--r-- 1 root root 10813577 Aug  1 23:00 gop-live-point_txn_aggregator-data-2019-08-01_00022</span><br><span class="line">-rw-r--r-- 1 root root  9507499 Aug  2 00:00 gop-live-point_txn_aggregator-data-2019-08-01_00023</span><br><span class="line">-rw-r--r-- 1 root root  8110763 Aug  2 01:00 gop-live-point_txn_aggregator-data-2019-08-02_00000</span><br><span class="line">-rw-r--r-- 1 root root  7238339 Aug  2 02:00 gop-live-point_txn_aggregator-data-2019-08-02_00001</span><br><span class="line">-rw-r--r-- 1 root root  6577030 Aug  2 02:59 gop-live-point_txn_aggregator-data-2019-08-02_00002</span><br><span class="line">-rw-r--r-- 1 root root  6586196 Aug  2 04:00 gop-live-point_txn_aggregator-data-2019-08-02_00003</span><br><span class="line">-rw-r--r-- 1 root root  6883540 Aug  2 05:00 gop-live-point_txn_aggregator-data-2019-08-02_00004</span><br><span class="line">-rw-r--r-- 1 root root  7172237 Aug  2 06:00 gop-live-point_txn_aggregator-data-2019-08-02_00005</span><br><span class="line">-rw-r--r-- 1 root root  7293336 Aug  2 07:00 gop-live-point_txn_aggregator-data-2019-08-02_00006</span><br><span class="line">-rw-r--r-- 1 root root  7728992 Aug  2 08:00 gop-live-point_txn_aggregator-data-2019-08-02_00007</span><br><span class="line">-rw-r--r-- 1 root root  8154425 Aug  2 09:00 gop-live-point_txn_aggregator-data-2019-08-02_00008</span><br><span class="line">-rw-r--r-- 1 root root  8036346 Aug  2 09:59 gop-live-point_txn_aggregator-data-2019-08-02_00009</span><br><span class="line">-rw-r--r-- 1 root root  7940669 Aug  2 11:00 gop-live-point_txn_aggregator-data-2019-08-02_00010</span><br><span class="line">-rw-r--r-- 1 root root  7901900 Aug  2 12:00 gop-live-point_txn_aggregator-data-2019-08-02_00011</span><br><span class="line">-rw-r--r-- 1 root root  8501400 Aug  2 13:00 gop-live-point_txn_aggregator-data-2019-08-02_00012</span><br><span class="line">-rw-r--r-- 1 root root  8024730 Aug  2 13:59 gop-live-point_txn_aggregator-data-2019-08-02_00013</span><br><span class="line">-rw-r--r-- 1 root root  8413981 Aug  2 14:59 gop-live-point_txn_aggregator-data-2019-08-02_00014</span><br><span class="line">-rw-r--r-- 1 root root  5899646 Aug  2 15:50 gop-live-point_txn_aggregator-data-2019-08-02_00015</span><br><span class="line">lrwxrwxrwx 1 root root       51 Aug  2 15:00 gop-live-point_txn_aggregator-data_current -&gt; gop-live-point_txn_aggregator-data-2019-08-02_00015</span><br></pre></td></tr></table></figure>
+
+<h2 id="backup-and-rsync-scripts"><a href="#backup-and-rsync-scripts" class="headerlink" title="backup and rsync scripts"></a>backup and rsync scripts</h2><blockquote>
+<p>check_original_log.sh</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">var_date=<span class="variable">$1</span></span><br><span class="line">var_src=<span class="string">&quot;/data/gop/live/primary/gop&quot;</span></span><br><span class="line">find <span class="variable">$&#123;var_src&#125;</span> | grep -i <span class="variable">$&#123;var_date&#125;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>check_backup_log.sh</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">var_date=<span class="variable">$1</span></span><br><span class="line">var_src=<span class="string">&quot;/data/backup/&quot;</span></span><br><span class="line">find <span class="variable">$&#123;var_src&#125;</span> | grep -i <span class="variable">$&#123;var_date&#125;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>copy_dir_to_backup.sh</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">var_path=<span class="string">&quot;/data/gop/live/primary/gop/&quot;</span></span><br><span class="line">var_str=<span class="string">&quot;/data/backup/&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># rsync copy all directories </span></span><br><span class="line"><span class="comment"># rsync -anv --include=&#x27;*/&#x27; --exclude=&#x27;*&#x27; $&#123;var_path&#125; $&#123;var_str&#125;</span></span><br><span class="line">rsync -a --include=<span class="string">&#x27;*/&#x27;</span> --exclude=<span class="string">&#x27;*&#x27;</span> <span class="variable">$&#123;var_path&#125;</span> <span class="variable">$&#123;var_str&#125;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>move_backup.sh</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">var_date=<span class="variable">$1</span></span><br><span class="line">var_path=<span class="string">&quot;/data/gop/live/primary/gop&quot;</span></span><br><span class="line">var_str=<span class="string">&quot;/data/backup&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># analyze log</span></span><br><span class="line"></span><br><span class="line">find <span class="variable">$&#123;var_path&#125;</span> | grep -i <span class="variable">$&#123;var_date&#125;</span> &gt; <span class="built_in">log</span>/<span class="variable">$&#123;var_date&#125;</span>.ori.out</span><br><span class="line"><span class="built_in">cp</span> <span class="built_in">log</span>/<span class="variable">$&#123;var_date&#125;</span>.ori.out <span class="built_in">log</span>/<span class="variable">$&#123;var_date&#125;</span>.mod.out</span><br><span class="line">sed -i <span class="string">&quot;s:/data/gop/live/primary/gop:<span class="variable">$&#123;var_str&#125;</span>:g&quot;</span> <span class="built_in">log</span>/<span class="variable">$&#123;var_date&#125;</span>.mod.out</span><br><span class="line"></span><br><span class="line"><span class="comment"># merge move action</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">paste</span> -d <span class="string">&quot;|&quot;</span> <span class="built_in">log</span>/<span class="variable">$&#123;var_date&#125;</span>.ori.out <span class="built_in">log</span>/<span class="variable">$&#123;var_date&#125;</span>.mod.out &gt; <span class="built_in">log</span>/<span class="variable">$&#123;var_date&#125;</span>.out</span><br><span class="line"></span><br><span class="line"><span class="comment"># move files</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> `<span class="built_in">cat</span> <span class="built_in">log</span>/<span class="variable">$&#123;var_date&#125;</span>.out`</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">var_a=`<span class="built_in">echo</span> <span class="variable">$&#123;i&#125;</span> | <span class="built_in">cut</span> -f1 -d<span class="string">&quot;|&quot;</span>`</span><br><span class="line">var_b=`<span class="built_in">echo</span> <span class="variable">$&#123;i&#125;</span> | <span class="built_in">cut</span> -f2 -d<span class="string">&quot;|&quot;</span>`</span><br><span class="line"><span class="built_in">mv</span> <span class="variable">$&#123;var_a&#125;</span> <span class="variable">$&#123;var_b&#125;</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>rsync_backup.sh</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#!/bin/bash</span></span><br><span class="line">var_src=<span class="string">&quot;/data/backup/&quot;</span></span><br><span class="line">var_des=<span class="string">&quot;rsync://10.71.12.61:873/backup/&quot;</span></span><br><span class="line">rsync -aP <span class="variable">$&#123;var_src&#125;</span> <span class="variable">$&#123;var_des&#125;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>clean_backup_log.sh</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#!/bin/bash</span></span><br><span class="line">var_date=<span class="variable">$1</span></span><br><span class="line">var_src=<span class="string">&quot;/data/backup/&quot;</span></span><br><span class="line">find <span class="variable">$&#123;var_src&#125;</span> | grep -i <span class="variable">$&#123;var_date&#125;</span> | xargs <span class="built_in">rm</span> -f</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>log out samples</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"># 2019-05.ori.out</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-25.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-27.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-23.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-30.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-31.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-28.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-24.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-26.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-29.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_line_data_server-daemon/gop-live-gop_line_data_server-daemon-2019-05-31.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_line_data_server-daemon/gop-live-gop_line_data_server-daemon-2019-05-29.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_line_data_server-daemon/gop-live-gop_line_data_server-daemon-2019-05-23.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_line_data_server-daemon/gop-live-gop_line_data_server-daemon-2019-05-30.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_line_data_server-daemon/gop-live-gop_line_data_server-daemon-2019-05-27.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_line_data_server-daemon/gop-live-gop_line_data_server-daemon-2019-05-28.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_line_data_server-daemon/gop-live-gop_line_data_server-daemon-2019-05-24.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_line_data_server-daemon/gop-live-gop_line_data_server-daemon-2019-05-25.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_line_data_server-daemon/gop-live-gop_line_data_server-daemon-2019-05-26.tgz</span><br><span class="line"></span><br><span class="line"># 2019-05.mod.out</span><br><span class="line">/data/backup/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-25.tgz</span><br><span class="line">/data/backup/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-27.tgz</span><br><span class="line">/data/backup/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-23.tgz</span><br><span class="line">/data/backup/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-30.tgz</span><br><span class="line">/data/backup/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-31.tgz</span><br><span class="line">/data/backup/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-28.tgz</span><br><span class="line">/data/backup/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-24.tgz</span><br><span class="line">/data/backup/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-26.tgz</span><br><span class="line">/data/backup/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-29.tgz</span><br><span class="line">/data/backup/gop-live-gop_line_data_server-daemon/gop-live-gop_line_data_server-daemon-2019-05-31.tgz</span><br><span class="line">/data/backup/gop-live-gop_line_data_server-daemon/gop-live-gop_line_data_server-daemon-2019-05-29.tgz</span><br><span class="line">/data/backup/gop-live-gop_line_data_server-daemon/gop-live-gop_line_data_server-daemon-2019-05-23.tgz</span><br><span class="line">/data/backup/gop-live-gop_line_data_server-daemon/gop-live-gop_line_data_server-daemon-2019-05-30.tgz</span><br><span class="line">/data/backup/gop-live-gop_line_data_server-daemon/gop-live-gop_line_data_server-daemon-2019-05-27.tgz</span><br><span class="line">/data/backup/gop-live-gop_line_data_server-daemon/gop-live-gop_line_data_server-daemon-2019-05-28.tgz</span><br><span class="line">/data/backup/gop-live-gop_line_data_server-daemon/gop-live-gop_line_data_server-daemon-2019-05-24.tgz</span><br><span class="line">/data/backup/gop-live-gop_line_data_server-daemon/gop-live-gop_line_data_server-daemon-2019-05-25.tgz</span><br><span class="line">/data/backup/gop-live-gop_line_data_server-daemon/gop-live-gop_line_data_server-daemon-2019-05-26.tgz</span><br><span class="line"></span><br><span class="line"># 2019-05.out</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-25.tgz|/data/backup/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-25.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-27.tgz|/data/backup/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-27.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-23.tgz|/data/backup/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-23.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-30.tgz|/data/backup/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-30.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-31.tgz|/data/backup/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-31.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-28.tgz|/data/backup/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-28.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-24.tgz|/data/backup/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-24.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-26.tgz|/data/backup/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-26.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-29.tgz|/data/backup/gop-live-gop_huawei_data_server-daemon/gop-live-gop_huawei_data_server-daemon-2019-05-29.tgz</span><br><span class="line">/data/gop/live/primary/gop/gop-live-gop_line_data_server-daemon/gop-live-gop_line_data_server-daemon-2019-05-31.tgz|/data/backup/gop-live-gop_line_data_server-daemon/gop-live-gop_line_data_server-daemon-2019-05-31.tgz</span><br><span class="line"></span><br><span class="line"># 2019-05.rsync.out</span><br><span class="line">nohup: ignoring input</span><br><span class="line">sending incremental file list</span><br><span class="line">./</span><br><span class="line">gop-live-account.garena.com-access/</span><br><span class="line">gop-live-account.garena.com-access/gop-live-account.garena.com-access-2019-05-01.tgz</span><br><span class="line">^M         32,768   0%    0.00kB/s    0:00:00  ^M     75,551,185 100%  188.53MB/s    0:00:00 (xfr#1, ir-chk=1053/1441)</span><br><span class="line">gop-live-account.garena.com-access/gop-live-account.garena.com-access-2019-05-02.tgz</span><br><span class="line">^M         32,768   0%   81.01kB/s    0:15:24  ^M     74,896,153 100%   82.01MB/s    0:00:00 (xfr#2, ir-chk=1052/1441)</span><br></pre></td></tr></table></figure>
+
+<h2 id="log-cleanup-exclude-list"><a href="#log-cleanup-exclude-list" class="headerlink" title="log cleanup exclude list"></a>log cleanup exclude list</h2><p>&#x2F;data&#x2F;nc_backup</p>
+<p>gop-live-tcp_server<br>gop-live-sso_website<br>gop-live-app_point<br>gop-live-gop_vk_data_server<br>gop-live-gop_huawei_data_server<br>gop-live-gop_line_data_server<br>gop-live-gop_google_data_server<br>gop-live-gop_fb_data_server<br>gop-live-gop_data_server<br>gop-live-general-api_server<br>gop-live-payment_center<br>gop-live-msdk_api<br>gop-live-cron_autofix<br>gop-live-shell_api_server<br>gop-live-api_server<br>gop-staging-payment_center<br>gop-staging-msdk_api</p>
+<blockquote>
+<p>create python script to combine multiple lines</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">data=<span class="built_in">open</span>(<span class="string">&quot;file&quot;</span>).readlines()</span><br><span class="line"><span class="keyword">for</span> n,line <span class="keyword">in</span> <span class="built_in">enumerate</span>(data):</span><br><span class="line">    <span class="keyword">if</span> line.startswith(<span class="string">&quot;line&quot;</span>):</span><br><span class="line">       data[n] = <span class="string">&quot;\n&quot;</span>+line.rstrip()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">       data[n]=line.rstrip()</span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;|&#x27;</span>.join(data))</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># simple example</span><br><span class="line">Englist</span><br><span class="line">中文</span><br><span class="line"></span><br><span class="line">Englist|中文</span><br><span class="line"></span><br><span class="line"># can change line.startwith</span><br><span class="line">line1</span><br><span class="line">text1</span><br><span class="line">text2</span><br><span class="line">text3</span><br><span class="line">line2</span><br><span class="line">something1</span><br><span class="line">something2</span><br><span class="line"></span><br><span class="line">line1|text1|text2|text3|</span><br><span class="line">line2|something1|something2</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>use find to filter the log</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># use find command filter directory</span></span><br><span class="line">find /data/nc_backup -<span class="built_in">type</span> d &gt; log_source</span><br><span class="line">find /data/nc_backup -<span class="built_in">type</span> d | egrep -v <span class="string">&quot;gop-live-tcp_server|gop-live-sso_website|gop-live-app_point|gop-live-gop_vk_data_server|gop-live-gop_huawei_data_server|gop-live-gop_line_data_server|gop-live-gop_google_data_server|gop-live-gop_fb_data_server|gop-live-gop_data_server|gop-live-general-api_server|gop-live-payment_center|gop-live-msdk_api|gop-live-cron_autofix|gop-live-shell_api_server|gop-live-api_server|gop-staging-payment_center|gop-staging-msdk_api&quot;</span> &gt; log_target</span><br><span class="line"><span class="comment"># remove the fist line</span></span><br><span class="line">sed -i <span class="string">&#x27;1d&#x27;</span> log_source</span><br><span class="line">sed -i <span class="string">&#x27;1d&#x27;</span> log_target</span><br></pre></td></tr></table></figure>
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/find/" data-title="基于bash find命令执行log日志备份和清理的实践 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/thailand/" title="泰国普吉岛和甲米的旅游经历分享">
+  <strong>上一篇：</strong><br/>
+  <span>
+  泰国普吉岛和甲米的旅游经历分享</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/influxdb/"  title="InfluxDB 安装部署">
+ <strong>下一篇：</strong><br/> 
+ <span>InfluxDB 安装部署
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#find"><span class="toc-number">3.</span> <span class="toc-text">find</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#How-to-use"><span class="toc-number">4.</span> <span class="toc-text">How to use</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#log-archive"><span class="toc-number">5.</span> <span class="toc-text">log archive</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#backup-and-rsync-scripts"><span class="toc-number">6.</span> <span class="toc-text">backup and rsync scripts</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#log-cleanup-exclude-list"><span class="toc-number">7.</span> <span class="toc-text">log cleanup exclude list</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

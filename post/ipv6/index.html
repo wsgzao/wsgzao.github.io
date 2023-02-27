@@ -1,0 +1,660 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>IPv6与IPv4的基础知识学习分享 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="IPv6与IPv4的基础知识学习分享">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IPv6与IPv4的基础知识学习分享">
+<meta property="og:url" content="https://wsgzao.github.io/post/ipv6/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="IPv6与IPv4的基础知识学习分享">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/202211161719285.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/202211161749655.png">
+<meta property="article:published_time" content="2022-11-15T06:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:06.866Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/202211161719285.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/ipv6/" title="IPv6与IPv4的基础知识学习分享" itemprop="url">IPv6与IPv4的基础知识学习分享</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2022-11-15T06:59:49.000Z" itemprop="datePublished"> 发表于 2022-11-15</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IP-x2F-IPv4-x2F-IPv6-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-number">3.</span> <span class="toc-text">IP&#x2F;IPv4&#x2F;IPv6 基础知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8IPv6"><span class="toc-number">4.</span> <span class="toc-text">为什么要用IPv6</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IPv6-%E7%9A%84%E5%8F%91%E5%B1%95%E7%8E%B0%E7%8A%B6%E5%92%8C%E8%BF%87%E6%B8%A1%E6%8A%80%E6%9C%AF"><span class="toc-number">5.</span> <span class="toc-text">IPv6 的发展现状和过渡技术</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8C%E6%A0%88%E6%8A%80%E6%9C%AF%EF%BC%88Dual-Stack%EF%BC%89"><span class="toc-number">5.1.</span> <span class="toc-text">双栈技术（Dual Stack）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%8F%E8%AE%AE%E8%BD%AC%E6%8D%A2%E6%8A%80%E6%9C%AF%EF%BC%88NAT%EF%BC%89"><span class="toc-number">5.2.</span> <span class="toc-text">协议转换技术（NAT）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9A%A7%E9%81%93%E6%8A%80%E6%9C%AF%EF%BC%88Tunnel%EF%BC%89"><span class="toc-number">5.3.</span> <span class="toc-text">隧道技术（Tunnel）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IPv6%E5%9C%B0%E5%9D%80%E9%95%BF%E4%BB%80%E4%B9%88%E6%A0%B7"><span class="toc-number">6.</span> <span class="toc-text">IPv6地址长什么样</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#IPv6%E5%9C%B0%E5%9D%80%E6%A0%BC%E5%BC%8F"><span class="toc-number">6.1.</span> <span class="toc-text">IPv6地址格式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IPv6%E5%9C%B0%E5%9D%80%E5%A6%82%E4%BD%95%E7%BC%A9%E5%86%99"><span class="toc-number">6.2.</span> <span class="toc-text">IPv6地址如何缩写</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IPv6%E5%9C%B0%E5%9D%80%E7%9A%84%E6%8E%A9%E7%A0%81%E6%80%8E%E4%B9%88%E5%86%99"><span class="toc-number">6.3.</span> <span class="toc-text">IPv6地址的掩码怎么写</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E6%AE%8A%E5%9C%B0%E5%9D%80"><span class="toc-number">6.4.</span> <span class="toc-text">特殊地址</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IPv6-%E7%9A%84%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90"><span class="toc-number">6.5.</span> <span class="toc-text">IPv6 的域名解析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux-%E5%86%85%E6%A0%B8-IPv6-%E6%9E%B6%E6%9E%84%E7%AE%80%E6%9E%90"><span class="toc-number">7.</span> <span class="toc-text">Linux 内核 IPv6 架构简析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IPv6%E7%9B%B8%E5%85%B3%E7%BD%91%E7%BB%9C%E5%B7%A5%E5%85%B7"><span class="toc-number">8.</span> <span class="toc-text">IPv6相关网络工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IPv6-%E7%9A%84%E6%9C%AA%E6%9D%A5"><span class="toc-number">9.</span> <span class="toc-text">IPv6 的未来</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">10.</span> <span class="toc-text">参考文章</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>2019 年 11 月 26 日，负责英国、欧洲、中东和部分中亚地区互联网资源分配的欧洲网络协调中心（RIPE NCC）通过电子邮件宣布，其最后的 IPv4 地址空间储备池在 11 月 25 日 UTC + 1 15:35 完全耗尽。国务院办公厅《推进IPv6规模部署行动计划》要求2020年底市地级以上政府外网网站、国内用户量前100网站、5G网络及业务完成IPv6支持。随着IPv6升级改造，其实我们已经在不知不觉中逐步进入到全民IPv6的时代。</p>
+<p>本文主要记录IPv6与IPv4的区别，从IPv4过渡到IPv6的技术演进过程。</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2022年11月15日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/ipv6/">https://wsgzao.github.io/post/ipv6/</a></p>
+<hr>
+<h2 id="IP-x2F-IPv4-x2F-IPv6-基础知识"><a href="#IP-x2F-IPv4-x2F-IPv6-基础知识" class="headerlink" title="IP&#x2F;IPv4&#x2F;IPv6 基础知识"></a>IP&#x2F;IPv4&#x2F;IPv6 基础知识</h2><p>关于IPv6相关的新闻进展就不再赘述了，各位可以直接查看最新战况<br><a target="_blank" rel="noopener" href="https://www.ithome.com/search/ipv6.html">https://www.ithome.com/search/ipv6.html</a></p>
+<blockquote>
+<p>什么是 IP</p>
+</blockquote>
+<p>互联网协议 IP（Internet Protocol）主要定义了在相互连接的网络中如何传递数据。网络中的每一个设备（如计算机），要想和其它设备相互通信传递数据，就都需要一个像门牌号码一样的标识 —— 这个标识也就是我们熟悉的 IP 地址。</p>
+<blockquote>
+<p>IPv4</p>
+</blockquote>
+<p>目前被广泛使用的 IP 协议是 IPv4（IP Version 4），网络设备使用的地址即为 IPv4 地址。</p>
+<p>IPv4 地址长度为 32 bit，因此能提供的地址最多为 2 的 32 次方（约 43 亿）个地址。但是除去一些预留地址以及用于广播、测试、私有网络的专用地址外，实际可用地址是不足 43 亿的。</p>
+<p>互联网发展了这么多年，IPv4 地址一直被分配使用。2019 年 11 月 25 日，负责英国、欧洲、中东和部分中亚地区互联网资源分配的欧洲网络协调中心（RIPE NCC）宣布，全球所有 43 亿个 IPv4 地址已全部分配完毕。</p>
+<blockquote>
+<p>IPv6</p>
+</blockquote>
+<p>不论是国家、行业还是个人，对 IPv6（IP Version 6）都有着迫切的需求并支持推广。</p>
+<p>世界上主要的国家和经济体都在力争尽早完成 IPv6 网络的建设，争取网络的率先应用和技术领先（如开篇提到的行动计划和专项行动）。</p>
+<p>市场上大量移动终端、固定设备、应用网站及 App 等均已支持 IPv4 和 IPv6 两种协议。</p>
+<p>智能家居的普及，家庭和个人拥有了众多智能设备，对这些设备的端到端管理，需要 IPv6 技术的支持。</p>
+<h2 id="为什么要用IPv6"><a href="#为什么要用IPv6" class="headerlink" title="为什么要用IPv6"></a>为什么要用IPv6</h2><blockquote>
+<p>核心理由：IP地址分配不合理、资源枯竭</p>
+</blockquote>
+<p>互联网技术来自于美国，互联网的发展、管理由美国人掌控了，据说美国一所大学拥有的IP地址数量比我们中国还要多！后来为了解决分配不合理、资源面临枯竭问题，也出现了划分子网、无类编址、NAT技术来应对，但终究解决不了实质问题。</p>
+<p>而IPv6拥有几乎无限的地址空间：地址容量极大扩展，由原来的32位扩充到128位， 这是什么概念呢？</p>
+<p>这相当于：</p>
+<p>IPv4有（232）&#x3D; 4,294,967,296个地址，约等于43亿</p>
+<p>IPv6有（2128 &#x3D; 296x232 ）&#x3D; 340,282,366,920,938,463,463,374,607,431,768,211,456个地址(340万亿万亿万亿个地址)，相当于地球表面每平方米可以分配到67万亿个地址，彻底解决了IPv4地址不足的问题。</p>
+<blockquote>
+<p>IPv6其他优点自行了解吧</p>
+</blockquote>
+<ol>
+<li>更庞大的网络地址数量</li>
+</ol>
+<p>IPv6地址长度为128比特，地址空间增大了2的96次倍。IPv6能够为现在和将来的互联网应用提供更多的网络地址，它能够在现在40亿个IPv4的网络地址的基础上增加大体上340万亿万亿万亿的IPv6网络地址。</p>
+<ol start="2">
+<li>更小的路由表</li>
+</ol>
+<p>因为IPv6在地址分配时遵循聚类原则，相同区域默认分配相同前缀IP地址。当路由在查找和传递过程中，可以更高效地选择最优路由进行传递，大大节省传递时的开销。</p>
+<ol start="3">
+<li>IPv6的分段处理</li>
+</ol>
+<p>在IPv4的网络中，数据包在传输过程中，路由器会根据其设置的MTU值(最大传输单元，默认为1500字节)来对数据包进行分片传输。</p>
+<p>而在IPv6的网络中，主机在发出数据包时，就已经对数据包进行分片处理(默认最小MTU为1280字节)，这样在数据传输的过程中就不需要路由器来担任分片工作，大大提高了数据传输的效率。</p>
+<ol start="4">
+<li>即插即用</li>
+</ol>
+<p>在IPv4的网络中，如果用户不想手动配置IP地址，就得依赖DHCP服务来进行地址自动分配。在IPv6中同样可以通过DHCPv6进行有状态地址分配，但是也可以不依赖DHCPv6来进行无状态地址分配(SLAAC)。</p>
+<p>IPv6可以通过NDP进行路由请求和通告，获取IPv6地址的网络前缀，而 IPv6地址的后64位是由网卡的物理地址(MAC)加上转换算法得来，本身就是全球唯一的地址，所以也就很难遇到IP地址冲突现象。</p>
+<ol start="5">
+<li>传输安全性</li>
+</ol>
+<p>在IPv6网络中，除了对以往IPv4的报文精简改进，最大的区别就是强制使用IPSec安全加密传输，让用户不再担心数据抓包导致信息泄密，也避免了大多数据数欺骗攻击。</p>
+<h2 id="IPv6-的发展现状和过渡技术"><a href="#IPv6-的发展现状和过渡技术" class="headerlink" title="IPv6 的发展现状和过渡技术"></a>IPv6 的发展现状和过渡技术</h2><p>对比 IPv4，IPv6 明显优秀得多。但是爱思考的朋友一定会产生这样的疑问 —— 既然 IPv6 这么好，从协议提出到现在也发展了这么多年，为什么一直没有被大规模的应用呢？</p>
+<p>这是因为技术的更新换代从来都不是那么容易的事。一方面因为 NAT（Network Address Translation）技术的应用，延缓了 IPv4 地址枯竭的速度。NAT 通过地址转换可以使多个设备共享一个 IP 地址来访问互联网，节省了部分地址资源。</p>
+<p>另一方面网络升级到 IPv6 的成本巨大。从 IPv4 到 IPv6 的升级，不仅仅是更改下地址那么简单，而是涉及到网络的方方面面。从个人终端到运营商网络，从各种应用软件到网站服务，都需要全面改造升级。</p>
+<p>正因如此，从 IPv4 到 IPv6 的升级不是一次性完成的，而是需要逐步、分层次地推进。在过渡期间，为了保证 IPv4 与 IPv6 能够共存、互通，出现了一些过渡技术。</p>
+<p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/202211161719285.png"></p>
+<h3 id="双栈技术（Dual-Stack）"><a href="#双栈技术（Dual-Stack）" class="headerlink" title="双栈技术（Dual Stack）"></a>双栈技术（Dual Stack）</h3><p>当同时存在 IPv4 和 IPv6 网络时，通过具有双栈功能的设备，结合隧道和转换技术，实现 IPv4 网络和 IPv6 网络的互通。</p>
+<p>代表技术 DS-Lite。</p>
+<p>其中大多数应用服务器采用的为双栈主机的解决方案，严格意义上它并不是解决IPv4与IPv6互通的问题，而是适配两种网络模式来为不同网络下的客户端提供服务。</p>
+<p>当IPv4网络下的客户端发起请求时，服务器及链路会在IPv4网络下进行响应。同理，当发起客户端处于IPv6网络时，服务器会在IPv6网络下进行响应。反之，也可以在客户终端上配置双协议栈，来分别访问不同网络协议下的服务器。</p>
+<h3 id="协议转换技术（NAT）"><a href="#协议转换技术（NAT）" class="headerlink" title="协议转换技术（NAT）"></a>协议转换技术（NAT）</h3><p>当 IPv4 网络节点或 IPv6 网络节点要和对方通信时，需要借助协议转换技术将 IPv4 和 IPv6 的报文进行转换后才可互通。</p>
+<p>代表技术 NAT64。</p>
+<p>NAT64的工作原理就是搭建一台翻译网关位于IPv4与IPv6网络之间，将通过网关的IPv6与IPv4的数据包进行翻译传输。NAT64一般只能单方向的将发往IPv4网络的IPv6报文进行翻译，而不能主动翻译反方向的IPv4发往IPv6的报文，需要进行静态条目绑定才能真正实现IPv4访问IPv6网络，在技术实现上成本较高。</p>
+<h3 id="隧道技术（Tunnel）"><a href="#隧道技术（Tunnel）" class="headerlink" title="隧道技术（Tunnel）"></a>隧道技术（Tunnel）</h3><p>在 IPv4 向 IPv6 过渡的初期，IPv4 网络已经大量部署，而 IPv6 网络只是散落在各地的“孤岛”，隧道技术使 IPv6 报文可以在 IPv4 网络中传输，实现 IPv6 网络间的孤岛互联。</p>
+<p>代表技术：6PE、6VPE、GRE、6to4 等。</p>
+<p>隧道技术是指将IPv6的数据包封装在IPv4的数据包里进行发送，它好处就是不需要对现有的IPv4网络进行改造，就可以直接利用隧道来传输IPv6的数据包。</p>
+<p>隧道技术主要是为了向IPv6网络过渡过程中减少搭建设备的成本，但是它依然无法解决纯IPv4主机与IPv6主机的互通问题。</p>
+<h2 id="IPv6地址长什么样"><a href="#IPv6地址长什么样" class="headerlink" title="IPv6地址长什么样"></a>IPv6地址长什么样</h2><h3 id="IPv6地址格式"><a href="#IPv6地址格式" class="headerlink" title="IPv6地址格式"></a>IPv6地址格式</h3><p>IPv6地址总长度为128比特，分为8组，每组为4个十六进制数的形式，每组十六进制数间用冒号分隔。</p>
+<p>例如：FC00:0000:130F:0000:0000:09C0:876A:130B</p>
+<h3 id="IPv6地址如何缩写"><a href="#IPv6地址如何缩写" class="headerlink" title="IPv6地址如何缩写"></a>IPv6地址如何缩写</h3><p>每组中的前导“0”都可以省略，所以上述地址可写为：FC00:0:130F:0:0:9C0:876A:130B。</p>
+<p>地址中包含的连续两个或多个均为0的组，可以用双冒号“::”来代替</p>
+<p>所以上述地址又可以进一步简写为：FC00:0:130F::9C0:876A:130B。</p>
+<p>需要注意的是，在一个IPv6地址中只能使用一次双冒号“::”</p>
+<h3 id="IPv6地址的掩码怎么写"><a href="#IPv6地址的掩码怎么写" class="headerlink" title="IPv6地址的掩码怎么写"></a>IPv6地址的掩码怎么写</h3><p>IPv6的掩码使用“前缀长度”来表示，如：</p>
+<p>FC00:0:130F::9C0:876A:130B&#x2F;64</p>
+<p>代表这个地址的前缀长度是64，也就是掩码长度为64位</p>
+<h3 id="特殊地址"><a href="#特殊地址" class="headerlink" title="特殊地址"></a>特殊地址</h3><blockquote>
+<p>回环地址</p>
+</blockquote>
+<p>0:0:0:0:0:0:0:1 或::1，等同于 IPv4 的 127.0.0.1</p>
+<blockquote>
+<p>过渡地址：内嵌 IPv4 地址的 IPv6 地址</p>
+</blockquote>
+<p>就是在 IPv6 的某一些十六进制段内嵌这 IPv4 的地址，例如 IPv6 地址中 64:ff9b::10.10.10.10，此 IPv6 地址最后 4 个字节内嵌一个 IPv4 的地址，这类地址主要用于 IPv6&#x2F;IPv4 的过渡技术中。</p>
+<blockquote>
+<p>公有云Seurity Group IPv6出入规则</p>
+</blockquote>
+<p>[::]&#x2F;0</p>
+<h3 id="IPv6-的域名解析"><a href="#IPv6-的域名解析" class="headerlink" title="IPv6 的域名解析"></a>IPv6 的域名解析</h3><p>由于 IPv6 的地址扩展为 128 位，比 IPv4 的更难书写和记忆，因此 IPv6 下的 DNS 变得尤为重要。IPv6 的的 DNS 资源记录类型为 AAAA（又称作 4A），用于解析指向 IPv6 地址的完全有效域名。下面是一个示例：</p>
+<p>Hostipv6.example.wechat.com IN AAAA 2001:db8:1::1</p>
+<p>IPv6 下的域名解析可以认为是 IPv4 的扩展，详细可以查看 RFC3596。</p>
+<p>这里值得注意的是，在浏览器中使用 IPv6 的地址访问 web 资源，IPv6 的地址必须要使用中括号“[]”包起来。</p>
+<h2 id="Linux-内核-IPv6-架构简析"><a href="#Linux-内核-IPv6-架构简析" class="headerlink" title="Linux 内核 IPv6 架构简析"></a>Linux 内核 IPv6 架构简析</h2><p><img src="https://raw.githubusercontent.com/wsgzao/storage-public/master/img/202211161749655.png"></p>
+<p>Linux 内核中，IPv6 协议栈与 IPv4 协议栈并行关系。IPv6 和 IPv4 完全是两套不一样的代码实现。IPv6 完整的协议栈逻辑模块包括：</p>
+<p>1、网络层 IPv6，核心逻辑：IPv6 路由子系统</p>
+<p>2、传输层 TCP&#x2F;UDP 实现：TCPv6、UDPv6</p>
+<p>3、控制报文协议 ICMPv6，这里值得一提的是 ICMPv6 在 IPv6 协议中的地位十分重要。</p>
+<p>ICMPv6 不仅提供了与 ICMPv4 相同的服务诊断功能，例如报告数据包的错误和提供简单的 echo 服务，ICMPv6 是 IPv6 中邻居发现协议的重要组成部分，用于管理链路上的点到点的通信。</p>
+<p>4、邻居子系统的实现：邻居发现协议 NDP（对应于 IPv4 里面的 ARP 协议）</p>
+<p>5、其他高级实现（IPv6 NAT、IPv6 隧道、iPv6 IPSec 等）</p>
+<p>由于我们平时的开发工作在应用层，以上 1-4 是将会接触得最多。</p>
+<h2 id="IPv6相关网络工具"><a href="#IPv6相关网络工具" class="headerlink" title="IPv6相关网络工具"></a>IPv6相关网络工具</h2><p><a target="_blank" rel="noopener" href="http://ip6.me/">http://ip6.me/</a><br><a target="_blank" rel="noopener" href="http://ip6.me/docs/">http://ip6.me/docs/</a></p>
+<p><a target="_blank" rel="noopener" href="https://ip.sb/api/">https://ip.sb/api/</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># dig dns解析，查看一个域名是否具有AAAA记录</span></span><br><span class="line"></span><br><span class="line">dig www.qq.com aaaa</span><br><span class="line"></span><br><span class="line"><span class="comment"># curl通过IPv6网络协议进行请求响应，获取服务端数据</span></span><br><span class="line">curl -I -v -4 ip6.me</span><br><span class="line">curl -I -v -6 ip6.me</span><br><span class="line"></span><br><span class="line"><span class="comment"># ping6 查看IPv6网络的连通性和域名解析的正确性</span></span><br><span class="line">ping6 -c4 www.qq.com</span><br><span class="line"></span><br><span class="line"><span class="comment"># telnet 查看对应IPv6地址端口是否开放</span></span><br><span class="line">telnet 2600:1417:7:28b::180c 80</span><br><span class="line"></span><br><span class="line"><span class="comment"># IPv6网络连通性判断工具</span></span><br><span class="line">mtr -6 2600:1417:7:28b::180c</span><br><span class="line">traceroute6 www.qq.com</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看本机IPv6路由表</span></span><br><span class="line">ip -6 route</span><br><span class="line">route -A <span class="string">&quot;inet6&quot;</span></span><br><span class="line"></span><br><span class="line">Kernel IPv6 routing table</span><br><span class="line">Destination                    Next Hop                   Flag Met Ref Use If</span><br><span class="line">localhost/128                  [::]                       U    256 2     0 lo</span><br><span class="line">fe80::/64                      [::]                       U    256 1     0 eth0</span><br><span class="line">localhost/128                  [::]                       Un   0   5     0 lo</span><br><span class="line">ff00::/8                       [::]                       U    256 4     0 eth0</span><br><span class="line">[::]/0                         [::]                       !n   -1  1     0 lo</span><br><span class="line"></span><br><span class="line"><span class="comment"># curl测试API</span></span><br><span class="line">ip4only.me/api/ - IPv4 only query</span><br><span class="line">ip6.me/api/ - Dual stack IPv6 and IPv4 (preference depends on your OS/client)</span><br><span class="line">ip6only.me/api/ - IPv6 only query</span><br><span class="line"></span><br><span class="line">Example (Plain text): https://api.ip.sb/ip (Listen on both IPv4 and IPv6) or curl ip.sb</span><br><span class="line">Example (Plain text): https://api-ipv4.ip.sb/ip (Listen on IPv4 only) or curl -4 ip.sb or curl ipv4.ip.sb</span><br><span class="line">Example (Plain text): https://api-ipv6.ip.sb/ip (Listen on IPv6 only) or curl -6 ip.sb or curl ipv6.ip.sb</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="IPv6-的未来"><a href="#IPv6-的未来" class="headerlink" title="IPv6 的未来"></a>IPv6 的未来</h2><p>尽管面临着许多困难，但 IPv6 技术强大完善的功能以及 5G 时代对网络性能的极大需求，都在推动着 IPv4 网络稳步地向 IPv6 网络演进。</p>
+<p>随着 5G 网络的逐步建设，我们国家在物联网、大数据、云计算、人工智能等新兴领域都迎来了快速的发展，那么既能够提供海量地址资源又能解决 IPv4 网络缺陷的高速、可靠、安全的 IPv6 网络无疑是最佳选择。</p>
+<p>近年，基于 IPv6 的下一代互联网技术创新体系“IPv6+”也引起了广泛关注。“IPv6+”是 IPv6 的升级，是面向 5G 和云时代的 IP 网络创新体系。</p>
+<p>“IPv6+”不仅包括了以 SRv6、网络切片、随流检测、BIERv6 和 APN6 等内容为代表的协议创新，以网络分析、自动调优等网络智能化为代表的技术创新，还包括以 5G 承载和云网融合为重点应用场景的业务创新。</p>
+<p>在北京冬奥会期间，IPv6 + 技术也是首次在大型赛事活动上进行了应用。</p>
+<p>属于 IPv6 以及“IPv6+”的时代已经到来，你准备好了吗？！</p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p>“IPv6+”的时代都来了，你还不知道什么是IPv6吗？<br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/0g_JF1B96XTJV5BnP7QseA">https://mp.weixin.qq.com/s/0g_JF1B96XTJV5BnP7QseA</a></p>
+<p>全球 IPv4 地址耗尽，IPv6 来了！<br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/wMdDiu0o4JfUiqD8hAB75w">https://mp.weixin.qq.com/s/wMdDiu0o4JfUiqD8hAB75w</a></p>
+<p>IPv6 过渡机制<br><a target="_blank" rel="noopener" href="https://dieken.gitlab.io/posts/ipv6-transition/">https://dieken.gitlab.io/posts/ipv6-transition/</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/ipv6/" data-title="IPv6与IPv4的基础知识学习分享 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/system-design/" title="System Design 学习路径">
+  <strong>上一篇：</strong><br/>
+  <span>
+  System Design 学习路径</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/proxychains/"  title="proxychains和graftcp和cgproxy使用方法">
+ <strong>下一篇：</strong><br/> 
+ <span>proxychains和graftcp和cgproxy使用方法
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IP-x2F-IPv4-x2F-IPv6-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-number">3.</span> <span class="toc-text">IP&#x2F;IPv4&#x2F;IPv6 基础知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8IPv6"><span class="toc-number">4.</span> <span class="toc-text">为什么要用IPv6</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IPv6-%E7%9A%84%E5%8F%91%E5%B1%95%E7%8E%B0%E7%8A%B6%E5%92%8C%E8%BF%87%E6%B8%A1%E6%8A%80%E6%9C%AF"><span class="toc-number">5.</span> <span class="toc-text">IPv6 的发展现状和过渡技术</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8C%E6%A0%88%E6%8A%80%E6%9C%AF%EF%BC%88Dual-Stack%EF%BC%89"><span class="toc-number">5.1.</span> <span class="toc-text">双栈技术（Dual Stack）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%8F%E8%AE%AE%E8%BD%AC%E6%8D%A2%E6%8A%80%E6%9C%AF%EF%BC%88NAT%EF%BC%89"><span class="toc-number">5.2.</span> <span class="toc-text">协议转换技术（NAT）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9A%A7%E9%81%93%E6%8A%80%E6%9C%AF%EF%BC%88Tunnel%EF%BC%89"><span class="toc-number">5.3.</span> <span class="toc-text">隧道技术（Tunnel）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IPv6%E5%9C%B0%E5%9D%80%E9%95%BF%E4%BB%80%E4%B9%88%E6%A0%B7"><span class="toc-number">6.</span> <span class="toc-text">IPv6地址长什么样</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#IPv6%E5%9C%B0%E5%9D%80%E6%A0%BC%E5%BC%8F"><span class="toc-number">6.1.</span> <span class="toc-text">IPv6地址格式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IPv6%E5%9C%B0%E5%9D%80%E5%A6%82%E4%BD%95%E7%BC%A9%E5%86%99"><span class="toc-number">6.2.</span> <span class="toc-text">IPv6地址如何缩写</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IPv6%E5%9C%B0%E5%9D%80%E7%9A%84%E6%8E%A9%E7%A0%81%E6%80%8E%E4%B9%88%E5%86%99"><span class="toc-number">6.3.</span> <span class="toc-text">IPv6地址的掩码怎么写</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E6%AE%8A%E5%9C%B0%E5%9D%80"><span class="toc-number">6.4.</span> <span class="toc-text">特殊地址</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IPv6-%E7%9A%84%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90"><span class="toc-number">6.5.</span> <span class="toc-text">IPv6 的域名解析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux-%E5%86%85%E6%A0%B8-IPv6-%E6%9E%B6%E6%9E%84%E7%AE%80%E6%9E%90"><span class="toc-number">7.</span> <span class="toc-text">Linux 内核 IPv6 架构简析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IPv6%E7%9B%B8%E5%85%B3%E7%BD%91%E7%BB%9C%E5%B7%A5%E5%85%B7"><span class="toc-number">8.</span> <span class="toc-text">IPv6相关网络工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IPv6-%E7%9A%84%E6%9C%AA%E6%9D%A5"><span class="toc-number">9.</span> <span class="toc-text">IPv6 的未来</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">10.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

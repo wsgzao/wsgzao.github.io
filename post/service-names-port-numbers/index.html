@@ -1,0 +1,1822 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>TCP/UDP常用端口列表 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="熟悉常用的TCP&#x2F;UDP端口很有必要">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TCP&#x2F;UDP常用端口列表">
+<meta property="og:url" content="https://wsgzao.github.io/post/service-names-port-numbers/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="熟悉常用的TCP&#x2F;UDP端口很有必要">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-03-30T08:22:32.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:07.076Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/service-names-port-numbers/" title="TCP/UDP常用端口列表" itemprop="url">TCP/UDP常用端口列表</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2016-03-30T08:22:32.000Z" itemprop="datePublished"> 发表于 2016-03-30</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E8%AE%B0%E5%BD%95"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B8%B8%E7%94%A8%E7%AB%AF%E5%8F%A3"><span class="toc-number">3.</span> <span class="toc-text">服务器常用端口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP-x2F-UDP%E7%AB%AF%E5%8F%A3%E5%88%97%E8%A1%A8"><span class="toc-number">4.</span> <span class="toc-text">TCP&#x2F;UDP端口列表</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>文章的表格中列举了Linux 中的服务、守护进程、和程序所使用的最常见的通信端口，该列表还可以在 &#x2F;etc&#x2F;services 文件中找到，更多详细信息推荐查看由互联网号码分派局（IANA）制定的“著名的已注册动态端口”官方列表。本文引用了维基百科中文版内的TCP&#x2F;UDP端口列表，颜色和标签很清晰，感谢维护者们的更新。最后还是提醒大家开发程序时记得提前查阅一下端口是否和已经定义的存在冲突，能避免尽量不要选择共用相同的端口，为后期IP+PORT方式定位应用铺平道路。</p>
+<blockquote>
+<p>熟悉常用的TCP&#x2F;UDP端口很有必要</p>
+</blockquote>
+<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2016年03月30日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/service-names-port-numbers/">https://wsgzao.github.io/post/service-names-port-numbers/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>TCP&#x2F;UDP端口列表 - <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/TCP/UDP%E7%AB%AF%E5%8F%A3%E5%88%97%E8%A1%A8">https://zh.wikipedia.org/wiki/TCP/UDP端口列表</a><br>Service Name and Transport Protocol Port Number Registry - <a target="_blank" rel="noopener" href="http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml">http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml</a></p>
+<h2 id="服务器常用端口"><a href="#服务器常用端口" class="headerlink" title="服务器常用端口"></a>服务器常用端口</h2><table>
+<thead>
+<tr>
+<th>端口</th>
+<th>服务</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>21</td>
+<td>FTP</td>
+<td>FTP服务器所开放的端口，用于上传、下载</td>
+</tr>
+<tr>
+<td>22</td>
+<td>SSH</td>
+<td>22端口就是ssh端口，用于通过命令行模式远程连接Linux系统服务器</td>
+</tr>
+<tr>
+<td>25</td>
+<td>SMTP</td>
+<td>SMTP服务器所开放的端口，用于发送邮件</td>
+</tr>
+<tr>
+<td>80</td>
+<td>HTTP</td>
+<td>用于网站服务例如IIS、Apache、Nginx等提供对外访问</td>
+</tr>
+<tr>
+<td>110</td>
+<td>POP3</td>
+<td>110端口是为POP3（邮件协议3）服务开放的</td>
+</tr>
+<tr>
+<td>137&#x2F;138&#x2F;139</td>
+<td>NETBIOS</td>
+<td>其中137、138是UDP端口，当通过网上邻居传输文件时用这个端口。而139端口：通过这个端口进入的连接试图获得NetBIOS&#x2F;SMB服务。这个协议被用于windows文件和打印机共享和SAMBA</td>
+</tr>
+<tr>
+<td>143</td>
+<td>IMAP</td>
+<td>143端口主要是用于“Internet Message AccessProtocol”v2（Internet消息访问协议，简称IMAP），和POP3一样，是用于电子邮件的接收的协议</td>
+</tr>
+<tr>
+<td>443</td>
+<td>HTTPS</td>
+<td>网页浏览端口，能提供加密和通过安全端口传输的另一种HTTP</td>
+</tr>
+<tr>
+<td>1433</td>
+<td>SQL Server</td>
+<td>1433端口，是SQL Server默认的端口，SQL Server服务使用两个端口：TCP-1433、UDP-1434。其中1433用于供SQL Server对外提供服务，1434用于向请求者返回SQL Server使用了哪个TCP&#x2F;IP端口</td>
+</tr>
+<tr>
+<td>3306</td>
+<td>MySQL</td>
+<td>3306端口，是MySQL数据库的默认端口，用于MySQL对外提供服务</td>
+</tr>
+<tr>
+<td>3389</td>
+<td>Windows Server Remote Desktop Services</td>
+<td>3389端口是Windows远程桌面的服务端口，可以通过这个端口，用”远程桌面”等连接工具来连接到远程的服务器</td>
+</tr>
+<tr>
+<td>8080</td>
+<td>代理端口</td>
+<td>8080端口同80端口，是被用于WWW代理服务的，可以实现网页浏览，经常在访问某个网站或使用代理服务器的时候，会加上“:8080”端口号。另外Apache Tomcat web server安装后，默认的服务端口就是8080</td>
+</tr>
+</tbody></table>
+<h2 id="TCP-x2F-UDP端口列表"><a href="#TCP-x2F-UDP端口列表" class="headerlink" title="TCP&#x2F;UDP端口列表"></a>TCP&#x2F;UDP端口列表</h2><p>IANA的端口分配列表 - <a target="_blank" rel="noopener" href="http://www.iana.org/assignments/port-numbers">http://www.iana.org/assignments/port-numbers</a></p>
+<blockquote>
+<p>以下列表仅列出常用端口，详细的列表请参阅IANA网站</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>端口</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0&#x2F;TCP,UDP</td>
+<td>保留端口；不使用（若发送过程不准备接受回复消息，则可以作为源端口）</td>
+</tr>
+<tr>
+<td>1&#x2F;TCP,UDP</td>
+<td>TCPMUX（传输控制协议端口服务多路开关选择器）</td>
+</tr>
+<tr>
+<td>5&#x2F;TCP,UDP</td>
+<td>RJE（远程作业登录）</td>
+</tr>
+<tr>
+<td>7&#x2F;TCP,UDP</td>
+<td>ECHO（回显）协议</td>
+</tr>
+<tr>
+<td>9&#x2F;TCP,UDP</td>
+<td>DISCARD（丢弃）协议</td>
+</tr>
+<tr>
+<td>11&#x2F;TCP,UDP</td>
+<td>SYSTAT协议</td>
+</tr>
+<tr>
+<td>13&#x2F;TCP,UDP</td>
+<td>DAYTIME协议</td>
+</tr>
+<tr>
+<td>15&#x2F;TCP,UDP</td>
+<td>NETSTAT协议</td>
+</tr>
+<tr>
+<td>17&#x2F;TCP,UDP</td>
+<td>QOTD（Quote of the Day，每日引用）协议</td>
+</tr>
+<tr>
+<td>18&#x2F;TCP,UDP</td>
+<td>消息发送协议</td>
+</tr>
+<tr>
+<td>19&#x2F;TCP,UDP</td>
+<td>CHARGEN（字符发生器）协议</td>
+</tr>
+<tr>
+<td>20&#x2F;TCP,UDP</td>
+<td>文件传输协议 - 默认数据端口</td>
+</tr>
+<tr>
+<td>21&#x2F;TCP,UDP</td>
+<td>文件传输协议 - 控制端口</td>
+</tr>
+<tr>
+<td>22&#x2F;TCP,UDP</td>
+<td>SSH（Secure Shell） - 远程登录协议，用于安全登录文件传输（SCP，SFTP）及端口重新定向</td>
+</tr>
+<tr>
+<td>23&#x2F;TCP,UDP</td>
+<td>Telnet终端仿真协议 - 未加密文本通信</td>
+</tr>
+<tr>
+<td>25&#x2F;TCP,UDP</td>
+<td>SMTP（简单邮件传输协议） - 用于邮件服务器间的电子邮件传递</td>
+</tr>
+<tr>
+<td>26&#x2F;TCP,UDP</td>
+<td>RSFTP - 一个简单的类似FTP的协议</td>
+</tr>
+<tr>
+<td>35&#x2F;TCP,UDP</td>
+<td>QMS Magicolor 2 printer</td>
+</tr>
+<tr>
+<td>37&#x2F;TCP,UDP</td>
+<td>TIME时间协议</td>
+</tr>
+<tr>
+<td>39&#x2F;TCP,UDP</td>
+<td>Resource Location Protocol（资源定位协议）</td>
+</tr>
+<tr>
+<td>41&#x2F;TCP,UDP</td>
+<td>图形</td>
+</tr>
+<tr>
+<td>42&#x2F;TCP,UDP</td>
+<td>Host Name Server（主机名服务）</td>
+</tr>
+<tr>
+<td>42&#x2F;TCP,UDP</td>
+<td>WINS（WINS主机名服务）</td>
+</tr>
+<tr>
+<td>43&#x2F;TCP</td>
+<td>WHOIS协议</td>
+</tr>
+<tr>
+<td>49&#x2F;TCP,UDP</td>
+<td>TACACS登录主机协议</td>
+</tr>
+<tr>
+<td>53&#x2F;TCP,UDP</td>
+<td>DNS（域名服务系统）</td>
+</tr>
+<tr>
+<td>56&#x2F;TCP,UDP</td>
+<td>远程访问协议</td>
+</tr>
+<tr>
+<td>57&#x2F;TCP</td>
+<td>MTP，邮件传输协议</td>
+</tr>
+<tr>
+<td>67&#x2F;UDP</td>
+<td>BOOTP（BootStrap协议）服务；同时用于动态主机设置协议</td>
+</tr>
+<tr>
+<td>68&#x2F;UDP</td>
+<td>BOOTP客户端；同时用于动态主机设定协议</td>
+</tr>
+<tr>
+<td>69&#x2F;UDP</td>
+<td>TFTP（小型文件传输协议）</td>
+</tr>
+<tr>
+<td>70&#x2F;TCP</td>
+<td>Gopher信息检索协议</td>
+</tr>
+<tr>
+<td>79&#x2F;TCP</td>
+<td>Finger协议</td>
+</tr>
+<tr>
+<td>80&#x2F;TCP</td>
+<td>HTTP（超文本传输协议）- 用于传输网页</td>
+</tr>
+<tr>
+<td>81&#x2F;TCP</td>
+<td>HTTP预备 (超文本传输协议)</td>
+</tr>
+<tr>
+<td>81&#x2F;TCP</td>
+<td>Torpark - Onion routing ORport</td>
+</tr>
+<tr>
+<td>82&#x2F;UDP</td>
+<td>Torpark - 控制端口</td>
+</tr>
+<tr>
+<td>88&#x2F;TCP</td>
+<td>Kerberos - 认证代理</td>
+</tr>
+<tr>
+<td>101&#x2F;TCP</td>
+<td>主机名</td>
+</tr>
+<tr>
+<td>102&#x2F;TCP</td>
+<td>ISO-TSAP协议</td>
+</tr>
+<tr>
+<td>107&#x2F;TCP</td>
+<td>远程Telnet协议</td>
+</tr>
+<tr>
+<td>109&#x2F;TCP</td>
+<td>POP (Post Office Protocol)，“邮局协议”，第2版</td>
+</tr>
+<tr>
+<td>110&#x2F;TCP</td>
+<td>POP3（“邮局协议”，第3版）- 用于接收电子邮件</td>
+</tr>
+<tr>
+<td>111&#x2F;TCP,UDP</td>
+<td>Sun协议</td>
+</tr>
+<tr>
+<td>113&#x2F;TCP</td>
+<td>ident - 旧的服务器身份识别系统，仍然被IRC服务器用来认证它的用户</td>
+</tr>
+<tr>
+<td>115&#x2F;TCP</td>
+<td>SFTP,简单文件传输协议</td>
+</tr>
+<tr>
+<td>117&#x2F;TCP</td>
+<td>UUCP-PATH</td>
+</tr>
+<tr>
+<td>118&#x2F;TCP,UDP</td>
+<td>SQL服务</td>
+</tr>
+<tr>
+<td>119&#x2F;TCP</td>
+<td>网络新闻传输协议 - 用来收取新闻组的消息</td>
+</tr>
+<tr>
+<td>123&#x2F;UDP</td>
+<td>NTP（Network Time Protocol） - 用于时间同步</td>
+</tr>
+<tr>
+<td>135&#x2F;TCP,UDP</td>
+<td>EPMAP (End Point Mapper) &#x2F; Microsoft RPC Locator Service</td>
+</tr>
+<tr>
+<td>137&#x2F;TCP,UDP</td>
+<td>NetBIOS NetBIOS Name Service</td>
+</tr>
+<tr>
+<td>138&#x2F;TCP,UDP</td>
+<td>NetBIOS NetBIOS Datagram Service</td>
+</tr>
+<tr>
+<td>139&#x2F;TCP,UDP</td>
+<td>NetBIOS NetBIOS Session Service</td>
+</tr>
+<tr>
+<td>143&#x2F;TCP,UDP</td>
+<td>IMAP4（Internet Message Access Protocol 4） - used for retrieving E-mails</td>
+</tr>
+<tr>
+<td>152&#x2F;TCP,UDP</td>
+<td>BFTP, Background File Transfer Program</td>
+</tr>
+<tr>
+<td>153&#x2F;TCP,UDP</td>
+<td>SGMP, Simple Gateway Monitoring Protocol</td>
+</tr>
+<tr>
+<td>156&#x2F;TCP,UDP</td>
+<td>SQL服务</td>
+</tr>
+<tr>
+<td>158&#x2F;TCP,UDP</td>
+<td>DMSP, Distributed Mail Service Protocol</td>
+</tr>
+<tr>
+<td>161&#x2F;TCP,UDP</td>
+<td>SNMP (Simple Network Management Protocol)</td>
+</tr>
+<tr>
+<td>162&#x2F;TCP,UDP</td>
+<td>SNMPTRAP</td>
+</tr>
+<tr>
+<td>170&#x2F;TCP</td>
+<td>Print-srv</td>
+</tr>
+<tr>
+<td>179&#x2F;TCP</td>
+<td>BGP (Border Gateway Protocol)</td>
+</tr>
+<tr>
+<td>194&#x2F;TCP</td>
+<td>IRC（互联网中继聊天）</td>
+</tr>
+<tr>
+<td>201&#x2F;TCP,UDP</td>
+<td>AppleTalk Routing Maintenance</td>
+</tr>
+<tr>
+<td>209&#x2F;TCP,UDP</td>
+<td>Quick Mail传输协议</td>
+</tr>
+<tr>
+<td>213&#x2F;TCP,UDP</td>
+<td>IPX</td>
+</tr>
+<tr>
+<td>218&#x2F;TCP,UDP</td>
+<td>MPP，信息发布协议</td>
+</tr>
+<tr>
+<td>220&#x2F;TCP,UDP</td>
+<td>IMAP，交互邮件访问协议第3版</td>
+</tr>
+<tr>
+<td>259&#x2F;TCP,UDP</td>
+<td>ESRO, Efficient Short Remote Operations</td>
+</tr>
+<tr>
+<td>264&#x2F;TCP,UDP</td>
+<td>BGMP，Border Gateway Multicast Protocol</td>
+</tr>
+<tr>
+<td>308&#x2F;TCP</td>
+<td>Novastor Online Backup</td>
+</tr>
+<tr>
+<td>311&#x2F;TCP</td>
+<td>Apple Server-Admin-Tool, Workgroup-Manager-Tool</td>
+</tr>
+<tr>
+<td>318&#x2F;TCP,UDP</td>
+<td>TSP，时间戳协议（英语：Time Stamp Protocol）</td>
+</tr>
+<tr>
+<td>323&#x2F;TCP,UDP</td>
+<td>IMMP, Internet Message Mapping Protocol</td>
+</tr>
+<tr>
+<td>383&#x2F;TCP,UDP</td>
+<td>HP OpenView HTTPs Operations Agent</td>
+</tr>
+<tr>
+<td>366&#x2F;TCP,UDP</td>
+<td>SMTP, Simple Mail Transfer Protocol. ODMR, On-Demand Mail Relay</td>
+</tr>
+<tr>
+<td>369&#x2F;TCP,UDP</td>
+<td>Rpc2portmap</td>
+</tr>
+<tr>
+<td>371&#x2F;TCP,UDP</td>
+<td>ClearCase albd</td>
+</tr>
+<tr>
+<td>384&#x2F;TCP,UDP</td>
+<td>一个远程网络服务器系统</td>
+</tr>
+<tr>
+<td>387&#x2F;TCP,UDP</td>
+<td>AURP, AppleTalk Update-based Routing Protocol</td>
+</tr>
+<tr>
+<td>389&#x2F;TCP,UDP</td>
+<td>轻型目录访问协议</td>
+</tr>
+<tr>
+<td>401&#x2F;TCP,UDP</td>
+<td>UPS Uninterruptible Power Supply</td>
+</tr>
+<tr>
+<td>411&#x2F;TCP</td>
+<td>Direct Connect Hub port</td>
+</tr>
+<tr>
+<td>412&#x2F;TCP</td>
+<td>Direct Connect Client-To-Client port</td>
+</tr>
+<tr>
+<td>427&#x2F;TCP,UDP</td>
+<td>SLP (Service Location Protocol)</td>
+</tr>
+<tr>
+<td>443&#x2F;TCP</td>
+<td>HTTPS - HTTP over TLS&#x2F;SSL（加密传输）</td>
+</tr>
+<tr>
+<td>444&#x2F;TCP,UDP</td>
+<td>SNPP，Simple Network Paging Protocol</td>
+</tr>
+<tr>
+<td>445&#x2F;TCP</td>
+<td>Microsoft-DS (Active Directory，Windows shares, Sasser worm，Agobot, Zobotworm)</td>
+</tr>
+<tr>
+<td>445&#x2F;UDP</td>
+<td>Microsoft-DS SMB file sharing</td>
+</tr>
+<tr>
+<td>464&#x2F;TCP,UDP</td>
+<td>Kerberos Change&#x2F;Set password</td>
+</tr>
+<tr>
+<td>465&#x2F;TCP</td>
+<td>Cisco protocol</td>
+</tr>
+<tr>
+<td>465&#x2F;TCP</td>
+<td>SMTP over SSL</td>
+</tr>
+<tr>
+<td>475&#x2F;TCP</td>
+<td>tcpnethaspsrv（Hasp services, TCP&#x2F;IP version）</td>
+</tr>
+<tr>
+<td>497&#x2F;TCP</td>
+<td>dantz backup service</td>
+</tr>
+<tr>
+<td>500&#x2F;TCP,UDP</td>
+<td>ISAKMP，IKE-Internet Key Exchange</td>
+</tr>
+<tr>
+<td>502&#x2F;TCP,UDP</td>
+<td>Modbus，Protocol</td>
+</tr>
+<tr>
+<td>512&#x2F;TCP</td>
+<td>exec, Remote Process Execution</td>
+</tr>
+<tr>
+<td>512&#x2F;UDP</td>
+<td>comsat, together with biff：notifies users of new c.q. yet unread e-mail</td>
+</tr>
+<tr>
+<td>513&#x2F;TCP</td>
+<td>登陆</td>
+</tr>
+<tr>
+<td>513&#x2F;UDP</td>
+<td>Who</td>
+</tr>
+<tr>
+<td>514&#x2F;TCP</td>
+<td>rsh protocol - used to execute non-interactive commandline commands on a remote system and see the screen return</td>
+</tr>
+<tr>
+<td>514&#x2F;UDP</td>
+<td>syslog protocol - used for system logging</td>
+</tr>
+<tr>
+<td>515&#x2F;TCP</td>
+<td>Line Printer Daemon protocol - used in LPD printer servers</td>
+</tr>
+<tr>
+<td>517&#x2F;UDP</td>
+<td>Talk</td>
+</tr>
+<tr>
+<td>518&#x2F;UDP</td>
+<td>NTalk</td>
+</tr>
+<tr>
+<td>520&#x2F;TCP</td>
+<td>efs</td>
+</tr>
+<tr>
+<td>520&#x2F;UDP</td>
+<td>Routing - RIP</td>
+</tr>
+<tr>
+<td>513&#x2F;UDP</td>
+<td>Router</td>
+</tr>
+<tr>
+<td>524&#x2F;TCP,UDP</td>
+<td>NCP（NetWare Core Protocol）is used for a variety things such as access to primary NetWare server resources, Time Synchronization, etc.</td>
+</tr>
+<tr>
+<td>525&#x2F;UDP</td>
+<td>Timed，Timeserver</td>
+</tr>
+<tr>
+<td>530&#x2F;TCP,UDP</td>
+<td>远程过程调用</td>
+</tr>
+<tr>
+<td>531&#x2F;TCP,UDP</td>
+<td>AOL Instant Messenger, IRC</td>
+</tr>
+<tr>
+<td>532&#x2F;TCP</td>
+<td>netnews</td>
+</tr>
+<tr>
+<td>533&#x2F;UDP</td>
+<td>netwall, For Emergency Broadcasts</td>
+</tr>
+<tr>
+<td>540&#x2F;TCP</td>
+<td>UUCP (Unix-to-Unix Copy Protocol)</td>
+</tr>
+<tr>
+<td>542&#x2F;TCP,UDP</td>
+<td>commerce (Commerce Applications)</td>
+</tr>
+<tr>
+<td>543&#x2F;TCP</td>
+<td>klogin, Kerberos login</td>
+</tr>
+<tr>
+<td>544&#x2F;TCP</td>
+<td>kshell, Kerberos Remote shell</td>
+</tr>
+<tr>
+<td>546&#x2F;TCP,UDP</td>
+<td>DHCPv6客户端</td>
+</tr>
+<tr>
+<td>547&#x2F;TCP,UDP</td>
+<td>DHCPv6服务器</td>
+</tr>
+<tr>
+<td>548&#x2F;TCP</td>
+<td>AFP (Apple Filing Protocol)</td>
+</tr>
+<tr>
+<td>550&#x2F;UDP</td>
+<td>new-rwho, new-who</td>
+</tr>
+<tr>
+<td>554&#x2F;TCP,UDP</td>
+<td>RTSP (Real Time Streaming Protocol)</td>
+</tr>
+<tr>
+<td>556&#x2F;TCP</td>
+<td>Remotefs, rfs, rfs_server</td>
+</tr>
+<tr>
+<td>560&#x2F;UDP</td>
+<td>rmonitor, Remote Monitor</td>
+</tr>
+<tr>
+<td>561&#x2F;UDP</td>
+<td>monitor</td>
+</tr>
+<tr>
+<td>563&#x2F;TCP,UDP</td>
+<td>NNTP protocol over TLS&#x2F;SSL (NNTPS)</td>
+</tr>
+<tr>
+<td>587&#x2F;TCP</td>
+<td>email message submission（SMTP，RFC 2476）</td>
+</tr>
+<tr>
+<td>591&#x2F;TCP</td>
+<td>FileMaker 6.0（及之后版本）网络共享（HTTP的替代，见80端口）</td>
+</tr>
+<tr>
+<td>593&#x2F;TCP,UDP</td>
+<td>HTTP RPC Ep Map（RPC over HTTP, often used by DCOM services and Microsoft Exchange Server）</td>
+</tr>
+<tr>
+<td>604&#x2F;TCP</td>
+<td>TUNNEL</td>
+</tr>
+<tr>
+<td>631&#x2F;TCP,UDP</td>
+<td>互联网列印协定</td>
+</tr>
+<tr>
+<td>636&#x2F;TCP,UDP</td>
+<td>LDAP over SSL（加密传输，也被称为LDAPS）</td>
+</tr>
+<tr>
+<td>639&#x2F;TCP,UDP</td>
+<td>MSDP, Multicast Source Discovery Protocol</td>
+</tr>
+<tr>
+<td>646&#x2F;TCP</td>
+<td>LDP, Label Distribution Protocol</td>
+</tr>
+<tr>
+<td>647&#x2F;TCP</td>
+<td>DHCP Failover Protocol</td>
+</tr>
+<tr>
+<td>648&#x2F;TCP</td>
+<td>RRP, Registry Registrar Protocol</td>
+</tr>
+<tr>
+<td>652&#x2F;TCP</td>
+<td>DTCP, Dynamic Tunnel Configuration Protocol</td>
+</tr>
+<tr>
+<td>654&#x2F;UDP</td>
+<td>AODV, Ad hoc On-Demand Distance Vector</td>
+</tr>
+<tr>
+<td>665&#x2F;TCP</td>
+<td>sun-dr, Remote Dynamic Reconfiguration</td>
+</tr>
+<tr>
+<td>666&#x2F;UDP</td>
+<td>毁灭战士，电脑平台上的一系列第一人称射击游戏。</td>
+</tr>
+<tr>
+<td>674&#x2F;TCP</td>
+<td>ACAP, Application Configuration Access Protocol</td>
+</tr>
+<tr>
+<td>691&#x2F;TCP</td>
+<td>MS Exchange Routing</td>
+</tr>
+<tr>
+<td>692&#x2F;TCP</td>
+<td>Hyperwave-ISP</td>
+</tr>
+<tr>
+<td>694&#x2F;UDP</td>
+<td>Linux-HA High availability Heartbeat port</td>
+</tr>
+<tr>
+<td>695&#x2F;TCP</td>
+<td>IEEE-MMS-SSL</td>
+</tr>
+<tr>
+<td>698&#x2F;UDP</td>
+<td>OLSR, Optimized Link State Routing</td>
+</tr>
+<tr>
+<td>699&#x2F;TCP</td>
+<td>Access Network</td>
+</tr>
+<tr>
+<td>700&#x2F;TCP</td>
+<td>EPP, Extensible Provisioning Protocol</td>
+</tr>
+<tr>
+<td>701&#x2F;TCP</td>
+<td>LMP, Link Management Protocol.</td>
+</tr>
+<tr>
+<td>702&#x2F;TCP</td>
+<td>IRIS over BEEP</td>
+</tr>
+<tr>
+<td>706&#x2F;TCP</td>
+<td>SILC, Secure Internet Live Conferencing</td>
+</tr>
+<tr>
+<td>711&#x2F;TCP</td>
+<td>TDP, Tag Distribution Protocol</td>
+</tr>
+<tr>
+<td>712&#x2F;TCP</td>
+<td>TBRPF, Topology Broadcast based on Reverse-Path Forwarding</td>
+</tr>
+<tr>
+<td>720&#x2F;TCP</td>
+<td>SMQP, Simple Message Queue Protocol</td>
+</tr>
+<tr>
+<td>749&#x2F;TCP, UDP</td>
+<td>kerberos-adm, Kerberos administration</td>
+</tr>
+<tr>
+<td>750&#x2F;UDP</td>
+<td>Kerberos version IV</td>
+</tr>
+<tr>
+<td>782&#x2F;TCP</td>
+<td>Conserver serial-console management server</td>
+</tr>
+<tr>
+<td>829&#x2F;TCP</td>
+<td>CMP (Certificate Management Protocol)</td>
+</tr>
+<tr>
+<td>860&#x2F;TCP</td>
+<td>iSCSI</td>
+</tr>
+<tr>
+<td>873&#x2F;TCP</td>
+<td>rsync File synchronisation protocol</td>
+</tr>
+<tr>
+<td>901&#x2F;TCP</td>
+<td>Samba Web Administration Tool (SWAT)</td>
+</tr>
+<tr>
+<td>902</td>
+<td>VMware服务器控制台[2]</td>
+</tr>
+<tr>
+<td>904</td>
+<td>VMware服务器替代（如果902端口已被占用）</td>
+</tr>
+<tr>
+<td>911&#x2F;TCP</td>
+<td>Network Console on Acid（NCA） - local tty redirection over OpenSSH</td>
+</tr>
+<tr>
+<td>981&#x2F;TCP</td>
+<td>SofaWare Technologies Remote HTTPS management for firewall devices running embedded Checkpoint Firewall-1 software</td>
+</tr>
+<tr>
+<td>989&#x2F;TCP,UDP</td>
+<td>FTP Protocol (data) over TLS&#x2F;SSL</td>
+</tr>
+<tr>
+<td>990&#x2F;TCP,UDP</td>
+<td>FTP Protocol (control) over TLS&#x2F;SSL</td>
+</tr>
+<tr>
+<td>991&#x2F;TCP,UDP</td>
+<td>NAS (Netnews Admin System)</td>
+</tr>
+<tr>
+<td>992&#x2F;TCP,UDP</td>
+<td>Telnet protocol over TLS&#x2F;SSL</td>
+</tr>
+<tr>
+<td>993&#x2F;TCP</td>
+<td>IMAP4 over SSL (encrypted transmission)</td>
+</tr>
+<tr>
+<td>995&#x2F;TCP</td>
+<td>POP3 over SSL (encrypted transmission)</td>
+</tr>
+<tr>
+<td>1025&#x2F;tcp</td>
+<td>NFS-or-IIS</td>
+</tr>
+<tr>
+<td>1026&#x2F;tcp</td>
+<td>Often utilized by Microsoft DCOM services</td>
+</tr>
+<tr>
+<td>1029&#x2F;tcp</td>
+<td>Often utilized by Microsoft DCOM services</td>
+</tr>
+<tr>
+<td>1058&#x2F;tcp</td>
+<td>nim AIX Network Installation Manager</td>
+</tr>
+<tr>
+<td>1059&#x2F;tcp</td>
+<td>nimreg</td>
+</tr>
+<tr>
+<td>1080&#x2F;tcp</td>
+<td>SOCKS proxy</td>
+</tr>
+<tr>
+<td>1099&#x2F;tcp</td>
+<td>RMI Registry</td>
+</tr>
+<tr>
+<td>1099&#x2F;udp</td>
+<td>RMI Registry</td>
+</tr>
+<tr>
+<td>1109&#x2F;tcp</td>
+<td>Kerberos POP</td>
+</tr>
+<tr>
+<td>1140&#x2F;tcp</td>
+<td>AutoNOC</td>
+</tr>
+<tr>
+<td>1167&#x2F;udp</td>
+<td>phone, conference calling</td>
+</tr>
+<tr>
+<td>1176&#x2F;tcp</td>
+<td>Perceptive Automation Indigo home control server</td>
+</tr>
+<tr>
+<td>1182&#x2F;tcp,udp</td>
+<td>AcceleNet</td>
+</tr>
+<tr>
+<td>1194&#x2F;udp</td>
+<td>OpenVPN</td>
+</tr>
+<tr>
+<td>1198&#x2F;tcp,udp</td>
+<td>The cajo project Free dynamic transparent distributed computing in Java</td>
+</tr>
+<tr>
+<td>1200&#x2F;udp</td>
+<td>Steam Friends Applet</td>
+</tr>
+<tr>
+<td>1214&#x2F;tcp</td>
+<td>Kazaa</td>
+</tr>
+<tr>
+<td>1223&#x2F;tcp,udp</td>
+<td>TGP: “TrulyGlobal Protocol” aka “The Gur Protocol”</td>
+</tr>
+<tr>
+<td>1241&#x2F;tcp,udp</td>
+<td>Nessus Security Scanner</td>
+</tr>
+<tr>
+<td>1248&#x2F;tcp</td>
+<td>NSClient&#x2F;NSClient++&#x2F;NC_Net (Nagios)</td>
+</tr>
+<tr>
+<td>1270&#x2F;tcp,udp</td>
+<td>Microsoft Operations Manager 2005 agent (MOM 2005)</td>
+</tr>
+<tr>
+<td>1311&#x2F;tcp</td>
+<td>Dell Open Manage Https Port</td>
+</tr>
+<tr>
+<td>1313&#x2F;tcp</td>
+<td>Xbiim (Canvii server) Port</td>
+</tr>
+<tr>
+<td>1337&#x2F;tcp</td>
+<td>WASTE Encrypted File Sharing Program</td>
+</tr>
+<tr>
+<td>1352&#x2F;tcp</td>
+<td>IBM Lotus Notes&#x2F;Domino RPC</td>
+</tr>
+<tr>
+<td>1387&#x2F;tcp</td>
+<td>Computer Aided Design Software Inc LM (cadsi-lm )</td>
+</tr>
+<tr>
+<td>1387&#x2F;udp</td>
+<td>Computer Aided Design Software Inc LM (cadsi-lm )</td>
+</tr>
+<tr>
+<td>1414&#x2F;tcp</td>
+<td>IBM MQSeries</td>
+</tr>
+<tr>
+<td>1431&#x2F;tcp</td>
+<td>RGTP</td>
+</tr>
+<tr>
+<td>1433&#x2F;tcp,udp</td>
+<td>Microsoft SQL database system</td>
+</tr>
+<tr>
+<td>1434&#x2F;tcp,udp</td>
+<td>Microsoft SQL Monitor</td>
+</tr>
+<tr>
+<td>1494&#x2F;tcp</td>
+<td>Citrix Presentation Server ICA Client</td>
+</tr>
+<tr>
+<td>1512&#x2F;tcp,udp</td>
+<td>WINS</td>
+</tr>
+<tr>
+<td>1521&#x2F;tcp</td>
+<td>nCube License Manager</td>
+</tr>
+<tr>
+<td>1521&#x2F;tcp</td>
+<td>Oracle database default listener, in future releases official port 2483</td>
+</tr>
+<tr>
+<td>1524&#x2F;tcp,udp</td>
+<td>ingreslock, ingres</td>
+</tr>
+<tr>
+<td>1526&#x2F;tcp</td>
+<td>Oracle database common alternative for listener</td>
+</tr>
+<tr>
+<td>1533&#x2F;tcp</td>
+<td>IBM Sametime IM - Virtual Places Chat</td>
+</tr>
+<tr>
+<td>1547&#x2F;tcp</td>
+<td>Laplink</td>
+</tr>
+<tr>
+<td>1547&#x2F;udp</td>
+<td>Laplink</td>
+</tr>
+<tr>
+<td>1550</td>
+<td>Gadu-Gadu (Direct Client-to-Client)</td>
+</tr>
+<tr>
+<td>1581&#x2F;udp</td>
+<td>MIL STD 2045-47001 VMF</td>
+</tr>
+<tr>
+<td>1589&#x2F;udp</td>
+<td>Cisco VQP (VLAN Query Protocol) &#x2F; VMPS</td>
+</tr>
+<tr>
+<td>1627</td>
+<td>iSketch</td>
+</tr>
+<tr>
+<td>1677&#x2F;tcp</td>
+<td>Novell GroupWise clients in client&#x2F;server access mode</td>
+</tr>
+<tr>
+<td>1701&#x2F;udp</td>
+<td>l2tp, Layer 2 Tunnelling protocol</td>
+</tr>
+<tr>
+<td>1716&#x2F;tcp</td>
+<td>America’s Army MMORPG Default Game Port</td>
+</tr>
+<tr>
+<td>1723&#x2F;tcp</td>
+<td>Microsoft PPTP VPN</td>
+</tr>
+<tr>
+<td>1723&#x2F;udp</td>
+<td>Microsoft PPTP VPN</td>
+</tr>
+<tr>
+<td>1725&#x2F;udp</td>
+<td>Valve Steam Client</td>
+</tr>
+<tr>
+<td>1755&#x2F;tcp</td>
+<td>Microsoft Media Services (MMS, ms-streaming)</td>
+</tr>
+<tr>
+<td>1755&#x2F;udp</td>
+<td>Microsoft Media Services (MMS, ms-streaming)</td>
+</tr>
+<tr>
+<td>1761&#x2F;tcp,udp</td>
+<td>cft-0</td>
+</tr>
+<tr>
+<td>1761&#x2F;tcp</td>
+<td>Novell Zenworks Remote Control utility</td>
+</tr>
+<tr>
+<td>1762-1768&#x2F;tcp,udp</td>
+<td>cft-1 to cft-7</td>
+</tr>
+<tr>
+<td>1812&#x2F;udp</td>
+<td>radius, RADIUS authentication protocol</td>
+</tr>
+<tr>
+<td>1813&#x2F;udp</td>
+<td>radacct, RADIUS accounting protocol</td>
+</tr>
+<tr>
+<td>1863&#x2F;tcp</td>
+<td>Windows Live Messenger, MSN</td>
+</tr>
+<tr>
+<td>1900&#x2F;udp</td>
+<td>Microsoft SSDP Enables discovery of UPnP devices</td>
+</tr>
+<tr>
+<td>1935&#x2F;tcp</td>
+<td>Real Time Messaging Protocol (RTMP) raw protocol</td>
+</tr>
+<tr>
+<td>1970&#x2F;tcp,udp</td>
+<td>Danware Data NetOp Remote Control</td>
+</tr>
+<tr>
+<td>1971&#x2F;tcp,udp</td>
+<td>Danware Data NetOp School</td>
+</tr>
+<tr>
+<td>1972&#x2F;tcp,udp</td>
+<td>InterSystems Caché</td>
+</tr>
+<tr>
+<td>1975-77&#x2F;udp</td>
+<td>Cisco TCO (Documentation)</td>
+</tr>
+<tr>
+<td>1984&#x2F;tcp</td>
+<td>Big Brother - network monitoring tool</td>
+</tr>
+<tr>
+<td>1985&#x2F;udp</td>
+<td>Cisco HSRP</td>
+</tr>
+<tr>
+<td>1994&#x2F;TCP</td>
+<td>STUN-SDLC protocol for tunneling</td>
+</tr>
+<tr>
+<td>1998&#x2F;tcp</td>
+<td>Cisco X.25 service (XOT)</td>
+</tr>
+<tr>
+<td>2000&#x2F;udp</td>
+<td>Cisco SCCP (Skinny)</td>
+</tr>
+<tr>
+<td>2000&#x2F;tcp</td>
+<td>Cisco SCCP (Skinny)</td>
+</tr>
+<tr>
+<td>2002&#x2F;tcp</td>
+<td>Cisco Secure Access Control Server (ACS) for Windows</td>
+</tr>
+<tr>
+<td>2030</td>
+<td>Oracle Services for Microsoft Transaction Server</td>
+</tr>
+<tr>
+<td>2031&#x2F;tcp</td>
+<td>mobrien-chat - Mike O’Brien November 2004</td>
+</tr>
+<tr>
+<td>2031&#x2F;udp</td>
+<td>mobrien-chat - Mike O’Brien November 2004</td>
+</tr>
+<tr>
+<td>2049&#x2F;udp</td>
+<td>nfs, NFS Server</td>
+</tr>
+<tr>
+<td>2049&#x2F;udp</td>
+<td>shilp</td>
+</tr>
+<tr>
+<td>2053&#x2F;tcp</td>
+<td>knetd, Kerberos de-multiplexor</td>
+</tr>
+<tr>
+<td>2056&#x2F;udp</td>
+<td>Civilization 4 multiplayer</td>
+</tr>
+<tr>
+<td>2073&#x2F;tcp</td>
+<td>DataReel Database</td>
+</tr>
+<tr>
+<td>2073&#x2F;udp</td>
+<td>DataReel Database</td>
+</tr>
+<tr>
+<td>2074&#x2F;tcp</td>
+<td>Vertel VMF SA (i.e. App.. SpeakFreely)</td>
+</tr>
+<tr>
+<td>2074&#x2F;udp</td>
+<td>Vertel VMF SA (i.e. App.. SpeakFreely)</td>
+</tr>
+<tr>
+<td>2082&#x2F;tcp</td>
+<td>Infowave Mobility Server</td>
+</tr>
+<tr>
+<td>2082&#x2F;tcp</td>
+<td>CPanel, default port</td>
+</tr>
+<tr>
+<td>2083&#x2F;tcp</td>
+<td>Secure Radius Service (radsec)</td>
+</tr>
+<tr>
+<td>2083&#x2F;tcp</td>
+<td>CPanel default SSL port</td>
+</tr>
+<tr>
+<td>2086&#x2F;tcp</td>
+<td>GNUnet</td>
+</tr>
+<tr>
+<td>2086&#x2F;tcp</td>
+<td>WebHost Manager default port</td>
+</tr>
+<tr>
+<td>2087&#x2F;tcp</td>
+<td>WebHost Manager default SSL port</td>
+</tr>
+<tr>
+<td>2095&#x2F;tcp</td>
+<td>CPanel default webmail port</td>
+</tr>
+<tr>
+<td>2096&#x2F;tcp</td>
+<td>CPanel default SSL webmail port</td>
+</tr>
+<tr>
+<td>2161&#x2F;tcp</td>
+<td>?-APC Agent</td>
+</tr>
+<tr>
+<td>2181&#x2F;tcp</td>
+<td>EForward-document transport system</td>
+</tr>
+<tr>
+<td>2181&#x2F;udp</td>
+<td>EForward-document transport system</td>
+</tr>
+<tr>
+<td>2200&#x2F;tcp</td>
+<td>Tuxanci game server</td>
+</tr>
+<tr>
+<td>2219&#x2F;tcp</td>
+<td>NetIQ NCAP Protocol</td>
+</tr>
+<tr>
+<td>2219&#x2F;udp</td>
+<td>NetIQ NCAP Protocol</td>
+</tr>
+<tr>
+<td>2220&#x2F;tcp</td>
+<td>NetIQ End2End</td>
+</tr>
+<tr>
+<td>2220&#x2F;udp</td>
+<td>NetIQ End2End</td>
+</tr>
+<tr>
+<td>2222&#x2F;tcp</td>
+<td>DirectAdmin’s default port</td>
+</tr>
+<tr>
+<td>2222&#x2F;udp</td>
+<td>Microsoft Office OS X antipiracy network monitor [1]</td>
+</tr>
+<tr>
+<td>2301&#x2F;tcp</td>
+<td>HP System Management Redirect to port 2381</td>
+</tr>
+<tr>
+<td>2302&#x2F;udp</td>
+<td>ArmA multiplayer (default for game)</td>
+</tr>
+<tr>
+<td>2302&#x2F;udp</td>
+<td>Halo: Combat Evolved multiplayer</td>
+</tr>
+<tr>
+<td>2303&#x2F;udp</td>
+<td>ArmA multiplayer (default for server reporting) (default port for game +1)</td>
+</tr>
+<tr>
+<td>2305&#x2F;udp</td>
+<td>ArmA multiplayer (default for VoN) (default port for game +3)</td>
+</tr>
+<tr>
+<td>2369&#x2F;tcp</td>
+<td>Default port for BMC Software CONTROL-M&#x2F;Server - Configuration Agent port number - though often changed during installation</td>
+</tr>
+<tr>
+<td>2370&#x2F;tcp</td>
+<td>Default port for BMC Software CONTROL-M&#x2F;Server - Port utilized to allow the CONTROL-M&#x2F;Enterprise Manager to connect to the CONTROL-M&#x2F;Server - though often changed during installation</td>
+</tr>
+<tr>
+<td>2381&#x2F;tcp</td>
+<td>HP Insight Manager default port for webserver</td>
+</tr>
+<tr>
+<td>2404&#x2F;tcp</td>
+<td>IEC 60870-5-104</td>
+</tr>
+<tr>
+<td>2427&#x2F;udp</td>
+<td>Cisco MGCP</td>
+</tr>
+<tr>
+<td>2447&#x2F;tcp</td>
+<td>ovwdb - OpenView Network Node Manager (NNM) daemon</td>
+</tr>
+<tr>
+<td>2447&#x2F;udp</td>
+<td>ovwdb - OpenView Network Node Manager (NNM) daemon</td>
+</tr>
+<tr>
+<td>2483&#x2F;tcp,udp</td>
+<td>Oracle database listening port for unsecure client connections to the listener, replaces port 1521</td>
+</tr>
+<tr>
+<td>2484&#x2F;tcp,udp</td>
+<td>Oracle database listening port for SSL client connections to the listener</td>
+</tr>
+<tr>
+<td>2546&#x2F;tcp,udp</td>
+<td>Vytal Vault - Data Protection Services</td>
+</tr>
+<tr>
+<td>2593&#x2F;tcp,udp</td>
+<td>RunUO - Ultima Online server</td>
+</tr>
+<tr>
+<td>2598&#x2F;tcp</td>
+<td>new ICA - when Session Reliability is enabled, TCP port 2598 replaces port 1494</td>
+</tr>
+<tr>
+<td>2612&#x2F;tcp,udp</td>
+<td>QPasa from MQSoftware</td>
+</tr>
+<tr>
+<td>2710&#x2F;tcp</td>
+<td>XBT Bittorrent Tracker</td>
+</tr>
+<tr>
+<td>2710&#x2F;udp</td>
+<td>XBT Bittorrent Tracker experimental UDP tracker extension</td>
+</tr>
+<tr>
+<td>2710&#x2F;tcp</td>
+<td>Knuddels.de</td>
+</tr>
+<tr>
+<td>2735&#x2F;tcp</td>
+<td>NetIQ Monitor Console</td>
+</tr>
+<tr>
+<td>2735&#x2F;udp</td>
+<td>NetIQ Monitor Console</td>
+</tr>
+<tr>
+<td>2809&#x2F;tcp</td>
+<td>corbaloc:iiop URL, per the CORBA 3.0.3 specification.</td>
+</tr>
+</tbody></table>
+<pre><code>|   
+|   Also used by IBM WebSphere Application Server Node Agent
+</code></pre>
+<p>2809&#x2F;udp    |   corbaloc:iiop URL, per the CORBA 3.0.3 specification.<br>2944&#x2F;udp    |   Megaco Text H.248<br>2945&#x2F;udp    |   Megaco Binary (ASN.1) H.248<br>2948&#x2F;tcp    |   WAP-push Multimedia Messaging Service (MMS)<br>2948&#x2F;udp    |   WAP-push Multimedia Messaging Service (MMS)<br>2949&#x2F;tcp    |   WAP-pushsecure Multimedia Messaging Service (MMS)<br>2949&#x2F;udp    |   WAP-pushsecure Multimedia Messaging Service (MMS)<br>2967&#x2F;tcp    |   Symantec AntiVirus Corporate Edition<br>3000&#x2F;tcp    |   Miralix License server<br>3000&#x2F;udp    |   Distributed Interactive Simulation (DIS), modifiable default port<br>3001&#x2F;tcp    |   Miralix Phone Monitor<br>3002&#x2F;tcp    |   Miralix CSTA<br>3003&#x2F;tcp    |   Miralix GreenBox API<br>3004&#x2F;tcp    |   Miralix InfoLink<br>3006&#x2F;tcp    |   Miralix SMS Client Connector<br>3007&#x2F;tcp    |   Miralix OM Server<br>3025&#x2F;tcp    |   netpd.org<br>3050&#x2F;tcp,udp    |   gds_db (Interbase&#x2F;Firebird)<br>3074&#x2F;tcp,udp    |   Xbox Live<br>3128&#x2F;tcp    |   HTTP used by web caches and the default port for the Squid cache<br>3260&#x2F;tcp    |   iSCSI target<br>3268&#x2F;tcp    |   msft-gc, Microsoft Global Catalog (LDAP service which contains data from Active Directory forests)<br>3269&#x2F;tcp    |   msft-gc-ssl, Microsoft Global Catalog over SSL (similar to port 3268, LDAP over SSL version)<br>3300&#x2F;tcp    |   TripleA game server<br>3305&#x2F;tcp,udp    |   ODETTE-FTP<br>3306&#x2F;tcp,udp    |   MySQL Database system<br>3333&#x2F;tcp    |   Network Caller ID server<br>3386&#x2F;tcp,udp    |   GTP’ 3GPP GSM&#x2F;UMTS CDR logging protocol<br>3389&#x2F;tcp    |   远端桌面协定（RDP）<br>3396&#x2F;tcp    |   Novell NDPS Printer Agent<br>3689&#x2F;tcp    |   DAAP Digital Audio Access Protocol used by Apple’s iTunes<br>3690&#x2F;tcp    |   Subversion version control system<br>3702&#x2F;tcp,udp    |   Web Services Dynamic Discovery (WS-Discovery), used by various components of Windows Vista<br>3724&#x2F;tcp    |   World of Warcraft Online gaming MMORPG<br>3784&#x2F;tcp,udp    |   Ventrilo VoIP program used by Ventrilo<br>3785&#x2F;udp    |   Ventrilo VoIP program used by Ventrilo<br>3868 tcp,udp    |   Diameter base protocol<br>3872&#x2F;tcp    |   Oracle Management Remote Agent<br>3899&#x2F;tcp    |   Remote Administrator<br>3900&#x2F;tcp    |   Unidata UDT OS udt_os<br>3945&#x2F;tcp    |   Emcads server service port, a Giritech product used by G&#x2F;On<br>4000&#x2F;tcp    |   Diablo II game NoMachine Network Server (nxd)<br>4007&#x2F;tcp    |   PrintBuzzer printer monitoring socket server<br>4089&#x2F;udp    |   OpenCORE Remote Control Service<br>4089&#x2F;tcp    |   OpenCORE Remote Control Service<br>4093&#x2F;udp    |   PxPlus Client server interface ProvideX<br>4093&#x2F;tcp    |   PxPlus Client server interface ProvideX<br>4096&#x2F;udp    |   Bridge-Relay Element ASCOM<br>4100    |   WatchGuard Authentication Applet - default port<br>4111&#x2F;tcp,udp    |   Xgrid<br>4111&#x2F;tcp    |   Microsoft Office SharePoint Portal Server - 默认管理端口<br>4226&#x2F;tcp,udp    |   Aleph One (computer game)<br>4224&#x2F;tcp    |   Cisco CDP Cisco discovery Protocol<br>4569&#x2F;udp    |   Inter-Asterisk eXchange<br>4662&#x2F;tcp    |   OrbitNet Message Service<br>4662&#x2F;tcp    |   通常用于eMule<br>4664&#x2F;tcp    |   Google桌面搜索<br>4672&#x2F;udp    |   eMule - 常用端口<br>4894&#x2F;tcp    |   LysKOM Protocol A<br>4899&#x2F;tcp    |   Radmin 远程控制工具<br>5000&#x2F;tcp    |   commplex-main<br>5000&#x2F;tcp    |   UPnP - Windows network device interoperability<br>5000&#x2F;tcp,udp    |   VTun - VPN 软件<br>5001&#x2F;tcp,udp    |   Iperf (Tool for measuring TCP and UDP bandwidth performance)<br>5001&#x2F;tcp    |   Slingbox及Slingplayer<br>5003&#x2F;tcp    |   FileMaker Filemaker Pro<br>5004&#x2F;udp    |   RTP Real-time Transport Protocol<br>5005&#x2F;udp    |   RTP Real-time Transport Protocol<br>5031&#x2F;tcp,udp    |   AVM CAPI-over-TCP (ISDN over Ethernet tunneling)<br>5050&#x2F;tcp    |   Yahoo! Messenger<br>5051&#x2F;tcp    |   ita-agent Symantec Intruder Alert<br>5060&#x2F;tcp    |   Session Initiation Protocol (SIP)<br>5060&#x2F;udp    |   Session Initiation Protocol (SIP)<br>5061&#x2F;tcp    |   Session Initiation Protocol (SIP) over Transport Layer Security (TLS)<br>5093&#x2F;udp    |   SPSS License Administrator (SPSS)<br>5104&#x2F;tcp    |   IBM NetCOOL &#x2F; IMPACT HTTP Service<br>5106&#x2F;tcp    |   A-Talk Common connection<br>5107&#x2F;tcp    |   A-Talk 远程服务器连接<br>5110&#x2F;tcp    |   ProRat Server<br>5121&#x2F;tcp    |   Neverwinter Nights<br>5176&#x2F;tcp    |   ConsoleWorks default UI interface<br>5190&#x2F;tcp    |   ICQ and AOL Instant Messenger<br>5222&#x2F;tcp    |   XMPP&#x2F;Jabber - client connection<br>5223&#x2F;tcp    |   XMPP&#x2F;Jabber - default port for SSL Client Connection<br>5269&#x2F;tcp    |   XMPP&#x2F;Jabber - server connection<br>5351&#x2F;tcp,udp    |   NAT Port Mapping Protocol - client-requested configuration for inbound connections through network address translators<br>5353&#x2F;udp    |   mDNS - multicastDNS<br>5402&#x2F;tcp,udp    |   StarBurst AutoCast MFTP<br>5405&#x2F;tcp,udp    |   NetSupport<br>5421&#x2F;tcp,udp    |   Net Support 2<br>5432&#x2F;tcp    |   PostgreSQL database system<br>5445&#x2F;udp    |   Cisco Vidéo VT Advantage<br>5495&#x2F;tcp    |   Applix TM1 Admin server<br>5498&#x2F;tcp    |   Hotline tracker server connection<br>5499&#x2F;udp    |   Hotline tracker server discovery<br>5500&#x2F;tcp    |   VNC remote desktop protocol - for incoming listening viewer, Hotline control connection<br>5501&#x2F;tcp    |   Hotline file transfer connection<br>5517&#x2F;tcp    |   Setiqueue Proxy server client for SETI@Home project<br>5555&#x2F;tcp    |   Freeciv multiplay port for versions up to 2.0, Hewlett Packard Data Protector, SAP<br>5556&#x2F;tcp    |   Freeciv multiplay port<br>5631&#x2F;tcp    |   赛门铁克 pcAnywhere<br>5632&#x2F;udp    |   赛门铁克 pcAnywhere<br>5666&#x2F;tcp    |   NRPE (Nagios)<br>5667&#x2F;tcp    |   NSCA (Nagios)<br>5800&#x2F;tcp    |   VNC remote desktop protocol - for use over HTTP<br>5814&#x2F;tcp,udp    |   Hewlett-Packard Support Automation (HP OpenView Self-Healing Services)<br>5900&#x2F;tcp    |   VNC remote desktop protocol (used by ARD)<br>6000&#x2F;tcp    |   X11 - used between an X client and server over the network<br>6001&#x2F;udp    |   X11 - used between an X client and server over the network<br>6005&#x2F;tcp    |   Default port for BMC Software CONTROL-M&#x2F;Server - Socket Port number used for communication between CONTROL-M processes - though often changed during installation<br>6050&#x2F;tcp    |   Brightstor Arcserve Backup<br>6051&#x2F;tcp    |   Brightstor Arcserve Backup<br>6100&#x2F;tcp    |   Vizrt System<br>6110&#x2F;tcp    |   softcm HP SoftBench CM<br>6110&#x2F;udp    |   softcm HP SoftBench CM<br>6111&#x2F;tcp    |   spc HP SoftBench Sub-Process Control<br>6111&#x2F;udp    |   spc HP SoftBench Sub-Process Control<br>6112&#x2F;tcp    |   “dtspcd” - a network daemon that accepts requests from clients to execute commands and launch applications remotely<br>6112&#x2F;tcp    |   Blizzard’s Battle.net gaming service, ArenaNet gaming service<br>6129&#x2F;tcp    |   Dameware Remote Control<br>6257&#x2F;udp    |   WinMX （参见6699端口）<br>6346&#x2F;tcp,udp    |   gnutella-svc (FrostWire, Limewire, Bearshare, etc.)<br>6347&#x2F;tcp,udp    |   gnutella-rtr<br>6444&#x2F;tcp,udp    |   Sun Grid Engine - Qmaster Service<br>6445&#x2F;tcp,udp    |   Sun Grid Engine - Execution Service<br>6502&#x2F;tcp,udp    |   Danware Data NetOp Remote Control<br>6522&#x2F;tcp    |   Gobby (and other libobby-based software)<br>6543&#x2F;udp    |   Jetnet - default port that the Paradigm Research &amp; Development Jetnet protocol communicates on<br>6566&#x2F;tcp    |   SANE (Scanner Access Now Easy) - SANE network scanner daemon<br>6600&#x2F;tcp    |   Music Playing Daemon (MPD)<br>6619&#x2F;tcp,udp    |   ODETTE-FTP over TLS&#x2F;SSL<br>6665-6669&#x2F;tcp   |   Internet Relay Chat<br>6679&#x2F;tcp    |   IRC SSL （安全互联网中继聊天） - 通常使用的端口<br>6697&#x2F;tcp    |   IRC SSL （安全互联网中继聊天） - 通常使用的端口<br>6699&#x2F;tcp    |   WinMX （参见6257端口）<br>6881-6999&#x2F;tcp,udp   |   BitTorrent 通常使用的端口<br>6891-6900&#x2F;tcp,udp   |   Windows Live Messenger （文件传输）<br>6901&#x2F;tcp,udp    |   Windows Live Messenger （语音）<br>6969&#x2F;tcp    |   acmsoda<br>6969&#x2F;tcp    |   BitTorrent tracker port<br>7000&#x2F;tcp    |   Default port for Azureus’s built in HTTPS Bittorrent Tracker<br>7001&#x2F;tcp    |   Default port for BEA WebLogic Server’s HTTP server - though often changed during installation<br>7002&#x2F;tcp    |   Default port for BEA WebLogic Server’s HTTPS server - though often changed during installation<br>7005&#x2F;tcp,udp    |   Default port for BMC Software CONTROL-M&#x2F;Server and CONTROL-M&#x2F;Agent’s - Agent to Server port though often changed during installation<br>7006&#x2F;tcp,udp    |   Default port for BMC Software CONTROL-M&#x2F;Server and CONTROL-M&#x2F;Agent’s - Server to Agent port though often changed during installation<br>7010&#x2F;tcp    |   Default port for Cisco AON AMC (AON Management Console) [2]<br>7025&#x2F;tcp    |   Zimbra - lmtp [mailbox] - local mail delivery<br>7047&#x2F;tcp    |   Zimbra - conversion server<br>7171&#x2F;tcp    |   Tibia<br>7306&#x2F;tcp    |   Zimbra - mysql [mailbox]<br>7307&#x2F;tcp    |   Zimbra - mysql [logger] - logger<br>7312&#x2F;udp    |   Sibelius License Server port<br>7670&#x2F;tcp    |   BrettspielWelt BSW Boardgame Portal<br>7777&#x2F;tcp    |   Default port used by Windows backdoor program tini.exe<br>8000&#x2F;tcp    |   iRDMI - often mistakenly used instead of port 8080 (The Internet Assigned Numbers Authority (iana.org) officially lists this port for iRDMI protocol)<br>8000&#x2F;tcp    |   Common port used for internet radio streams such as those using SHOUTcast<br>8002&#x2F;tcp    |   Cisco Systems Unified Call Manager Intercluster Port<br>8008&#x2F;tcp    |   HTTP 替代端口<br>8008&#x2F;tcp    |   IBM HTTP Server 默认管理端口<br>8009&#x2F;tcp    |   Apache JServ 协议 v13 (ajp13) 例如：Apache mod_jk Tomcat会使用。<br>8010&#x2F;tcp    |   XMPP&#x2F;Jabber 文件传输<br>8074&#x2F;tcp    |   Gadu-Gadu<br>8080&#x2F;tcp    |   HTTP 替代端口 （http_alt） - commonly used for web proxy and caching server, or for running a web server as a non-root user<br>8080&#x2F;tcp    |   Apache Tomcat<br>8086&#x2F;tcp    |   HELM Web Host Automation Windows Control Panel<br>8086&#x2F;tcp    |   Kaspersky AV Control Center TCP Port<br>8087&#x2F;tcp    |   Hosting Accelerator Control Panel<br>8087&#x2F;udp    |   Kaspersky AV Control Center UDP Port<br>8090&#x2F;tcp    |   Another HTTP Alternate (http_alt_alt) - used as an alternative to port 8080<br>8118&#x2F;tcp    |   Privoxy web proxy - advertisements-filtering web proxy<br>8087&#x2F;tcp    |   SW Soft Plesk 控制面板<br>8200&#x2F;tcp    |   GoToMyPC<br>8220&#x2F;tcp    |   Bloomberg<br>8222    |   VMware Server Management User Interface (insecure web interface)[3]. See also, port 8333<br>8291&#x2F;tcp    |   Winbox - Default port on a MikroTik RouterOS for a Windows application used to administer MikroTik RouterOS<br>8294&#x2F;tcp    |   Bloomberg<br>8333    |   VMware 服务器管理用户界面（安全网络界面）[4]. See also, port 8222<br>8400    |   Commvault Unified Data Management<br>8443&#x2F;tcp    |   SW Soft Plesk Control Panel<br>8500&#x2F;tcp    |   ColdFusion Macromedia&#x2F;Adobe ColdFusion default Webserver port<br>8501&#x2F;udp    |   Duke Nukem 3D - Default Online Port<br>8767&#x2F;udp    |   TeamSpeak - Default UDP Port<br>8880    |   WebSphere Application Server SOAP Connector port<br>8881&#x2F;tcp    |   Atlasz Informatics Research Ltd Secure Application Server<br>8882&#x2F;tcp    |   Atlasz Informatics Research Ltd Secure Application Server<br>8888&#x2F;tcp,udp    |   NewsEDGE server<br>8888&#x2F;tcp    |   Sun Answerbook dwhttpd server (deprecated by docs.sun.com)<br>8888&#x2F;tcp    |   GNUmp3d HTTP music streaming and web interface port<br>8888&#x2F;tcp    |   Hero Fighter Network Game Server<br>9000&#x2F;tcp    |   Buffalo LinkSystem web access<br>9000&#x2F;tcp    |   DBGp<br>9000&#x2F;udp    |   UDPCast<br>9001    |   cisco-xremote router configuration<br>9001    |   Tor network default port<br>9001&#x2F;tcp    |   DBGp Proxy<br>9009&#x2F;tcp,udp    |   Pichat Server - Peer to peer chat software<br>9043&#x2F;tcp    |   WebSphere Application Server Administration Console secure port<br>9060&#x2F;tcp    |   WebSphere Application Server Administration Console<br>9100&#x2F;tcp    |   Jetdirect HP Print Services<br>9110&#x2F;udp    |   SSMP Message protocol<br>9101    |   Bacula Director<br>9102    |   Bacula File Daemon<br>9103    |   Bacula Storage Daemon<br>9119&#x2F;TCP,UDP    |   MXit Instant Messenger<br>9535&#x2F;tcp    |   man, Remote Man Server<br>9535    |   mngsuite - Management Suite Remote Control<br>9800&#x2F;tcp,udp    |   WebDAV Source Port<br>9800    |   WebCT e-learning portal<br>9999    |   Hydranode - edonkey2000 telnet control port<br>9999    |   Urchin Web Analytics<br>10000   |   Webmin - web based Linux admin tool<br>10000   |   BackupExec<br>10008   |   Octopus Multiplexer - CROMP protocol primary port, hoople.org<br>10017   |   AIX,NeXT, HPUX - rexd daemon control port<br>10024&#x2F;tcp   |   Zimbra - smtp [mta] - to amavis from postfix<br>10025&#x2F;tcp   |   Ximbra - smtp [mta] - back to postfix from amavis<br>10050&#x2F;tcp   |   Zabbix-Agent<br>10051&#x2F;tcp   |   Zabbix-Server<br>10113&#x2F;tcp   |   NetIQ Endpoint<br>10113&#x2F;udp   |   NetIQ Endpoint<br>10114&#x2F;tcp   |   NetIQ Qcheck<br>10114&#x2F;udp   |   NetIQ Qcheck<br>10115&#x2F;tcp   |   NetIQ Endpoint<br>10115&#x2F;udp   |   NetIQ Endpoint<br>10116&#x2F;tcp   |   NetIQ VoIP Assessor<br>10116&#x2F;udp   |   NetIQ VoIP Assessor<br>10480   |   SWAT 4 Dedicated Server<br>11211   |   memcached<br>11235   |   Savage:Battle for Newerth Server Hosting<br>11294   |   Blood Quest Online Server<br>11371   |   OpenPGP HTTP Keyserver<br>11576   |   IPStor Server management communication<br>12035&#x2F;udp   |   Linden Lab viewer to sim<br>12345   |   NetBus - remote administration tool (often Trojan horse). Also used by NetBuster. Little Fighter 2 (TCP).<br>12975&#x2F;tcp   |   LogMeIn Hamachi (VPN tunnel software;also port 32976)<br>13000-13050&#x2F;udp |   Linden Lab viewer to sim<br>13720&#x2F;tcp   |   Symantec NetBackup - bprd (formerly VERITAS)<br>13721&#x2F;tcp   |   Symantec NetBackup - bpdbm (formerly VERITAS)<br>13724&#x2F;tcp   |   Symantec Network Utility - vnet (formerly VERITAS)<br>13782&#x2F;tcp   |   Symantec NetBackup - bpcd (formerly VERITAS)<br>13783&#x2F;tcp   |   Symantec VOPIED protocol (formerly VERITAS)<br>14567&#x2F;udp   |   Battlefield 1942 and mods<br>15000&#x2F;tcp   |   psyBNC<br>15000&#x2F;tcp   |   Wesnoth<br>15567&#x2F;udp   |   Battlefield Vietnam and mods<br>15345&#x2F;udp   |   XPilot<br>16000&#x2F;tcp   |   shroudBNC<br>16080&#x2F;tcp   |   Mac OS X Server performance cache for HTTP[5]<br>16384&#x2F;udp   |   Iron Mountain Digital - online backup<br>16567&#x2F;udp   |   Battlefield 2 and mods<br>17788&#x2F;udp   |   PPS网路电视<br>19226&#x2F;tcp   |   Panda Software AdminSecure Communication Agent<br>19638&#x2F;tcp   |   Ensim Control Panel<br>19813&#x2F;tcp   |   4D database Client Server Communication<br>20000   |   Usermin - 基于网络的用户工具<br>20720&#x2F;tcp   |   Symantec i3 Web GUI server<br>22347&#x2F;tcp,udp   |   WibuKey - default port for WibuKey Network Server of WIBU-SYSTEMS AG<br>22350&#x2F;tcp,udp   |   CodeMeter - default port for CodeMeter Server of WIBU-SYSTEMS AG<br>24554&#x2F;tcp,udp   |   binkp - Fidonet mail transfers over TCP&#x2F;IP<br>24800   |   Synergy：keyboard&#x2F;mouse sharing software<br>24842   |   StepMania：Online: Dance Dance Revolution Simulator<br>25999&#x2F;tcp   |   Xfire<br>26000&#x2F;tcp,udp   |   id Software’s Quake server,<br>26000&#x2F;tcp   |   CCP’s EVE Online Online gaming MMORPG,<br>27000&#x2F;udp   |   (through 27006) id Software’s QuakeWorld master server<br>27010&#x2F;udp   |   Half-Life及其修改版，如Counter-Strike<br>27015&#x2F;udp   |   Half-Life及其修改版，如Counter-Strike<br>27374   |   Sub7’s default port. Most script kiddies do not change the default port.<br>27500&#x2F;udp   |   (through 27900) id Software’s QuakeWorld<br>27888&#x2F;udp   |   Kaillera server<br>27900   |   (through 27901) Nintendo Wi-Fi Connection<br>27901&#x2F;udp   |   (through 27910) id Software’s Quake II master server<br>27960&#x2F;udp   |   (through 27969) Activision’s Enemy Territory and id Software’s Quake III Arena and Quake III and some ioquake3 derived games<br>28910   |   任天堂 Wi-Fi连接<br>28960   |   Call of Duty 2 Common Call of Duty 2 port - (PC Version)<br>29900   |   (through 29901) Nintendo Wi-Fi Connection<br>29920   |   任天堂 Wi-Fi连接<br>30000   |   Pokemon Netbattle<br>30564&#x2F;tcp   |   Multiplicity：keyboard&#x2F;mouse&#x2F;clipboard sharing software<br>31337&#x2F;tcp   |   Back Orifice - remote administration tool（often Trojan horse）<br>31337&#x2F;tcp   |   xc0r3 - xc0r3 security antivir port<br>31415   |   ThoughtSignal - Server Communication Service（often Informational）<br>31456-31458&#x2F;tcp |   TetriNET ports (in order: IRC, game, and spectating)<br>32245&#x2F;tcp   |   MMTSG-mutualed over MMT (encrypted transmission)<br>33434   |   traceroute<br>37777&#x2F;tcp   |   Digital Video Recorder hardware<br>36963   |   Counter Strike 2D multiplayer port (2D clone of popular CounterStrike computer game)<br>40000   |   SafetyNET p<br>40523   |   data packets<br>43594-43595&#x2F;tcp |   RuneScape<br>47808   |   BACnet Building Automation and Control Networks</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/service-names-port-numbers/" data-title="TCP/UDP常用端口列表 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/gogs/" title="使用Gogs轻松搭建可能比GitLab更好用的Git服务平台">
+  <strong>上一篇：</strong><br/>
+  <span>
+  使用Gogs轻松搭建可能比GitLab更好用的Git服务平台</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/windows-batch/"  title="Windows批处理(cmd/bat)常用命令小结">
+ <strong>下一篇：</strong><br/> 
+ <span>Windows批处理(cmd/bat)常用命令小结
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E8%AE%B0%E5%BD%95"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B8%B8%E7%94%A8%E7%AB%AF%E5%8F%A3"><span class="toc-number">3.</span> <span class="toc-text">服务器常用端口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP-x2F-UDP%E7%AB%AF%E5%8F%A3%E5%88%97%E8%A1%A8"><span class="toc-number">4.</span> <span class="toc-text">TCP&#x2F;UDP端口列表</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

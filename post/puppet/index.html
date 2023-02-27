@@ -1,0 +1,591 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>Puppet安装配置小结 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="Puppet是最佳的集中配置管理系统之一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Puppet安装配置小结">
+<meta property="og:url" content="https://wsgzao.github.io/post/puppet/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="Puppet是最佳的集中配置管理系统之一">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/en/c/c5/Puppet_Labs_Logo.png">
+<meta property="og:image" content="http://ipad-cms.csdn.net/cms/attachment/201209/5048569d92738.jpg">
+<meta property="article:published_time" content="2016-03-25T08:22:32.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:07.026Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://upload.wikimedia.org/wikipedia/en/c/c5/Puppet_Labs_Logo.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/puppet/" title="Puppet安装配置小结" itemprop="url">Puppet安装配置小结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2016-03-25T08:22:32.000Z" itemprop="datePublished"> 发表于 2016-03-25</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E8%AE%B0%E5%BD%95"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">工作原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-number">4.</span> <span class="toc-text">准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Puppet-Server"><span class="toc-number">5.</span> <span class="toc-text">Puppet Server</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Puppet-Client"><span class="toc-number">6.</span> <span class="toc-text">Puppet Client</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Puppet%E8%AF%81%E4%B9%A6%E8%AE%A4%E8%AF%81"><span class="toc-number">7.</span> <span class="toc-text">Puppet证书认证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Puppet%E5%90%8C%E6%AD%A5%E9%AA%8C%E8%AF%81"><span class="toc-number">8.</span> <span class="toc-text">Puppet同步验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Troubleshooting"><span class="toc-number">9.</span> <span class="toc-text">Troubleshooting</span></a></li></ol>
+		
+		</div>
+		 -->
+		<p><img src="https://upload.wikimedia.org/wikipedia/en/c/c5/Puppet_Labs_Logo.png"></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Puppet这个词实际上包括了两层含义：它既代表编写这种代码的语言，也代表对基础设施进行管理的平台。做运维总是靠流程驱动和事故驱动，无论是生产还是测试环境配置上的不统一使得团队的整体效率大打折扣。能够在开发者的笔记本或是在QA环境下正常工作的代码，往往在部署到生产环境后就会出现问题，最糟糕的是没人知道问题的根源在哪里。而Puppet是一个优秀的基础设施管理平台，可以让每个系统管理员更高效地完成工作，Puppet能够为共享的代码库提供一种强力的粘合剂，以统一不同团队的工作。Puppet可以帮助处于各种不同状况的团队增强协作能力，以进行软件开发和发布的——这种工作方式的演变通常被称做DevOps。</p>
+<blockquote>
+<p>Puppet是最佳的集中配置管理系统之一</p>
+</blockquote>
+<h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><p>2016年03月25日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/puppet/">https://wsgzao.github.io/post/puppet/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>Puppet Labs Documentation - <a target="_blank" rel="noopener" href="https://docs.puppetlabs.com/">https://docs.puppetlabs.com/</a><br>Puppet Forge - <a target="_blank" rel="noopener" href="https://forge.puppetlabs.com/">https://forge.puppetlabs.com/</a></p>
+<h2 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h2><blockquote>
+<p>Puppet采用了非常简单的C&#x2F;S架构，所有数据的交互都通过SSL进行，以保证安全</p>
+</blockquote>
+<p><img src="http://ipad-cms.csdn.net/cms/attachment/201209/5048569d92738.jpg"></p>
+<ol>
+<li>客户端Puppetd向Master发起认证请求，或使用带签名的证书。</li>
+<li>Master告诉Client你是合法的。</li>
+<li>客户端Puppetd调用Facter，Facter探测出主机的一些变量，例如主机名、内存大小、IP地址等。Puppetd将这些信息通过SSL连接发送到服务器端。</li>
+<li>服务器端的Puppet Master检测客户端的主机名，然后找到manifest对应的node配置，并对该部分内容进行解析。Facter送过来的信息可以作为变量处 理，node牵涉到的代码才解析，其他没牵涉的代码不解析。解析分为几个阶段，首先是语法检查，如果语法错误就报错；如果语法没错，就继续解析，解析的结 果生成一个中间的“伪代码”（catelog），然后把伪代码发给客户端。</li>
+<li>客户端接收到“伪代码”，并且执行。</li>
+<li>客户端在执行时判断有没有File文件，如果有，则向fileserver发起请求。</li>
+<li>客户端判断有没有配置Report，如果已配置，则把执行结果发送给服务器。</li>
+<li>服务器端把客户端的执行结果写入日志，并发送给报告系统。</li>
+</ol>
+<p>这就是puppet的工作流程，最重要的莫过于puppet-master来管理node的配置文件。</p>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><blockquote>
+<p>以rhel6.3为例，前期核心在于配置yum，更多技巧可以参考以下文章</p>
+</blockquote>
+<p>RHEL(Red Hat Enterprise Linux)配置yum源 - <a href="https://wsgzao.github.io/post/yum/">https://wsgzao.github.io/post/yum/</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#关闭iptables</span></span><br><span class="line">/etc/init.d/iptables stop</span><br><span class="line">chkconfig iptables off</span><br><span class="line"></span><br><span class="line"><span class="comment">#关闭selinux</span></span><br><span class="line">setenforce 0</span><br><span class="line">sed -i <span class="string">&#x27;s/SELINUX=enforcing/SELINUX=disabled/&#x27;</span> /etc/selinux/config  </span><br><span class="line"></span><br><span class="line"><span class="comment">#NTP同步</span></span><br><span class="line">ntpdate 0.rhel.pool.ntp.org</span><br><span class="line">crontab -e</span><br><span class="line">0 0 * * * /usr/sbin/ntpdate 0.rhel.pool.ntp.org;/usr/sbin/hwclock -w</span><br><span class="line"></span><br><span class="line"><span class="comment">#添加hosts</span></span><br><span class="line">vi /etc/hosts</span><br><span class="line">192.168.1.10 master</span><br><span class="line">192.168.1.11 client</span><br><span class="line"></span><br><span class="line"><span class="comment">#puppet</span></span><br><span class="line">http://downloads.puppetlabs.com/puppet/</span><br><span class="line"><span class="comment">#facter</span></span><br><span class="line">http://downloads.puppetlabs.com/facter/</span><br><span class="line"><span class="comment">#ruby</span></span><br><span class="line">https://www.ruby-lang.org/zh_cn/downloads/</span><br><span class="line"></span><br><span class="line"><span class="comment">#配置CentOS YUM源</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /etc/yum.repos.d/</span><br><span class="line"><span class="built_in">cp</span> rhel-source.repo rhel-source.repo.bak</span><br><span class="line">vi rhel-source.repo</span><br><span class="line"></span><br><span class="line">[base]</span><br><span class="line">name=CentOS-<span class="variable">$releasever</span>-Base</span><br><span class="line">baseurl=http://centos.ustc.edu.cn/centos/6/os/x86_64/</span><br><span class="line">gpgcheck=1</span><br><span class="line">gpgkey=http://mirrors.163.com/centos/RPM-GPG-KEY-CentOS-6</span><br><span class="line"></span><br><span class="line">[updates]</span><br><span class="line">name=CentOS-<span class="variable">$releasever</span>-Updates</span><br><span class="line">baseurl=http://centos.ustc.edu.cn/centos/6/os/x86_64/</span><br><span class="line">gpgcheck=1</span><br><span class="line">gpgkey=http://mirrors.163.com/centos/RPM-GPG-KEY-CentOS-6</span><br><span class="line"></span><br><span class="line">[extras]</span><br><span class="line">name=CentOS-<span class="variable">$releasever</span>-Extras</span><br><span class="line">baseurl=http://centos.ustc.edu.cn/centos/6/os/x86_64/</span><br><span class="line">gpgcheck=1</span><br><span class="line">gpgkey=http://mirrors.163.com/centos/RPM-GPG-KEY-CentOS-6</span><br><span class="line"></span><br><span class="line">[centosplus]</span><br><span class="line">name=CentOS-<span class="variable">$releasever</span>-Plus</span><br><span class="line">baseurl=http://centos.ustc.edu.cn/centos/6/os/x86_64/</span><br><span class="line">gpgcheck=1</span><br><span class="line"></span><br><span class="line">yum clean all</span><br><span class="line">yum makecache</span><br><span class="line">yum repolist</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Puppet-Server"><a href="#Puppet-Server" class="headerlink" title="Puppet Server"></a>Puppet Server</h2><blockquote>
+<p>如果可以访问外网并配置repos，直接yum install puppetserver简单粗暴</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#Enable the Puppet Labs Package Repository</span></span><br><span class="line">rpm -ivh https://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm</span><br><span class="line"></span><br><span class="line"><span class="comment">#安装yum-plugin-downloadonly插件</span></span><br><span class="line">yum install -y yum-plugin-downloadonly</span><br><span class="line"></span><br><span class="line"><span class="comment">#yum install puppetserver</span></span><br><span class="line">yum install --downloadonly --downloaddir=/tmp/puppetserver puppetserver</span><br><span class="line"></span><br><span class="line">Total download size: 73 M</span><br><span class="line">Is this ok [y/N]: y</span><br><span class="line">Downloading Packages:</span><br><span class="line">(1/22): augeas-libs-1.0.0-10.el6.x86_64.rpm          </span><br><span class="line">(2/22): compat-readline5-5.2-17.1.el6.x86_64.rpm     </span><br><span class="line">(3/22): facter-2.4.6-1.el6.x86_64.rpm                </span><br><span class="line">(4/22): hiera-1.3.4-1.el6.noarch.rpm                 </span><br><span class="line">(5/22): java-1.7.0-openjdk-1.7.0.79-2.5.5.4.el6.x86_6</span><br><span class="line">(6/22): libjpeg-turbo-1.2.1-3.el6_5.x86_64.rpm       </span><br><span class="line">(7/22): libselinux-2.0.94-5.8.el6.i686.rpm           </span><br><span class="line">(8/22): libselinux-2.0.94-5.8.el6.x86_64.rpm         </span><br><span class="line">(9/22): libselinux-devel-2.0.94-5.8.el6.x86_64.rpm   </span><br><span class="line">(10/22): libselinux-python-2.0.94-5.8.el6.x86_64.rpm </span><br><span class="line">(11/22): libselinux-ruby-2.0.94-5.8.el6.x86_64.rpm   </span><br><span class="line">(12/22): libselinux-utils-2.0.94-5.8.el6.x86_64.rpm  </span><br><span class="line">(13/22): puppet-3.8.6-1.el6.noarch.rpm               </span><br><span class="line">(14/22): puppetserver-1.1.3-1.el6.noarch.rpm         </span><br><span class="line">(15/22): ruby-1.8.7.374-4.el6_6.x86_64.rpm           </span><br><span class="line">(16/22): ruby-augeas-0.4.1-3.el6.x86_64.rpm          </span><br><span class="line">(17/22): ruby-irb-1.8.7.374-4.el6_6.x86_64.rpm       </span><br><span class="line">(18/22): ruby-libs-1.8.7.374-4.el6_6.x86_64.rpm      </span><br><span class="line">(19/22): ruby-rdoc-1.8.7.374-4.el6_6.x86_64.rpm      </span><br><span class="line">(20/22): ruby-shadow-2.2.0-2.el6.x86_64.rpm          </span><br><span class="line">(21/22): rubygem-json-1.5.5-3.el6.x86_64.rpm         </span><br><span class="line">(22/22): rubygems-1.3.7-5.el6.noarch.rpm             </span><br><span class="line"></span><br><span class="line">master@/tmp/puppetserver<span class="comment">#rpm -Uvh *</span></span><br><span class="line">warning: augeas-libs-1.0.0-10.el6.x86_64.rpm: Header V3 RSA/SHA1 Signature, key ID c105b9de: NOKEY</span><br><span class="line">warning: facter-2.4.6-1.el6.x86_64.rpm: Header V4 RSA/SHA1 Signature, key ID 4bd6ec30: NOKEY</span><br><span class="line">Preparing...                <span class="comment">########################################### [100%]</span></span><br><span class="line">   1:libselinux             <span class="comment">########################################### [  5%]</span></span><br><span class="line">   2:augeas-libs            <span class="comment">########################################### [  9%]</span></span><br><span class="line">   3:libselinux-ruby        <span class="comment">########################################### [ 14%]</span></span><br><span class="line">   4:libselinux-utils       <span class="comment">########################################### [ 18%]</span></span><br><span class="line">   5:libjpeg-turbo          <span class="comment">########################################### [ 23%]</span></span><br><span class="line">   6:java-1.7.0-openjdk     <span class="comment">########################################### [ 27%]</span></span><br><span class="line">   7:compat-readline5       <span class="comment">########################################### [ 32%]</span></span><br><span class="line">   8:ruby-libs              <span class="comment">########################################### [ 36%]</span></span><br><span class="line">   9:ruby                   <span class="comment">########################################### [ 41%]</span></span><br><span class="line">  10:facter                 <span class="comment">########################################### [ 45%]</span></span><br><span class="line">  11:ruby-irb               <span class="comment">########################################### [ 50%]</span></span><br><span class="line">  12:ruby-rdoc              <span class="comment">########################################### [ 55%]</span></span><br><span class="line">  13:rubygems               <span class="comment">########################################### [ 59%]</span></span><br><span class="line">  14:rubygem-json           <span class="comment">########################################### [ 64%]</span></span><br><span class="line">  15:hiera                  <span class="comment">########################################### [ 68%]</span></span><br><span class="line">  16:ruby-shadow            <span class="comment">########################################### [ 73%]</span></span><br><span class="line">  17:ruby-augeas            <span class="comment">########################################### [ 77%]</span></span><br><span class="line">  18:puppet                 <span class="comment">########################################### [ 82%]</span></span><br><span class="line">  19:puppetserver           <span class="comment">########################################### [ 86%]</span></span><br><span class="line">  20:libselinux-devel       <span class="comment">########################################### [ 91%]</span></span><br><span class="line">  21:libselinux-python      <span class="comment">########################################### [ 95%]</span></span><br><span class="line">  22:libselinux             <span class="comment">########################################### [100%]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#验证puppetserver</span></span><br><span class="line">master@/tmp/puppetserver<span class="comment">#yum install puppetserver</span></span><br><span class="line">Loaded plugins: downloadonly, product-id, refresh-packagekit, security, subscription-manager</span><br><span class="line">Updating certificate-based repositories.</span><br><span class="line">Unable to <span class="built_in">read</span> consumer identity</span><br><span class="line">Setting up Install Process</span><br><span class="line">Package puppetserver-1.1.3-1.el6.noarch already installed and latest version</span><br><span class="line">Nothing to <span class="keyword">do</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#增加puppet master配置信息</span></span><br><span class="line">vi /etc/puppet/puppet.conf</span><br><span class="line"></span><br><span class="line">[main]</span><br><span class="line">    <span class="comment"># master的主机名</span></span><br><span class="line">    server = master</span><br><span class="line">    <span class="comment"># master的主机名</span></span><br><span class="line">    certname = master</span><br><span class="line">    <span class="comment">#禁用插件同步</span></span><br><span class="line">    pluginsync = <span class="literal">false</span></span><br><span class="line">    <span class="comment"># The Puppet log directory.</span></span><br><span class="line">    <span class="comment"># The default value is &#x27;$vardir/log&#x27;.</span></span><br><span class="line">    logdir = /var/log/puppet</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Where Puppet PID files are kept.</span></span><br><span class="line">    <span class="comment"># The default value is &#x27;$vardir/run&#x27;.</span></span><br><span class="line">    rundir = /var/run/puppet</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Where SSL certificates are kept.</span></span><br><span class="line">    <span class="comment"># The default value is &#x27;$confdir/ssl&#x27;.</span></span><br><span class="line">    ssldir = <span class="variable">$vardir</span>/ssl</span><br><span class="line"></span><br><span class="line">[agent]</span><br><span class="line">    <span class="comment"># The file in which puppetd stores a list of the classes</span></span><br><span class="line">    <span class="comment"># associated with the retrieved configuratiion.  Can be loaded in</span></span><br><span class="line">    <span class="comment"># the separate ``puppet`` executable using the ``--loadclasses``</span></span><br><span class="line">    <span class="comment"># option.</span></span><br><span class="line">    <span class="comment"># The default value is &#x27;$confdir/classes.txt&#x27;.</span></span><br><span class="line">    classfile = <span class="variable">$vardir</span>/classes.txt</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Where puppetd caches the local configuration.  An</span></span><br><span class="line">    <span class="comment"># extension indicating the cache format is added automatically.</span></span><br><span class="line">    <span class="comment"># The default value is &#x27;$confdir/localconfig&#x27;.</span></span><br><span class="line">    localconfig = <span class="variable">$vardir</span>/localconfig</span><br><span class="line"></span><br><span class="line"><span class="comment">#启动puppet</span></span><br><span class="line">puppet master</span><br><span class="line">ps -ef |grep master</span><br><span class="line"></span><br><span class="line">puppet    3077     1  0 10:09 ?        00:00:00 /usr/bin/ruby /usr/bin/puppet master</span><br><span class="line">root      3081  3015  0 10:09 pts/0    00:00:00 grep master</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Puppet-Client"><a href="#Puppet-Client" class="headerlink" title="Puppet Client"></a>Puppet Client</h2><blockquote>
+<p>如果可以访问外网并配置repos，直接yum install puppet简单粗暴</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#Enable the Puppet Labs Package Repository</span></span><br><span class="line">rpm -ivh https://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm</span><br><span class="line"></span><br><span class="line"><span class="comment">#安装yum-plugin-downloadonly插件</span></span><br><span class="line">yum install -y yum-plugin-downloadonly</span><br><span class="line"></span><br><span class="line"><span class="comment">#yum install puppet</span></span><br><span class="line">yum install --downloadonly --downloaddir=/tmp/puppet puppet</span><br><span class="line"></span><br><span class="line">Downloading Packages:</span><br><span class="line">(1/19): augeas-libs-1.0.0-10.el6.x86_64.rpm          </span><br><span class="line">(2/19): compat-readline5-5.2-17.1.el6.x86_64.rpm     </span><br><span class="line">(3/19): facter-2.4.6-1.el6.x86_64.rpm                </span><br><span class="line">(4/19): hiera-1.3.4-1.el6.noarch.rpm                 </span><br><span class="line">(5/19): libselinux-2.0.94-5.8.el6.i686.rpm           </span><br><span class="line">(6/19): libselinux-2.0.94-5.8.el6.x86_64.rpm         </span><br><span class="line">(7/19): libselinux-devel-2.0.94-5.8.el6.x86_64.rpm   </span><br><span class="line">(8/19): libselinux-python-2.0.94-5.8.el6.x86_64.rpm  </span><br><span class="line">(9/19): libselinux-ruby-2.0.94-5.8.el6.x86_64.rpm    </span><br><span class="line">(10/19): libselinux-utils-2.0.94-5.8.el6.x86_64.rpm  </span><br><span class="line">(11/19): puppet-3.8.6-1.el6.noarch.rpm               </span><br><span class="line">(12/19): ruby-1.8.7.374-4.el6_6.x86_64.rpm           </span><br><span class="line">(13/19): ruby-augeas-0.4.1-3.el6.x86_64.rpm          </span><br><span class="line">(14/19): ruby-irb-1.8.7.374-4.el6_6.x86_64.rpm       </span><br><span class="line">(15/19): ruby-libs-1.8.7.374-4.el6_6.x86_64.rpm      </span><br><span class="line">(16/19): ruby-rdoc-1.8.7.374-4.el6_6.x86_64.rpm      </span><br><span class="line">(17/19): ruby-shadow-2.2.0-2.el6.x86_64.rpm          </span><br><span class="line">(18/19): rubygem-json-1.5.5-3.el6.x86_64.rpm         </span><br><span class="line">(19/19): rubygems-1.3.7-5.el6.noarch.rpm             </span><br><span class="line"></span><br><span class="line"><span class="comment">#离线安装</span></span><br><span class="line">client@/tmp/puppet<span class="comment">#rpm -Uvh *</span></span><br><span class="line">warning: facter-2.4.6-1.el6.x86_64.rpm: Header V4 RSA/SHA1 Signature, key ID 4bd6ec30: NOKEY</span><br><span class="line">Preparing...                <span class="comment">########################################### [100%]</span></span><br><span class="line">   1:libselinux             <span class="comment">########################################### [  5%]</span></span><br><span class="line">   2:augeas-libs            <span class="comment">########################################### [ 11%]</span></span><br><span class="line">   3:libselinux-ruby        <span class="comment">########################################### [ 16%]</span></span><br><span class="line">   4:libselinux-utils       <span class="comment">########################################### [ 21%]</span></span><br><span class="line">   5:compat-readline5       <span class="comment">########################################### [ 26%]</span></span><br><span class="line">   6:ruby-libs              <span class="comment">########################################### [ 32%]</span></span><br><span class="line">   7:ruby                   <span class="comment">########################################### [ 37%]</span></span><br><span class="line">   8:facter                 <span class="comment">########################################### [ 42%]</span></span><br><span class="line">   9:ruby-irb               <span class="comment">########################################### [ 47%]</span></span><br><span class="line">  10:ruby-rdoc              <span class="comment">########################################### [ 53%]</span></span><br><span class="line">  11:rubygems               <span class="comment">########################################### [ 58%]</span></span><br><span class="line">  12:rubygem-json           <span class="comment">########################################### [ 63%]</span></span><br><span class="line">  13:hiera                  <span class="comment">########################################### [ 68%]</span></span><br><span class="line">  14:ruby-shadow            <span class="comment">########################################### [ 74%]</span></span><br><span class="line">  15:ruby-augeas            <span class="comment">########################################### [ 79%]</span></span><br><span class="line">  16:puppet                 <span class="comment">########################################### [ 84%]</span></span><br><span class="line">  17:libselinux-devel       <span class="comment">########################################### [ 89%]</span></span><br><span class="line">  18:libselinux-python      <span class="comment">########################################### [ 95%]</span></span><br><span class="line">  19:libselinux             <span class="comment">########################################### [100%]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#验证puppet</span></span><br><span class="line">client@/tmp/puppet<span class="comment">#yum install puppet</span></span><br><span class="line">Loaded plugins: fastestmirror, product-id, refresh-packagekit, security, subscription-manager</span><br><span class="line">Updating certificate-based repositories.</span><br><span class="line">Unable to <span class="built_in">read</span> consumer identity</span><br><span class="line">Setting up Install Process</span><br><span class="line">Loading mirror speeds from cached hostfile</span><br><span class="line">Package puppet-3.8.6-1.el6.noarch already installed and latest version</span><br><span class="line">Nothing to <span class="keyword">do</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#增加puppet client配置信息</span></span><br><span class="line">vi /etc/puppet/puppet.conf</span><br><span class="line"></span><br><span class="line">[main]</span><br><span class="line">    <span class="comment"># master的主机名</span></span><br><span class="line">    server = master</span><br><span class="line">    <span class="comment"># 禁用插件同步</span></span><br><span class="line">    pluginsync = <span class="literal">false</span></span><br><span class="line">    <span class="comment"># The Puppet log directory.</span></span><br><span class="line">    <span class="comment"># The default value is &#x27;$vardir/log&#x27;.</span></span><br><span class="line">    logdir = /var/log/puppet</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Where Puppet PID files are kept.</span></span><br><span class="line">    <span class="comment"># The default value is &#x27;$vardir/run&#x27;.</span></span><br><span class="line">    rundir = /var/run/puppet</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Where SSL certificates are kept.</span></span><br><span class="line">    <span class="comment"># The default value is &#x27;$confdir/ssl&#x27;.</span></span><br><span class="line">    ssldir = <span class="variable">$vardir</span>/ssl</span><br><span class="line"></span><br><span class="line">[agent]</span><br><span class="line">    <span class="comment"># The file in which puppetd stores a list of the classes</span></span><br><span class="line">    <span class="comment"># associated with the retrieved configuratiion.  Can be loaded in</span></span><br><span class="line">    <span class="comment"># the separate ``puppet`` executable using the ``--loadclasses``</span></span><br><span class="line">    <span class="comment"># option.</span></span><br><span class="line">    <span class="comment"># The default value is &#x27;$confdir/classes.txt&#x27;.</span></span><br><span class="line">    classfile = <span class="variable">$vardir</span>/classes.txt</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Where puppetd caches the local configuration.  An</span></span><br><span class="line">    <span class="comment"># extension indicating the cache format is added automatically.</span></span><br><span class="line">    <span class="comment"># The default value is &#x27;$confdir/localconfig&#x27;.</span></span><br><span class="line">    localconfig = <span class="variable">$vardir</span>/localconfig</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Puppet证书认证"><a href="#Puppet证书认证" class="headerlink" title="Puppet证书认证"></a>Puppet证书认证</h2><blockquote>
+<p>Puppet为了安全，采用ssl隧道通信，因此需要申请证书来验证的</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#client agent连接server</span></span><br><span class="line">puppet agent --server=master</span><br><span class="line"></span><br><span class="line"><span class="comment">#在master上查看申请证书请求</span></span><br><span class="line">puppet cert --list</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;client&quot;</span> (SHA256) BC:1B:42:88:B0:A4:F0:F2:81:56:5D:0E:7A:49:90:83:79:F2:41:A5:E3:12:FC:E2:F2:DB:DE:30:8E:DB:0D:D0</span><br><span class="line"></span><br><span class="line"><span class="comment">#在master上签发证书</span></span><br><span class="line"><span class="comment">#puppet cert sign --all</span></span><br><span class="line">puppet cert --sign client</span><br><span class="line"></span><br><span class="line">Notice: Signed certificate request <span class="keyword">for</span> client</span><br><span class="line">Notice: Removing file Puppet::SSL::CertificateRequest client at <span class="string">&#x27;/var/lib/puppet/ssl/ca/requests/client.pem&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#查看证书，&quot;+&quot;表示已经签名成功</span></span><br><span class="line">puppet cert -all</span><br><span class="line"></span><br><span class="line">+ <span class="string">&quot;client&quot;</span> (SHA256) BC:1B:42:88:B0:A4:F0:F2:81:56:5D:0E:7A:49:90:83:79:F2:41:A5:E3:12:FC:E2:F2:DB:DE:30:8E:DB:0D:D0</span><br><span class="line">+ <span class="string">&quot;master&quot;</span> (SHA256) 04:45:21:0B:B5:5E:41:AE:9C:F4:B4:6B:EC:2F:AA:D2:BE:46:33:3E:B1:0E:85:2E:3C:B7:6B:98:95:A8:CE:4D</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Puppet同步验证"><a href="#Puppet同步验证" class="headerlink" title="Puppet同步验证"></a>Puppet同步验证</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#在master上创建一个site.pp文件</span></span><br><span class="line">vi /etc/puppet/manifests/site.pp</span><br><span class="line"></span><br><span class="line">node default &#123; file &#123; <span class="string">&quot;/tmp/test.txt&quot;</span>: content =&gt; <span class="string">&quot;Hello, First puppet test!&quot;</span>&#125; &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#在client机进行验证，如果/tmp/test.txt文件生成并有内容，则说明功能正常。</span></span><br><span class="line">puppet agent --<span class="built_in">test</span></span><br><span class="line"></span><br><span class="line">Info: Caching catalog <span class="keyword">for</span> client</span><br><span class="line">Info: Applying configuration version <span class="string">&#x27;1458888162&#x27;</span></span><br><span class="line">Notice: /Stage[main]/Main/Node[default]/File[/tmp/test.txt]/ensure: defined content as <span class="string">&#x27;&#123;md5&#125;390b4c389233b9ae38a84ff8c731a8a1&#x27;</span></span><br><span class="line">Info: Creating state file /var/lib/puppet/state/state.yaml</span><br><span class="line">Notice: Finished catalog run <span class="keyword">in</span> 0.03 seconds</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Troubleshooting"><a href="#Troubleshooting" class="headerlink" title="Troubleshooting"></a>Troubleshooting</h2><blockquote>
+<p>硬件配置&#x2F;操作系统记得按照Puppet的官方建议来做，遇到错误仔细分析日志</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://docs.puppetlabs.com/pe/latest/install_system_requirements.html">https://docs.puppetlabs.com/pe/latest/install_system_requirements.html</a><br><a target="_blank" rel="noopener" href="https://docs.puppetlabs.com/guides/troubleshooting.html">https://docs.puppetlabs.com/guides/troubleshooting.html</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#Error: Could not find certificate request for client</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#execute on your puppet master.</span></span><br><span class="line">puppet cert clean <span class="string">&quot;yourhostnamehere&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#execute on your puppet agent.</span></span><br><span class="line"><span class="built_in">rm</span> -f /etc/puppetlabs/puppet/ssl/certs/yourhostnamehere</span><br><span class="line">find /var/lib/puppet -name *yourhostnamehere* -delete</span><br><span class="line">puppet agent -t</span><br><span class="line"></span><br><span class="line"><span class="comment">#back for your puppet master</span></span><br><span class="line">puppet cert --list</span><br><span class="line"></span><br><span class="line"><span class="comment">#check your name certificate and sign.</span></span><br><span class="line">puppet cert --sign <span class="string">&quot;yourhostnamehere&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#come back to your puppet agent and be happy :D</span></span><br><span class="line">puppet agent -t</span><br><span class="line"></span><br><span class="line"><span class="comment">#客户端报错提示的方法也是类似</span></span><br><span class="line">Error: Could not request certificate: The certificate retrieved from the master does not match the agent<span class="string">&#x27;s private key.</span></span><br><span class="line"><span class="string">To fix this, remove the certificate from both the master and the agent and then start a puppet run, which will automatically regenerate a certficate.</span></span><br><span class="line"><span class="string">On the master:</span></span><br><span class="line"><span class="string">  puppet cert clean &quot;client&quot;</span></span><br><span class="line"><span class="string">On the agent:</span></span><br><span class="line"><span class="string">  1a. On most platforms: find /var/lib/puppet/ssl -name client.pem -delete</span></span><br><span class="line"><span class="string">  1b. On Windows: del &quot;/var/lib/puppet/ssl/client.pem&quot; /f</span></span><br><span class="line"><span class="string">  2. puppet agent -t</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#Error: Could not run: Could not create PID file: /var/run/puppet/master.pid</span></span><br><span class="line"><span class="string">killall puppet</span></span><br><span class="line"><span class="string">puppet master --verbose --no-daemonize</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#puppet agent --test</span></span><br><span class="line"><span class="string">Error: Could not retrieve catalog from remote server: Error 400 on SERVER: Could not parse for environment production: Permission denied - /etc/puppet/manifests/site.pp on node client.cffex.com.cn</span></span><br><span class="line"><span class="string">Warning: Not using cache on failed catalog</span></span><br><span class="line"><span class="string">Error: Could not retrieve catalog; skipping run</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#注意/etc/puppet/manifests的权限</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/puppet/" data-title="Puppet安装配置小结 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/windows-batch/" title="Windows批处理(cmd/bat)常用命令小结">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Windows批处理(cmd/bat)常用命令小结</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/lvm/"  title="LVM逻辑卷管理配置小结">
+ <strong>下一篇：</strong><br/> 
+ <span>LVM逻辑卷管理配置小结
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E8%AE%B0%E5%BD%95"><span class="toc-number">2.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">工作原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-number">4.</span> <span class="toc-text">准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Puppet-Server"><span class="toc-number">5.</span> <span class="toc-text">Puppet Server</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Puppet-Client"><span class="toc-number">6.</span> <span class="toc-text">Puppet Client</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Puppet%E8%AF%81%E4%B9%A6%E8%AE%A4%E8%AF%81"><span class="toc-number">7.</span> <span class="toc-text">Puppet证书认证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Puppet%E5%90%8C%E6%AD%A5%E9%AA%8C%E8%AF%81"><span class="toc-number">8.</span> <span class="toc-text">Puppet同步验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Troubleshooting"><span class="toc-number">9.</span> <span class="toc-text">Troubleshooting</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

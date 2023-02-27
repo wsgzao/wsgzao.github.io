@@ -1,0 +1,720 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>ZooKeeper安装使用 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="ZooKeeper分布式环境的协调利器">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ZooKeeper安装使用">
+<meta property="og:url" content="https://wsgzao.github.io/post/zookeeper/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="ZooKeeper分布式环境的协调利器">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-09-27T07:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:07.229Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/zookeeper/" title="ZooKeeper安装使用" itemprop="url">ZooKeeper安装使用</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2018-09-27T07:59:49.000Z" itemprop="datePublished"> 发表于 2018-09-27</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ZooKeeper%E7%AE%80%E4%BB%8B"><span class="toc-number">3.</span> <span class="toc-text">ZooKeeper简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jdk"><span class="toc-number">4.</span> <span class="toc-text">jdk</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#install-jdk-by-ansible"><span class="toc-number">4.1.</span> <span class="toc-text">install jdk by ansible</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#install-jdk-manually"><span class="toc-number">4.2.</span> <span class="toc-text">install jdk manually</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#zookeeper"><span class="toc-number">5.</span> <span class="toc-text">zookeeper</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#install-zookeeper-by-ansible"><span class="toc-number">5.1.</span> <span class="toc-text">install zookeeper by ansible</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#zookeeper-stand-alone"><span class="toc-number">5.2.</span> <span class="toc-text">zookeeper stand-alone</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#install-zookeeper-manually"><span class="toc-number">5.3.</span> <span class="toc-text">install zookeeper manually</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zookeeper-Configuration"><span class="toc-number">6.</span> <span class="toc-text">Zookeeper Configuration</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#zookeeper-test"><span class="toc-number">7.</span> <span class="toc-text">zookeeper test</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#zookeeper%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3"><span class="toc-number">8.</span> <span class="toc-text">zookeeper配置参数详解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#zookeeper%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">9.</span> <span class="toc-text">zookeeper常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">10.</span> <span class="toc-text">参考资料</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>相信大家对ZooKeeper应该不算陌生，ZooKeeper的使用和ZooKeeper集群的搭建并不复杂，这里分享自己看到的一些好文章以及使用Ansible快速部署和手动部署ZooKeeper的经验分享。</p>
+<blockquote>
+<p>ZooKeeper分布式环境的协调利器</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2018年09月27日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/zookeeper/">https://wsgzao.github.io/post/zookeeper/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>ZooKeeper - <a target="_blank" rel="noopener" href="https://zookeeper.apache.org/">https://zookeeper.apache.org/</a></p>
+<hr>
+<h2 id="ZooKeeper简介"><a href="#ZooKeeper简介" class="headerlink" title="ZooKeeper简介"></a>ZooKeeper简介</h2><p>ZooKeeper is a centralized service for maintaining configuration information, naming, providing distributed synchronization, and providing group services. All of these kinds of services are used in some form or another by distributed applications. Each time they are implemented there is a lot of work that goes into fixing the bugs and race conditions that are inevitable. Because of the difficulty of implementing these kinds of services, applications initially usually skimp on them ,which make them brittle in the presence of change and difficult to manage. Even when done correctly, different implementations of these services lead to management complexity when the applications are deployed.</p>
+<p>ZooKeeper是一个开源的为分布式应用提供分布式协调的服务。它公开了一组简单的原语，分布式应用程序可以基于这些原语实现更高级别的服务，包括同步、维护配置、组和命名。它的设计易于编程，它使用一个遵循文件系统中常见的目录树结构的数据模型。它在Java环境中运行，对Java和C都有绑定。<br>协调服务是出了名的难。它们特别容易出错，如竞态条件和死锁。ZooKeeper背后的动机是让分布式应用从零开始实现一站式协调服务。</p>
+<p>翻译：ZooKeeper OverView<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/f-ck-need-u/p/9231153.html">https://www.cnblogs.com/f-ck-need-u/p/9231153.html</a></p>
+<p>可能是全网把 ZooKeeper 概念讲的最清楚的一篇文章<br><a target="_blank" rel="noopener" href="https://github.com/Snailclimb/JavaGuide/blob/master/docs/system-design/framework/ZooKeeper.md">https://github.com/Snailclimb/JavaGuide/blob/master/docs/system-design/framework/ZooKeeper.md</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Snailclimb/JavaGuide/blob/master/docs/system-design/framework/ZooKeeper.md">ZooKeeper 相关概念总结</a><br><a target="_blank" rel="noopener" href="https://github.com/Snailclimb/JavaGuide/blob/master/docs/system-design/framework/ZooKeeper%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%B8%B8%E8%A7%81%E5%91%BD%E4%BB%A4.md">ZooKeeper 数据模型和常见命令</a></p>
+<h2 id="jdk"><a href="#jdk" class="headerlink" title="jdk"></a>jdk</h2><h3 id="install-jdk-by-ansible"><a href="#install-jdk-by-ansible" class="headerlink" title="install jdk by ansible"></a>install jdk by ansible</h3><p><a target="_blank" rel="noopener" href="https://galaxy.ansible.com/geerlingguy/java">https://galaxy.ansible.com/geerlingguy/java</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># download</span></span><br><span class="line">ansible-galaxy install geerlingguy.java</span><br><span class="line"><span class="comment"># create yaml file and config java version</span></span><br><span class="line">vi install_jdk.yml</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">- hosts: all</span><br><span class="line">  roles:</span><br><span class="line">    - role: geerlingguy.java</span><br><span class="line">      when: <span class="string">&quot;ansible_os_family == &#x27;RedHat&#x27;&quot;</span></span><br><span class="line">      java_packages:</span><br><span class="line">        - java-1.8.0-openjdk</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="install-jdk-manually"><a href="#install-jdk-manually" class="headerlink" title="install jdk manually"></a>install jdk manually</h3><p><a target="_blank" rel="noopener" href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">http://www.oracle.com/technetwork/java/javase/downloads/index.html</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># yum</span></span><br><span class="line">yum install java-1.8.0-openjdk</span><br><span class="line"><span class="comment"># rpm</span></span><br><span class="line">yum localinstall -y jdk-8u181-linux-x64.rpm</span><br><span class="line"><span class="comment"># set env</span></span><br><span class="line">vi /etc/profile</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/java/jdk1.8.0_181</span><br><span class="line"><span class="built_in">export</span> CLASSPATH=<span class="variable">$CLASSPATH</span>:<span class="variable">$JAVA_HOME</span>/lib:<span class="variable">$JAVA_HOME</span>/jre/lib </span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$JAVA_HOME</span>/bin:<span class="variable">$JAVA_HOME</span>/jre/bin:<span class="variable">$PATH</span>:<span class="variable">$HOME</span>/bin </span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure>
+
+<h2 id="zookeeper"><a href="#zookeeper" class="headerlink" title="zookeeper"></a>zookeeper</h2><h3 id="install-zookeeper-by-ansible"><a href="#install-zookeeper-by-ansible" class="headerlink" title="install zookeeper by ansible"></a>install zookeeper by ansible</h3><p><a target="_blank" rel="noopener" href="https://github.com/sleighzy/ansible-zookeeper">ansible-zookeeper</a></p>
+<h3 id="zookeeper-stand-alone"><a href="#zookeeper-stand-alone" class="headerlink" title="zookeeper stand-alone"></a>zookeeper stand-alone</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># install jdk</span></span><br><span class="line">yum -y install java-1.8.0-openjdk</span><br><span class="line"><span class="comment"># download and install zookeeper</span></span><br><span class="line">wget https://archive.apache.org/dist/zookeeper/zookeeper-3.4.14/zookeeper-3.4.14.tar.gz</span><br><span class="line">tar -zxvf zookeeper-3.4.14.tar.gz -C /opt</span><br><span class="line"><span class="built_in">ln</span> -s /opt/zookeeper-3.4.14 /opt/zookeeper</span><br><span class="line"><span class="built_in">cd</span> /opt/zookeeper</span><br><span class="line"><span class="comment"># create zoo.cfg</span></span><br><span class="line"><span class="built_in">cd</span> /opt/zookeeper/conf</span><br><span class="line"><span class="built_in">cp</span> zoo_sample.cfg zoo.cfg</span><br><span class="line"><span class="comment"># start zookeeper</span></span><br><span class="line">/opt/zookeeper/bin/zkServer.sh start</span><br><span class="line">/opt/zookeeper/bin/zkCli.sh -server 127.0.0.1:2181</span><br></pre></td></tr></table></figure>
+
+<h3 id="install-zookeeper-manually"><a href="#install-zookeeper-manually" class="headerlink" title="install zookeeper manually"></a>install zookeeper manually</h3><p><a target="_blank" rel="noopener" href="https://zookeeper.apache.org/releases.html#download">https://zookeeper.apache.org/releases.html#download</a><br><a target="_blank" rel="noopener" href="https://archive.apache.org/dist/zookeeper/stable/">https://archive.apache.org/dist/zookeeper/stable/</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># install jdk</span></span><br><span class="line">yum -y install java-1.8.0-openjdk</span><br><span class="line"><span class="comment"># download and install zookeeper</span></span><br><span class="line">tar -zxvf zookeeper-3.4.14.tar.gz —C /opt</span><br><span class="line"><span class="built_in">ln</span> -s /opt/zookeeper-3.4.14 /opt/zookeeper</span><br><span class="line"><span class="built_in">cd</span> /opt/zookeeper</span><br><span class="line"><span class="comment"># create zoo.cfg</span></span><br><span class="line"><span class="built_in">cd</span> /opt/zookeeper/conf</span><br><span class="line"><span class="built_in">cp</span> zoo_sample.cfg zoo.cfg</span><br><span class="line">vi zoo.cfg</span><br><span class="line"></span><br><span class="line">tickTime=2000</span><br><span class="line">dataDir=/var/lib/zookeeper</span><br><span class="line">dataLogDir=/var/log/zookeeper</span><br><span class="line">clientPort=2181</span><br><span class="line">initLimit=5</span><br><span class="line">syncLimit=2</span><br><span class="line"></span><br><span class="line">server.1=zoo1:2888:3888</span><br><span class="line">server.2=zoo2:2888:3888</span><br><span class="line">server.3=zoo3:2888:3888</span><br><span class="line"></span><br><span class="line"><span class="comment"># create directory</span></span><br><span class="line"><span class="built_in">mkdir</span> /var/lib/zookeeper</span><br><span class="line"><span class="built_in">mkdir</span> /var/log/zookeeper</span><br><span class="line"><span class="comment"># create myid file in different zookeeper</span></span><br><span class="line"><span class="built_in">cd</span> /var/lib/zookeeper/</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> 1 &gt; /var/lib/zookeeper/myid</span><br><span class="line"><span class="built_in">echo</span> 2 &gt; /var/lib/zookeeper/myid</span><br><span class="line"><span class="built_in">echo</span> 3 &gt; /var/lib/zookeeper/myid</span><br><span class="line"></span><br><span class="line"><span class="comment"># live</span></span><br><span class="line"><span class="built_in">cat</span> &lt;&lt; <span class="string">EOF &gt; /opt/zookeeper/conf/zoo.cfg</span></span><br><span class="line"><span class="string">tickTime=2000</span></span><br><span class="line"><span class="string">initLimit=5</span></span><br><span class="line"><span class="string">syncLimit=2</span></span><br><span class="line"><span class="string">dataDir=/data/zookeeper/data</span></span><br><span class="line"><span class="string">dataLogDir=/var/log/zookeeper</span></span><br><span class="line"><span class="string">clientPort=2181</span></span><br><span class="line"><span class="string">server.1=192.168.188.120:2888:3888</span></span><br><span class="line"><span class="string">server.2=192.168.188.121:2888:3888</span></span><br><span class="line"><span class="string">server.3=192.168.188.122:2888:3888</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># autostart</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;/opt/zookeeper/bin/zkServer.sh start&#x27;</span>  &gt;&gt; /etc/rc.local</span><br><span class="line"></span><br><span class="line"><span class="comment"># start</span></span><br><span class="line"><span class="built_in">cd</span> /usr/local/zookeeper/bin</span><br><span class="line">./zkServer.sh start</span><br><span class="line"><span class="comment"># check</span></span><br><span class="line">./zkServer.sh status</span><br><span class="line"><span class="comment"># create znode</span></span><br><span class="line">./zkCli.sh -server 127.0.0.1:2181</span><br><span class="line">create /codis codis</span><br><span class="line"><span class="built_in">ls</span> /</span><br><span class="line">[zookeeper, codis]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Zookeeper-Configuration"><a href="#Zookeeper-Configuration" class="headerlink" title="Zookeeper Configuration"></a>Zookeeper Configuration</h2><p>Platform: RHEL &#x2F; CentOS 7<br>Java: Oracle JDK</p>
+<blockquote>
+<p>Variables</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">zookeeper_version: 3.4.14</span><br><span class="line">zookeeper_group: zookeeper</span><br><span class="line">zookeeper_user: zookeeper</span><br><span class="line">zookeeper_dir: /opt/zookeeper-&#123;&#123;zookeeper_version&#125;&#125; <span class="comment"># or /opt/zookeeper</span></span><br><span class="line">zookeeper_conf_dir: &#123;&#123;zookeeper_dir&#125;&#125; <span class="comment"># or /etc/zookeeper</span></span><br><span class="line">zookeeper_tarball_dir: /opt/src</span><br><span class="line">data_dir: /var/lib/zookeeper</span><br><span class="line">log_dir: /var/log/zookeeper</span><br><span class="line">zookeeper_client_port: 2181</span><br><span class="line">zookeeper_id: 1</span><br><span class="line">zookeeper_leader_port: 2888</span><br><span class="line">zookeeper_election_port: 3888</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Default Ports</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Port</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2181</td>
+<td>Client connection port</td>
+</tr>
+<tr>
+<td>2888</td>
+<td>Quorum port for clustering</td>
+</tr>
+<tr>
+<td>3888</td>
+<td>Leader election port for clustering</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>conf&#x2F;zoo.cfg</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">tickTime=2000</span><br><span class="line">dataDir=/var/lib/zookeeper</span><br><span class="line">dataLogDir=/var/log/zookeeper</span><br><span class="line">clientPort=2181</span><br><span class="line">initLimit=5</span><br><span class="line">syncLimit=2</span><br><span class="line">server.1=zoo1:2888:3888</span><br><span class="line">server.2=zoo2:2888:3888</span><br><span class="line">server.3=zoo3:2888:3888</span><br></pre></td></tr></table></figure>
+
+<p><strong>tickTime</strong><br>the basic time unit in milliseconds used by ZooKeeper. It is used to do heartbeats and the minimum session timeout will be twice the tickTime.</p>
+<p><strong>dataDir</strong><br>the location to store the in-memory database snapshots and, unless specified otherwise, the transaction log of updates to the database.</p>
+<p><strong>clientPort</strong><br>the port to listen for client connections</p>
+<p><strong>initLimit</strong><br>is timeouts ZooKeeper uses to limit the length of time the ZooKeeper servers in quorum have to connect to a leader. </p>
+<p><strong>syncLimit</strong><br>limits how far out of date a server can be from a leader.</p>
+<p>In this example, the timeout for initLimit is 5 ticks at 2000 milleseconds a tick, or 10 seconds.</p>
+<h2 id="zookeeper-test"><a href="#zookeeper-test" class="headerlink" title="zookeeper test"></a>zookeeper test</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 连接到192.168.1.3</span></span><br><span class="line">ganlixins-MacBook-Pro:~ ganlixin$ /usr/local/zookeeper/bin/zkCli.sh  -server 192.168.1.3:2181</span><br><span class="line">[zk: 192.168.1.3:2181(CONNECTED) 0] create /abc 123</span><br><span class="line">Created /abc</span><br><span class="line">[zk: 192.168.1.3:2181(CONNECTED) 1] create /xyz 666</span><br><span class="line">Created /xyz</span><br><span class="line">[zk: 192.168.1.3:2181(CONNECTED) 2] quit</span><br><span class="line">Quitting...</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 连接到192.168.1.4</span></span><br><span class="line">ganlixins-MacBook-Pro:~ ganlixin$ /usr/local/zookeeper/bin/zkCli.sh  -server 192.168.1.4:2181</span><br><span class="line">[zk: 192.168.1.4:2181(CONNECTED) 0] <span class="built_in">ls</span> /</span><br><span class="line">[xyz, abc, zookeeper]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="zookeeper配置参数详解"><a href="#zookeeper配置参数详解" class="headerlink" title="zookeeper配置参数详解"></a>zookeeper配置参数详解</h2><p>conf中zoo.cfg配置文件参数详细说明表</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>clientPort</td>
+<td>客户端连接server的端口，即对外服务端口，一般设置为2181吧。</td>
+</tr>
+<tr>
+<td>dataDir</td>
+<td>存储快照文件snapshot的目录。默认情况下，事务日志也会存储在这里。建议同时配置参数dataLogDir, 事务日志的写性能直接影响zk性能。</td>
+</tr>
+<tr>
+<td>tickTime</td>
+<td>ZK中的一个时间单元。ZK中所有时间都是以这个时间单元为基础，进行整数倍配置的。例如，session的最小超时时间是2*tickTime。</td>
+</tr>
+<tr>
+<td>dataLogDir</td>
+<td>事务日志输出目录。尽量给事务日志的输出配置单独的磁盘或是挂载点，这将极大的提升ZK性能。 （No Java system property）</td>
+</tr>
+<tr>
+<td>globalOutstandingLimit</td>
+<td>最大请求堆积数。默认是1000。ZK运行的时候， 尽管server已经没有空闲来处理更多的客户端请求了，但是还是允许客户端将请求提交到服务器上来，以提高吞吐性能。当然，为了防止Server内存溢出，这个请求堆积数还是需要限制下的。 (Java system property:zookeeper.globalOutstandingLimit. )</td>
+</tr>
+<tr>
+<td>preAllocSize</td>
+<td>预先开辟磁盘空间，用于后续写入事务日志。默认是64M，每个事务日志大小就是64M。如果ZK的快照频率较大的话，建议适当减小这个参数。(Java system property:zookeeper.preAllocSize )</td>
+</tr>
+<tr>
+<td>snapCount</td>
+<td>每进行snapCount次事务日志输出后，触发一次快照(snapshot), 此时，ZK会生成一个snapshot.*文件，同时创建一个新的事务日志文件log.*。默认是100000.（真正的代码实现中，会进行一定的随机数处理，以避免所有服务器在同一时间进行快照而影响性能）(Java system property:zookeeper.snapCount )</td>
+</tr>
+<tr>
+<td>traceFile</td>
+<td>用于记录所有请求的log，一般调试过程中可以使用，但是生产环境不建议使用，会严重影响性能。(Java system property:? requestTraceFile )</td>
+</tr>
+<tr>
+<td>maxClientCnxns</td>
+<td>单个客户端与单台服务器之间的连接数的限制，是ip级别的，默认是60，如果设置为0，那么表明不作任何限制。请注意这个限制的使用范围，仅仅是单台客户端机器与单台ZK服务器之间的连接数限制，不是针对指定客户端IP，也不是ZK集群的连接数限制，也不是单台ZK对所有客户端的连接数限制。指定客户端IP的限制策略，这里有一个patch，可以尝试一下：<a target="_blank" rel="noopener" href="https://link.jianshu.com/?t=http://rdc.taobao.com/team/jm/archives/1334">http://rdc.taobao.com/team/jm/archives/1334</a>（No Java system property）</td>
+</tr>
+<tr>
+<td>clientPortAddress</td>
+<td>对于多网卡的机器，可以为每个IP指定不同的监听端口。默认情况是所有IP都监听 clientPort 指定的端口。 New in 3.3.0</td>
+</tr>
+<tr>
+<td>minSessionTimeoutmaxSessionTimeoutSession</td>
+<td>超时时间限制，如果客户端设置的超时时间不在这个范围，那么会被强制设置为最大或最小时间。默认的Session超时时间是在2 * tickTime ~ 20 * tickTime 这个范围 New in 3.3.0</td>
+</tr>
+<tr>
+<td>fsync.warningthresholdms</td>
+<td>事务日志输出时，如果调用fsync方法超过指定的超时时间，那么会在日志中输出警告信息。默认是1000ms。(Java system property: fsync.warningthresholdms )New in 3.3.4</td>
+</tr>
+<tr>
+<td>autopurge.purgeInterval</td>
+<td>在上文中已经提到，3.4.0及之后版本，ZK提供了自动清理事务日志和快照文件的功能，这个参数指定了清理频率，单位是小时，需要配置一个1或更大的整数，默认是0，表示不开启自动清理功能。(No Java system property) New in 3.4.0</td>
+</tr>
+<tr>
+<td>autopurge.snapRetainCount</td>
+<td>这个参数和上面的参数搭配使用，这个参数指定了需要保留的文件数目。默认是保留3个。(No Java system property) New in 3.4.0</td>
+</tr>
+<tr>
+<td>electionAlg</td>
+<td>在之前的版本中， 这个参数配置是允许我们选择leader选举算法，但是由于在以后的版本中，只会留下一种“TCP-based version of fast leader election”算法，所以这个参数目前看来没有用了，这里也不详细展开说了。(No Java system property)</td>
+</tr>
+<tr>
+<td>initLimitFollowe</td>
+<td>r在启动过程中，会从Leader同步所有最新数据，然后确定自己能够对外服务的起始状态。Leader允许F在 initLimit 时间内完成这个工作。通常情况下，我们不用太在意这个参数的设置。如果ZK集群的数据量确实很大了，F在启动的时候，从Leader上同步数据的时间也会相应变长，因此在这种情况下，有必要适当调大这个参数了。(No Java system property)</td>
+</tr>
+<tr>
+<td>syncLimit</td>
+<td>在运行过程中，Leader负责与ZK集群中所有机器进行通信，例如通过一些心跳检测机制，来检测机器的存活状态。如果L发出心跳包在syncLimit之后，还没有从F那里收到响应，那么就认为这个F已经不在线了。注意：不要把这个参数设置得过大，否则可能会掩盖一些问题。(No Java system property)</td>
+</tr>
+<tr>
+<td>leaderServes</td>
+<td>默认情况下，Leader是会接受客户端连接，并提供正常的读写服务。但是，如果你想让Leader专注于集群中机器的协调，那么可以将这个参数设置为no，这样一来，会大大提高写操作的性能。(Java system property: zookeeper. leaderServes )。</td>
+</tr>
+<tr>
+<td>server.x&#x3D;[hostname]:nnnnn[:nnnnn]</td>
+<td>这里的x是一个数字，与myid文件中的id是一致的。右边可以配置两个端口，第一个端口用于F和L之间的数据同步和其它通信，第二个端口用于Leader选举过程中投票通信。 (No Java system property)</td>
+</tr>
+<tr>
+<td>group.x&#x3D;nnnnn[:nnnnn]weight.x&#x3D;nnnnn</td>
+<td>对机器分组和权重设置，可以 参见这里(No Java system property)</td>
+</tr>
+<tr>
+<td>cnxTimeoutLeader</td>
+<td>选举过程中，打开一次连接的超时时间，默认是5s。(Java system property: zookeeper. cnxTimeout)</td>
+</tr>
+<tr>
+<td>zookeeper.DigestAuthenticationProvider.superDigestZK</td>
+<td>权限设置相关，具体参见 《 使用super 身份对有权限的节点进行操作 》 和 《 ZooKeeper 权限控制 》</td>
+</tr>
+<tr>
+<td>skipACL</td>
+<td>对所有客户端请求都不作ACL检查。如果之前节点上设置有权限限制，一旦服务器上打开这个开头，那么也将失效。(Java system property: zookeeper.skipACL )</td>
+</tr>
+<tr>
+<td>forceSync</td>
+<td>这个参数确定了是否需要在事务日志提交的时候调用 FileChannel .force来保证数据完全同步到磁盘。(Java system property: zookeeper.forceSync )</td>
+</tr>
+<tr>
+<td>jute.maxbuffer</td>
+<td>每个节点最大数据量，是默认是1M。这个限制必须在server和client端都进行设置才会生效。(Java system property: jute.maxbuffer )</td>
+</tr>
+</tbody></table>
+<h2 id="zookeeper常用命令"><a href="#zookeeper常用命令" class="headerlink" title="zookeeper常用命令"></a>zookeeper常用命令</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">[zk: 127.0.0.1:2181(CONNECTED) 0] help</span><br><span class="line">ZooKeeper -server host:port cmd args</span><br><span class="line">        stat path [watch]</span><br><span class="line">        set path data [version]</span><br><span class="line">        ls path [watch]</span><br><span class="line">        delquota [-n|-b] path</span><br><span class="line">        ls2 path [watch]</span><br><span class="line">        setAcl path acl</span><br><span class="line">        setquota -n|-b val path</span><br><span class="line">        history </span><br><span class="line">        redo cmdno</span><br><span class="line">        printwatches on|off</span><br><span class="line">        delete path [version]</span><br><span class="line">        sync path</span><br><span class="line">        listquota path</span><br><span class="line">        rmr path</span><br><span class="line">        get path [watch]</span><br><span class="line">        create [-s] [-e] path data acl</span><br><span class="line">        addauth scheme auth</span><br><span class="line">        quit </span><br><span class="line">        getAcl path</span><br><span class="line">        close </span><br><span class="line">        connect host:port</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p>ZooKeeper系列文章<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/f-ck-need-u/p/7576137.html#zk">https://www.cnblogs.com/f-ck-need-u/p/7576137.html#zk</a></p>
+<p>ZooKeeper系列(1)：安装搭建ZooKeeper环境<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/f-ck-need-u/p/9235308.html">https://www.cnblogs.com/f-ck-need-u/p/9235308.html</a></p>
+<p>Administrator’s Guide - a guide for system administrators and anyone else who might deploy ZooKeeper<br><a target="_blank" rel="noopener" href="https://zookeeper.apache.org/doc/current/zookeeperAdmin.html">https://zookeeper.apache.org/doc/current/zookeeperAdmin.html</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/zookeeper/" data-title="ZooKeeper安装使用 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/zabbix-alert-wechat/" title="Zabbix使用企业微信告警配置小结">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Zabbix使用企业微信告警配置小结</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/punctuation/"  title="英文标点符号中英文翻译和用法整理">
+ <strong>下一篇：</strong><br/> 
+ <span>英文标点符号中英文翻译和用法整理
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ZooKeeper%E7%AE%80%E4%BB%8B"><span class="toc-number">3.</span> <span class="toc-text">ZooKeeper简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jdk"><span class="toc-number">4.</span> <span class="toc-text">jdk</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#install-jdk-by-ansible"><span class="toc-number">4.1.</span> <span class="toc-text">install jdk by ansible</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#install-jdk-manually"><span class="toc-number">4.2.</span> <span class="toc-text">install jdk manually</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#zookeeper"><span class="toc-number">5.</span> <span class="toc-text">zookeeper</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#install-zookeeper-by-ansible"><span class="toc-number">5.1.</span> <span class="toc-text">install zookeeper by ansible</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#zookeeper-stand-alone"><span class="toc-number">5.2.</span> <span class="toc-text">zookeeper stand-alone</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#install-zookeeper-manually"><span class="toc-number">5.3.</span> <span class="toc-text">install zookeeper manually</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zookeeper-Configuration"><span class="toc-number">6.</span> <span class="toc-text">Zookeeper Configuration</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#zookeeper-test"><span class="toc-number">7.</span> <span class="toc-text">zookeeper test</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#zookeeper%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3"><span class="toc-number">8.</span> <span class="toc-text">zookeeper配置参数详解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#zookeeper%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">9.</span> <span class="toc-text">zookeeper常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">10.</span> <span class="toc-text">参考资料</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

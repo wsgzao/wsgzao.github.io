@@ -1,0 +1,595 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>Prometheus监控学习教程推荐 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="Prometheus监控学习教程推荐">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Prometheus监控学习教程推荐">
+<meta property="og:url" content="https://wsgzao.github.io/post/prometheus/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="Prometheus监控学习教程推荐">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://prometheus.io/assets/architecture.png">
+<meta property="article:published_time" content="2021-07-17T06:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:07.022Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://prometheus.io/assets/architecture.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/prometheus/" title="Prometheus监控学习教程推荐" itemprop="url">Prometheus监控学习教程推荐</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2021-07-17T06:59:49.000Z" itemprop="datePublished"> 发表于 2021-07-17</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Prometheus%E7%AE%80%E4%BB%8B%E5%92%8C%E5%9F%BA%E7%A1%80%E6%9E%B6%E6%9E%84"><span class="toc-number">3.</span> <span class="toc-text">Prometheus简介和基础架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Prometheus%E6%8E%A8%E8%8D%90%E6%95%99%E7%A8%8B"><span class="toc-number">4.</span> <span class="toc-text">Prometheus推荐教程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="toc-number">5.</span> <span class="toc-text">参考文献</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p><a target="_blank" rel="noopener" href="https://prometheus.io/">Prometheus</a> 是由 SoundCloud 开源监控告警解决方案，从 2012 年开始编写代码，2015 年 GitHub 上开源，2016 年 Prometheus 成为继 Kubernetes 之后，成为 CNCF （<a target="_blank" rel="noopener" href="https://cncf.io/">Cloud Native Computing Foundation</a>）中的第二个项目成员，也是第二个正式毕业的项目。作为新一代开源解决方案，Prometheus 的很多设计理念与 Google SRE 运维之道不谋而合。</p>
+<p>监控作为可观察性实践（监控、日志、追踪）中的关键一环，相较以往的系统监控，在云原生时代产生了诸多变化。一是微服务和容器化，导致监控对象和指标的指数级增加；二是监控对象的生命周期更加短暂，导致监控数据量和复杂度的成倍增加。这就需要一款统一监控指标和数据查询语言的工具，Prometheus 应运而生了。Pemetheus 可以很方便的与众多开源项目集成，帮助我们了解系统和服务的运行状态，另一方面分析其收集的大数据，可以帮助我们进行系统优化和作出决策。它不仅是可以应用在 IT 领域，对于任何需要收集指标数据的情形下都可以使用。</p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2021年07月17日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/prometheus/">https://wsgzao.github.io/post/prometheus/</a></p>
+<hr>
+<h2 id="Prometheus简介和基础架构"><a href="#Prometheus简介和基础架构" class="headerlink" title="Prometheus简介和基础架构"></a>Prometheus简介和基础架构</h2><p><a target="_blank" rel="noopener" href="https://github.com/prometheus">Prometheus</a> is an open-source systems monitoring and alerting toolkit originally built at <a target="_blank" rel="noopener" href="https://soundcloud.com/">SoundCloud</a>. Since its inception in 2012, many companies and organizations have adopted Prometheus, and the project has a very active developer and user <a target="_blank" rel="noopener" href="https://prometheus.io/community">community</a>. It is now a standalone open source project and maintained independently of any company. To emphasize this, and to clarify the project’s governance structure, Prometheus joined the <a target="_blank" rel="noopener" href="https://cncf.io/">Cloud Native Computing Foundation</a> in 2016 as the second hosted project, after <a target="_blank" rel="noopener" href="https://kubernetes.io/">Kubernetes</a>.</p>
+<p>For more elaborate overviews of Prometheus, see the resources linked from the <a target="_blank" rel="noopener" href="https://prometheus.io/docs/introduction/media/">media</a> section.</p>
+<p><img src="https://prometheus.io/assets/architecture.png"></p>
+<p>从这个架构图，也可以看出 Prometheus 的主要模块包含：Server、Exporters、Pushgateway、PromQL、Alertmanager、WebUI 等。</p>
+<p>它大致使用逻辑是这样：</p>
+<ol>
+<li>Prometheus server 定期从静态配置的 target 或者服务发现的 target 拉取数据。</li>
+<li>当新拉取的数据大于配置内存缓存区的时候，Prometheus 会将数据持久化到磁盘（如果使用 remote storage 将持久化到云端）。</li>
+<li>Prometheus 可以配置 rule，然后定时查询数据，当条件触发的时候，会将 alert 推送到配置的 Alertmanager。</li>
+<li>Alertmanager 收到警告的时候，可以根据配置，聚合、去重、降噪，最后发送警告。</li>
+<li>可以使用 API、Prometheus Console 或者 Grafana 查询和聚合数据。</li>
+</ol>
+<h2 id="Prometheus推荐教程"><a href="#Prometheus推荐教程" class="headerlink" title="Prometheus推荐教程"></a>Prometheus推荐教程</h2><blockquote>
+<p>Prometheus 使用入门系列</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://shuyi.tech/tags?tag=prometheus">Prometheus 使用入门系列 - 陈树义的博客</a></p>
+<blockquote>
+<p>kubernetes-handbook</p>
+</blockquote>
+<p>Kubernetes中文指南&#x2F;云原生应用架构实践手册<br>K8S最佳实战（包括了K8S的Prometheus监控和EFK日志搜集） </p>
+<p><a target="_blank" rel="noopener" href="https://github.com/rootsongjc/kubernetes-handbook">https://github.com/rootsongjc/kubernetes-handbook</a></p>
+<p><a target="_blank" rel="noopener" href="https://jimmysong.io/kubernetes-handbook/practice/">https://jimmysong.io/kubernetes-handbook/practice/</a> </p>
+<blockquote>
+<p>Prometheus-book</p>
+</blockquote>
+<p>Prometheus操作指南</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/yunlzheng/prometheus-book">https://github.com/yunlzheng/prometheus-book</a></p>
+<p><a target="_blank" rel="noopener" href="https://yunlzheng.gitbook.io/prometheus-book/">https://yunlzheng.gitbook.io/prometheus-book/</a></p>
+<blockquote>
+<p>prometheus_practice</p>
+</blockquote>
+<p>Prometheus实战包括 Prometheus 基础知识，性能优化和大量实战经验。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/songjiayang/prometheus_practice">https://github.com/songjiayang/prometheus_practice</a></p>
+<p><a target="_blank" rel="noopener" href="https://song-jia-yang.gitbook.io/prometheus/">https://song-jia-yang.gitbook.io/prometheus/</a></p>
+<blockquote>
+<p>Prometheus dashboard</p>
+</blockquote>
+<ol>
+<li>Kubernetes for Prometheus Dashboard</li>
+<li>Node Exporter for Prometheus Dashboard</li>
+<li>Blackbox Exporter for Prometheus Dashboard</li>
+<li>windows_exporter for Prometheus Dashboard</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://github.com/starsliao/Prometheus">https://github.com/starsliao/Prometheus</a></p>
+<blockquote>
+<p>Awesome Prometheus alerts</p>
+</blockquote>
+<p>Collection of alerting rules</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/samber/awesome-prometheus-alerts">https://github.com/samber/awesome-prometheus-alerts</a></p>
+<p><a target="_blank" rel="noopener" href="https://awesome-prometheus-alerts.grep.to/">https://awesome-prometheus-alerts.grep.to/</a></p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><p><a target="_blank" rel="noopener" href="https://prometheus.io/docs/introduction/overview/">Prometheus Introduction</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/prometheus/" data-title="Prometheus监控学习教程推荐 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/game/" title="游戏行业常用术语解释">
+  <strong>上一篇：</strong><br/>
+  <span>
+  游戏行业常用术语解释</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/ping/"  title="为ping添加时间戳后台运行实时输出保存日志">
+ <strong>下一篇：</strong><br/> 
+ <span>为ping添加时间戳后台运行实时输出保存日志
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Prometheus%E7%AE%80%E4%BB%8B%E5%92%8C%E5%9F%BA%E7%A1%80%E6%9E%B6%E6%9E%84"><span class="toc-number">3.</span> <span class="toc-text">Prometheus简介和基础架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Prometheus%E6%8E%A8%E8%8D%90%E6%95%99%E7%A8%8B"><span class="toc-number">4.</span> <span class="toc-text">Prometheus推荐教程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="toc-number">5.</span> <span class="toc-text">参考文献</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

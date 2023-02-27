@@ -1,0 +1,571 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>使用GoAccess分析Nginx日志以及sed/awk手动分析实践 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="日志固然重要，但努力建设适合业务发展的集中化日志管理平台才是基础核心">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用GoAccess分析Nginx日志以及sed&#x2F;awk手动分析实践">
+<meta property="og:url" content="https://wsgzao.github.io/post/goaccess/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="日志固然重要，但努力建设适合业务发展的集中化日志管理平台才是基础核心">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.goaccess.io/images/goaccess-html-report.png">
+<meta property="article:published_time" content="2015-08-31T02:48:05.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:06.814Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.goaccess.io/images/goaccess-html-report.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/goaccess/" title="使用GoAccess分析Nginx日志以及sed/awk手动分析实践" itemprop="url">使用GoAccess分析Nginx日志以及sed/awk手动分析实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2015-08-31T02:48:05.000Z" itemprop="datePublished"> 发表于 2015-08-31</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85GoAccess"><span class="toc-number">3.</span> <span class="toc-text">安装GoAccess</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="toc-number">4.</span> <span class="toc-text">使用方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8bash-x2F-sed-x2F-awk%E6%89%8B%E5%8A%A8%E6%9F%A5%E6%89%BENginx%E6%97%A5%E5%BF%97"><span class="toc-number">5.</span> <span class="toc-text">使用bash&#x2F;sed&#x2F;awk手动查找Nginx日志</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nginx%E6%97%A5%E5%BF%97%E6%8C%89%E6%97%B6%E9%97%B4%E5%88%86%E5%89%B2"><span class="toc-number">6.</span> <span class="toc-text">Nginx日志按时间分割</span></a></li></ol>
+		
+		</div>
+		 -->
+		<p><img src="http://www.goaccess.io/images/goaccess-html-report.png"></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>使用Nginx的网站可能会遇到访问流量异常、被友情检测、程序出现Bug等各种突然情况，这时大家的反应想必都是第一时间分析日志，然后发现日志有几十GB之多，又需要按照时间、错误类型或者关键字段检索信息时会不会有种醍醐灌顶、菊花一紧的错觉。文中介绍的方法不管是GoAccess还是sed&#x2F;awk虽然可以解决一时的问题但未必能够治本，也许<code>ELK(Logstash+ElasticSearch+Kibana)</code>对我们大多数人来说是更合理的集中化日志管理解决方案。</p>
+<blockquote>
+<p>日志固然重要，但努力建设适合业务发展的集中化日志管理平台才是基础核心</p>
+</blockquote>
+<hr>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2015年08月31日 - 增加Nginx日志按时间分割<br>2015年07月16日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/goaccess/">https://wsgzao.github.io/post/goaccess/</a></p>
+<p>扩展阅读</p>
+<p>GoAccess - <a target="_blank" rel="noopener" href="http://goaccess.io/">http://goaccess.io/</a><br>用GoAccess分析Nginx的日志 - <a target="_blank" rel="noopener" href="http://www.fancycoding.com/log-analyse-using-goaccess/">http://www.fancycoding.com/log-analyse-using-goaccess/</a><br>sed 简明教程 - <a target="_blank" rel="noopener" href="http://coolshell.cn/articles/9104.html">http://coolshell.cn/articles/9104.html</a><br>AWK 简明教程 - <a target="_blank" rel="noopener" href="http://coolshell.cn/articles/9070.html">http://coolshell.cn/articles/9070.html</a><br>LTMP索引 - <a href="https://wsgzao.github.io/index/#LTMP">https://wsgzao.github.io/index/#LTMP</a></p>
+<hr>
+<h2 id="安装GoAccess"><a href="#安装GoAccess" class="headerlink" title="安装GoAccess"></a>安装GoAccess</h2><blockquote>
+<p>各平台都有灰常简单的部署方案 - <a target="_blank" rel="noopener" href="http://goaccess.io/download">http://goaccess.io/download</a></p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">wget http://tar.goaccess.io/goaccess-0.9.2.tar.gz</span><br><span class="line">tar -xzvf goaccess-0.9.2.tar.gz</span><br><span class="line"><span class="built_in">cd</span> goaccess-0.9.2/</span><br><span class="line">./configure --enable-utf8</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用方式"><a href="#使用方式" class="headerlink" title="使用方式"></a>使用方式</h2><blockquote>
+<p>更多常见问题请参考官方FAQ - <a target="_blank" rel="noopener" href="http://goaccess.io/faq">http://goaccess.io/faq</a></p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#直接打开</span></span><br><span class="line">goaccess -f access.log</span><br><span class="line"></span><br><span class="line"><span class="comment">#选择日志格式</span></span><br><span class="line">NCSA Combined Log Format</span><br><span class="line"></span><br><span class="line"><span class="comment">#剩下的操作都蛮简单的，参考扩展阅读和官方文档吧</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#导出HTML报告会遇到的问题</span></span><br><span class="line">goaccess -f time_access.log -a &gt; report.html</span><br><span class="line"></span><br><span class="line">GoAccess - version 0.9.2 - Jul 15 2015 16:23:20</span><br><span class="line">Config file: /usr/local/etc/goaccess.conf</span><br><span class="line"></span><br><span class="line">Fatal error has occurred</span><br><span class="line">Error occured at: src/parser.c - verify_formats - 1691</span><br><span class="line">No time format was found on your conf file.</span><br><span class="line"></span><br><span class="line"><span class="comment">#添加配置文件</span></span><br><span class="line">vi ~/.goaccessrc</span><br><span class="line"></span><br><span class="line">time-format %T</span><br><span class="line">date-format %d/%b/%Y</span><br><span class="line">log-format %h %^[%d:%t %^] <span class="string">&quot;%r&quot;</span> %s %b <span class="string">&quot;%R&quot;</span> <span class="string">&quot;%u&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#重新指定配置文件后执行</span></span><br><span class="line">goaccess -f time_access.log -p ~/.goaccessrc -a &gt; report.html</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="使用bash-x2F-sed-x2F-awk手动查找Nginx日志"><a href="#使用bash-x2F-sed-x2F-awk手动查找Nginx日志" class="headerlink" title="使用bash&#x2F;sed&#x2F;awk手动查找Nginx日志"></a>使用bash&#x2F;sed&#x2F;awk手动查找Nginx日志</h2><blockquote>
+<p>更多技巧可以参考扩展阅读，Python的处理效率或者更优</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#按日期查找时间段</span></span><br><span class="line">sed -n <span class="string">&quot;/30\/Aug\/2015:00:00:01/,/30\/Aug\/2015:23:59:59/&quot;</span>p access.log &gt; time_access.log</span><br><span class="line"></span><br><span class="line"><span class="comment">#查找504错误的页面和数量</span></span><br><span class="line">awk <span class="string">&#x27;($9 ~ /504/)&#x27;</span> time_access.log | awk <span class="string">&#x27;&#123;print $7&#125;&#x27;</span> | <span class="built_in">sort</span> | <span class="built_in">uniq</span> -c | <span class="built_in">sort</span> -rn &gt; 504.<span class="built_in">log</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#查找访问最多的20个IP及访问次数</span></span><br><span class="line">awk <span class="string">&#x27;&#123;print $1&#125;&#x27;</span> time_access.log | <span class="built_in">sort</span> | <span class="built_in">uniq</span> -c | <span class="built_in">sort</span> -n -k 1 -r | <span class="built_in">head</span> -n 20 &gt; top.log</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Nginx日志按时间分割"><a href="#Nginx日志按时间分割" class="headerlink" title="Nginx日志按时间分割"></a>Nginx日志按时间分割</h2><blockquote>
+<p>这个脚本可以作为通用模板，其它业务需求也可以参照</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#增加自定义脚本</span></span><br><span class="line">vi nginx_log.sh</span><br><span class="line"></span><br><span class="line"><span class="comment">#!/bin/bash</span></span><br><span class="line"><span class="comment">#设置crontab -e为每日凌晨3点</span></span><br><span class="line"><span class="comment">#0 3 * * * /root/OMCS/script/nginx_log.sh</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> ngix_i <span class="keyword">in</span> `<span class="built_in">ls</span> /app/local`</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">     <span class="comment">#设置临时变量</span></span><br><span class="line">     nginx_dir=`<span class="built_in">basename</span> <span class="variable">$&#123;ngix_i&#125;</span>`</span><br><span class="line">     <span class="keyword">if</span> ( <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$nginx_dir</span>&quot;</span>|grep <span class="string">&quot;nginx&quot;</span> &gt; /dev/null ); <span class="keyword">then</span></span><br><span class="line">          <span class="comment"># echo $nginx_dir</span></span><br><span class="line">          <span class="comment">#设置日志文件存放目录</span></span><br><span class="line">          logs_path=<span class="string">&quot;/app/local/<span class="variable">$nginx_dir</span>/logs/&quot;</span></span><br><span class="line">          <span class="comment">#设置备份日志存放目录</span></span><br><span class="line">          logs_bak=<span class="string">&quot;/app/local/<span class="variable">$nginx_dir</span>/logs/bak/&quot;</span></span><br><span class="line">          <span class="comment">#设置pid文件</span></span><br><span class="line">          pid_path=<span class="string">&quot;/app/local/<span class="variable">$nginx_dir</span>/logs/nginx.pid&quot;</span></span><br><span class="line">         </span><br><span class="line">          <span class="comment">#判断目录是否存在</span></span><br><span class="line">          <span class="keyword">if</span>  [ ! -d  <span class="string">&quot;<span class="variable">$logs_path</span>&quot;</span> ]; <span class="keyword">then</span> </span><br><span class="line">               <span class="built_in">continue</span></span><br><span class="line">          <span class="keyword">fi</span></span><br><span class="line">          <span class="comment">#判断文件是否存在</span></span><br><span class="line">          <span class="keyword">if</span>  [ ! -e  <span class="string">&quot;<span class="variable">$pid_path</span>&quot;</span> ]; <span class="keyword">then</span> </span><br><span class="line">               <span class="built_in">continue</span></span><br><span class="line">          <span class="keyword">fi</span></span><br><span class="line">         </span><br><span class="line">          <span class="comment">#判断目录是否存在</span></span><br><span class="line">          <span class="keyword">if</span>  [ ! -d  <span class="string">&quot;<span class="variable">$logs_bak</span>&quot;</span> ]; <span class="keyword">then</span> </span><br><span class="line">               <span class="built_in">mkdir</span> -p <span class="string">&quot;<span class="variable">$logs_bak</span>&quot;</span> </span><br><span class="line">          <span class="keyword">fi</span> </span><br><span class="line">         </span><br><span class="line">          <span class="built_in">cd</span> <span class="variable">$&#123;logs_path&#125;</span></span><br><span class="line">          logfiles=(`<span class="built_in">ls</span> *.<span class="built_in">log</span>`)</span><br><span class="line"></span><br><span class="line">          array_i=0</span><br><span class="line">          <span class="comment">#迁移日志循环模块</span></span><br><span class="line">          <span class="keyword">for</span> i <span class="keyword">in</span> <span class="variable">$&#123;logfiles[@]&#125;</span>;</span><br><span class="line">          <span class="keyword">do</span></span><br><span class="line">               <span class="comment">#设置临时变量</span></span><br><span class="line">               j=`<span class="built_in">basename</span> <span class="variable">$&#123;i&#125;</span>`</span><br><span class="line">               <span class="comment">#重命名并迁移日志文件</span></span><br><span class="line">               baklogname=<span class="variable">$&#123;j&#125;</span>_$(<span class="built_in">date</span> -d <span class="string">&quot;yesterday&quot;</span> +<span class="string">&quot;%Y%m%d%H%M%S&quot;</span>)</span><br><span class="line">               baklognames[<span class="variable">$array_i</span>]=<span class="variable">$baklogname</span></span><br><span class="line">               <span class="built_in">mv</span> <span class="variable">$&#123;i&#125;</span> <span class="variable">$&#123;logs_bak&#125;</span><span class="variable">$&#123;baklogname&#125;</span></span><br><span class="line">               array_i=`<span class="built_in">expr</span> <span class="variable">$array_i</span> + 1`</span><br><span class="line">          <span class="keyword">done</span></span><br><span class="line"></span><br><span class="line">          <span class="comment">#向nginx主进程发信号重新打开日志</span></span><br><span class="line">          <span class="built_in">kill</span> -USR1 `<span class="built_in">cat</span> <span class="variable">$&#123;pid_path&#125;</span>`</span><br><span class="line">         </span><br><span class="line">          <span class="built_in">cd</span> <span class="variable">$&#123;logs_bak&#125;</span></span><br><span class="line">          <span class="comment">#压缩日志循环模块</span></span><br><span class="line">          <span class="keyword">for</span> i <span class="keyword">in</span> <span class="variable">$&#123;baklognames[@]&#125;</span>;</span><br><span class="line">          <span class="keyword">do</span></span><br><span class="line">               <span class="comment">#压缩并删除原日志</span></span><br><span class="line">               tar -zcvf <span class="variable">$&#123;i&#125;</span>.tar.gz <span class="variable">$&#123;i&#125;</span> --remove-files &gt; /dev/null 2&gt;&amp;1</span><br><span class="line">          <span class="keyword">done</span></span><br><span class="line"></span><br><span class="line">          <span class="comment">#清理7天前的日志</span></span><br><span class="line">          find <span class="variable">$&#123;logs_bak&#125;</span> -name <span class="string">&#x27;*&#x27;</span>  -mtime +90 | xargs <span class="built_in">rm</span> -rf &#123;&#125;</span><br><span class="line">             </span><br><span class="line">     <span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#增加执行权限</span></span><br><span class="line"><span class="built_in">chmod</span> u+x nginx_log.sh</span><br><span class="line"></span><br><span class="line"><span class="comment">#设置crontab -e为每日凌晨3点</span></span><br><span class="line">crontab -e</span><br><span class="line"></span><br><span class="line">0 3 * * * /root/OMCS/script/nginx_log.sh</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/goaccess/" data-title="使用GoAccess分析Nginx日志以及sed/awk手动分析实践 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/os/" title="常用操作系统分享">
+  <strong>上一篇：</strong><br/>
+  <span>
+  常用操作系统分享</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/stay-hungry-stay-foolish/"  title="乔布斯在斯坦福大学毕业典礼上的演讲">
+ <strong>下一篇：</strong><br/> 
+ <span>乔布斯在斯坦福大学毕业典礼上的演讲
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85GoAccess"><span class="toc-number">3.</span> <span class="toc-text">安装GoAccess</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="toc-number">4.</span> <span class="toc-text">使用方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8bash-x2F-sed-x2F-awk%E6%89%8B%E5%8A%A8%E6%9F%A5%E6%89%BENginx%E6%97%A5%E5%BF%97"><span class="toc-number">5.</span> <span class="toc-text">使用bash&#x2F;sed&#x2F;awk手动查找Nginx日志</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nginx%E6%97%A5%E5%BF%97%E6%8C%89%E6%97%B6%E9%97%B4%E5%88%86%E5%89%B2"><span class="toc-number">6.</span> <span class="toc-text">Nginx日志按时间分割</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

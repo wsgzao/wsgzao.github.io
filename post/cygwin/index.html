@@ -1,0 +1,582 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>使用Cygwin在Windows上体验Linux的快感 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="Get that Linux feeling - on Windows">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Cygwin在Windows上体验Linux的快感">
+<meta property="og:url" content="https://wsgzao.github.io/post/cygwin/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="Get that Linux feeling - on Windows">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://i.v2ex.co/Pmsh13Ts.png">
+<meta property="article:published_time" content="2015-07-21T09:22:07.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:06.760Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://i.v2ex.co/Pmsh13Ts.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/cygwin/" title="使用Cygwin在Windows上体验Linux的快感" itemprop="url">使用Cygwin在Windows上体验Linux的快感</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2015-07-21T09:22:07.000Z" itemprop="datePublished"> 发表于 2015-07-21</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E7%BA%BF%E5%AE%89%E8%A3%85"><span class="toc-number">3.</span> <span class="toc-text">在线安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85"><span class="toc-number">4.</span> <span class="toc-text">离线安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BD%AF%E4%BB%B6%E5%BA%93"><span class="toc-number">5.</span> <span class="toc-text">软件库</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8Cygwin%E9%87%8C%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8dig"><span class="toc-number">5.1.</span> <span class="toc-text">在Cygwin里安装使用dig</span></a></li></ol></li></ol>
+		
+		</div>
+		 -->
+		<p><img src="http://i.v2ex.co/Pmsh13Ts.png"></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>记得大学的时候就曾经使用过Cygwin，可惜当时没有发现她的美，我相信现在大多数朋友可能会更加倾向于使用<code>Git</code>或者干脆直接使用虚拟机以及原生Unix。不过对于刚进入Linux的世界新人来说，使用Cygwin可以让你在Windows下面练习Linux的Bash，以及常用工具，而不需要安装Linux，也不用担心Windows被破坏，给每个人多一种选择也蛮好的，最后再一次感谢163为开源做出的努力。</p>
+<blockquote>
+<p>Get that Linux feeling - on Windows     </p>
+</blockquote>
+<hr>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2015年07月24日 - 增加在Cygwin里安装使用dig实践<br>2015年07月21日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/cygwin/">https://wsgzao.github.io/post/cygwin/</a></p>
+<p>扩展阅读</p>
+<p>Cygwin - <a target="_blank" rel="noopener" href="http://www.cygwin.com/">http://www.cygwin.com/</a><br>163源 - <a target="_blank" rel="noopener" href="http://mirrors.163.com/cygwin/">http://mirrors.163.com/cygwin/</a></p>
+<hr>
+<blockquote>
+<p>按照个人习惯一步步勾选即可，软件源我选择163，如果网络不给力可以下载我提供的完整离线包</p>
+</blockquote>
+<h2 id="在线安装"><a href="#在线安装" class="headerlink" title="在线安装"></a>在线安装</h2><ol>
+<li>点击下一步</li>
+<li>选择<code>Install from Internet</code></li>
+<li>自定义安装路径</li>
+<li>自定义Local Package Directory</li>
+<li>自定义网络连接下载方式（可以使用代理加速）</li>
+<li>选择<code>http://mirrors.163.com</code>作为下载源</li>
+<li>选择自己所需的Packages</li>
+</ol>
+<h2 id="离线安装"><a href="#离线安装" class="headerlink" title="离线安装"></a>离线安装</h2><ol>
+<li>点击下一步</li>
+<li>选择<code>Install from Local Directory</code></li>
+<li>自定义安装路径</li>
+<li>定义Local Package Directory为<code>mirrors.163.com</code></li>
+<li>选择自己所需的Packages</li>
+</ol>
+<h2 id="软件库"><a href="#软件库" class="headerlink" title="软件库"></a>软件库</h2><blockquote>
+<p>你同样可以在Cygwin上编译安装和执行Unix下的程序</p>
+</blockquote>
+<p>在<code>Select Packages</code>界面搜索并勾选所需的包或者直接全部install <code>Devel</code>，举个<code>GoAccess</code>栗子</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br></pre></td><td class="code"><pre><span class="line">Administrator@PC-20150629NSFI ~/goaccess-0.9.2</span><br><span class="line">$ ./configure --enable-utf8</span><br><span class="line">checking <span class="keyword">for</span> a BSD-compatible install... /usr/bin/install -c</span><br><span class="line">checking whether build environment is sane... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> a thread-safe <span class="built_in">mkdir</span> -p... /usr/bin/mkdir -p</span><br><span class="line">checking <span class="keyword">for</span> gawk... gawk</span><br><span class="line">checking whether make sets $(MAKE)... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> gcc... gcc</span><br><span class="line">checking whether the C compiler works... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> C compiler default output file name... a.exe</span><br><span class="line">checking <span class="keyword">for</span> suffix of executables... .exe</span><br><span class="line">checking whether we are cross compiling... no</span><br><span class="line">checking <span class="keyword">for</span> suffix of object files... o</span><br><span class="line">checking whether we are using the GNU C compiler... <span class="built_in">yes</span></span><br><span class="line">checking whether gcc accepts -g... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> gcc option to accept ISO C89... none needed</span><br><span class="line">checking <span class="keyword">for</span> style of include used by make... GNU</span><br><span class="line">checking dependency style of gcc... gcc3</span><br><span class="line">checking whether gcc and cc understand -c and -o together... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> pthread_create <span class="keyword">in</span> -lpthread... <span class="built_in">yes</span></span><br><span class="line">checking build system <span class="built_in">type</span>... x86_64-unknown-cygwin</span><br><span class="line">checking host system <span class="built_in">type</span>... x86_64-unknown-cygwin</span><br><span class="line">checking whether to build with rdynamic <span class="keyword">for</span> GNU ld... no</span><br><span class="line">checking <span class="keyword">for</span> mvaddwstr <span class="keyword">in</span> -lncursesw... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> ncursesw/ncurses.h... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> ncurses.h... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> pkg-config... /usr/bin/pkg-config</span><br><span class="line">checking pkg-config is at least version 0.9.0... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> pkg-config... /usr/bin/pkg-config</span><br><span class="line">checking <span class="keyword">for</span> GLIB2... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> g_list_append <span class="keyword">in</span> -lglib-2.0... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> socket <span class="keyword">in</span> -lsocket... no</span><br><span class="line">checking <span class="keyword">for</span> gethostbyname <span class="keyword">in</span> -lnsl... no</span><br><span class="line">checking how to run the C preprocessor... gcc -E</span><br><span class="line">checking <span class="keyword">for</span> grep that handles long lines and -e... /usr/bin/grep</span><br><span class="line">checking <span class="keyword">for</span> egrep... /usr/bin/grep -E</span><br><span class="line">checking <span class="keyword">for</span> ANSI C header files... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> sys/types.h... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> sys/stat.h... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> stdlib.h... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> string.h... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> memory.h... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> strings.h... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> inttypes.h... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> stdint.h... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> unistd.h... <span class="built_in">yes</span></span><br><span class="line">checking netinet/in.h usability... <span class="built_in">yes</span></span><br><span class="line">checking netinet/in.h presence... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> netinet/in.h... <span class="built_in">yes</span></span><br><span class="line">checking sys/socket.h usability... <span class="built_in">yes</span></span><br><span class="line">checking sys/socket.h presence... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> sys/socket.h... <span class="built_in">yes</span></span><br><span class="line">checking arpa/inet.h usability... <span class="built_in">yes</span></span><br><span class="line">checking arpa/inet.h presence... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> arpa/inet.h... <span class="built_in">yes</span></span><br><span class="line">checking locale.h usability... <span class="built_in">yes</span></span><br><span class="line">checking locale.h presence... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> locale.h... <span class="built_in">yes</span></span><br><span class="line">checking netdb.h usability... <span class="built_in">yes</span></span><br><span class="line">checking netdb.h presence... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> netdb.h... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> stdint.h... (cached) <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> stdlib.h... (cached) <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> string.h... (cached) <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> unistd.h... (cached) <span class="built_in">yes</span></span><br><span class="line">checking stddef.h usability... <span class="built_in">yes</span></span><br><span class="line">checking stddef.h presence... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> stddef.h... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> an ANSI C-conforming const... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> off_t... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> size_t... <span class="built_in">yes</span></span><br><span class="line">checking whether struct tm is <span class="keyword">in</span> sys/time.h or time.h... time.h</span><br><span class="line">checking <span class="keyword">for</span> ptrdiff_t... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> working strtod... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> _LARGEFILE_SOURCE value needed <span class="keyword">for</span> large files... no</span><br><span class="line">checking <span class="keyword">for</span> working memcmp... <span class="built_in">yes</span></span><br><span class="line">checking whether lstat correctly handles trailing slash... <span class="built_in">yes</span></span><br><span class="line">checking whether <span class="built_in">stat</span> accepts an empty string... no</span><br><span class="line">checking <span class="keyword">for</span> strftime... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> regcomp... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> strtoull... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> memmove... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> floor... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> gethostbyaddr... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> gethostbyname... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> memset... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> setlocale... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> strchr... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> strdup... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> strerror... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> strrchr... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> strstr... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> strtol... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> <span class="built_in">realpath</span>... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> malloc... <span class="built_in">yes</span></span><br><span class="line">checking <span class="keyword">for</span> realloc... <span class="built_in">yes</span></span><br><span class="line">configure: creating ./config.status</span><br><span class="line">config.status: creating Makefile</span><br><span class="line">config.status: creating src/config.h</span><br><span class="line">config.status: executing depfiles commands</span><br><span class="line"></span><br><span class="line">Your build configuration:</span><br><span class="line"></span><br><span class="line">  CFLAGS = -pthread</span><br><span class="line">  storage: On-memory Hash Database (GLib)</span><br><span class="line">  prefix: /usr/local</span><br><span class="line">  package: goaccess</span><br><span class="line">  version: 0.9.2</span><br><span class="line">  bugs: goaccess@prosoftcorp.com</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">make &amp;&amp; make install</span><br><span class="line"></span><br><span class="line">$ goaccess -V</span><br><span class="line">GoAccess - 0.9.2.</span><br><span class="line">For more details visit: http://goaccess.io</span><br><span class="line">Copyright (C) 2009-2015 GNU GPL<span class="string">&#x27;d, by Gerardo Orellana</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+
+<h3 id="在Cygwin里安装使用dig"><a href="#在Cygwin里安装使用dig" class="headerlink" title="在Cygwin里安装使用dig"></a>在Cygwin里安装使用dig</h3><p>1.启动Cygwin选择下载源</p>
+<blockquote>
+<p>推荐国内源 - <a target="_blank" rel="noopener" href="http://mirrors.163.com/cygwin/">http://mirrors.163.com/cygwin/</a></p>
+</blockquote>
+<p>2.Install the <code>Bind</code> package</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$ dig wsgzao.github.io</span><br><span class="line"></span><br><span class="line">; &lt;&lt;&gt;&gt; DiG 9.10.2-P2 &lt;&lt;&gt;&gt; wsgzao.github.io</span><br><span class="line">;; global options: +cmd</span><br><span class="line">;; Got answer:</span><br><span class="line">;; -&gt;&gt;HEADER&lt;&lt;- <span class="string">opcode: QUERY, status: NOERROR, id: 21080</span></span><br><span class="line"><span class="string">;; flags: qr rd ra; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 1</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">;; OPT PSEUDOSECTION:</span></span><br><span class="line"><span class="string">; EDNS: version: 0, flags:; udp: 4096</span></span><br><span class="line"><span class="string">;; QUESTION SECTION:</span></span><br><span class="line"><span class="string">;wsgzao.github.io.              IN      A</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">;; ANSWER SECTION:</span></span><br><span class="line"><span class="string">wsgzao.github.io.       30      IN      CNAME   github.map.fastly.net.</span></span><br><span class="line"><span class="string">github.map.fastly.net.  30      IN      A       103.245.222.133</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">;; Query time: 10 msec</span></span><br><span class="line"><span class="string">;; SERVER: 202.96.209.133#53(202.96.209.133)</span></span><br><span class="line"><span class="string">;; WHEN: 周五 七月 24 15:28:05 CST 2015</span></span><br><span class="line"><span class="string">;; MSG SIZE  rcvd: 96</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/cygwin/" data-title="使用Cygwin在Windows上体验Linux的快感 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/xtrabackup/" title="XtraBackup不停机不锁表搭建MySQL主从同步实践">
+  <strong>上一篇：</strong><br/>
+  <span>
+  XtraBackup不停机不锁表搭建MySQL主从同步实践</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/vagrant/"  title="Windows上使用Vagrant打造Laravel Homestead可协同跨平台开发环境">
+ <strong>下一篇：</strong><br/> 
+ <span>Windows上使用Vagrant打造Laravel Homestead可协同跨平台开发环境
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E7%BA%BF%E5%AE%89%E8%A3%85"><span class="toc-number">3.</span> <span class="toc-text">在线安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85"><span class="toc-number">4.</span> <span class="toc-text">离线安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BD%AF%E4%BB%B6%E5%BA%93"><span class="toc-number">5.</span> <span class="toc-text">软件库</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8Cygwin%E9%87%8C%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8dig"><span class="toc-number">5.1.</span> <span class="toc-text">在Cygwin里安装使用dig</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>

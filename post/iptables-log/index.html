@@ -1,0 +1,572 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>使用rsyslog单独保存iptables log日志实践 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="使用rsyslog单独保存iptables log日志实践">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用rsyslog单独保存iptables log日志实践">
+<meta property="og:url" content="https://wsgzao.github.io/post/iptables-log/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="使用rsyslog单独保存iptables log日志实践">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-05-09T06:59:49.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:33:06.863Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/iptables-log/" title="使用rsyslog单独保存iptables log日志实践" itemprop="url">使用rsyslog单独保存iptables log日志实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2019-05-09T06:59:49.000Z" itemprop="datePublished"> 发表于 2019-05-09</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RedHat%E5%AE%98%E6%96%B9%E6%95%99%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">RedHat官方教程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Environment"><span class="toc-number">3.1.</span> <span class="toc-text">Environment</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Issue"><span class="toc-number">3.2.</span> <span class="toc-text">Issue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Resolution"><span class="toc-number">3.3.</span> <span class="toc-text">Resolution</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%AA%E4%BA%BA%E5%AE%9E%E8%B7%B5%E8%BF%87%E7%A8%8B"><span class="toc-number">4.</span> <span class="toc-text">个人实践过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#iptables%E9%98%B2%E7%81%AB%E5%A2%99%E6%97%A5%E5%BF%97"><span class="toc-number">4.1.</span> <span class="toc-text">iptables防火墙日志</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AErsyslog%E8%AF%BB%E5%8F%96%E5%92%8C%E4%BF%9D%E5%AD%98iptables%E6%97%A5%E5%BF%97"><span class="toc-number">4.2.</span> <span class="toc-text">配置rsyslog读取和保存iptables日志</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AElog-rotate"><span class="toc-number">4.3.</span> <span class="toc-text">配置log rotate</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A3%80%E6%9F%A5%E6%97%A5%E5%BF%97%E8%BE%93%E5%87%BA"><span class="toc-number">4.4.</span> <span class="toc-text">检查日志输出</span></a></li></ol></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>iptables作为经典的软件防火墙大家已经很熟悉了，不过各位应该比较少会使用到log日志记录保存的功能。这次因为Ngnix stream模块的编译和获取realip(ngx_http_realip_module &#x2F; ngx_stream_realip_module)的方案改动成本过高，退而求其次的方式是通过iptables做转发，需要解决的问题就是如何保存日志和按时间rotate。原本计划使用Filebeat直接接入EFK但因为某些原因暂时搁浅了，最后选择比较简单的rsyslog在本地服务器上做处理。</p>
+<blockquote>
+<p>使用rsyslog单独保存iptables log日志实践</p>
+</blockquote>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2019年05月09日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/iptables-log/">https://wsgzao.github.io/post/iptables-log/</a></p>
+<p><strong>扩展阅读</strong></p>
+<p>rsyslog - <a target="_blank" rel="noopener" href="https://www.rsyslog.com/guides/">https://www.rsyslog.com/guides/</a><br>How to Enable Logging in Iptables on Linux - <a target="_blank" rel="noopener" href="https://tecadmin.net/enable-logging-in-iptables-on-linux/">https://tecadmin.net/enable-logging-in-iptables-on-linux/</a></p>
+<hr>
+<h2 id="RedHat官方教程"><a href="#RedHat官方教程" class="headerlink" title="RedHat官方教程"></a>RedHat官方教程</h2><blockquote>
+<p>How to configure syslog to log the iptables messages to a different log file in Red Hat Enterprise Linux 5&#x2F;6&#x2F;7</p>
+</blockquote>
+<h3 id="Environment"><a href="#Environment" class="headerlink" title="Environment"></a>Environment</h3><p>Red Hat Enterprise Linux 5<br>Red Hat Enterprise Linux 6<br>Red Hat Enterprise Linux 7<br>syslog</p>
+<h3 id="Issue"><a href="#Issue" class="headerlink" title="Issue"></a>Issue</h3><ul>
+<li>How to modify the iptables rules to let it log at the appropriate level?</li>
+<li>How to configure syslog to log the iptables messages to a different log file?</li>
+<li>To stop iptables messages to get logged into &#x2F;var&#x2F;log&#x2F;messages ?</li>
+</ul>
+<h3 id="Resolution"><a href="#Resolution" class="headerlink" title="Resolution"></a>Resolution</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Make a backup of /etc/syslog.conf before making any changes to it.</span></span><br><span class="line"><span class="built_in">cp</span> /etc/syslog.conf /etc/syslog.conf.bak</span><br><span class="line"></span><br><span class="line"><span class="comment"># Edit /etc/syslog.conf with an editor such as vi and add lines:</span></span><br><span class="line"><span class="comment"># comment iptables log</span></span><br><span class="line">kern.warning                    /var/log/iptables</span><br><span class="line"></span><br><span class="line"><span class="comment"># Make sure the iptables rule is logging at the appropriate level. This can be done by using the log-level switch. Default log-level is warning.</span></span><br><span class="line"><span class="comment"># Below example will log ssh attempts:</span></span><br><span class="line">iptables -I INPUT -p tcp --dport 22 -j LOG --log-level 4</span><br><span class="line"></span><br><span class="line"><span class="comment"># Note: Log Levels can be found using command:</span></span><br><span class="line">man syslog</span><br><span class="line"></span><br><span class="line"><span class="comment"># Note: Consider adding a prefix to your iptables rule. This makes it easier to separate the firewall message from the few random messages that the kernel puts out. </span></span><br><span class="line"><span class="comment"># Below example use to log ping and add the prefix &quot;#### Firewall ####&quot;.</span></span><br><span class="line">iptables -I INPUT -p icmp --icmp-type ping -j LOG --log-prefix <span class="string">&quot;#### Firewall ####&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Note:- Follow below steps if iptables print all the logs on the console:-</span></span><br><span class="line"><span class="comment"># Step1:- Add below entry in /etc/sysctl.conf</span></span><br><span class="line">kernel.printk = 4 1 1 7</span><br><span class="line"><span class="comment"># Step2:- Run below command to make changes effectively at runtime.</span></span><br><span class="line">/sbin/sysctl -p /etc/sysctl.conf</span><br><span class="line"><span class="comment"># Step3:- Check the changes at below file.</span></span><br><span class="line"><span class="built_in">cat</span> /proc/sys/kernel/printk</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="个人实践过程"><a href="#个人实践过程" class="headerlink" title="个人实践过程"></a>个人实践过程</h2><h3 id="iptables防火墙日志"><a href="#iptables防火墙日志" class="headerlink" title="iptables防火墙日志"></a>iptables防火墙日志</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改防火墙NAT表中的PREROUTING和POSTROUTING链，添加自定义log-prefix</span></span><br><span class="line">vim /etc/sysconfig/iptables</span><br><span class="line"></span><br><span class="line">*nat</span><br><span class="line">:PREROUTING ACCEPT [0:0]</span><br><span class="line">:INPUT ACCEPT [0:0]</span><br><span class="line">:OUTPUT ACCEPT [0:0]</span><br><span class="line">:POSTROUTING ACCEPT [0:0]</span><br><span class="line">-A PREROUTING -p tcp -d &lt;IP&gt; --dport 443 -j LOG --log-prefix seatalk:</span><br><span class="line">-A PREROUTING -p tcp -d &lt;IP&gt; --dport 443 -j DNAT --to-destination 10.71.19.142:443</span><br><span class="line">-A POSTROUTING -j MASQUERADE</span><br><span class="line">COMMIT</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启iptables</span></span><br><span class="line">service iptables reload</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="配置rsyslog读取和保存iptables日志"><a href="#配置rsyslog读取和保存iptables日志" class="headerlink" title="配置rsyslog读取和保存iptables日志"></a>配置rsyslog读取和保存iptables日志</h3><p>rsyslog 是一个 syslogd 的多线程增强版。现在 Fedora &#x2F; RHEL &#x2F; CentOS &#x2F; Ubuntu 默认的日志系统都是 rsyslog 了。</p>
+<p>rsyslog 负责写入日志，logrotate 负责备份和删除旧日志，以及更新日志文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建iptables日志目录</span></span><br><span class="line"><span class="built_in">mkdir</span> -p /var/log/iptables/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编辑rsyslog.conf</span></span><br><span class="line">vim /etc/rsyslog.conf</span><br><span class="line"><span class="comment"># Save iptables log</span></span><br><span class="line">kern.warning /var/log/iptables/iptables.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启rsyslog</span></span><br><span class="line">service rsyslog restart</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="配置log-rotate"><a href="#配置log-rotate" class="headerlink" title="配置log rotate"></a>配置log rotate</h3><p>rotate 轮换，日志切换</p>
+<p>logrotate 是一个日志管理程序，用来把旧的日志文件删除（备份），并创建新的日志文件，这个过程称为 “转储”。我们可以根据日志的大小，或者根据其使用的天数来转储。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 添加iptables log rotate策略</span></span><br><span class="line">vim /etc/logrotate.d/iptables</span><br><span class="line"></span><br><span class="line">/var/log/iptables/iptables.log &#123;</span><br><span class="line">        daily</span><br><span class="line">        rotate 7</span><br><span class="line">        compress</span><br><span class="line">        delaycompress</span><br><span class="line">        missingok</span><br><span class="line">        notifempty</span><br><span class="line">        create 0664 root root</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启rsyslog</span></span><br><span class="line">service rsyslog restart</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这篇文章有更多实例</span></span><br><span class="line">rsyslog 和 logrotate 服务 - http://xstarcd.github.io/wiki/Linux/rsyslog_logrotate.html</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="检查日志输出"><a href="#检查日志输出" class="headerlink" title="检查日志输出"></a>检查日志输出</h3><blockquote>
+<p>如果条件允许建议直接采用EFK一步到位</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var/log/iptables</span><br><span class="line">iptables.log</span><br><span class="line">iptables.log-20190512.gz</span><br><span class="line">iptables.log-20190513</span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> iptables.log</span><br><span class="line"></span><br><span class="line">May 14 15:08:35 &lt;localhost&gt; kernel: IN=em1 OUT= MAC=14:18:77:28:56:59:a0:f8:49:5f:b2:c3:08:00 SRC=&lt;IP&gt; DST=&lt;IP&gt; LEN=60 TOS=0x00 PREC=0x00 TTL=57 ID=43701 DF PROTO=TCP SPT=4150 DPT=443 WINDOW=65535 RES=0x00 SYN URGP=0</span><br><span class="line">May 14 15:09:00 &lt;localhost&gt; kernel: IN=em1 OUT= MAC=14:18:77:28:56:59:00:f8:2c:91:79:43:08:00 SRC=&lt;IP&gt; DST=&lt;IP&gt; LEN=60 TOS=0x00 PREC=0x00 TTL=54 ID=31497 DF PROTO=TCP SPT=43586 DPT=443 WINDOW=65535 RES=0x00 SYN URGP=0</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/iptables-log/" data-title="使用rsyslog单独保存iptables log日志实践 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/sysctl/" title="sysctl.conf和limits.conf学习和调优">
+  <strong>上一篇：</strong><br/>
+  <span>
+  sysctl.conf和limits.conf学习和调优</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/prometheus-nginx/"  title="Prometheus 监控 Nginx">
+ <strong>下一篇：</strong><br/> 
+ <span>Prometheus 监控 Nginx
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RedHat%E5%AE%98%E6%96%B9%E6%95%99%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">RedHat官方教程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Environment"><span class="toc-number">3.1.</span> <span class="toc-text">Environment</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Issue"><span class="toc-number">3.2.</span> <span class="toc-text">Issue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Resolution"><span class="toc-number">3.3.</span> <span class="toc-text">Resolution</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%AA%E4%BA%BA%E5%AE%9E%E8%B7%B5%E8%BF%87%E7%A8%8B"><span class="toc-number">4.</span> <span class="toc-text">个人实践过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#iptables%E9%98%B2%E7%81%AB%E5%A2%99%E6%97%A5%E5%BF%97"><span class="toc-number">4.1.</span> <span class="toc-text">iptables防火墙日志</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AErsyslog%E8%AF%BB%E5%8F%96%E5%92%8C%E4%BF%9D%E5%AD%98iptables%E6%97%A5%E5%BF%97"><span class="toc-number">4.2.</span> <span class="toc-text">配置rsyslog读取和保存iptables日志</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AElog-rotate"><span class="toc-number">4.3.</span> <span class="toc-text">配置log rotate</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A3%80%E6%9F%A5%E6%97%A5%E5%BF%97%E8%BE%93%E5%87%BA"><span class="toc-number">4.4.</span> <span class="toc-text">检查日志输出</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>190</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2023 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>
