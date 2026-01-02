@@ -1,0 +1,712 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    var host = "wsgzao.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+  </script> 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LJ3PMGPVCK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LJ3PMGPVCK');
+</script>
+  
+    <title>nftables代替iptables的新一代防火墙配置指南 | HelloDog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wsgzao">
+    
+
+    
+    <meta name="description" content="nftables代替iptables的新一代防火墙配置指南">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nftables代替iptables的新一代防火墙配置指南">
+<meta property="og:url" content="https://wsgzao.github.io/post/nftables/index.html">
+<meta property="og:site_name" content="HelloDog">
+<meta property="og:description" content="nftables代替iptables的新一代防火墙配置指南">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-11-23T06:59:49.000Z">
+<meta property="article:modified_time" content="2025-12-18T06:28:52.412Z">
+<meta property="article:author" content="wsgzao">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="HelloDog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HelloDog" title="HelloDog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HelloDog">HelloDog</a></h1>
+				<h2 class="blog-motto">Keep Calm and Carry On</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页 | Home</a></li>
+					
+						<li><a href="/index/">索引 | Index</a></li>
+					
+						<li><a href="/archives/">归档 | Archives</a></li>
+					
+						<li><a href="/about/">简介 | About</a></li>
+					
+					<li>
+ 					
+						<form class="search">
+							<label>Search</label>
+						<input type="text" id="search" class="st-default-search-input" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/post/nftables/" title="nftables代替iptables的新一代防火墙配置指南" itemprop="url">nftables代替iptables的新一代防火墙配置指南</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wsgzao" target="_blank" itemprop="author">wsgzao</a>
+		
+  <p class="article-time">
+    <time datetime="2025-11-23T06:59:49.000Z" itemprop="datePublished"> 发表于 2025-11-23</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+<!-- 		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nftables%E5%AE%89%E8%A3%85"><span class="toc-number">3.</span> <span class="toc-text">nftables安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nftables%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5"><span class="toc-number">4.</span> <span class="toc-text">nftables基础概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#nftables-%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E7%A4%BA%E4%BE%8B"><span class="toc-number">4.1.</span> <span class="toc-text">nftables 的基本操作示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#nft-%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%AE%9E%E4%BE%8B%E5%B0%8F%E7%BB%93"><span class="toc-number">4.2.</span> <span class="toc-text">nft 命令行实例小结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E5%A4%9A%E7%A4%BA%E4%BE%8B%E4%B8%8E%E6%8A%80%E5%B7%A7"><span class="toc-number">5.</span> <span class="toc-text">更多示例与技巧</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="toc-number">6.</span> <span class="toc-text">常见问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">7.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-number">8.</span> <span class="toc-text">参考文档</span></a></li></ol>
+		
+		</div>
+		 -->
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>nftables 是 Linux 防火墙子系统的框架（从 Linux 3.13 开始引入），它用于替代旧的 iptables&#x2F;ip6tables&#x2F;arptables&#x2F;ebtables 等工具，提供更统一、更灵活、更高效的防火墙规则管理方式。</p>
+<p>nftables 提供了强大的防火墙管理能力，同时简化了配置。对于初学者，掌握常用的 “增删改查” 命令、表链规则逻辑和持久化操作基本就能满足日常需求。在实际生产环境中，你可以根据需求编写更复杂的规则脚本来实现流量控制、NAT 转发、端口映射等功能。</p>
+<p>相比于传统的 iptables：</p>
+<ul>
+<li>规则更简洁：nftables 用一条规则可以处理多个协议字段，而 iptables 往往需要多条规则。</li>
+<li>可读性更好：nftables 使用类似编程语言的写法，支持批量编辑。</li>
+<li>性能更佳：规则的执行更高效，占用更少的系统资源。</li>
+</ul>
+<p>更多信息也可以直接访问nftables官方wiki<br><a target="_blank" rel="noopener" href="http://wiki.nftables.org/">http://wiki.nftables.org/</a></p>
+<h2 id="更新历史"><a href="#更新历史" class="headerlink" title="更新历史"></a>更新历史</h2><p>2025年11月23日 - 初稿</p>
+<p>阅读原文 - <a href="https://wsgzao.github.io/post/nftables/">https://wsgzao.github.io/post/nftables/</a></p>
+<h2 id="nftables安装"><a href="#nftables安装" class="headerlink" title="nftables安装"></a>nftables安装</h2><p>不同发行版安装方式略有差异</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># Debian / Ubuntu 系列：</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install nftables</span><br><span class="line"></span><br><span class="line"># CentOS / RHEL 系列：</span><br><span class="line">sudo yum install nftables</span><br><span class="line"></span><br><span class="line"># Fedora：</span><br><span class="line">sudo dnf install nftables</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>安装完成后，可以启用服务并设置开机启动</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># 启动服务</span><br><span class="line">sudo systemctl start nftables</span><br><span class="line"></span><br><span class="line"># 查看 nftables 状态</span><br><span class="line">sudo systemctl status nftables</span><br><span class="line"></span><br><span class="line"># 设置开机启动</span><br><span class="line">sudo systemctl enable nftables</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="nftables基础概念"><a href="#nftables基础概念" class="headerlink" title="nftables基础概念"></a>nftables基础概念</h2><p>Netfilter &amp; nftables</p>
+<ul>
+<li>Netfilter 是 Linux 内核中的网络数据包处理子系统，nftables 则是其新一代的用户态工具，用来管理防火墙和 NAT 规则。</li>
+<li>它替代了传统的 iptables、ip6tables、arptables、ebtables，提供统一的配置方式和更灵活的语法。</li>
+</ul>
+<p>要想理解 nftables，需要了解三个核心概念：表（table）、链（chain） 和 规则（rule）。</p>
+<p>Table（表）</p>
+<p>用于逻辑分组规则。类似 iptables 中的 filter、nat 表。<br>nftables 中可以自己命名表，比如 inet filter、ip nat 等。</p>
+<p>Chain（链）</p>
+<p>每个表里可以包含多个链。链中定义了处理数据包的流程（例如 input, forward, output 等）。<br>也可以自定义用户链，用来按需编排复杂逻辑。</p>
+<p>Rule（规则）</p>
+<p>具体的防火墙匹配逻辑和处理动作都写在规则中，挂载在某个表的某条链里。<br>动作可以是：accept, drop, reject, log, redirect, masquerade 等。</p>
+<p>常见命令行</p>
+<ul>
+<li>sudo nft add table <family> <tablename>：创建表</li>
+<li>sudo nft add chain <family> <tablename> <chainname> { … }：创建链，指定类型、hook、priority、policy 等</li>
+<li>sudo nft add rule <family> <tablename> <chainname> <match> <action>：添加规则</li>
+<li>sudo nft list ruleset：查看当前完整配置</li>
+<li>sudo nft delete rule&#x2F;chain&#x2F;table …：删除对应对象</li>
+<li>sudo nft flush ruleset：清空所有规则（谨慎操作）</li>
+</ul>
+<p>协议族 (family)</p>
+<ul>
+<li>ip（仅 IPv4），ip6（仅 IPv6），inet（同时管理 IPv4&#x2F;IPv6），arp，bridge 等。</li>
+<li>一般推荐使用 inet 统一管理 IPv4&#x2F;IPv6 防火墙规则（但NAT 通常只能使用 ip 或 ip6）。</li>
+</ul>
+<p>常见 hook</p>
+<ul>
+<li>prerouting：数据包刚进来，还没决定路由</li>
+<li>input：发往本机的数据包</li>
+<li>forward：要转发给其他目的地的数据包</li>
+<li>output：本机发出的数据包</li>
+<li>postrouting：数据包即将离开本机，常用于 SNAT</li>
+<li>ingress：更早阶段的过滤，在协议栈处理之前</li>
+</ul>
+<p>默认策略 (policy)</p>
+<ul>
+<li>accept：默认放行</li>
+<li>drop：默认丢弃</li>
+<li>常用做法：在关键链（如 input、forward 等）上设置 policy drop，然后再加特定的放行规则（白名单式）</li>
+</ul>
+<p>优先级 (priority)</p>
+<ul>
+<li>每个 hook 可以设置 priority，以决定规则生效的先后顺序。</li>
+<li>常见做法：</li>
+<li>prerouting（DNAT）常用 priority -100</li>
+<li>filter（如 input、forward）常用 priority 0</li>
+<li>postrouting（SNAT）常用 priority 100</li>
+</ul>
+<h3 id="nftables-的基本操作示例"><a href="#nftables-的基本操作示例" class="headerlink" title="nftables 的基本操作示例"></a>nftables 的基本操作示例</h3><p>下面是一些常见的 nftables 命令操作示例，帮助快速上手。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># 查看当前配置</span><br><span class="line">sudo nft list ruleset</span><br><span class="line"></span><br><span class="line"># 该命令会列出当前系统已生效的所有 nftables 规则集，包括表、链、规则等内容。</span><br><span class="line"></span><br><span class="line"># 新建表</span><br><span class="line">sudo nft add table inet mytable</span><br><span class="line"></span><br><span class="line"># 这里示例了在 “inet” 协议簇中新建一个名为 mytable 的表。</span><br><span class="line"># “inet” 协议簇表示同时支持 IPv4 和 IPv6，你也可以使用 ip, ip6, arp, bridge 等协议簇。</span><br><span class="line"></span><br><span class="line"># 新建链</span><br><span class="line">sudo nft add chain inet mytable mychain &#123; type filter hook input priority 0\; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>该命令含义：<br>type filter：表明这是一个过滤链。<br>hook input：该链挂载在 “input” 钩子上，处理进来（进入本机）数据包。<br>priority 0：优先级，数值越小，越先处理。</p>
+<p>常见的 hook：<br>input：处理发往本机的数据包。<br>forward：处理转发数据包（主机作为路由器或转发流量时）。<br>output：处理本机发送的数据包。<br>prerouting &#x2F; postrouting：常用于 NAT 场景。</p>
+<p>添加规则<br>在链中添加规则，语法一般类似：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">sudo nft add rule &lt;协议簇&gt; &lt;表名&gt; &lt;链名&gt; &lt;匹配条件&gt; &lt;动作&gt;</span><br><span class="line"></span><br><span class="line">示例：允许 SSH 连接</span><br><span class="line">sudo nft add rule inet mytable mychain tcp dport ssh accept</span><br><span class="line"></span><br><span class="line">允许 TCP 端口为 22（ssh） 的连接通过。</span><br><span class="line"></span><br><span class="line">示例：丢弃某个 IP 地址的访问</span><br><span class="line">sudo nft add rule inet mytable mychain ip saddr 192.168.1.100 drop</span><br><span class="line">匹配源 IP 为 192.168.1.100 的数据包，直接丢弃（drop）。</span><br></pre></td></tr></table></figure>
+
+<p>修改 &#x2F; 删除 规则</p>
+<p>修改规则 一般先删除再添加。nftables 也支持一些原子操作，比如直接替换，但对小白而言，删除+添加更简单。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">列出规则行号</span><br><span class="line">sudo nft list chain inet mytable mychain -a</span><br><span class="line"></span><br><span class="line">-a 参数用于显示规则的句柄（handle），帮助我们精确定位规则。</span><br><span class="line">删除规则</span><br><span class="line"></span><br><span class="line">通过句柄删除</span><br><span class="line">sudo nft delete rule inet mytable mychain handle &lt;句柄号&gt;</span><br><span class="line"></span><br><span class="line">先通过列出规则的句柄，然后再用该句柄删除想要的规则。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>持久化</p>
+<p>编辑完规则后，如果你想让它们在系统重启后仍然生效，需要持久化配置。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">有些发行版会在启动时自动加载 /etc/nftables.conf 中的内容。可以将规则直接写进这个文件。</span><br><span class="line">也可通过命令行导出当前规则到 nftables.conf：</span><br><span class="line">sudo nft list ruleset &gt; /etc/nftables.conf</span><br><span class="line"></span><br><span class="line">重启后，系统会自动读取并应用其中的规则。</span><br></pre></td></tr></table></figure>
+
+<h3 id="nft-命令行实例小结"><a href="#nft-命令行实例小结" class="headerlink" title="nft 命令行实例小结"></a>nft 命令行实例小结</h3><p>下面汇总一下常见的命令及含义：</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>sudo nft list ruleset</code></td>
+<td>列出当前 nftables 的全部配置</td>
+</tr>
+<tr>
+<td><code>sudo nft add table inet mytable</code></td>
+<td>创建名为 mytable 的表 (协议簇 inet)</td>
+</tr>
+<tr>
+<td><code>sudo nft add chain inet mytable mychain &#123;...&#125;</code></td>
+<td>在 mytable 中创建一条链 (指定 hook &amp; priority)</td>
+</tr>
+<tr>
+<td><code>sudo nft add rule inet mytable mychain ...</code></td>
+<td>在 mychain 中添加规则</td>
+</tr>
+<tr>
+<td><code>sudo nft delete rule inet mytable mychain handle X</code></td>
+<td>删除句柄为 X 的规则</td>
+</tr>
+<tr>
+<td><code>sudo nft flush chain inet mytable mychain</code></td>
+<td>清空 mychain 链中所有规则</td>
+</tr>
+<tr>
+<td><code>sudo nft flush table inet mytable</code></td>
+<td>清空 mytable 表中所有规则</td>
+</tr>
+<tr>
+<td><code>sudo nft delete chain inet mytable mychain</code></td>
+<td>删除 mychain 链</td>
+</tr>
+<tr>
+<td><code>sudo nft delete table inet mytable</code></td>
+<td>删除 mytable 表</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="更多示例与技巧"><a href="#更多示例与技巧" class="headerlink" title="更多示例与技巧"></a>更多示例与技巧</h2><p>IPv4 NAT 示例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sudo nft add table ip nat</span><br><span class="line">sudo nft add chain ip nat prerouting &#123; type nat hook prerouting priority 0\; &#125;</span><br><span class="line">sudo nft add chain ip nat postrouting &#123; type nat hook postrouting priority 100\; &#125;</span><br><span class="line"></span><br><span class="line"># 例如：将所有发往 192.168.0.100:80 的流量重定向到 8080</span><br><span class="line">sudo nft add rule ip nat prerouting tcp dport 80 redirect to 8080</span><br><span class="line"></span><br><span class="line"># 例如：源地址伪装</span><br><span class="line">sudo nft add rule ip nat postrouting ip saddr 192.168.0.0/24 oif &quot;eth0&quot; masquerade</span><br></pre></td></tr></table></figure>
+
+<p>IPv6 NAT 示例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">nft add table inet nat</span><br><span class="line">nft add chain inet nat postrouting &#123; type nat hook postrouting priority 100 \; &#125;</span><br><span class="line">nft add rule inet nat postrouting oif eth0 masquerade</span><br><span class="line"></span><br><span class="line"># 将当前规则输出到配置文件</span><br><span class="line">nft list ruleset &gt; /etc/nftables.conf</span><br><span class="line"># 启用并立即启动nftables服务（重启后自动加载规则）</span><br><span class="line">systemctl enable nftables --now</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>记录日志</p>
+<p>有时需要排查防火墙是否匹配到某条规则，可使用 log 动作：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo nft add rule inet mytable mychain tcp dport 80 log prefix &quot;HTTP_PORT80: &quot; drop</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>简要工作流程图</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">flowchart LR</span><br><span class="line">    A[网络数据包] --&gt; B[内核 netfilter]</span><br><span class="line">    B --&gt; C[匹配 nftables hook]</span><br><span class="line">    C --&gt; D[查找对应表 &amp; 链]</span><br><span class="line">    D --&gt; E[规则匹配 / 执行动作]</span><br><span class="line">    E --&gt; F[accept, drop, log等结果]</span><br></pre></td></tr></table></figure>
+
+<p>当数据包到达内核后，会根据不同阶段（hook）进入相应的 nftables 链匹配规则，并执行对应的动作。</p>
+<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><blockquote>
+<p>iptables 与 nftables 冲突吗？</p>
+</blockquote>
+<p>大多数发行版已经将 iptables 的后端替换成了 nftables，但仍保留 iptables-nft 兼容包。如果你使用了传统的 iptables 命令，实际上也在调用 nftables 后端。<br>建议统一使用 nftables 命令管理，以免混淆。</p>
+<blockquote>
+<p>如何调试规则？</p>
+</blockquote>
+<ul>
+<li>使用 sudo nft list ruleset 确认最终规则</li>
+<li>dmesg 或 journalctl -k 查看日志</li>
+<li>同时注意网络接口名、IP 地址是否正确；经常出现 NAT 链类型不匹配、priority 值冲突、IPv4&#x2F;IPv6 混淆等问题</li>
+</ul>
+<blockquote>
+<p>发行版文档</p>
+</blockquote>
+<p>部分发行版可能对 nftables 做了额外封装（如 Debian&#x2F;Ubuntu 的 nftables 服务、Red Hat 系的 nftables.conf 位置等），请查看对应发行版的官方指南。</p>
+<blockquote>
+<p>为什么规则不生效或重启后丢失？</p>
+</blockquote>
+<p>需要确认服务是否开启并在开机启动，以及是否将规则持久化保存到 &#x2F;etc&#x2F;nftables.conf 等对应文件里。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>nftables 的基本结构始终是：表(table) → 链(chain) → 规则(rule)。</li>
+<li>应用场景决定是做 过滤(type filter) 还是 NAT(type nat)，以及要挂载到哪个 hook（如 input、prerouting、postrouting、ingress 等）。</li>
+<li>常见匹配包括源&#x2F;目的 IP、端口、协议、接口名、连接状态 (ct state)、MAC 地址等；动作可为 accept, drop, reject, snat, dnat, masquerade, log 等。</li>
+<li>高级用法如 set（批量黑白名单）、map（值→动作映射）、log（记录日志）、limit&#x2F;meter（限速或计数）能够减少重复规则，提高可读性和性能。</li>
+<li>注意发行版、内核版本、Docker&#x2F;k8s 等环境差异，以免默认配置或自动生成的规则与手动写的规则冲突。也要关注持久化方式和服务启动脚本的配置。</li>
+</ol>
+<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><p><a target="_blank" rel="noopener" href="http://wiki.nftables.org/">nftables官方wiki</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/i89211/article/details/146066955">nftables 入门：简洁高效的 Linux 防火墙管理</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/i89211/article/details/146089016">面向实战的 nftables 防火墙配置指南：从入门到高级</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0-Study/">学习 | Study</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://wsgzao.github.io/post/nftables/" data-title="nftables代替iptables的新一代防火墙配置指南 | HelloDog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/post/tiktok-referral/" title="字节跳动和TikTok内推">
+  <strong>上一篇：</strong><br/>
+  <span>
+  字节跳动和TikTok内推</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/post/singapore-maid-china-visa/"  title="新加坡女佣申请中国签证">
+ <strong>下一篇：</strong><br/> 
+ <span>新加坡女佣申请中国签证
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8E%86%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text">更新历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nftables%E5%AE%89%E8%A3%85"><span class="toc-number">3.</span> <span class="toc-text">nftables安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nftables%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5"><span class="toc-number">4.</span> <span class="toc-text">nftables基础概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#nftables-%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E7%A4%BA%E4%BE%8B"><span class="toc-number">4.1.</span> <span class="toc-text">nftables 的基本操作示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#nft-%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%AE%9E%E4%BE%8B%E5%B0%8F%E7%BB%93"><span class="toc-number">4.2.</span> <span class="toc-text">nft 命令行实例小结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E5%A4%9A%E7%A4%BA%E4%BE%8B%E4%B8%8E%E6%8A%80%E5%B7%A7"><span class="toc-number">5.</span> <span class="toc-text">更多示例与技巧</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="toc-number">6.</span> <span class="toc-text">常见问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">7.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-number">8.</span> <span class="toc-text">参考文档</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="wsgzao" data-theme="medium"></div>
+<script type="text/javascript" src="//lab.lepture.com/github-cards/widget.js" ></script>
+</div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习-Study/" title="学习 | Study">学习 | Study<sup>198</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活-Life/" title="生活 | Life">生活 | Life<sup>33</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/软件-Soft/" title="软件 | Soft">软件 | Soft<sup>5</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.linkedin.com/in/aowang" target="_blank" title="LinkedIn">LinkedIn</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello, I&#39;m OX. This is my blog on GitHub. <br/>
+			Keep Calm and Carry On.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/wsgzao" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		<a href="https://www.linkedin.com/in/aowang" target="_blank" class="icon-linkedin" title="linkedin"></a>
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2026 
+		
+		<a href="/about" target="_blank" title="wsgzao">wsgzao</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-3.6.4.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery-qrcode-0.18.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'wsgzao';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-77732745-1', 'wsgzao.github.io');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?c2c5fc7d844d0973d9f77abd87f49c3c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- swiftype Begin -->
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','_4qDmKrBPn9Es3UvQHT4','2.0.0');
+</script>
+
+<!-- swiftype End -->
+
+  </body>
+</html>
